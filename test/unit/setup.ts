@@ -20,22 +20,19 @@ export const handlers = {
     success: http.post('*/v1/rewrites/', () => {
       return HttpResponse.json({
         workflow_id: 'test-workflow-id',
-        status: 'processing'
+        status: 'processing',
       });
     }),
     status: http.get('*/v1/rewrites/:workflowId', () => {
       return HttpResponse.json({
         status: 'completed',
         result: {
-          merged_text: 'This is the rewritten content.'
-        }
+          merged_text: 'This is the rewritten content.',
+        },
       });
     }),
     error: http.post('*/v1/rewrites/', () => {
-      return HttpResponse.json(
-        { message: 'Invalid API key' },
-        { status: 401 }
-      );
-    })
-  }
-}; 
+      return HttpResponse.json({ message: 'Invalid API key' }, { status: 401 });
+    }),
+  },
+};

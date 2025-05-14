@@ -6,7 +6,7 @@ import path from 'path';
 beforeAll(() => {
   // Load from the root directory
   const result = dotenv.config({ path: path.resolve(process.cwd(), '.env') });
-  
+
   if (result.error) {
     console.warn('Warning: .env file not found. Make sure you have set up your environment variables.');
   }
@@ -15,4 +15,4 @@ beforeAll(() => {
   if (!process.env.ACROLINX_API_KEY) {
     throw new Error('ACROLINX_API_KEY environment variable is required for integration tests');
   }
-}); 
+});

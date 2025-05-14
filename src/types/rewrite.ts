@@ -1,17 +1,71 @@
-export interface RewriteResponse {
+export enum Dialect {
+  AmericanEnglish = 'american_english',
+  AustralianEnglish = 'australian_english',
+  BritishOxford = 'british_oxford',
+  CanadianEnglish = 'canadian_english',
+  IndianEnglish = 'indian_english',
+}
+
+export enum Status {
+  Running = 'running',
+  Pending = 'pending',
+  Completed = 'completed',
+  Failed = 'failed',
+  Error = 'error',
+}
+
+export enum Tone {
+  Academic = 'academic',
+  Business = 'business',
+  Casual = 'casual',
+  Conversational = 'conversational',
+  Formal = 'formal',
+  GenZ = 'gen-z',
+  Informal = 'informal',
+  Technical = 'technical',
+}
+
+export interface RewriteRequest {
+  content: string;
+  guidanceSettings: GuidanceSettings;
+}
+
+export interface GuidanceSettings {
+  dialect: Dialect;
+  tone: Tone;
+  styleGuide: string;
+}
+
+export interface RewriteResponseBase {
   workflow_id: string;
-  status: 'pending' | 'completed' | 'failed';
+  status: string;
+}
+
+export interface RewriteSubmissionResponse extends RewriteResponseBase {
+  status: 'submitted';
+  workflow_id: string;
+}
+
+export interface RewritePollingResponse extends RewriteResponseBase {
+  status: Status;
+  workflow_id: string;
+  error_message?: string;
+}
+
+export interface RewriteSuccessResponse extends RewriteResponseBase {
+  status: Status.Completed;
+  workflow_id: string;
   result: RewriteResult;
-  error_message: string | null;
+}
+
+export interface RewriteErrorResponse extends RewriteResponseBase {
+  status: Status.Failed | Status.Error;
+  workflow_id: string;
+  error_message: string;
 }
 
 export interface RewriteResult {
-  errors: ErrorDetail[];
-  final_scores: Scores;
-  initial_scores: Scores;
   merged_text: string;
-  original_text: string;
-  results: RewriteResultItem[];
 }
 
 export interface ErrorDetail {
@@ -106,4 +160,4 @@ export interface Change {
   modified: string;
   change_start_char_idx: number;
   category: string;
-} 
+}
