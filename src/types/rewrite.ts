@@ -1,0 +1,109 @@
+export interface RewriteResponse {
+  workflow_id: string;
+  status: 'pending' | 'completed' | 'failed';
+  result: RewriteResult;
+  error_message: string | null;
+}
+
+export interface RewriteResult {
+  errors: ErrorDetail[];
+  final_scores: Scores;
+  initial_scores: Scores;
+  merged_text: string;
+  original_text: string;
+  results: RewriteResultItem[];
+}
+
+export interface ErrorDetail {
+  code: string;
+  message: string;
+  details?: Record<string, unknown>;
+}
+
+export interface Scores {
+  acrolinx_score: number | null;
+  content_score: ContentScore | null;
+}
+
+export interface ContentScore {
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: ScoreParameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  analysis: ContentAnalysis;
+  feedback: string;
+  score: number;
+  suggestions: string[];
+  target_score: number | null;
+}
+
+export interface ScoreParameters {
+  dialect: string | null;
+  tone: string | null;
+  style_guide: string | null;
+  max_words: number | null;
+}
+
+export interface TokenUsage {
+  completion_tokens: number;
+  prompt_tokens: number;
+  total_tokens: number;
+}
+
+export interface ContentAnalysis {
+  avg_sentence_length: number;
+  avg_word_length: number;
+  complexity_score: number;
+  readability_score: number;
+  sentence_count: number;
+  vocabulary_score: number;
+  word_count: number;
+}
+
+export interface RewriteResultItem {
+  created_at: string;
+  errors: ErrorDetail[];
+  initial_scores: Scores;
+  final_scores: Scores;
+  input_file: string;
+  parameters: {
+    dialect: string;
+    tone: string;
+    style_guide: string;
+    max_words: number;
+  };
+  run_id: string;
+  workflow_id: string;
+  grammar_result: ResultItem;
+  merging_result: ResultItem | null;
+  parser_result: ResultItem | null;
+  sentence_length_result: ResultItem;
+  sentence_structure_result: ResultItem;
+  simple_vocabulary_result: ResultItem;
+  tone_result: ResultItem;
+  style_guide_result: ResultItem;
+}
+
+export interface ResultItem {
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: ScoreParameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  text?: string;
+  changes?: Change[];
+}
+
+export interface Change {
+  original: string;
+  modified: string;
+  change_start_char_idx: number;
+  category: string;
+} 
