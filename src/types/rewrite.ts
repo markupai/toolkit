@@ -65,7 +65,12 @@ export interface RewriteErrorResponse extends RewriteResponseBase {
 }
 
 export interface RewriteResult {
+  errors: ErrorDetail[];
+  final_scores: Scores;
+  initial_scores: Scores;
   merged_text: string;
+  original_text: string;
+  results: RewriteResultItem[];
 }
 
 export interface ErrorDetail {
