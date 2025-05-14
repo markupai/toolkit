@@ -3,7 +3,6 @@ export interface RewriteRequest {
 }
 
 export class Endpoint {
-
   constructor() {}
 
   rewriteContent(rewriteRequest: RewriteRequest) {
