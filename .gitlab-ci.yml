@@ -19,9 +19,10 @@ deploy:
   stage: deploy
   script:
     # Configure npm registry
-    - echo "@acrolinx:registry=https://gitlab.com/api/v4/packages/npm/" > .npmrc
-    - echo "//gitlab.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
-    - echo "//gitlab.com/api/v4/projects/69851120/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+    - |
+      echo "@acrolinx:registry=https://gitlab.com/api/v4/packages/npm/" > .npmrc
+      echo "//gitlab.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
+      echo "//gitlab.com/api/v4/projects/69851120/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     
     # Increment patch version
     - npm version patch --no-git-tag-version
@@ -30,14 +31,15 @@ deploy:
     - NEW_VERSION=$(node -p "require('./package.json').version")
     
     # Create git tag
-    - git config --global user.email "${SERVICE_USER_EMAIL}"
-    - git config --global user.name "${SERVICE_USER_NAME}"
-    - git remote set-url origin "https://${SERVICE_USER_NAME}:${SERVICE_USER_GIT_TOKEN}@gitlab.com/${CI_PROJECT_PATH}.git"
-    - git add package.json package-lock.json
-    - git commit -m "chore: bump version to ${NEW_VERSION}"
-    - git tag -a "v${NEW_VERSION}" -m "Release v${NEW_VERSION}"
-    - git push origin HEAD:${CI_COMMIT_REF_NAME}
-    - git push origin "v${NEW_VERSION}"
+    - |
+      git config --global user.email "${SERVICE_USER_EMAIL}"
+      git config --global user.name "${SERVICE_USER_NAME}"
+      git remote set-url origin "https://${SERVICE_USER_NAME}:${SERVICE_USER_GIT_TOKEN}@gitlab.com/${CI_PROJECT_PATH}.git"
+      git add package.json package-lock.json
+      git commit -m "chore: bump version to ${NEW_VERSION}"
+      git tag -a "v${NEW_VERSION}" -m "Release v${NEW_VERSION}"
+      git push origin HEAD:${CI_COMMIT_REF_NAME}
+      git push origin "v${NEW_VERSION}"
     
     # Publish package
     - npm publish
