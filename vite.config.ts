@@ -10,17 +10,6 @@ export default defineConfig({
     },
   },
   plugins: [
-    dts({
-      include: ['src/**/*.ts'],
-      rollupTypes: true,
-      outDir: 'dist',
-      beforeWriteFile: (filePath, content) => {
-        // Ensure all types are properly exported
-        return {
-          filePath,
-          content: content.replace(/^declare /gm, 'export declare ')
-        };
-      }
-    }),
+    dts(),
   ],
 });

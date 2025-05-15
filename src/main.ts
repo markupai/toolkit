@@ -5,7 +5,45 @@ import {
   RewriteSubmissionResponse,
   RewriteSuccessResponse,
   Status,
+  Dialect,
+  Tone,
+  GuidanceSettings,
+  RewriteResponseBase,
+  RewriteErrorResponse,
+  ErrorDetail,
+  Scores,
+  ContentScore,
+  ScoreParameters,
+  TokenUsage,
+  ContentAnalysis,
+  RewriteResultItem,
+  ResultItem,
+  Change,
 } from './types/rewrite';
+
+// Re-export all types
+export type {
+  RewritePollingResponse,
+  RewriteRequest,
+  RewriteResult,
+  RewriteSubmissionResponse,
+  RewriteSuccessResponse,
+  Status,
+  Dialect,
+  Tone,
+  GuidanceSettings,
+  RewriteResponseBase,
+  RewriteErrorResponse,
+  ErrorDetail,
+  Scores,
+  ContentScore,
+  ScoreParameters,
+  TokenUsage,
+  ContentAnalysis,
+  RewriteResultItem,
+  ResultItem,
+  Change,
+};
 
 export interface EndpointProps {
   platformUrl: string;
