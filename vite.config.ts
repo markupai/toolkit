@@ -9,7 +9,5 @@ export default defineConfig({
       fileName: 'acrolinx-typescript-sdk',
     },
   },
-  plugins: [
-    dts(),
-  ],
+  plugins: [dts()],
 });

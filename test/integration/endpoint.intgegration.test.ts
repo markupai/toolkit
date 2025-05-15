@@ -14,7 +14,6 @@ describe('Endpoint Integration Tests', () => {
   };
 
   beforeAll(() => {
-    // Ensure we have the required environment variables
     if (!process.env.ACROLINX_API_KEY) {
       throw new Error('ACROLINX_API_KEY environment variable is required');
     }
@@ -26,7 +25,7 @@ describe('Endpoint Integration Tests', () => {
   });
 
   it('should successfully rewrite content', async () => {
-    const result = await endpoint.rewriteContent(mockRewriteRequest);
+    const result = await endpoint.submitRewrite(mockRewriteRequest);
 
     expect(result).toBeDefined();
     expect(typeof result).toBe('object');
@@ -41,11 +40,10 @@ describe('Endpoint Integration Tests', () => {
     });
 
     try {
-      await invalidEndpoint.rewriteContent(mockRewriteRequest);
+      await invalidEndpoint.submitRewrite(mockRewriteRequest);
       throw new Error('Expected request to fail with invalid API key');
     } catch (error) {
       expect(error).toBeDefined();
-      // Log the actual error for debugging
       console.error('API Error:', error);
     }
   });
@@ -57,17 +55,16 @@ describe('Endpoint Integration Tests', () => {
     });
 
     try {
-      await invalidEndpoint.rewriteContent(mockRewriteRequest);
+      await invalidEndpoint.submitRewrite(mockRewriteRequest);
       throw new Error('Expected request to fail with invalid URL');
     } catch (error) {
       expect(error).toBeDefined();
-      // Log the actual error for debugging
       console.error('Network Error:', error);
     }
   });
 
   it('should submit rewrite request and poll for result', async () => {
-    const initialResponse = await endpoint.rewriteContent(mockRewriteRequest);
+    const initialResponse = await endpoint.submitRewrite(mockRewriteRequest);
 
     expect(initialResponse).toBeDefined();
     expect(initialResponse.workflow_id).toBeDefined();
@@ -75,7 +72,7 @@ describe('Endpoint Integration Tests', () => {
 
     console.log('Initial response:', JSON.stringify(initialResponse, null, 2));
 
-    const finalResponse = await endpoint.pollRewriteStatus(initialResponse.workflow_id);
+    const finalResponse = await endpoint.pollWorkflowForResult(initialResponse.workflow_id);
 
     expect(finalResponse).toBeDefined();
     expect(finalResponse.status).toBe('completed');
@@ -87,7 +84,7 @@ describe('Endpoint Integration Tests', () => {
   });
 
   it('should successfully rewrite content and poll for result in one call', async () => {
-    const result = await endpoint.rewriteContentAndPoll(mockRewriteRequest);
+    const result = await endpoint.submitRewriteAndGetResult(mockRewriteRequest);
 
     expect(result).toBeDefined();
     expect(result.merged_text).toBeDefined();
@@ -102,28 +99,25 @@ describe('Endpoint Integration Tests', () => {
     });
 
     try {
-      await invalidEndpoint.rewriteContentAndPoll(mockRewriteRequest);
+      await invalidEndpoint.submitRewriteAndGetResult(mockRewriteRequest);
       throw new Error('Expected request to fail with invalid URL');
     } catch (error) {
       expect(error).toBeDefined();
-      // Log the actual error for debugging
       console.error('RewriteContentAndPoll Error:', error);
     }
   });
 
   it('should handle workflow failure in rewriteContentAndPoll', async () => {
-    // Create an endpoint with an invalid API key to simulate workflow failure
     const invalidEndpoint = new Endpoint({
       platformUrl: process.env.ACROLINX_PLATFORM_URL || 'http://localhost:8000',
       apiKey: 'invalid-api-key',
     });
 
     try {
-      await invalidEndpoint.rewriteContentAndPoll(mockRewriteRequest);
+      await invalidEndpoint.submitRewriteAndGetResult(mockRewriteRequest);
       throw new Error('Expected request to fail with invalid API key');
     } catch (error) {
       expect(error).toBeDefined();
-      // Log the actual error for debugging
       console.error('Workflow Failure Error:', error);
     }
   });

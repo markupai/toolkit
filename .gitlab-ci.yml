@@ -20,13 +20,13 @@ deploy:
   script:
     # Increment patch version
     - npm version patch --no-git-tag-version
-    
+
     # Get the new version
     - NEW_VERSION=$(node -p "require('./package.json').version")
 
     # Publish package
     - npm publish
-    
+
     # Create git tag
     - |
       git config --global user.email "${SERVICE_USER_EMAIL}"

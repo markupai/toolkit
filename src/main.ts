@@ -22,11 +22,7 @@ import {
 } from './types/rewrite';
 
 // Re-export all types
-export {
-  Status,
-  Dialect,
-  Tone,
-};
+export { Status, Dialect, Tone };
 
 export type {
   RewritePollingResponse,
@@ -56,19 +52,10 @@ export interface EndpointProps {
 export class Endpoint {
   constructor(private readonly props: EndpointProps) {}
 
-  async rewriteContent(rewriteRequest: RewriteRequest): Promise<RewriteSubmissionResponse> {
-    console.log(rewriteRequest);
-
-    const formData = new FormData();
-
-    formData.append('file', new Blob([rewriteRequest.content], { type: 'text/plain' }));
-    formData.append('dialect', rewriteRequest.guidanceSettings.dialect.toString());
-    formData.append('tone', rewriteRequest.guidanceSettings.tone.toString());
-    formData.append('style_guide', rewriteRequest.guidanceSettings.styleGuide);
-
+  private async makeRequest<T>(endpoint: string, method: string, formData: FormData): Promise<T> {
     try {
-      const response = await fetch(`${this.props.platformUrl}/v1/rewrites/`, {
-        method: 'POST',
+      const response = await fetch(`${this.props.platformUrl}${endpoint}`, {
+        method,
         headers: {
           'x-api-key': this.props.apiKey,
         },
@@ -90,7 +77,31 @@ export class Endpoint {
     }
   }
 
-  async pollRewriteStatus(workflowId: string): Promise<RewriteSuccessResponse> {
+  async submitRewrite(rewriteRequest: RewriteRequest): Promise<RewriteSubmissionResponse> {
+    console.log(rewriteRequest);
+
+    const formData = new FormData();
+    formData.append('file', new Blob([rewriteRequest.content], { type: 'text/plain' }));
+    formData.append('dialect', rewriteRequest.guidanceSettings.dialect.toString());
+    formData.append('tone', rewriteRequest.guidanceSettings.tone.toString());
+    formData.append('style_guide', rewriteRequest.guidanceSettings.styleGuide);
+
+    return this.makeRequest<RewriteSubmissionResponse>('/v1/rewrites/', 'POST', formData);
+  }
+
+  async submitCheck(checkRequest: RewriteRequest): Promise<RewriteSubmissionResponse> {
+    console.log(checkRequest);
+
+    const formData = new FormData();
+    formData.append('file', new Blob([checkRequest.content], { type: 'text/plain' }));
+    formData.append('dialect', checkRequest.guidanceSettings.dialect.toString());
+    formData.append('tone', checkRequest.guidanceSettings.tone.toString());
+    formData.append('style_guide', checkRequest.guidanceSettings.styleGuide);
+
+    return this.makeRequest<RewriteSubmissionResponse>('/v1/checks/', 'POST', formData);
+  }
+
+  async pollWorkflowForResult(workflowId: string): Promise<RewriteSuccessResponse> {
     let attempts = 0;
     const maxAttempts = 30;
     const pollInterval = 2000;
@@ -124,14 +135,12 @@ export class Endpoint {
           return data as RewriteSuccessResponse;
         }
 
-        // If status is 'in_progress' or 'pending', continue polling
         if (data.status === Status.Running || data.status === Status.Pending) {
           attempts++;
           await new Promise((resolve) => setTimeout(resolve, pollInterval));
           return poll();
         }
 
-        // If we get here, we have an unexpected status
         throw new Error(`Unexpected workflow status: ${data.status}`);
       } catch (error) {
         if (error instanceof Error) {
@@ -146,14 +155,12 @@ export class Endpoint {
     return poll();
   }
 
-  async rewriteContentAndPoll(rewriteRequest: RewriteRequest): Promise<RewriteResult> {
+  async submitRewriteAndGetResult(rewriteRequest: RewriteRequest): Promise<RewriteResult> {
     try {
-      // First send the rewrite request
-      const initialResponse = await this.rewriteContent(rewriteRequest);
+      const initialResponse = await this.submitRewrite(rewriteRequest);
 
-      // If the response contains a workflow_id, poll for the result
       if (initialResponse.workflow_id) {
-        const polledResponse = await this.pollRewriteStatus(initialResponse.workflow_id);
+        const polledResponse = await this.pollWorkflowForResult(initialResponse.workflow_id);
         if (polledResponse.status === Status.Completed && polledResponse.result) {
           return polledResponse.result;
         }
@@ -166,6 +173,29 @@ export class Endpoint {
         console.error('Error in rewriteContentAndPoll:', error.message);
       } else {
         console.error('Unknown error in rewriteContentAndPoll:', error);
+      }
+      throw error;
+    }
+  }
+
+  async submitCheckAndGetResult(checkRequest: RewriteRequest): Promise<RewriteResult> {
+    try {
+      const initialResponse = await this.submitCheck(checkRequest);
+
+      if (initialResponse.workflow_id) {
+        const polledResponse = await this.pollWorkflowForResult(initialResponse.workflow_id);
+        if (polledResponse.status === Status.Completed && polledResponse.result) {
+          return polledResponse.result;
+        }
+        throw new Error(`Check failed with status: ${polledResponse.status}`);
+      }
+
+      throw new Error('No workflow_id received from initial check request');
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error in checkContentAndPoll:', error.message);
+      } else {
+        console.error('Unknown error in checkContentAndPoll:', error);
       }
       throw error;
     }

@@ -26,7 +26,7 @@ describe('Endpoint Unit Tests', () => {
   it('should successfully submit rewrite request', async () => {
     server.use(handlers.rewrite.success);
 
-    const result = await endpoint.rewriteContent(mockRewriteRequest);
+    const result = await endpoint.submitRewrite(mockRewriteRequest);
 
     expect(result).toBeDefined();
     expect(result.workflow_id).toBe('test-workflow-id');
@@ -36,13 +36,13 @@ describe('Endpoint Unit Tests', () => {
   it('should handle API errors', async () => {
     server.use(handlers.rewrite.error);
 
-    await expect(endpoint.rewriteContent(mockRewriteRequest)).rejects.toThrow('HTTP error! status: 401');
+    await expect(endpoint.submitRewrite(mockRewriteRequest)).rejects.toThrow('HTTP error! status: 401');
   });
 
   it('should successfully poll for rewrite status', async () => {
     server.use(handlers.rewrite.status);
 
-    const result = await endpoint.pollRewriteStatus('test-workflow-id');
+    const result = await endpoint.pollWorkflowForResult('test-workflow-id');
 
     expect(result).toBeDefined();
     expect(result.status).toBe('completed');
@@ -50,7 +50,6 @@ describe('Endpoint Unit Tests', () => {
   });
 
   it('should handle polling timeout', async () => {
-    // Mock a slow response that will timeout
     server.use(
       http.get('*/v1/rewrites/:workflowId', async () => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -60,14 +59,12 @@ describe('Endpoint Unit Tests', () => {
       }),
     );
 
-    // Create endpoint with short timeout
     const quickEndpoint = new Endpoint({
       platformUrl: 'http://test-api.com',
       apiKey: 'test-api-key',
     });
 
-    // Override polling parameters
-    quickEndpoint.pollRewriteStatus = async (workflowId: string) => {
+    quickEndpoint.pollWorkflowForResult = async (workflowId: string) => {
       let attempts = 0;
       const maxAttempts = 2;
       const pollInterval = 100;
@@ -103,13 +100,12 @@ describe('Endpoint Unit Tests', () => {
       return poll();
     };
 
-    await expect(quickEndpoint.pollRewriteStatus('test-workflow-id')).rejects.toThrow(
+    await expect(quickEndpoint.pollWorkflowForResult('test-workflow-id')).rejects.toThrow(
       'Workflow timed out after 2 attempts',
     );
   });
 
   it('should successfully complete rewrite content and poll workflow', async () => {
-    // Mock successful initial rewrite request
     server.use(
       http.post('*/v1/rewrites/', () => {
         return HttpResponse.json({
@@ -119,7 +115,6 @@ describe('Endpoint Unit Tests', () => {
       }),
     );
 
-    // Mock successful polling response
     server.use(
       http.get('*/v1/rewrites/:workflowId', () => {
         return HttpResponse.json({
@@ -132,14 +127,13 @@ describe('Endpoint Unit Tests', () => {
       }),
     );
 
-    const result = await endpoint.rewriteContentAndPoll(mockRewriteRequest);
+    const result = await endpoint.submitRewriteAndGetResult(mockRewriteRequest);
 
     expect(result).toBeDefined();
     expect(result.merged_text).toBe('This is the rewritten content.');
   });
 
   it('should handle failed rewrite workflow', async () => {
-    // Mock successful initial rewrite request
     server.use(
       http.post('*/v1/rewrites/', () => {
         return HttpResponse.json({
@@ -149,7 +143,6 @@ describe('Endpoint Unit Tests', () => {
       }),
     );
 
-    // Mock failed polling response
     server.use(
       http.get('*/v1/rewrites/:workflowId', () => {
         return HttpResponse.json({
@@ -159,13 +152,12 @@ describe('Endpoint Unit Tests', () => {
       }),
     );
 
-    await expect(endpoint.rewriteContentAndPoll(mockRewriteRequest)).rejects.toThrow(
+    await expect(endpoint.submitRewriteAndGetResult(mockRewriteRequest)).rejects.toThrow(
       'Workflow failed: Processing failed',
     );
   });
 
   it('should handle missing workflow_id in initial response', async () => {
-    // Mock response without workflow_id
     server.use(
       http.post('*/v1/rewrites/', () => {
         return HttpResponse.json({
@@ -175,7 +167,7 @@ describe('Endpoint Unit Tests', () => {
       }),
     );
 
-    await expect(endpoint.rewriteContentAndPoll(mockRewriteRequest)).rejects.toThrow(
+    await expect(endpoint.submitRewriteAndGetResult(mockRewriteRequest)).rejects.toThrow(
       'No workflow_id received from initial rewrite request',
     );
   });
