@@ -13,12 +13,14 @@ export default defineConfig({
     dts({
       include: ['src/**/*.ts'],
       rollupTypes: true,
-      copyDtsFiles: true,
       outDir: 'dist',
-      compilerOptions: {
-        declaration: true,
-        declarationMap: true,
-      },
+      beforeWriteFile: (filePath, content) => {
+        // Ensure all types are properly exported
+        return {
+          filePath,
+          content: content.replace(/^declare /gm, 'export declare ')
+        };
+      }
     }),
   ],
 });
