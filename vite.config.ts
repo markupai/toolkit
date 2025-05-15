@@ -9,5 +9,16 @@ export default defineConfig({
       fileName: 'acrolinx-typescript-sdk',
     },
   },
-  plugins: [dts()],
+  plugins: [
+    dts({
+      include: ['src/**/*.ts'],
+      rollupTypes: true,
+      copyDtsFiles: true,
+      outDir: 'dist',
+      compilerOptions: {
+        declaration: true,
+        declarationMap: true,
+      },
+    }),
+  ],
 });
