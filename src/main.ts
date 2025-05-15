@@ -22,15 +22,18 @@ import {
 } from './types/rewrite';
 
 // Re-export all types
+export {
+  Status,
+  Dialect,
+  Tone,
+};
+
 export type {
   RewritePollingResponse,
   RewriteRequest,
   RewriteResult,
   RewriteSubmissionResponse,
   RewriteSuccessResponse,
-  Status,
-  Dialect,
-  Tone,
   GuidanceSettings,
   RewriteResponseBase,
   RewriteErrorResponse,
