@@ -10,15 +10,11 @@ import {
   GuidanceSettings,
   RewriteResponseBase,
   RewriteErrorResponse,
-  ErrorDetail,
-  Scores,
-  ContentScore,
-  ScoreParameters,
-  TokenUsage,
+  WorkflowError,
+  FinalScores,
+  InitialScores,
   ContentAnalysis,
-  RewriteResultItem,
-  ResultItem,
-  Change,
+  HeliosOneWorkflowOutput,
   StyleGuide,
 } from './types/rewrite';
 
@@ -27,7 +23,7 @@ export const API_ENDPOINTS = {
   CHECKS: '/v1/checks/',
 } as const;
 
-export { Status, Dialect, Tone };
+export { Status, Dialect, Tone, StyleGuide };
 
 export type {
   RewritePollingResponse,
@@ -38,16 +34,11 @@ export type {
   GuidanceSettings,
   RewriteResponseBase,
   RewriteErrorResponse,
-  ErrorDetail,
-  Scores,
-  ContentScore,
-  ScoreParameters,
-  TokenUsage,
+  WorkflowError,
+  FinalScores,
+  InitialScores,
   ContentAnalysis,
-  RewriteResultItem,
-  ResultItem,
-  Change,
-  StyleGuide,
+  HeliosOneWorkflowOutput,
 };
 
 export interface EndpointProps {
@@ -133,7 +124,7 @@ export class Endpoint {
 
         const data = (await response.json()) as RewritePollingResponse;
 
-        if (data.status === Status.Failed || data.status === Status.Error) {
+        if (data.status === Status.Failed) {
           throw new Error(`Workflow failed: ${data.error_message}`);
         }
 
@@ -141,7 +132,7 @@ export class Endpoint {
           return data as RewriteSuccessResponse;
         }
 
-        if (data.status === Status.Running || data.status === Status.Pending) {
+        if (data.status === Status.Running || data.status === Status.Queued) {
           attempts++;
           await new Promise((resolve) => setTimeout(resolve, pollInterval));
           return poll();

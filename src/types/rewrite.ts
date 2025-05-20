@@ -7,11 +7,10 @@ export enum Dialect {
 }
 
 export enum Status {
+  Queued = 'queued',
   Running = 'running',
-  Pending = 'pending',
   Completed = 'completed',
   Failed = 'failed',
-  Error = 'error',
 }
 
 export enum Tone {
@@ -31,6 +30,60 @@ export enum StyleGuide {
   Microsoft = 'microsoft',
 }
 
+export enum ChangeCategory {
+  Punctuation = 'punctuation',
+  Capitalization = 'capitalization',
+  GrammarAndUsage = 'grammar_and_usage',
+  NumbersAndDates = 'numbers_and_dates',
+  FormattingAndStructure = 'formatting_and_structure',
+  Other = 'other',
+}
+
+export enum GrammarCategory {
+  SvaPronoun = 'sva_pronoun',
+  PunctCap = 'punct_cap',
+  Spelling = 'spelling',
+  Syntax = 'syntax',
+  Verbs = 'verbs',
+  WordUsage = 'word_usage',
+  Other = 'other',
+}
+
+export enum SentenceLengthCategory {
+  Capitalization = 'capitalization',
+  Remove = 'remove',
+  Extract = 'extract',
+  Shorten = 'shorten',
+  Deletion = 'deletion',
+  Replace = 'replace',
+  Other = 'other',
+}
+
+export enum SentenceStructureCategory {
+  ComplexVerbs = 'complex_verbs',
+  HiddenVerbs = 'hidden_verbs',
+  Insertion = 'insertion',
+  ModalVerbs = 'modal_verbs',
+  Passive = 'passive',
+  PhrasalVerbs = 'phrasal_verbs',
+  Subjunctive = 'subjunctive',
+  Other = 'other',
+}
+
+export enum SimpleVocabChangeCategory {
+  Vocabulary = 'vocabulary',
+  Other = 'other',
+}
+
+export enum ToneCategories {
+  WordChoice = 'word_choice',
+  Syntax = 'syntax',
+  Punctuation = 'punctuation',
+  DiscourseFeatures = 'discourse_features',
+  ImplicitStyle = 'implicit_style',
+  Other = 'other',
+}
+
 export interface RewriteRequest {
   content: string;
   guidanceSettings: GuidanceSettings;
@@ -48,7 +101,7 @@ export interface RewriteResponseBase {
 }
 
 export interface RewriteSubmissionResponse extends RewriteResponseBase {
-  status: 'submitted';
+  message: string;
   workflow_id: string;
 }
 
@@ -65,51 +118,95 @@ export interface RewriteSuccessResponse extends RewriteResponseBase {
 }
 
 export interface RewriteErrorResponse extends RewriteResponseBase {
-  status: Status.Failed | Status.Error;
+  status: Status.Failed;
   workflow_id: string;
   error_message: string;
 }
 
 export interface RewriteResult {
-  errors: ErrorDetail[];
-  final_scores: Scores;
-  initial_scores: Scores;
+  errors: WorkflowError[];
+  final_scores: FinalScores;
+  initial_scores: InitialScores;
   merged_text: string;
   original_text: string;
-  results: RewriteResultItem[];
+  results: HeliosOneWorkflowOutput[];
 }
 
-export interface ErrorDetail {
-  code: string;
-  message: string;
-  details?: Record<string, unknown>;
+export interface WorkflowError {
+  error: string;
 }
 
-export interface Scores {
-  acrolinx_score: number | null;
-  content_score: ContentScore | null;
+export interface FinalScores {
+  acrolinx_score: AcrolinxScorerActivityOutput | null;
+  content_score: ContentScorerActivityOutput | null;
 }
 
-export interface ContentScore {
+export interface InitialScores {
+  acrolinx_score: AcrolinxScorerActivityOutput | null;
+  content_score: ContentScorerActivityOutput | null;
+}
+
+export interface AcrolinxScorerActivityOutput {
   error: string | null;
   duration: number;
   model: string;
-  parameters: ScoreParameters;
+  parameters: Parameters;
   provider: string;
   run_id: string;
   token_usage: TokenUsage;
   workflow_id: string;
-  analysis: ContentAnalysis;
-  feedback: string;
+  issues: Issue[];
   score: number;
-  suggestions: string[];
-  target_score: number | null;
 }
 
-export interface ScoreParameters {
-  dialect: string | null;
-  tone: string | null;
-  style_guide: string | null;
+export interface Issue {
+  description: string;
+  originalText: string;
+  position: number;
+  suggestedReplacements: string[];
+  type: string;
+}
+
+export interface ContentScorerActivityOutput {
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  analysis: ContentAnalysis | null;
+  feedback: ContentQualityFeedback | null;
+  score: number;
+  suggestions: ContentSuggestions[] | null;
+  target_score: TargetScore | null;
+}
+
+export type ContentQualityFeedback =
+  | 'Excellent content quality! Your text is clear, readable, and well-structured.'
+  | 'Good content quality. Your text is readable but has room for improvement.'
+  | 'Moderate content quality. Consider revising for better readability.'
+  | 'Low content quality. The text needs significant revision for better readability.';
+
+export type ContentSuggestions =
+  | 'Use shorter sentences and simpler words to improve readability.'
+  | 'Your text may be too complex. Consider simplifying vocabulary and sentence structure.'
+  | 'Your sentences are quite long. Consider breaking them into shorter ones.'
+  | 'Your sentences are very short. Consider combining some for better flow.'
+  | 'Your vocabulary diversity is low. Try using a wider range of words.'
+  | 'Your text is well-balanced. Consider proofreading for minor improvements.';
+
+export interface TargetScore {
+  target_score: number | null;
+  target_range: number | null;
+  within_target: boolean | null;
+}
+
+export interface Parameters {
+  dialect: Dialect | null;
+  tone: Tone | null;
+  style_guide: StyleGuide | null;
   max_words: number | null;
 }
 
@@ -129,46 +226,163 @@ export interface ContentAnalysis {
   word_count: number;
 }
 
-export interface RewriteResultItem {
+export interface HeliosOneWorkflowOutput {
   created_at: string;
-  errors: ErrorDetail[];
-  initial_scores: Scores;
-  final_scores: Scores;
+  errors: WorkflowError[];
+  initial_scores: InitialScores;
+  final_scores: FinalScores;
   input_file: string;
-  parameters: {
-    dialect: string;
-    tone: string;
-    style_guide: string;
-    max_words: number;
-  };
+  parameters: Parameters;
   run_id: string;
   workflow_id: string;
-  grammar_result: ResultItem;
-  merging_result: ResultItem | null;
-  parser_result: ResultItem | null;
-  sentence_length_result: ResultItem;
-  sentence_structure_result: ResultItem;
-  simple_vocabulary_result: ResultItem;
-  tone_result: ResultItem;
-  style_guide_result: ResultItem;
+  grammar_result: GrammarActivityOutput | null;
+  merging_result: MergingActivityOutput | null;
+  parser_result: ParserResponse | null;
+  sentence_length_result: SentenceLengthActivityOutput | null;
+  sentence_structure_result: SentenceStructureOutput | null;
+  simple_vocabulary_result: SimpleVocabOutput | null;
+  tone_result: ToneCheckOutput | null;
+  style_guide_result: StyleGuideOutput | null;
 }
 
-export interface ResultItem {
+export interface GrammarActivityOutput {
   error: string | null;
   duration: number;
   model: string;
-  parameters: ScoreParameters;
+  parameters: Parameters;
   provider: string;
   run_id: string;
   token_usage: TokenUsage;
   workflow_id: string;
-  text?: string;
-  changes?: Change[];
+  changes: GrammarChange[];
 }
 
-export interface Change {
+export interface GrammarChange {
   original: string;
   modified: string;
   change_start_char_idx: number;
-  category: string;
+  category: GrammarCategory;
+}
+
+export interface MergingActivityOutput {
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  merged_text: string;
+}
+
+export interface ParserResponse {
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  extracted_text: string;
+}
+
+export interface SentenceLengthActivityOutput {
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  text: string;
+  changes: SentenceLengthChange[];
+}
+
+export interface SentenceLengthChange {
+  original: string;
+  modified: string;
+  change_start_char_idx: number;
+  category: SentenceLengthCategory;
+}
+
+export interface SentenceStructureOutput {
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  text: string;
+  changes: SentenceStructureChange[];
+}
+
+export interface SentenceStructureChange {
+  original: string;
+  modified: string;
+  change_start_char_idx: number;
+  category: SentenceStructureCategory;
+}
+
+export interface SimpleVocabOutput {
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  text: string;
+  changes: SimpleVocabChange[];
+}
+
+export interface SimpleVocabChange {
+  original: string;
+  modified: string;
+  change_start_char_idx: number;
+  category: SimpleVocabChangeCategory;
+}
+
+export interface ToneCheckOutput {
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  text: string;
+  changes: ToneChange[];
+}
+
+export interface ToneChange {
+  original: string;
+  modified: string;
+  change_start_char_idx: number;
+  category: ToneCategories;
+}
+
+export interface StyleGuideOutput {
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  changes: StyleGuideChange[];
+}
+
+export interface StyleGuideChange {
+  original: string;
+  modified: string;
+  change_start_char_idx: number;
+  category: ChangeCategory;
 }
