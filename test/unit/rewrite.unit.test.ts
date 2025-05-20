@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { API_ENDPOINTS, Endpoint } from '../../src/main';
 import { server, handlers } from './setup';
 import { http, HttpResponse } from 'msw';
