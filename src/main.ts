@@ -19,6 +19,7 @@ import {
   RewriteResultItem,
   ResultItem,
   Change,
+  StyleGuide,
 } from './types/rewrite';
 
 // Re-export all types
@@ -42,6 +43,7 @@ export type {
   RewriteResultItem,
   ResultItem,
   Change,
+  StyleGuide,
 };
 
 export interface EndpointProps {
