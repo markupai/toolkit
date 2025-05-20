@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { Endpoint } from '../../src/main';
+import { API_ENDPOINTS, Endpoint } from '../../src/main';
 import { Dialect, RewriteRequest, StyleGuide, Tone } from '../../src/types/rewrite';
 
 describe('Endpoint Integration Tests', () => {
@@ -72,7 +72,7 @@ describe('Endpoint Integration Tests', () => {
 
     console.log('Initial response:', JSON.stringify(initialResponse, null, 2));
 
-    const finalResponse = await endpoint.pollWorkflowForResult(initialResponse.workflow_id);
+    const finalResponse = await endpoint.pollWorkflowForResult(initialResponse.workflow_id, API_ENDPOINTS.REWRITES);
 
     expect(finalResponse).toBeDefined();
     expect(finalResponse.status).toBe('completed');

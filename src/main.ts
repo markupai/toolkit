@@ -22,7 +22,11 @@ import {
   StyleGuide,
 } from './types/rewrite';
 
-// Re-export all types
+export const API_ENDPOINTS = {
+  REWRITES: '/v1/rewrites/',
+  CHECKS: '/v1/checks/',
+} as const;
+
 export { Status, Dialect, Tone };
 
 export type {
@@ -88,7 +92,7 @@ export class Endpoint {
     formData.append('tone', rewriteRequest.guidanceSettings.tone.toString());
     formData.append('style_guide', rewriteRequest.guidanceSettings.styleGuide);
 
-    return this.makeRequest<RewriteSubmissionResponse>('/v1/rewrites/', 'POST', formData);
+    return this.makeRequest<RewriteSubmissionResponse>(API_ENDPOINTS.REWRITES, 'POST', formData);
   }
 
   async submitCheck(checkRequest: RewriteRequest): Promise<RewriteSubmissionResponse> {
@@ -100,10 +104,10 @@ export class Endpoint {
     formData.append('tone', checkRequest.guidanceSettings.tone.toString());
     formData.append('style_guide', checkRequest.guidanceSettings.styleGuide);
 
-    return this.makeRequest<RewriteSubmissionResponse>('/v1/checks/', 'POST', formData);
+    return this.makeRequest<RewriteSubmissionResponse>(API_ENDPOINTS.CHECKS, 'POST', formData);
   }
 
-  async pollWorkflowForResult(workflowId: string): Promise<RewriteSuccessResponse> {
+  async pollWorkflowForResult(workflowId: string, endpoint: typeof API_ENDPOINTS[keyof typeof API_ENDPOINTS]): Promise<RewriteSuccessResponse> {
     let attempts = 0;
     const maxAttempts = 30;
     const pollInterval = 2000;
@@ -114,7 +118,7 @@ export class Endpoint {
       }
 
       try {
-        const response = await fetch(`${this.props.platformUrl}/v1/rewrites/${workflowId}`, {
+        const response = await fetch(`${this.props.platformUrl}${endpoint}${workflowId}`, {
           method: 'GET',
           headers: {
             'x-api-key': this.props.apiKey,
@@ -162,7 +166,7 @@ export class Endpoint {
       const initialResponse = await this.submitRewrite(rewriteRequest);
 
       if (initialResponse.workflow_id) {
-        const polledResponse = await this.pollWorkflowForResult(initialResponse.workflow_id);
+        const polledResponse = await this.pollWorkflowForResult(initialResponse.workflow_id, API_ENDPOINTS.REWRITES);
         if (polledResponse.status === Status.Completed && polledResponse.result) {
           return polledResponse.result;
         }
@@ -185,7 +189,7 @@ export class Endpoint {
       const initialResponse = await this.submitCheck(checkRequest);
 
       if (initialResponse.workflow_id) {
-        const polledResponse = await this.pollWorkflowForResult(initialResponse.workflow_id);
+        const polledResponse = await this.pollWorkflowForResult(initialResponse.workflow_id, API_ENDPOINTS.CHECKS);
         if (polledResponse.status === Status.Completed && polledResponse.result) {
           return polledResponse.result;
         }
