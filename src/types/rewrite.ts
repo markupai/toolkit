@@ -25,6 +25,12 @@ export enum Tone {
   Technical = 'technical',
 }
 
+export enum StyleGuide {
+  AP = 'ap',
+  Chicago = 'chicago',
+  Microsoft = 'microsoft',
+}
+
 export interface RewriteRequest {
   content: string;
   guidanceSettings: GuidanceSettings;
@@ -33,7 +39,7 @@ export interface RewriteRequest {
 export interface GuidanceSettings {
   dialect: Dialect;
   tone: Tone;
-  styleGuide: string;
+  styleGuide: StyleGuide;
 }
 
 export interface RewriteResponseBase {

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { Endpoint } from '../../src/main';
-import { Dialect, RewriteRequest, Tone } from '../../src/types/rewrite';
+import { Dialect, RewriteRequest, StyleGuide, Tone } from '../../src/types/rewrite';
 
 describe('Endpoint Integration Tests', () => {
   let endpoint: Endpoint;
@@ -9,7 +9,7 @@ describe('Endpoint Integration Tests', () => {
     guidanceSettings: {
       dialect: Dialect.AmericanEnglish,
       tone: Tone.Academic,
-      styleGuide: 'microsoft',
+      styleGuide: StyleGuide.Microsoft,
     },
   };
 
