@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { API_ENDPOINTS, Endpoint } from '../../src/main';
-import { Dialect, RewriteRequest, StyleGuide, Tone } from '../../src/types/rewrite';
+import { Dialect, AnalysisRequest, StyleGuide, Tone } from '../../src/types/rewrite';
 
 describe('Endpoint Integration Tests', () => {
   let endpoint: Endpoint;
-  const mockRewriteRequest: RewriteRequest = {
+  const mockRewriteRequest: AnalysisRequest = {
     content: 'This is a test content that needs to be rewritten.',
     guidanceSettings: {
       dialect: Dialect.AmericanEnglish,

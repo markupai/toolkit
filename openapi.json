@@ -1,1 +1,1174 @@
-{"openapi":"3.1.0","info":{"title":"Helios API","description":"API interface for Helios content processing workflows.","version":"1.0.0"},"paths":{"/v1/rewrites/{workflow_id}/stream":{"get":{"tags":["Rewrites"],"summary":"Stream workflow events","description":"Stream workflow events for a specific workflow.","operationId":"Rewrites-stream_workflow_events","parameters":[{"name":"workflow_id","in":"path","required":true,"schema":{"type":"string","description":"The workflow ID to stream events for.","title":"Workflow Id"},"description":"The workflow ID to stream events for."}],"responses":{"202":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ActivityOverview"}}}},"404":{"description":"Workflow not found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"403":{"description":"Invalid API Key","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"500":{"description":"Internal server error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/v1/rewrites/":{"post":{"tags":["Rewrites"],"summary":"Submit a document for editing","description":"Uploads a .txt file and starts the Helios One editing workflow.","operationId":"Rewrites-submit_edit_workflow","requestBody":{"content":{"multipart/form-data":{"schema":{"$ref":"#/components/schemas/Body_Rewrites-submit_edit_workflow"}}}},"responses":{"202":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/StartEditResponse"}}}},"400":{"description":"Invalid input parameters or file","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"403":{"description":"Invalid API Key","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"500":{"description":"Internal server error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}},"security":[{"APIKeyHeader":[]}]}},"/v1/rewrites/{workflow_id}":{"get":{"tags":["Rewrites"],"summary":"Get the status of an edit workflow","description":"Returns the current status of a Helios One editing workflow.","operationId":"Rewrites-get_edit_status","security":[{"APIKeyHeader":[]}],"parameters":[{"name":"workflow_id","in":"path","required":true,"schema":{"type":"string","description":"The workflow ID to get the status for.","title":"Workflow Id"},"description":"The workflow ID to get the status for."}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/EditStatusResponse"}}}},"403":{"description":"Invalid API Key","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"404":{"description":"Workflow not found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"500":{"description":"Internal server error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/v1/checks/":{"post":{"tags":["Checks"],"summary":"Submit a document for checking","description":"Uploads a document (PDF) and starts the Helios One editing workflow.","operationId":"Checks-submit_check_workflow","requestBody":{"content":{"multipart/form-data":{"schema":{"$ref":"#/components/schemas/Body_Checks-submit_check_workflow"}}},"required":true},"responses":{"202":{"description":"Successful Response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/StartCheckResponse"}}}},"400":{"description":"Invalid input parameters or file","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"403":{"description":"Invalid API Key","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"500":{"description":"Internal server error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}},"security":[{"APIKeyHeader":[]}]}},"/":{"get":{"tags":["Health"],"summary":"Read Root","operationId":"Health-read_root","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}}},"components":{"schemas":{"AcrolinxScorerActivityOutput":{"properties":{"error":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Error","description":"The error that occurred during the activity"},"duration":{"type":"number","title":"Duration","description":"The duration of the activity in seconds"},"model":{"type":"string","title":"Model","description":"The model used to run the activity","default":""},"parameters":{"$ref":"#/components/schemas/Parameters","description":"The parameters used to run the activity"},"provider":{"type":"string","title":"Provider","description":"The provider used to run the activity","default":""},"run_id":{"type":"string","title":"Run Id","description":"The Temporal workflow run ID"},"token_usage":{"$ref":"#/components/schemas/TokenUsage","description":"The token usage for the activity"},"workflow_id":{"type":"string","title":"Workflow Id","description":"The Temporal workflow ID"},"issues":{"items":{"$ref":"#/components/schemas/Issue"},"type":"array","title":"Issues"},"score":{"type":"number","title":"Score","default":-1}},"type":"object","required":["duration","run_id","workflow_id"],"title":"AcrolinxScorerActivityOutput"},"ActivityOverview":{"properties":{"label":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Label"},"name":{"type":"string","title":"Name"},"result":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Result"},"status":{"$ref":"#/components/schemas/Status","default":"queued"},"workflow_id":{"type":"string","title":"Workflow Id"}},"type":"object","required":["name","workflow_id"],"title":"ActivityOverview","description":"A summary of an activity.\n\nArgs:\n    BaseModel (BaseModel): The base model for an activity overview"},"Analysis":{"properties":{"avg_sentence_length":{"type":"number","title":"Avg Sentence Length","default":-1},"avg_word_length":{"type":"number","title":"Avg Word Length","default":-1},"complexity_score":{"type":"number","title":"Complexity Score","default":-1},"readability_score":{"type":"number","title":"Readability Score","default":-1},"sentence_count":{"type":"integer","title":"Sentence Count","default":-1},"vocabulary_score":{"type":"number","title":"Vocabulary Score","default":-1},"word_count":{"type":"integer","title":"Word Count","default":-1}},"type":"object","title":"Analysis"},"Body_Checks-submit_check_workflow":{"properties":{"dialect":{"$ref":"#/components/schemas/Dialects","description":"The intended dialect of the text to check.","examples":["american_english","australian_english","british_oxford","canadian_english","indian_english"]},"tone":{"$ref":"#/components/schemas/Tones","description":"The intended tone of the text to check.","examples":["academic","business","casual","conversational","formal","gen-z","informal","technical"]},"style_guide":{"$ref":"#/components/schemas/StyleGuides","description":"The intended style guide to use for the text to check.","examples":["ap","chicago","microsoft"]},"file":{"type":"string","format":"binary","title":"File","description":"The .txt file to process.","content_type":"text/plain"}},"type":"object","required":["dialect","tone","style_guide","file"],"title":"Body_Checks-submit_check_workflow"},"Body_Rewrites-submit_edit_workflow":{"properties":{"file":{"anyOf":[{"type":"string","format":"binary"},{"type":"null"}],"title":"File","description":"The .txt file to process.","content_type":"text/plain"},"dialect":{"$ref":"#/components/schemas/Dialects","description":"The intended dialect of the text to edit.","default":"american_english","examples":["american_english","australian_english","british_oxford","canadian_english","indian_english"]},"tone":{"$ref":"#/components/schemas/Tones","description":"The intended tone of the text to edit.","default":"formal","examples":["academic","business","casual","conversational","formal","gen-z","informal","technical"]},"style_guide":{"$ref":"#/components/schemas/StyleGuides","description":"The intended style guide to use for the text to edit.","default":"microsoft","examples":["ap","chicago","microsoft"]},"include_classic_score":{"type":"boolean","title":"Include Classic Score","description":"Whether to score the text.","default":false,"examples":[true,false]},"url":{"type":"string","title":"Url","description":"The URL to scrape.","default":"","examples":["https://example.com"]}},"type":"object","title":"Body_Rewrites-submit_edit_workflow"},"ChangeCategory":{"type":"string","enum":["punctuation","capitalization","grammar_and_usage","numbers_and_dates","formatting_and_structure","other"],"title":"ChangeCategory"},"ContentQualityFeedback":{"type":"string","enum":["Excellent content quality! Your text is clear, readable, and well-structured.","Good content quality. Your text is readable but has room for improvement.","Moderate content quality. Consider revising for better readability.","Low content quality. The text needs significant revision for better readability."],"title":"ContentQualityFeedback"},"ContentScorerActivityOutput":{"properties":{"error":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Error","description":"The error that occurred during the activity"},"duration":{"type":"number","title":"Duration","description":"The duration of the activity in seconds"},"model":{"type":"string","title":"Model","description":"The model used to run the activity","default":""},"parameters":{"$ref":"#/components/schemas/Parameters","description":"The parameters used to run the activity"},"provider":{"type":"string","title":"Provider","description":"The provider used to run the activity","default":""},"run_id":{"type":"string","title":"Run Id","description":"The Temporal workflow run ID"},"token_usage":{"$ref":"#/components/schemas/TokenUsage","description":"The token usage for the activity"},"workflow_id":{"type":"string","title":"Workflow Id","description":"The Temporal workflow ID"},"analysis":{"anyOf":[{"$ref":"#/components/schemas/Analysis"},{"type":"null"}]},"feedback":{"anyOf":[{"$ref":"#/components/schemas/ContentQualityFeedback"},{"type":"null"}]},"score":{"type":"number","title":"Score","default":-1},"suggestions":{"anyOf":[{"items":{"$ref":"#/components/schemas/ContentSuggestions"},"type":"array"},{"type":"null"}],"title":"Suggestions"},"target_score":{"anyOf":[{"$ref":"#/components/schemas/TargetScore"},{"type":"null"}]}},"type":"object","required":["duration","run_id","workflow_id"],"title":"ContentScorerActivityOutput"},"ContentSuggestions":{"type":"string","enum":["Use shorter sentences and simpler words to improve readability.","Your text may be too complex. Consider simplifying vocabulary and sentence structure.","Your sentences are quite long. Consider breaking them into shorter ones.","Your sentences are very short. Consider combining some for better flow.","Your vocabulary diversity is low. Try using a wider range of words.","Your text is well-balanced. Consider proofreading for minor improvements."],"title":"ContentSuggestions"},"Dialects":{"type":"string","enum":["american_english","australian_english","british_oxford","canadian_english","indian_english"],"title":"Dialects"},"EditStatusResponse":{"properties":{"workflow_id":{"type":"string","title":"Workflow Id"},"status":{"$ref":"#/components/schemas/WorkflowStatus"},"result":{"anyOf":[{"$ref":"#/components/schemas/TheiaOutput"},{"type":"null"}]},"error_message":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Error Message"}},"type":"object","required":["workflow_id","status"],"title":"EditStatusResponse"},"ErrorResponse":{"properties":{"detail":{"type":"string","title":"Detail"}},"type":"object","required":["detail"],"title":"ErrorResponse","description":"Standard error response model."},"FinalScores":{"properties":{"acrolinx_score":{"anyOf":[{"$ref":"#/components/schemas/AcrolinxScorerActivityOutput"},{"type":"null"}]},"content_score":{"anyOf":[{"$ref":"#/components/schemas/ContentScorerActivityOutput"},{"type":"null"}]}},"type":"object","title":"FinalScores"},"GrammarActivityOutput":{"properties":{"error":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Error","description":"The error that occurred during the activity"},"duration":{"type":"number","title":"Duration","description":"The duration of the activity in seconds"},"model":{"type":"string","title":"Model","description":"The model used to run the activity","default":""},"parameters":{"$ref":"#/components/schemas/Parameters","description":"The parameters used to run the activity"},"provider":{"type":"string","title":"Provider","description":"The provider used to run the activity","default":""},"run_id":{"type":"string","title":"Run Id","description":"The Temporal workflow run ID"},"token_usage":{"$ref":"#/components/schemas/TokenUsage","description":"The token usage for the activity"},"workflow_id":{"type":"string","title":"Workflow Id","description":"The Temporal workflow ID"},"changes":{"items":{"$ref":"#/components/schemas/GrammarChange"},"type":"array","title":"Changes"}},"type":"object","required":["duration","run_id","workflow_id","changes"],"title":"GrammarActivityOutput"},"GrammarCategory":{"type":"string","enum":["sva_pronoun","punct_cap","spelling","syntax","verbs","word_usage","other"],"title":"GrammarCategory"},"GrammarChange":{"properties":{"original":{"type":"string","title":"Original","description":"The original text"},"modified":{"type":"string","title":"Modified","description":"The modified text"},"change_start_char_idx":{"type":"integer","title":"Change Start Char Idx","description":"The start index of the change"},"category":{"$ref":"#/components/schemas/GrammarCategory"}},"type":"object","required":["original","modified","change_start_char_idx","category"],"title":"GrammarChange"},"HTTPValidationError":{"properties":{"detail":{"items":{"$ref":"#/components/schemas/ValidationError"},"type":"array","title":"Detail"}},"type":"object","title":"HTTPValidationError"},"HeliosOneWorkflowOutput":{"properties":{"created_at":{"type":"string","title":"Created At","description":"The date and time the workflow was created"},"errors":{"items":{"$ref":"#/components/schemas/WorkflowError"},"type":"array","title":"Errors","description":"The errors that occurred during the workflow"},"initial_scores":{"$ref":"#/components/schemas/InitialScores","description":"The initial scores of the workflow"},"final_scores":{"$ref":"#/components/schemas/FinalScores","description":"The final scores of the workflow"},"input_file":{"type":"string","title":"Input File","description":"The path to the input file"},"parameters":{"$ref":"#/components/schemas/Parameters","description":"The parameters used to run the workflow"},"run_id":{"type":"string","title":"Run Id","description":"The Temporal workflow run ID"},"workflow_id":{"type":"string","title":"Workflow Id","description":"The Temporal workflow ID"},"grammar_result":{"anyOf":[{"$ref":"#/components/schemas/GrammarActivityOutput"},{"type":"null"}],"description":"The result of the grammar activity"},"merging_result":{"anyOf":[{"$ref":"#/components/schemas/MergingActivityOutput"},{"type":"null"}],"description":"The result of the merging activity"},"parser_result":{"anyOf":[{"$ref":"#/components/schemas/ParserResponse"},{"type":"null"}],"description":"The result of the parser activity"},"sentence_length_result":{"anyOf":[{"$ref":"#/components/schemas/SentenceLengthActivityOutput"},{"type":"null"}],"description":"The result of the sentence length activity"},"sentence_structure_result":{"anyOf":[{"$ref":"#/components/schemas/SentenceStructureOutput"},{"type":"null"}],"description":"The result of the sentence structure activity"},"simple_vocabulary_result":{"anyOf":[{"$ref":"#/components/schemas/SimpleVocabOutput"},{"type":"null"}],"description":"The result of the simple vocabulary activity"},"tone_result":{"anyOf":[{"$ref":"#/components/schemas/ToneCheckOutput"},{"type":"null"}],"description":"The result of the tone activity"},"style_guide_result":{"anyOf":[{"$ref":"#/components/schemas/StyleGuideOutput"},{"type":"null"}],"description":"The result of the style guide activity"}},"type":"object","required":["created_at","input_file","run_id","workflow_id"],"title":"HeliosOneWorkflowOutput"},"InitialScores":{"properties":{"acrolinx_score":{"anyOf":[{"$ref":"#/components/schemas/AcrolinxScorerActivityOutput"},{"type":"null"}]},"content_score":{"anyOf":[{"$ref":"#/components/schemas/ContentScorerActivityOutput"},{"type":"null"}]}},"type":"object","title":"InitialScores"},"Issue":{"properties":{"description":{"type":"string","title":"Description"},"originalText":{"type":"string","title":"Originaltext"},"position":{"type":"integer","title":"Position"},"suggestedReplacements":{"items":{"type":"string"},"type":"array","title":"Suggestedreplacements"},"type":{"type":"string","title":"Type"}},"type":"object","required":["description","originalText","position","suggestedReplacements","type"],"title":"Issue"},"MergingActivityOutput":{"properties":{"error":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Error","description":"The error that occurred during the activity"},"duration":{"type":"number","title":"Duration","description":"The duration of the activity in seconds"},"model":{"type":"string","title":"Model","description":"The model used to run the activity","default":""},"parameters":{"$ref":"#/components/schemas/Parameters","description":"The parameters used to run the activity"},"provider":{"type":"string","title":"Provider","description":"The provider used to run the activity","default":""},"run_id":{"type":"string","title":"Run Id","description":"The Temporal workflow run ID"},"token_usage":{"$ref":"#/components/schemas/TokenUsage","description":"The token usage for the activity"},"workflow_id":{"type":"string","title":"Workflow Id","description":"The Temporal workflow ID"},"merged_text":{"type":"string","minLength":1,"title":"Merged Text","description":"Text after applying all changes"}},"type":"object","required":["duration","run_id","workflow_id","merged_text"],"title":"MergingActivityOutput"},"Parameters":{"properties":{"dialect":{"anyOf":[{"$ref":"#/components/schemas/Dialects"},{"type":"null"}],"description":"The dialect used for the activity"},"tone":{"anyOf":[{"$ref":"#/components/schemas/Tones"},{"type":"null"}],"description":"The tone used for the activity"},"style_guide":{"anyOf":[{"$ref":"#/components/schemas/StyleGuides"},{"type":"null"}],"description":"The style guide used for the activity"},"max_words":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Max Words","description":"The maximum number of words allowed for the activity"}},"type":"object","title":"Parameters"},"ParserResponse":{"properties":{"error":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Error","description":"The error that occurred during the activity"},"duration":{"type":"number","title":"Duration","description":"The duration of the activity in seconds"},"model":{"type":"string","title":"Model","description":"The model used to run the activity","default":""},"parameters":{"$ref":"#/components/schemas/Parameters","description":"The parameters used to run the activity"},"provider":{"type":"string","title":"Provider","description":"The provider used to run the activity","default":""},"run_id":{"type":"string","title":"Run Id","description":"The Temporal workflow run ID"},"token_usage":{"$ref":"#/components/schemas/TokenUsage","description":"The token usage for the activity"},"workflow_id":{"type":"string","title":"Workflow Id","description":"The Temporal workflow ID"},"extracted_text":{"type":"string","minLength":1,"title":"Extracted Text","description":"The extracted text from the file."}},"type":"object","required":["duration","run_id","workflow_id","extracted_text"],"title":"ParserResponse"},"SentenceLengthActivityOutput":{"properties":{"error":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Error"},"duration":{"type":"number","title":"Duration","description":"The duration of the activity in seconds"},"model":{"type":"string","title":"Model","description":"The model used to run the activity","default":""},"parameters":{"$ref":"#/components/schemas/Parameters","description":"The parameters used to run the activity"},"provider":{"type":"string","title":"Provider","description":"The provider used to run the activity","default":""},"run_id":{"type":"string","title":"Run Id"},"token_usage":{"$ref":"#/components/schemas/TokenUsage","description":"The token usage for the activity"},"workflow_id":{"type":"string","title":"Workflow Id"},"text":{"type":"string","title":"Text"},"changes":{"items":{"$ref":"#/components/schemas/SentenceLengthChange"},"type":"array","title":"Changes"}},"type":"object","required":["duration","run_id","workflow_id","text","changes"],"title":"SentenceLengthActivityOutput"},"SentenceLengthCategory":{"type":"string","enum":["capitalization","remove","extract","shorten","deletion","replace","other"],"title":"SentenceLengthCategory"},"SentenceLengthChange":{"properties":{"original":{"type":"string","title":"Original","description":"The original text"},"modified":{"type":"string","title":"Modified","description":"The modified text"},"change_start_char_idx":{"type":"integer","title":"Change Start Char Idx","description":"The start index of the change"},"category":{"$ref":"#/components/schemas/SentenceLengthCategory"}},"type":"object","required":["original","modified","change_start_char_idx","category"],"title":"SentenceLengthChange"},"SentenceStructureCategory":{"type":"string","enum":["complex_verbs","hidden_verbs","insertion","modal_verbs","passive","phrasal_verbs","subjunctive","other"],"title":"SentenceStructureCategory"},"SentenceStructureChange":{"properties":{"original":{"type":"string","title":"Original","description":"The original text"},"modified":{"type":"string","title":"Modified","description":"The modified text"},"change_start_char_idx":{"type":"integer","title":"Change Start Char Idx","description":"The start index of the change"},"category":{"$ref":"#/components/schemas/SentenceStructureCategory"}},"type":"object","required":["original","modified","change_start_char_idx","category"],"title":"SentenceStructureChange"},"SentenceStructureOutput":{"properties":{"error":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Error"},"duration":{"type":"number","title":"Duration","description":"The duration of the activity in seconds"},"model":{"type":"string","title":"Model","description":"The model used to run the activity","default":""},"parameters":{"$ref":"#/components/schemas/Parameters","description":"The parameters used to run the activity"},"provider":{"type":"string","title":"Provider","description":"The provider used to run the activity","default":""},"run_id":{"type":"string","title":"Run Id"},"token_usage":{"$ref":"#/components/schemas/TokenUsage","description":"The token usage for the activity"},"workflow_id":{"type":"string","title":"Workflow Id"},"text":{"type":"string","title":"Text"},"changes":{"items":{"$ref":"#/components/schemas/SentenceStructureChange"},"type":"array","title":"Changes"}},"type":"object","required":["duration","run_id","workflow_id","text","changes"],"title":"SentenceStructureOutput"},"SimpleVocabChange":{"properties":{"original":{"type":"string","title":"Original","description":"The original text"},"modified":{"type":"string","title":"Modified","description":"The modified text"},"change_start_char_idx":{"type":"integer","title":"Change Start Char Idx","description":"The start index of the change"},"category":{"$ref":"#/components/schemas/SimpleVocabChangeCategory"}},"type":"object","required":["original","modified","change_start_char_idx","category"],"title":"SimpleVocabChange"},"SimpleVocabChangeCategory":{"type":"string","enum":["vocabulary","other"],"title":"SimpleVocabChangeCategory"},"SimpleVocabOutput":{"properties":{"error":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Error"},"duration":{"type":"number","title":"Duration","description":"The duration of the activity in seconds"},"model":{"type":"string","title":"Model","description":"The model used to run the activity","default":""},"parameters":{"$ref":"#/components/schemas/Parameters","description":"The parameters used to run the activity"},"provider":{"type":"string","title":"Provider","description":"The provider used to run the activity","default":""},"run_id":{"type":"string","title":"Run Id"},"token_usage":{"$ref":"#/components/schemas/TokenUsage","description":"The token usage for the activity"},"workflow_id":{"type":"string","title":"Workflow Id"},"text":{"type":"string","title":"Text"},"changes":{"items":{"$ref":"#/components/schemas/SimpleVocabChange"},"type":"array","title":"Changes"}},"type":"object","required":["duration","run_id","workflow_id","text","changes"],"title":"SimpleVocabOutput"},"StartCheckResponse":{"properties":{"message":{"type":"string","title":"Message","default":"Check workflow started successfully."},"workflow_id":{"type":"string","title":"Workflow Id","examples":["helios-workflow-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]}},"type":"object","required":["workflow_id"],"title":"StartCheckResponse","description":"Response after successfully starting a check workflow."},"StartEditResponse":{"properties":{"message":{"type":"string","title":"Message","default":"Rewrite workflow started successfully."},"workflow_id":{"type":"string","title":"Workflow Id","examples":["helios-workflow-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]}},"type":"object","required":["workflow_id"],"title":"StartEditResponse","description":"Response after successfully starting a rewrite workflow."},"Status":{"type":"string","enum":["queued","running","completed","failed"],"title":"Status","description":"The status of an activity.\n\nArgs:\n    Enum (Enum): The status of an activity"},"StyleGuideChange":{"properties":{"original":{"type":"string","title":"Original","description":"The original text"},"modified":{"type":"string","title":"Modified","description":"The modified text"},"change_start_char_idx":{"type":"integer","title":"Change Start Char Idx","description":"The start index of the change"},"category":{"$ref":"#/components/schemas/ChangeCategory"}},"type":"object","required":["original","modified","change_start_char_idx","category"],"title":"StyleGuideChange"},"StyleGuideOutput":{"properties":{"error":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Error","description":"The error that occurred during the activity"},"duration":{"type":"number","title":"Duration","description":"The duration of the activity in seconds"},"model":{"type":"string","title":"Model","description":"The model used to run the activity","default":""},"parameters":{"$ref":"#/components/schemas/Parameters","description":"The parameters used to run the activity"},"provider":{"type":"string","title":"Provider","description":"The provider used to run the activity","default":""},"run_id":{"type":"string","title":"Run Id","description":"The Temporal workflow run ID"},"token_usage":{"$ref":"#/components/schemas/TokenUsage","description":"The token usage for the activity"},"workflow_id":{"type":"string","title":"Workflow Id","description":"The Temporal workflow ID"},"changes":{"items":{"$ref":"#/components/schemas/StyleGuideChange"},"type":"array","title":"Changes"}},"type":"object","required":["duration","run_id","workflow_id","changes"],"title":"StyleGuideOutput"},"StyleGuides":{"type":"string","enum":["ap","chicago","microsoft"],"title":"StyleGuides"},"TargetScore":{"properties":{"target_score":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Target Score","default":-1},"target_range":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Target Range","default":-1},"within_target":{"anyOf":[{"type":"boolean"},{"type":"null"}],"title":"Within Target","default":false}},"type":"object","title":"TargetScore"},"TheiaOutput":{"properties":{"errors":{"items":{"$ref":"#/components/schemas/WorkflowError"},"type":"array","title":"Errors","default":[]},"final_scores":{"anyOf":[{"$ref":"#/components/schemas/FinalScores"},{"type":"null"}]},"initial_scores":{"anyOf":[{"$ref":"#/components/schemas/InitialScores"},{"type":"null"}]},"merged_text":{"type":"string","title":"Merged Text"},"original_text":{"type":"string","title":"Original Text"},"results":{"items":{"$ref":"#/components/schemas/HeliosOneWorkflowOutput"},"type":"array","title":"Results"}},"type":"object","required":["merged_text","original_text","results"],"title":"TheiaOutput"},"TokenUsage":{"properties":{"completion_tokens":{"type":"integer","title":"Completion Tokens","description":"The number of completion tokens used","default":-1},"prompt_tokens":{"type":"integer","title":"Prompt Tokens","description":"The number of prompt tokens used","default":-1},"total_tokens":{"type":"integer","title":"Total Tokens","description":"The total number of tokens used","default":-1}},"type":"object","title":"TokenUsage"},"ToneCategories":{"type":"string","enum":["word_choice","syntax","punctuation","discourse_features","implicit_style","other"],"title":"ToneCategories"},"ToneChange":{"properties":{"original":{"type":"string","title":"Original","description":"The original text"},"modified":{"type":"string","title":"Modified","description":"The modified text"},"change_start_char_idx":{"type":"integer","title":"Change Start Char Idx","description":"The start index of the change"},"category":{"$ref":"#/components/schemas/ToneCategories","description":"The category of the change"}},"type":"object","required":["original","modified","change_start_char_idx","category"],"title":"ToneChange"},"ToneCheckOutput":{"properties":{"error":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Error","description":"The error that occurred during the activity"},"duration":{"type":"number","title":"Duration","description":"The duration of the activity in seconds"},"model":{"type":"string","title":"Model","description":"The model used to run the activity","default":""},"parameters":{"$ref":"#/components/schemas/Parameters","description":"The parameters used to run the activity"},"provider":{"type":"string","title":"Provider","description":"The provider used to run the activity","default":""},"run_id":{"type":"string","title":"Run Id","description":"The Temporal workflow run ID"},"token_usage":{"$ref":"#/components/schemas/TokenUsage","description":"The token usage for the activity"},"workflow_id":{"type":"string","title":"Workflow Id","description":"The Temporal workflow ID"},"text":{"type":"string","minLength":1,"title":"Text","description":"The original text"},"changes":{"items":{"$ref":"#/components/schemas/ToneChange"},"type":"array","title":"Changes","description":"Suggested changes to the text"}},"type":"object","required":["duration","run_id","workflow_id","text","changes"],"title":"ToneCheckOutput"},"Tones":{"type":"string","enum":["academic","business","casual","conversational","formal","gen-z","informal","technical"],"title":"Tones"},"ValidationError":{"properties":{"loc":{"items":{"anyOf":[{"type":"string"},{"type":"integer"}]},"type":"array","title":"Location"},"msg":{"type":"string","title":"Message"},"type":{"type":"string","title":"Error Type"}},"type":"object","required":["loc","msg","type"],"title":"ValidationError"},"WorkflowError":{"properties":{"error":{"type":"string","title":"Error"}},"type":"object","required":["error"],"title":"WorkflowError"},"WorkflowStatus":{"type":"string","enum":["running","completed","failed","not_found"],"title":"WorkflowStatus"}},"securitySchemes":{"APIKeyHeader":{"type":"apiKey","in":"header","name":"x-api-key"}}}}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Helios API",
+    "description": "API interface for Helios content processing workflows.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/v1/rewrites/{workflow_id}/stream": {
+      "get": {
+        "tags": ["Rewrites"],
+        "summary": "Stream workflow events",
+        "description": "Stream workflow events for a specific workflow.",
+        "operationId": "Rewrites-stream_workflow_events",
+        "parameters": [
+          {
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The workflow ID to stream events for.",
+              "title": "Workflow Id"
+            },
+            "description": "The workflow ID to stream events for."
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ActivityOverview" } } }
+          },
+          "404": {
+            "description": "Workflow not found",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "403": {
+            "description": "Invalid API Key",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
+        }
+      }
+    },
+    "/v1/rewrites/": {
+      "post": {
+        "tags": ["Rewrites"],
+        "summary": "Submit a document for editing",
+        "description": "Uploads a .txt file and starts the Helios One editing workflow.",
+        "operationId": "Rewrites-submit_edit_workflow",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": { "schema": { "$ref": "#/components/schemas/Body_Rewrites-submit_edit_workflow" } }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StartEditResponse" } } }
+          },
+          "400": {
+            "description": "Invalid input parameters or file",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "403": {
+            "description": "Invalid API Key",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/v1/rewrites/{workflow_id}": {
+      "get": {
+        "tags": ["Rewrites"],
+        "summary": "Get the status of an edit workflow",
+        "description": "Returns the current status of a Helios One editing workflow.",
+        "operationId": "Rewrites-get_edit_status",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The workflow ID to get the status for.",
+              "title": "Workflow Id"
+            },
+            "description": "The workflow ID to get the status for."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EditStatusResponse" } } }
+          },
+          "403": {
+            "description": "Invalid API Key",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "404": {
+            "description": "Workflow not found",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
+        }
+      }
+    },
+    "/v1/checks/": {
+      "post": {
+        "tags": ["Checks"],
+        "summary": "Submit a document for checking",
+        "description": "Uploads a document (PDF) and starts the Helios One editing workflow.",
+        "operationId": "Checks-submit_check_workflow",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": { "schema": { "$ref": "#/components/schemas/Body_Checks-submit_check_workflow" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StartCheckResponse" } } }
+          },
+          "400": {
+            "description": "Invalid input parameters or file",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "403": {
+            "description": "Invalid API Key",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Read Root",
+        "operationId": "Health-read_root",
+        "responses": {
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AcrolinxScorerActivityOutput": {
+        "properties": {
+          "error": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Error",
+            "description": "The error that occurred during the activity"
+          },
+          "duration": {
+            "type": "number",
+            "title": "Duration",
+            "description": "The duration of the activity in seconds"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "The model used to run the activity",
+            "default": ""
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/Parameters",
+            "description": "The parameters used to run the activity"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "description": "The provider used to run the activity",
+            "default": ""
+          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "token_usage": {
+            "$ref": "#/components/schemas/TokenUsage",
+            "description": "The token usage for the activity"
+          },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
+          "issues": { "items": { "$ref": "#/components/schemas/Issue" }, "type": "array", "title": "Issues" },
+          "score": { "type": "number", "title": "Score", "default": -1 }
+        },
+        "type": "object",
+        "required": ["duration", "run_id", "workflow_id"],
+        "title": "AcrolinxScorerActivityOutput"
+      },
+      "ActivityOverview": {
+        "properties": {
+          "label": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Label" },
+          "name": { "type": "string", "title": "Name" },
+          "result": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Result" },
+          "status": { "$ref": "#/components/schemas/Status", "default": "queued" },
+          "workflow_id": { "type": "string", "title": "Workflow Id" }
+        },
+        "type": "object",
+        "required": ["name", "workflow_id"],
+        "title": "ActivityOverview",
+        "description": "A summary of an activity.\n\nArgs:\n    BaseModel (BaseModel): The base model for an activity overview"
+      },
+      "Analysis": {
+        "properties": {
+          "avg_sentence_length": { "type": "number", "title": "Avg Sentence Length", "default": -1 },
+          "avg_word_length": { "type": "number", "title": "Avg Word Length", "default": -1 },
+          "complexity_score": { "type": "number", "title": "Complexity Score", "default": -1 },
+          "readability_score": { "type": "number", "title": "Readability Score", "default": -1 },
+          "sentence_count": { "type": "integer", "title": "Sentence Count", "default": -1 },
+          "vocabulary_score": { "type": "number", "title": "Vocabulary Score", "default": -1 },
+          "word_count": { "type": "integer", "title": "Word Count", "default": -1 }
+        },
+        "type": "object",
+        "title": "Analysis"
+      },
+      "Body_Checks-submit_check_workflow": {
+        "properties": {
+          "dialect": {
+            "$ref": "#/components/schemas/Dialects",
+            "description": "The intended dialect of the text to check.",
+            "examples": [
+              "american_english",
+              "australian_english",
+              "british_oxford",
+              "canadian_english",
+              "indian_english"
+            ]
+          },
+          "tone": {
+            "$ref": "#/components/schemas/Tones",
+            "description": "The intended tone of the text to check.",
+            "examples": ["academic", "business", "casual", "conversational", "formal", "gen-z", "informal", "technical"]
+          },
+          "style_guide": {
+            "$ref": "#/components/schemas/StyleGuides",
+            "description": "The intended style guide to use for the text to check.",
+            "examples": ["ap", "chicago", "microsoft"]
+          },
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File",
+            "description": "The .txt file to process.",
+            "content_type": "text/plain"
+          }
+        },
+        "type": "object",
+        "required": ["dialect", "tone", "style_guide", "file"],
+        "title": "Body_Checks-submit_check_workflow"
+      },
+      "Body_Rewrites-submit_edit_workflow": {
+        "properties": {
+          "file": {
+            "anyOf": [{ "type": "string", "format": "binary" }, { "type": "null" }],
+            "title": "File",
+            "description": "The .txt file to process.",
+            "content_type": "text/plain"
+          },
+          "dialect": {
+            "$ref": "#/components/schemas/Dialects",
+            "description": "The intended dialect of the text to edit.",
+            "default": "american_english",
+            "examples": [
+              "american_english",
+              "australian_english",
+              "british_oxford",
+              "canadian_english",
+              "indian_english"
+            ]
+          },
+          "tone": {
+            "$ref": "#/components/schemas/Tones",
+            "description": "The intended tone of the text to edit.",
+            "default": "formal",
+            "examples": ["academic", "business", "casual", "conversational", "formal", "gen-z", "informal", "technical"]
+          },
+          "style_guide": {
+            "$ref": "#/components/schemas/StyleGuides",
+            "description": "The intended style guide to use for the text to edit.",
+            "default": "microsoft",
+            "examples": ["ap", "chicago", "microsoft"]
+          },
+          "include_classic_score": {
+            "type": "boolean",
+            "title": "Include Classic Score",
+            "description": "Whether to score the text.",
+            "default": false,
+            "examples": [true, false]
+          },
+          "url": {
+            "type": "string",
+            "title": "Url",
+            "description": "The URL to scrape.",
+            "default": "",
+            "examples": ["https://example.com"]
+          }
+        },
+        "type": "object",
+        "title": "Body_Rewrites-submit_edit_workflow"
+      },
+      "ChangeCategory": {
+        "type": "string",
+        "enum": [
+          "punctuation",
+          "capitalization",
+          "grammar_and_usage",
+          "numbers_and_dates",
+          "formatting_and_structure",
+          "other"
+        ],
+        "title": "ChangeCategory"
+      },
+      "ContentQualityFeedback": {
+        "type": "string",
+        "enum": [
+          "Excellent content quality! Your text is clear, readable, and well-structured.",
+          "Good content quality. Your text is readable but has room for improvement.",
+          "Moderate content quality. Consider revising for better readability.",
+          "Low content quality. The text needs significant revision for better readability."
+        ],
+        "title": "ContentQualityFeedback"
+      },
+      "ContentScorerActivityOutput": {
+        "properties": {
+          "error": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Error",
+            "description": "The error that occurred during the activity"
+          },
+          "duration": {
+            "type": "number",
+            "title": "Duration",
+            "description": "The duration of the activity in seconds"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "The model used to run the activity",
+            "default": ""
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/Parameters",
+            "description": "The parameters used to run the activity"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "description": "The provider used to run the activity",
+            "default": ""
+          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "token_usage": {
+            "$ref": "#/components/schemas/TokenUsage",
+            "description": "The token usage for the activity"
+          },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
+          "analysis": { "anyOf": [{ "$ref": "#/components/schemas/Analysis" }, { "type": "null" }] },
+          "feedback": { "anyOf": [{ "$ref": "#/components/schemas/ContentQualityFeedback" }, { "type": "null" }] },
+          "score": { "type": "number", "title": "Score", "default": -1 },
+          "suggestions": {
+            "anyOf": [
+              { "items": { "$ref": "#/components/schemas/ContentSuggestions" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Suggestions"
+          },
+          "target_score": { "anyOf": [{ "$ref": "#/components/schemas/TargetScore" }, { "type": "null" }] }
+        },
+        "type": "object",
+        "required": ["duration", "run_id", "workflow_id"],
+        "title": "ContentScorerActivityOutput"
+      },
+      "ContentSuggestions": {
+        "type": "string",
+        "enum": [
+          "Use shorter sentences and simpler words to improve readability.",
+          "Your text may be too complex. Consider simplifying vocabulary and sentence structure.",
+          "Your sentences are quite long. Consider breaking them into shorter ones.",
+          "Your sentences are very short. Consider combining some for better flow.",
+          "Your vocabulary diversity is low. Try using a wider range of words.",
+          "Your text is well-balanced. Consider proofreading for minor improvements."
+        ],
+        "title": "ContentSuggestions"
+      },
+      "Dialects": {
+        "type": "string",
+        "enum": ["american_english", "australian_english", "british_oxford", "canadian_english", "indian_english"],
+        "title": "Dialects"
+      },
+      "EditStatusResponse": {
+        "properties": {
+          "workflow_id": { "type": "string", "title": "Workflow Id" },
+          "status": { "$ref": "#/components/schemas/WorkflowStatus" },
+          "result": { "anyOf": [{ "$ref": "#/components/schemas/TheiaOutput" }, { "type": "null" }] },
+          "error_message": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Error Message" }
+        },
+        "type": "object",
+        "required": ["workflow_id", "status"],
+        "title": "EditStatusResponse"
+      },
+      "ErrorResponse": {
+        "properties": { "detail": { "type": "string", "title": "Detail" } },
+        "type": "object",
+        "required": ["detail"],
+        "title": "ErrorResponse",
+        "description": "Standard error response model."
+      },
+      "FinalScores": {
+        "properties": {
+          "acrolinx_score": {
+            "anyOf": [{ "$ref": "#/components/schemas/AcrolinxScorerActivityOutput" }, { "type": "null" }]
+          },
+          "content_score": {
+            "anyOf": [{ "$ref": "#/components/schemas/ContentScorerActivityOutput" }, { "type": "null" }]
+          }
+        },
+        "type": "object",
+        "title": "FinalScores"
+      },
+      "GrammarActivityOutput": {
+        "properties": {
+          "error": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Error",
+            "description": "The error that occurred during the activity"
+          },
+          "duration": {
+            "type": "number",
+            "title": "Duration",
+            "description": "The duration of the activity in seconds"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "The model used to run the activity",
+            "default": ""
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/Parameters",
+            "description": "The parameters used to run the activity"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "description": "The provider used to run the activity",
+            "default": ""
+          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "token_usage": {
+            "$ref": "#/components/schemas/TokenUsage",
+            "description": "The token usage for the activity"
+          },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
+          "changes": { "items": { "$ref": "#/components/schemas/GrammarChange" }, "type": "array", "title": "Changes" }
+        },
+        "type": "object",
+        "required": ["duration", "run_id", "workflow_id", "changes"],
+        "title": "GrammarActivityOutput"
+      },
+      "GrammarCategory": {
+        "type": "string",
+        "enum": ["sva_pronoun", "punct_cap", "spelling", "syntax", "verbs", "word_usage", "other"],
+        "title": "GrammarCategory"
+      },
+      "GrammarChange": {
+        "properties": {
+          "original": { "type": "string", "title": "Original", "description": "The original text" },
+          "modified": { "type": "string", "title": "Modified", "description": "The modified text" },
+          "change_start_char_idx": {
+            "type": "integer",
+            "title": "Change Start Char Idx",
+            "description": "The start index of the change"
+          },
+          "category": { "$ref": "#/components/schemas/GrammarCategory" }
+        },
+        "type": "object",
+        "required": ["original", "modified", "change_start_char_idx", "category"],
+        "title": "GrammarChange"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": { "items": { "$ref": "#/components/schemas/ValidationError" }, "type": "array", "title": "Detail" }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HeliosOneWorkflowOutput": {
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "title": "Created At",
+            "description": "The date and time the workflow was created"
+          },
+          "errors": {
+            "items": { "$ref": "#/components/schemas/WorkflowError" },
+            "type": "array",
+            "title": "Errors",
+            "description": "The errors that occurred during the workflow"
+          },
+          "initial_scores": {
+            "$ref": "#/components/schemas/InitialScores",
+            "description": "The initial scores of the workflow"
+          },
+          "final_scores": {
+            "$ref": "#/components/schemas/FinalScores",
+            "description": "The final scores of the workflow"
+          },
+          "input_file": { "type": "string", "title": "Input File", "description": "The path to the input file" },
+          "parameters": {
+            "$ref": "#/components/schemas/Parameters",
+            "description": "The parameters used to run the workflow"
+          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
+          "grammar_result": {
+            "anyOf": [{ "$ref": "#/components/schemas/GrammarActivityOutput" }, { "type": "null" }],
+            "description": "The result of the grammar activity"
+          },
+          "merging_result": {
+            "anyOf": [{ "$ref": "#/components/schemas/MergingActivityOutput" }, { "type": "null" }],
+            "description": "The result of the merging activity"
+          },
+          "parser_result": {
+            "anyOf": [{ "$ref": "#/components/schemas/ParserResponse" }, { "type": "null" }],
+            "description": "The result of the parser activity"
+          },
+          "sentence_length_result": {
+            "anyOf": [{ "$ref": "#/components/schemas/SentenceLengthActivityOutput" }, { "type": "null" }],
+            "description": "The result of the sentence length activity"
+          },
+          "sentence_structure_result": {
+            "anyOf": [{ "$ref": "#/components/schemas/SentenceStructureOutput" }, { "type": "null" }],
+            "description": "The result of the sentence structure activity"
+          },
+          "simple_vocabulary_result": {
+            "anyOf": [{ "$ref": "#/components/schemas/SimpleVocabOutput" }, { "type": "null" }],
+            "description": "The result of the simple vocabulary activity"
+          },
+          "tone_result": {
+            "anyOf": [{ "$ref": "#/components/schemas/ToneCheckOutput" }, { "type": "null" }],
+            "description": "The result of the tone activity"
+          },
+          "style_guide_result": {
+            "anyOf": [{ "$ref": "#/components/schemas/StyleGuideOutput" }, { "type": "null" }],
+            "description": "The result of the style guide activity"
+          }
+        },
+        "type": "object",
+        "required": ["created_at", "input_file", "run_id", "workflow_id"],
+        "title": "HeliosOneWorkflowOutput"
+      },
+      "InitialScores": {
+        "properties": {
+          "acrolinx_score": {
+            "anyOf": [{ "$ref": "#/components/schemas/AcrolinxScorerActivityOutput" }, { "type": "null" }]
+          },
+          "content_score": {
+            "anyOf": [{ "$ref": "#/components/schemas/ContentScorerActivityOutput" }, { "type": "null" }]
+          }
+        },
+        "type": "object",
+        "title": "InitialScores"
+      },
+      "Issue": {
+        "properties": {
+          "description": { "type": "string", "title": "Description" },
+          "originalText": { "type": "string", "title": "Originaltext" },
+          "position": { "type": "integer", "title": "Position" },
+          "suggestedReplacements": { "items": { "type": "string" }, "type": "array", "title": "Suggestedreplacements" },
+          "type": { "type": "string", "title": "Type" }
+        },
+        "type": "object",
+        "required": ["description", "originalText", "position", "suggestedReplacements", "type"],
+        "title": "Issue"
+      },
+      "MergingActivityOutput": {
+        "properties": {
+          "error": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Error",
+            "description": "The error that occurred during the activity"
+          },
+          "duration": {
+            "type": "number",
+            "title": "Duration",
+            "description": "The duration of the activity in seconds"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "The model used to run the activity",
+            "default": ""
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/Parameters",
+            "description": "The parameters used to run the activity"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "description": "The provider used to run the activity",
+            "default": ""
+          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "token_usage": {
+            "$ref": "#/components/schemas/TokenUsage",
+            "description": "The token usage for the activity"
+          },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
+          "merged_text": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Merged Text",
+            "description": "Text after applying all changes"
+          }
+        },
+        "type": "object",
+        "required": ["duration", "run_id", "workflow_id", "merged_text"],
+        "title": "MergingActivityOutput"
+      },
+      "Parameters": {
+        "properties": {
+          "dialect": {
+            "anyOf": [{ "$ref": "#/components/schemas/Dialects" }, { "type": "null" }],
+            "description": "The dialect used for the activity"
+          },
+          "tone": {
+            "anyOf": [{ "$ref": "#/components/schemas/Tones" }, { "type": "null" }],
+            "description": "The tone used for the activity"
+          },
+          "style_guide": {
+            "anyOf": [{ "$ref": "#/components/schemas/StyleGuides" }, { "type": "null" }],
+            "description": "The style guide used for the activity"
+          },
+          "max_words": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Max Words",
+            "description": "The maximum number of words allowed for the activity"
+          }
+        },
+        "type": "object",
+        "title": "Parameters"
+      },
+      "ParserResponse": {
+        "properties": {
+          "error": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Error",
+            "description": "The error that occurred during the activity"
+          },
+          "duration": {
+            "type": "number",
+            "title": "Duration",
+            "description": "The duration of the activity in seconds"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "The model used to run the activity",
+            "default": ""
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/Parameters",
+            "description": "The parameters used to run the activity"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "description": "The provider used to run the activity",
+            "default": ""
+          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "token_usage": {
+            "$ref": "#/components/schemas/TokenUsage",
+            "description": "The token usage for the activity"
+          },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
+          "extracted_text": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Extracted Text",
+            "description": "The extracted text from the file."
+          }
+        },
+        "type": "object",
+        "required": ["duration", "run_id", "workflow_id", "extracted_text"],
+        "title": "ParserResponse"
+      },
+      "SentenceLengthActivityOutput": {
+        "properties": {
+          "error": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Error" },
+          "duration": {
+            "type": "number",
+            "title": "Duration",
+            "description": "The duration of the activity in seconds"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "The model used to run the activity",
+            "default": ""
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/Parameters",
+            "description": "The parameters used to run the activity"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "description": "The provider used to run the activity",
+            "default": ""
+          },
+          "run_id": { "type": "string", "title": "Run Id" },
+          "token_usage": {
+            "$ref": "#/components/schemas/TokenUsage",
+            "description": "The token usage for the activity"
+          },
+          "workflow_id": { "type": "string", "title": "Workflow Id" },
+          "text": { "type": "string", "title": "Text" },
+          "changes": {
+            "items": { "$ref": "#/components/schemas/SentenceLengthChange" },
+            "type": "array",
+            "title": "Changes"
+          }
+        },
+        "type": "object",
+        "required": ["duration", "run_id", "workflow_id", "text", "changes"],
+        "title": "SentenceLengthActivityOutput"
+      },
+      "SentenceLengthCategory": {
+        "type": "string",
+        "enum": ["capitalization", "remove", "extract", "shorten", "deletion", "replace", "other"],
+        "title": "SentenceLengthCategory"
+      },
+      "SentenceLengthChange": {
+        "properties": {
+          "original": { "type": "string", "title": "Original", "description": "The original text" },
+          "modified": { "type": "string", "title": "Modified", "description": "The modified text" },
+          "change_start_char_idx": {
+            "type": "integer",
+            "title": "Change Start Char Idx",
+            "description": "The start index of the change"
+          },
+          "category": { "$ref": "#/components/schemas/SentenceLengthCategory" }
+        },
+        "type": "object",
+        "required": ["original", "modified", "change_start_char_idx", "category"],
+        "title": "SentenceLengthChange"
+      },
+      "SentenceStructureCategory": {
+        "type": "string",
+        "enum": [
+          "complex_verbs",
+          "hidden_verbs",
+          "insertion",
+          "modal_verbs",
+          "passive",
+          "phrasal_verbs",
+          "subjunctive",
+          "other"
+        ],
+        "title": "SentenceStructureCategory"
+      },
+      "SentenceStructureChange": {
+        "properties": {
+          "original": { "type": "string", "title": "Original", "description": "The original text" },
+          "modified": { "type": "string", "title": "Modified", "description": "The modified text" },
+          "change_start_char_idx": {
+            "type": "integer",
+            "title": "Change Start Char Idx",
+            "description": "The start index of the change"
+          },
+          "category": { "$ref": "#/components/schemas/SentenceStructureCategory" }
+        },
+        "type": "object",
+        "required": ["original", "modified", "change_start_char_idx", "category"],
+        "title": "SentenceStructureChange"
+      },
+      "SentenceStructureOutput": {
+        "properties": {
+          "error": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Error" },
+          "duration": {
+            "type": "number",
+            "title": "Duration",
+            "description": "The duration of the activity in seconds"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "The model used to run the activity",
+            "default": ""
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/Parameters",
+            "description": "The parameters used to run the activity"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "description": "The provider used to run the activity",
+            "default": ""
+          },
+          "run_id": { "type": "string", "title": "Run Id" },
+          "token_usage": {
+            "$ref": "#/components/schemas/TokenUsage",
+            "description": "The token usage for the activity"
+          },
+          "workflow_id": { "type": "string", "title": "Workflow Id" },
+          "text": { "type": "string", "title": "Text" },
+          "changes": {
+            "items": { "$ref": "#/components/schemas/SentenceStructureChange" },
+            "type": "array",
+            "title": "Changes"
+          }
+        },
+        "type": "object",
+        "required": ["duration", "run_id", "workflow_id", "text", "changes"],
+        "title": "SentenceStructureOutput"
+      },
+      "SimpleVocabChange": {
+        "properties": {
+          "original": { "type": "string", "title": "Original", "description": "The original text" },
+          "modified": { "type": "string", "title": "Modified", "description": "The modified text" },
+          "change_start_char_idx": {
+            "type": "integer",
+            "title": "Change Start Char Idx",
+            "description": "The start index of the change"
+          },
+          "category": { "$ref": "#/components/schemas/SimpleVocabChangeCategory" }
+        },
+        "type": "object",
+        "required": ["original", "modified", "change_start_char_idx", "category"],
+        "title": "SimpleVocabChange"
+      },
+      "SimpleVocabChangeCategory": {
+        "type": "string",
+        "enum": ["vocabulary", "other"],
+        "title": "SimpleVocabChangeCategory"
+      },
+      "SimpleVocabOutput": {
+        "properties": {
+          "error": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Error" },
+          "duration": {
+            "type": "number",
+            "title": "Duration",
+            "description": "The duration of the activity in seconds"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "The model used to run the activity",
+            "default": ""
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/Parameters",
+            "description": "The parameters used to run the activity"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "description": "The provider used to run the activity",
+            "default": ""
+          },
+          "run_id": { "type": "string", "title": "Run Id" },
+          "token_usage": {
+            "$ref": "#/components/schemas/TokenUsage",
+            "description": "The token usage for the activity"
+          },
+          "workflow_id": { "type": "string", "title": "Workflow Id" },
+          "text": { "type": "string", "title": "Text" },
+          "changes": {
+            "items": { "$ref": "#/components/schemas/SimpleVocabChange" },
+            "type": "array",
+            "title": "Changes"
+          }
+        },
+        "type": "object",
+        "required": ["duration", "run_id", "workflow_id", "text", "changes"],
+        "title": "SimpleVocabOutput"
+      },
+      "StartCheckResponse": {
+        "properties": {
+          "message": { "type": "string", "title": "Message", "default": "Check workflow started successfully." },
+          "workflow_id": {
+            "type": "string",
+            "title": "Workflow Id",
+            "examples": ["helios-workflow-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]
+          }
+        },
+        "type": "object",
+        "required": ["workflow_id"],
+        "title": "StartCheckResponse",
+        "description": "Response after successfully starting a check workflow."
+      },
+      "StartEditResponse": {
+        "properties": {
+          "message": { "type": "string", "title": "Message", "default": "Rewrite workflow started successfully." },
+          "workflow_id": {
+            "type": "string",
+            "title": "Workflow Id",
+            "examples": ["helios-workflow-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]
+          }
+        },
+        "type": "object",
+        "required": ["workflow_id"],
+        "title": "StartEditResponse",
+        "description": "Response after successfully starting a rewrite workflow."
+      },
+      "Status": {
+        "type": "string",
+        "enum": ["queued", "running", "completed", "failed"],
+        "title": "Status",
+        "description": "The status of an activity.\n\nArgs:\n    Enum (Enum): The status of an activity"
+      },
+      "StyleGuideChange": {
+        "properties": {
+          "original": { "type": "string", "title": "Original", "description": "The original text" },
+          "modified": { "type": "string", "title": "Modified", "description": "The modified text" },
+          "change_start_char_idx": {
+            "type": "integer",
+            "title": "Change Start Char Idx",
+            "description": "The start index of the change"
+          },
+          "category": { "$ref": "#/components/schemas/ChangeCategory" }
+        },
+        "type": "object",
+        "required": ["original", "modified", "change_start_char_idx", "category"],
+        "title": "StyleGuideChange"
+      },
+      "StyleGuideOutput": {
+        "properties": {
+          "error": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Error",
+            "description": "The error that occurred during the activity"
+          },
+          "duration": {
+            "type": "number",
+            "title": "Duration",
+            "description": "The duration of the activity in seconds"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "The model used to run the activity",
+            "default": ""
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/Parameters",
+            "description": "The parameters used to run the activity"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "description": "The provider used to run the activity",
+            "default": ""
+          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "token_usage": {
+            "$ref": "#/components/schemas/TokenUsage",
+            "description": "The token usage for the activity"
+          },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
+          "changes": {
+            "items": { "$ref": "#/components/schemas/StyleGuideChange" },
+            "type": "array",
+            "title": "Changes"
+          }
+        },
+        "type": "object",
+        "required": ["duration", "run_id", "workflow_id", "changes"],
+        "title": "StyleGuideOutput"
+      },
+      "StyleGuides": { "type": "string", "enum": ["ap", "chicago", "microsoft"], "title": "StyleGuides" },
+      "TargetScore": {
+        "properties": {
+          "target_score": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Target Score",
+            "default": -1
+          },
+          "target_range": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Target Range",
+            "default": -1
+          },
+          "within_target": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Within Target",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "TargetScore"
+      },
+      "TheiaOutput": {
+        "properties": {
+          "errors": {
+            "items": { "$ref": "#/components/schemas/WorkflowError" },
+            "type": "array",
+            "title": "Errors",
+            "default": []
+          },
+          "final_scores": { "anyOf": [{ "$ref": "#/components/schemas/FinalScores" }, { "type": "null" }] },
+          "initial_scores": { "anyOf": [{ "$ref": "#/components/schemas/InitialScores" }, { "type": "null" }] },
+          "merged_text": { "type": "string", "title": "Merged Text" },
+          "original_text": { "type": "string", "title": "Original Text" },
+          "results": {
+            "items": { "$ref": "#/components/schemas/HeliosOneWorkflowOutput" },
+            "type": "array",
+            "title": "Results"
+          }
+        },
+        "type": "object",
+        "required": ["merged_text", "original_text", "results"],
+        "title": "TheiaOutput"
+      },
+      "TokenUsage": {
+        "properties": {
+          "completion_tokens": {
+            "type": "integer",
+            "title": "Completion Tokens",
+            "description": "The number of completion tokens used",
+            "default": -1
+          },
+          "prompt_tokens": {
+            "type": "integer",
+            "title": "Prompt Tokens",
+            "description": "The number of prompt tokens used",
+            "default": -1
+          },
+          "total_tokens": {
+            "type": "integer",
+            "title": "Total Tokens",
+            "description": "The total number of tokens used",
+            "default": -1
+          }
+        },
+        "type": "object",
+        "title": "TokenUsage"
+      },
+      "ToneCategories": {
+        "type": "string",
+        "enum": ["word_choice", "syntax", "punctuation", "discourse_features", "implicit_style", "other"],
+        "title": "ToneCategories"
+      },
+      "ToneChange": {
+        "properties": {
+          "original": { "type": "string", "title": "Original", "description": "The original text" },
+          "modified": { "type": "string", "title": "Modified", "description": "The modified text" },
+          "change_start_char_idx": {
+            "type": "integer",
+            "title": "Change Start Char Idx",
+            "description": "The start index of the change"
+          },
+          "category": { "$ref": "#/components/schemas/ToneCategories", "description": "The category of the change" }
+        },
+        "type": "object",
+        "required": ["original", "modified", "change_start_char_idx", "category"],
+        "title": "ToneChange"
+      },
+      "ToneCheckOutput": {
+        "properties": {
+          "error": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Error",
+            "description": "The error that occurred during the activity"
+          },
+          "duration": {
+            "type": "number",
+            "title": "Duration",
+            "description": "The duration of the activity in seconds"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "The model used to run the activity",
+            "default": ""
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/Parameters",
+            "description": "The parameters used to run the activity"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "description": "The provider used to run the activity",
+            "default": ""
+          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "token_usage": {
+            "$ref": "#/components/schemas/TokenUsage",
+            "description": "The token usage for the activity"
+          },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
+          "text": { "type": "string", "minLength": 1, "title": "Text", "description": "The original text" },
+          "changes": {
+            "items": { "$ref": "#/components/schemas/ToneChange" },
+            "type": "array",
+            "title": "Changes",
+            "description": "Suggested changes to the text"
+          }
+        },
+        "type": "object",
+        "required": ["duration", "run_id", "workflow_id", "text", "changes"],
+        "title": "ToneCheckOutput"
+      },
+      "Tones": {
+        "type": "string",
+        "enum": ["academic", "business", "casual", "conversational", "formal", "gen-z", "informal", "technical"],
+        "title": "Tones"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      },
+      "WorkflowError": {
+        "properties": { "error": { "type": "string", "title": "Error" } },
+        "type": "object",
+        "required": ["error"],
+        "title": "WorkflowError"
+      },
+      "WorkflowStatus": {
+        "type": "string",
+        "enum": ["running", "completed", "failed", "not_found"],
+        "title": "WorkflowStatus"
+      }
+    },
+    "securitySchemes": { "APIKeyHeader": { "type": "apiKey", "in": "header", "name": "x-api-key" } }
+  }
+}

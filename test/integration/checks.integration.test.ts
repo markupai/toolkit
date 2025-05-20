@@ -1,12 +1,21 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { Endpoint } from '../../src/main';
-import { Dialect, RewriteRequest, Tone, StyleGuide } from '../../src/types/rewrite';
+import { Dialect, AnalysisRequest, Tone, StyleGuide } from '../../src/types/rewrite';
 
 describe('Check Integration Tests', () => {
   let endpoint: Endpoint;
 
-  const mockCheckRequest: RewriteRequest = {
+  const mockCheckRequest: AnalysisRequest = {
     content: 'This is a test content that needs to be checked.',
+    guidanceSettings: {
+      dialect: Dialect.AmericanEnglish,
+      tone: Tone.Formal,
+      styleGuide: StyleGuide.Microsoft,
+    },
+  };
+
+  const invalidRequest: AnalysisRequest = {
+    content: '',
     guidanceSettings: {
       dialect: Dialect.AmericanEnglish,
       tone: Tone.Formal,
@@ -57,15 +66,6 @@ describe('Check Integration Tests', () => {
   });
 
   it('should handle invalid content', async () => {
-    const invalidRequest: RewriteRequest = {
-      content: '',
-      guidanceSettings: {
-        dialect: Dialect.AmericanEnglish,
-        tone: Tone.Formal,
-        styleGuide: StyleGuide.Microsoft,
-      },
-    };
-
     await expect(endpoint.submitCheck(invalidRequest)).rejects.toThrow();
   });
-}); 
+});

@@ -84,7 +84,7 @@ export enum ToneCategories {
   Other = 'other',
 }
 
-export interface RewriteRequest {
+export interface AnalysisRequest {
   content: string;
   guidanceSettings: GuidanceSettings;
 }
@@ -95,33 +95,33 @@ export interface GuidanceSettings {
   styleGuide: StyleGuide;
 }
 
-export interface RewriteResponseBase {
+export interface AnalysisResponseBase {
   workflow_id: string;
 }
 
-export interface RewriteSubmissionResponse extends RewriteResponseBase {
+export interface AnalysisSubmissionResponse extends AnalysisResponseBase {
   message: string;
 }
 
-export interface RewritePollingResponse extends RewriteResponseBase {
+export interface AnalysisPollingResponse extends AnalysisResponseBase {
   status: Status;
   workflow_id: string;
   error_message?: string;
 }
 
-export interface RewriteSuccessResponse extends RewriteResponseBase {
+export interface AnalysisSuccessResponse extends AnalysisResponseBase {
   status: Status.Completed;
   workflow_id: string;
-  result: RewriteResult;
+  result: AnalysisResult;
 }
 
-export interface RewriteErrorResponse extends RewriteResponseBase {
+export interface AnalysisErrorResponse extends AnalysisResponseBase {
   status: Status.Failed;
   workflow_id: string;
   error_message: string;
 }
 
-export interface RewriteResult {
+export interface AnalysisResult {
   errors: WorkflowError[];
   final_scores: FinalScores;
   initial_scores: InitialScores;

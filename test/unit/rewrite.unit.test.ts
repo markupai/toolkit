@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { API_ENDPOINTS, Endpoint } from '../../src/main';
 import { server, handlers } from './setup';
 import { http, HttpResponse } from 'msw';
-import { Dialect, RewriteRequest, Tone, StyleGuide } from '../../src/types/rewrite';
+import { Dialect, AnalysisRequest, Tone, StyleGuide } from '../../src/types/rewrite';
 
 describe('Endpoint Unit Tests', () => {
   const endpoint = new Endpoint({
@@ -10,7 +10,7 @@ describe('Endpoint Unit Tests', () => {
     apiKey: 'test-api-key',
   });
 
-  const mockRewriteRequest: RewriteRequest = {
+  const mockRewriteRequest: AnalysisRequest = {
     content: 'This is a test content that needs to be rewritten.',
     guidanceSettings: {
       dialect: Dialect.AmericanEnglish,

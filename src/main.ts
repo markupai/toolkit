@@ -1,21 +1,49 @@
 import {
-  RewritePollingResponse,
-  RewriteRequest,
-  RewriteResult,
-  RewriteSubmissionResponse,
-  RewriteSuccessResponse,
+  AnalysisPollingResponse,
+  AnalysisRequest,
+  AnalysisResult,
+  AnalysisSubmissionResponse,
+  AnalysisSuccessResponse,
+  AnalysisResponseBase,
+  AnalysisErrorResponse,
   Status,
   Dialect,
   Tone,
   GuidanceSettings,
-  RewriteResponseBase,
-  RewriteErrorResponse,
   WorkflowError,
   FinalScores,
   InitialScores,
   ContentAnalysis,
   HeliosOneWorkflowOutput,
   StyleGuide,
+  ChangeCategory,
+  GrammarCategory,
+  SentenceLengthCategory,
+  SentenceStructureCategory,
+  SimpleVocabChangeCategory,
+  ToneCategories,
+  AcrolinxScorerActivityOutput,
+  Issue,
+  ContentScorerActivityOutput,
+  ContentQualityFeedback,
+  ContentSuggestions,
+  TargetScore,
+  Parameters,
+  TokenUsage,
+  GrammarActivityOutput,
+  GrammarChange,
+  MergingActivityOutput,
+  ParserResponse,
+  SentenceLengthActivityOutput,
+  SentenceLengthChange,
+  SentenceStructureOutput,
+  SentenceStructureChange,
+  SimpleVocabOutput,
+  SimpleVocabChange,
+  ToneCheckOutput,
+  ToneChange,
+  StyleGuideOutput,
+  StyleGuideChange,
 } from './types/rewrite';
 
 export const API_ENDPOINTS = {
@@ -26,19 +54,47 @@ export const API_ENDPOINTS = {
 export { Status, Dialect, Tone, StyleGuide };
 
 export type {
-  RewritePollingResponse,
-  RewriteRequest,
-  RewriteResult,
-  RewriteSubmissionResponse,
-  RewriteSuccessResponse,
+  AnalysisPollingResponse,
+  AnalysisRequest,
+  AnalysisResult,
+  AnalysisSubmissionResponse,
+  AnalysisSuccessResponse,
+  AnalysisResponseBase,
+  AnalysisErrorResponse,
   GuidanceSettings,
-  RewriteResponseBase,
-  RewriteErrorResponse,
   WorkflowError,
   FinalScores,
   InitialScores,
   ContentAnalysis,
   HeliosOneWorkflowOutput,
+  ChangeCategory,
+  GrammarCategory,
+  SentenceLengthCategory,
+  SentenceStructureCategory,
+  SimpleVocabChangeCategory,
+  ToneCategories,
+  AcrolinxScorerActivityOutput,
+  Issue,
+  ContentScorerActivityOutput,
+  ContentQualityFeedback,
+  ContentSuggestions,
+  TargetScore,
+  Parameters,
+  TokenUsage,
+  GrammarActivityOutput,
+  GrammarChange,
+  MergingActivityOutput,
+  ParserResponse,
+  SentenceLengthActivityOutput,
+  SentenceLengthChange,
+  SentenceStructureOutput,
+  SentenceStructureChange,
+  SimpleVocabOutput,
+  SimpleVocabChange,
+  ToneCheckOutput,
+  ToneChange,
+  StyleGuideOutput,
+  StyleGuideChange,
 };
 
 export interface EndpointProps {
@@ -74,7 +130,7 @@ export class Endpoint {
     }
   }
 
-  async submitRewrite(rewriteRequest: RewriteRequest): Promise<RewriteSubmissionResponse> {
+  async submitRewrite(rewriteRequest: AnalysisRequest): Promise<AnalysisSubmissionResponse> {
     console.log(rewriteRequest);
 
     const formData = new FormData();
@@ -83,10 +139,10 @@ export class Endpoint {
     formData.append('tone', rewriteRequest.guidanceSettings.tone.toString());
     formData.append('style_guide', rewriteRequest.guidanceSettings.styleGuide);
 
-    return this.makeRequest<RewriteSubmissionResponse>(API_ENDPOINTS.REWRITES, 'POST', formData);
+    return this.makeRequest<AnalysisSubmissionResponse>(API_ENDPOINTS.REWRITES, 'POST', formData);
   }
 
-  async submitCheck(checkRequest: RewriteRequest): Promise<RewriteSubmissionResponse> {
+  async submitCheck(checkRequest: AnalysisRequest): Promise<AnalysisSubmissionResponse> {
     console.log(checkRequest);
 
     const formData = new FormData();
@@ -95,15 +151,18 @@ export class Endpoint {
     formData.append('tone', checkRequest.guidanceSettings.tone.toString());
     formData.append('style_guide', checkRequest.guidanceSettings.styleGuide);
 
-    return this.makeRequest<RewriteSubmissionResponse>(API_ENDPOINTS.CHECKS, 'POST', formData);
+    return this.makeRequest<AnalysisSubmissionResponse>(API_ENDPOINTS.CHECKS, 'POST', formData);
   }
 
-  async pollWorkflowForResult(workflowId: string, endpoint: typeof API_ENDPOINTS[keyof typeof API_ENDPOINTS]): Promise<RewriteSuccessResponse> {
+  async pollWorkflowForResult(
+    workflowId: string,
+    endpoint: (typeof API_ENDPOINTS)[keyof typeof API_ENDPOINTS],
+  ): Promise<AnalysisSuccessResponse> {
     let attempts = 0;
     const maxAttempts = 30;
     const pollInterval = 2000;
 
-    const poll = async (): Promise<RewriteSuccessResponse> => {
+    const poll = async (): Promise<AnalysisSuccessResponse> => {
       if (attempts >= maxAttempts) {
         throw new Error(`Workflow timed out after ${maxAttempts} attempts`);
       }
@@ -122,14 +181,14 @@ export class Endpoint {
           throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || 'Unknown error'}`);
         }
 
-        const data = (await response.json()) as RewritePollingResponse;
+        const data = (await response.json()) as AnalysisPollingResponse;
 
         if (data.status === Status.Failed) {
           throw new Error(`Workflow failed: ${data.error_message}`);
         }
 
         if (data.status === Status.Completed) {
-          return data as RewriteSuccessResponse;
+          return data as AnalysisSuccessResponse;
         }
 
         if (data.status === Status.Running || data.status === Status.Queued) {
@@ -152,7 +211,7 @@ export class Endpoint {
     return poll();
   }
 
-  async submitRewriteAndGetResult(rewriteRequest: RewriteRequest): Promise<RewriteResult> {
+  async submitRewriteAndGetResult(rewriteRequest: AnalysisRequest): Promise<AnalysisResult> {
     try {
       const initialResponse = await this.submitRewrite(rewriteRequest);
 
@@ -175,7 +234,7 @@ export class Endpoint {
     }
   }
 
-  async submitCheckAndGetResult(checkRequest: RewriteRequest): Promise<RewriteResult> {
+  async submitCheckAndGetResult(checkRequest: AnalysisRequest): Promise<AnalysisResult> {
     try {
       const initialResponse = await this.submitCheck(checkRequest);
 
