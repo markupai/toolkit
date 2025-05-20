@@ -100,7 +100,7 @@ describe('Endpoint Unit Tests', () => {
       return poll();
     };
 
-    await expect(quickEndpoint.pollWorkflowForResult('test-workflow-id')).rejects.toThrow(
+    await expect(quickEndpoint.pollWorkflowForResult('test-workflow-id', API_ENDPOINTS.REWRITES)).rejects.toThrow(
       'Workflow timed out after 2 attempts',
     );
   });
