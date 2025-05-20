@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Endpoint } from '../../src/main';
+import { API_ENDPOINTS, Endpoint } from '../../src/main';
 import { server, handlers } from './setup';
 import { http, HttpResponse } from 'msw';
-import { Dialect, RewriteRequest, Tone } from '../../src/types/rewrite';
+import { Dialect, RewriteRequest, Tone, StyleGuide } from '../../src/types/rewrite';
 
 describe('Endpoint Unit Tests', () => {
   const endpoint = new Endpoint({
@@ -15,7 +15,7 @@ describe('Endpoint Unit Tests', () => {
     guidanceSettings: {
       dialect: Dialect.AmericanEnglish,
       tone: Tone.Formal,
-      styleGuide: 'microsoft',
+      styleGuide: StyleGuide.Microsoft,
     },
   };
 
@@ -42,7 +42,7 @@ describe('Endpoint Unit Tests', () => {
   it('should successfully poll for rewrite status', async () => {
     server.use(handlers.rewrite.status);
 
-    const result = await endpoint.pollWorkflowForResult('test-workflow-id');
+    const result = await endpoint.pollWorkflowForResult('test-workflow-id', API_ENDPOINTS.REWRITES);
 
     expect(result).toBeDefined();
     expect(result.status).toBe('completed');
