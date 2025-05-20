@@ -20,7 +20,7 @@ export const handlers = {
     success: http.post('*/v1/rewrites/', () => {
       return HttpResponse.json({
         workflow_id: 'test-workflow-id',
-        status: 'processing',
+        message: 'Rewrite workflow started successfully.'
       });
     }),
     status: http.get('*/v1/rewrites/:workflowId', () => {

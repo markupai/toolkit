@@ -30,7 +30,7 @@ describe('Endpoint Unit Tests', () => {
 
     expect(result).toBeDefined();
     expect(result.workflow_id).toBe('test-workflow-id');
-    expect(result.status).toBe('processing');
+    expect(result.message).toBe('Rewrite workflow started successfully.');
   });
 
   it('should handle API errors', async () => {

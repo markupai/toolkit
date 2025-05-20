@@ -31,6 +31,8 @@ describe('Endpoint Integration Tests', () => {
     expect(typeof result).toBe('object');
     expect(result.workflow_id).toBeDefined();
     expect(typeof result.workflow_id).toBe('string');
+    expect(result.message).toBeDefined();
+    expect(typeof result.message).toBe('string');
   });
 
   it('should handle API errors gracefully', async () => {

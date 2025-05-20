@@ -97,12 +97,10 @@ export interface GuidanceSettings {
 
 export interface RewriteResponseBase {
   workflow_id: string;
-  status: string;
 }
 
 export interface RewriteSubmissionResponse extends RewriteResponseBase {
   message: string;
-  workflow_id: string;
 }
 
 export interface RewritePollingResponse extends RewriteResponseBase {
