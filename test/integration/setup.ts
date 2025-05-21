@@ -7,7 +7,7 @@ import { setPlatformUrl } from '../../src/utils/api';
 // Load environment variables before running integration tests
 beforeAll(() => {
   const envPath = path.resolve(process.cwd(), '.env');
-  
+
   // Check if .env file exists
   if (!fs.existsSync(envPath)) {
     throw new Error(`.env file not found at ${envPath}. Please create it with your API_KEY.`);

@@ -49,11 +49,7 @@ describe('Demo API Unit Tests', () => {
 
       const result = await submitRewrite(mockRequest, mockApiKey);
       expect(result).toEqual(mockResponse);
-      expect(postData).toHaveBeenCalledWith(
-        expect.stringContaining('/v1/rewrites/'),
-        expect.any(FormData),
-        mockApiKey,
-      );
+      expect(postData).toHaveBeenCalledWith(expect.stringContaining('/v1/rewrites/'), expect.any(FormData), mockApiKey);
     });
 
     it('should submit a check', async () => {
@@ -66,11 +62,7 @@ describe('Demo API Unit Tests', () => {
 
       const result = await submitCheck(mockRequest, mockApiKey);
       expect(result).toEqual(mockResponse);
-      expect(postData).toHaveBeenCalledWith(
-        expect.stringContaining('/v1/checks/'),
-        expect.any(FormData),
-        mockApiKey,
-      );
+      expect(postData).toHaveBeenCalledWith(expect.stringContaining('/v1/checks/'), expect.any(FormData), mockApiKey);
     });
   });
 

@@ -84,7 +84,9 @@ describe('API Utilities Unit Tests', () => {
 
     it('should handle workflow failure', async () => {
       server.use(handlers.api.workflow.failed);
-      await expect(pollWorkflowForResult(mockWorkflowId, mockEndpoint, mockApiKey)).rejects.toThrow('Workflow failed with status: failed');
+      await expect(pollWorkflowForResult(mockWorkflowId, mockEndpoint, mockApiKey)).rejects.toThrow(
+        'Workflow failed with status: failed',
+      );
     });
 
     it('should retry when workflow is in progress', async () => {
@@ -107,7 +109,7 @@ describe('API Utilities Unit Tests', () => {
               results: [],
             },
           });
-        })
+        }),
       );
       const result = await pollWorkflowForResult(mockWorkflowId, mockEndpoint, mockApiKey);
       expect(result.status).toBe(Status.Completed);
@@ -116,7 +118,9 @@ describe('API Utilities Unit Tests', () => {
 
     it.skip('should timeout after maximum retries', async () => {
       server.use(handlers.api.workflow.running);
-      await expect(pollWorkflowForResult(mockWorkflowId, mockEndpoint, mockApiKey)).rejects.toThrow('Workflow timed out after 30 attempts');
+      await expect(pollWorkflowForResult(mockWorkflowId, mockEndpoint, mockApiKey)).rejects.toThrow(
+        'Workflow timed out after 30 attempts',
+      );
     }, 10000);
 
     it('should handle API errors during polling', async () => {
