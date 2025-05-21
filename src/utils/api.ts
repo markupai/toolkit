@@ -7,13 +7,17 @@ export function setPlatformUrl(url: string) {
   PLATFORM_URL = url;
 }
 
+function getCommonHeaders(apiKey: string): HeadersInit {
+  return {
+    Authorization: `${apiKey}`,
+  };
+}
+
 export async function getData<T>(endpoint: string, apiKey: string): Promise<T> {
   try {
     const fetchOptions: RequestInit = {
       method: 'GET',
-      headers: {
-        Authorization: `${apiKey}`,
-      },
+      headers: getCommonHeaders(apiKey),
     };
     const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
 
@@ -36,9 +40,7 @@ export async function postData<T>(endpoint: string, formData: FormData, apiKey: 
   try {
     const fetchOptions: RequestInit = {
       method: 'POST',
-      headers: {
-        Authorization: `${apiKey}`,
-      },
+      headers: getCommonHeaders(apiKey),
       body: formData,
     };
     const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
@@ -62,9 +64,7 @@ export async function putData<T>(endpoint: string, formData: FormData, apiKey: s
   try {
     const fetchOptions: RequestInit = {
       method: 'PUT',
-      headers: {
-        Authorization: `${apiKey}`,
-      },
+      headers: getCommonHeaders(apiKey),
       body: formData,
     };
     const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
@@ -88,9 +88,7 @@ export async function deleteData<T>(endpoint: string, apiKey: string): Promise<T
   try {
     const fetchOptions: RequestInit = {
       method: 'DELETE',
-      headers: {
-        Authorization: `${apiKey}`,
-      },
+      headers: getCommonHeaders(apiKey),
     };
     const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
 
@@ -127,7 +125,7 @@ export async function pollWorkflowForResult(
       const response = await fetch(`${PLATFORM_URL}${endpoint}${workflowId}`, {
         method: 'GET',
         headers: {
-          Authorization: `${apiKey}`,
+          ...getCommonHeaders(apiKey),
           Accept: 'application/json',
         },
       });

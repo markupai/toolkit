@@ -1,9 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import {
-  submitRewrite,
-  submitCheck,
-  submitRewriteAndGetResult,
-} from '../../../src/api/demo.api';
+import { submitRewrite, submitCheck, submitRewriteAndGetResult } from '../../../src/api/demo.api';
 import { Dialect, Tone, StyleGuide } from '../../../src/api/style';
 
 describe('Demo API Integration Tests', () => {
@@ -74,7 +70,6 @@ describe('Demo API Integration Tests', () => {
       expect(result.results).toBeDefined();
       expect(Array.isArray(result.results)).toBe(true);
     });
-
   });
 
   describe('Error Handling', () => {

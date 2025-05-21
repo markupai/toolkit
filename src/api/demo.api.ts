@@ -59,4 +59,3 @@ export async function submitRewriteAndGetResult(
     throw error;
   }
 }
-
