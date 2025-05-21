@@ -122,7 +122,9 @@ export async function pollWorkflowForResult(
     }
 
     try {
-      const response = await fetch(`${PLATFORM_URL}${endpoint}${workflowId}`, {
+      // Ensure there's exactly one slash between endpoint and workflowId
+      const normalizedEndpoint = endpoint.endsWith('/') ? endpoint : `${endpoint}/`;
+      const response = await fetch(`${PLATFORM_URL}${normalizedEndpoint}${workflowId}`, {
         method: 'GET',
         headers: {
           ...getCommonHeaders(apiKey),

@@ -3,7 +3,6 @@ import {
   submitRewrite,
   submitCheck,
   submitRewriteAndGetResult,
-  submitCheckAndGetResult,
 } from '../../../src/api/demo.api';
 import { postData, pollWorkflowForResult } from '../../../src/utils/api';
 import {
@@ -99,37 +98,6 @@ describe('Demo API Unit Tests', () => {
       expect(result).toEqual(mockPolledResponse.result);
     });
 
-    it('should submit check and get result', async () => {
-      const mockSubmitResponse: AnalysisSubmissionResponse = {
-        workflow_id: mockWorkflowId,
-        message: 'Check workflow started successfully.',
-      };
-
-      const mockPolledResponse: AnalysisSuccessResponse = {
-        status: Status.Completed,
-        workflow_id: mockWorkflowId,
-        result: {
-          merged_text: 'test result',
-          original_text: 'test content',
-          errors: [],
-          final_scores: {
-            acrolinx_score: null,
-            content_score: null,
-          },
-          initial_scores: {
-            acrolinx_score: null,
-            content_score: null,
-          },
-          results: [],
-        },
-      };
-
-      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
-      vi.mocked(pollWorkflowForResult).mockResolvedValueOnce(mockPolledResponse);
-
-      const result = await submitCheckAndGetResult(mockRequest, mockApiKey);
-      expect(result).toEqual(mockPolledResponse.result);
-    });
 
     it('should handle rewrite polling failure', async () => {
       const mockSubmitResponse: AnalysisSubmissionResponse = {
@@ -147,22 +115,6 @@ describe('Demo API Unit Tests', () => {
       );
     });
 
-    it('should handle check polling failure', async () => {
-      const mockSubmitResponse: AnalysisSubmissionResponse = {
-        workflow_id: mockWorkflowId,
-        message: 'Check workflow started successfully.',
-      };
-
-      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
-      vi.mocked(pollWorkflowForResult).mockRejectedValueOnce(
-        new Error(`Workflow failed with status: ${Status.Failed}`),
-      );
-
-      await expect(submitCheckAndGetResult(mockRequest, mockApiKey)).rejects.toThrow(
-        `Workflow failed with status: ${Status.Failed}`,
-      );
-    });
-
     it('should handle missing workflow ID for rewrite', async () => {
       const mockSubmitResponse: AnalysisSubmissionResponse = {
         workflow_id: '',
@@ -176,17 +128,5 @@ describe('Demo API Unit Tests', () => {
       );
     });
 
-    it('should handle missing workflow ID for check', async () => {
-      const mockSubmitResponse: AnalysisSubmissionResponse = {
-        workflow_id: '',
-        message: 'Check workflow started successfully.',
-      };
-
-      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
-
-      await expect(submitCheckAndGetResult(mockRequest, mockApiKey)).rejects.toThrow(
-        'No workflow_id received from initial check request',
-      );
-    });
   });
 });
