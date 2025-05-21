@@ -1,6 +1,11 @@
 import { Status, AnalysisPollingResponse, AnalysisSuccessResponse } from '../api/style';
 
-export const PLATFORM_URL = 'https://app.acrolinx.com';
+export const DEFAULT_PLATFORM_URL = 'https://app.acrolinx.com';
+export let PLATFORM_URL = DEFAULT_PLATFORM_URL;
+
+export function setPlatformUrl(url: string) {
+  PLATFORM_URL = url;
+}
 
 export async function makeRequest<T>(endpoint: string, method: string, formData: FormData, apiKey: string): Promise<T> {
   try {

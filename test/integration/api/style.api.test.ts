@@ -15,10 +15,13 @@ import {
 import { Dialect, Tone, CreateStyleGuideData } from '../../../src/api/style';
 
 describe('Style API Integration Tests', () => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    throw new Error('API_KEY environment variable is required for integration tests');
-  }
+  let apiKey: string;
+  beforeAll(() => {
+    apiKey = process.env.API_KEY || '';
+    if (!apiKey) {
+      throw new Error('API_KEY environment variable is required for integration tests');
+    }
+  });
 
   let createdStyleGuideId: string;
 

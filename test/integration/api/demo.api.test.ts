@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import {
   submitRewrite,
   submitCheck,
@@ -8,10 +8,13 @@ import {
 import { Dialect, Tone, StyleGuide } from '../../../src/api/style';
 
 describe('Demo API Integration Tests', () => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    throw new Error('API_KEY environment variable is required for integration tests');
-  }
+  let apiKey: string;
+  beforeAll(() => {
+    apiKey = process.env.API_KEY || '';
+    if (!apiKey) {
+      throw new Error('API_KEY environment variable is required for integration tests');
+    }
+  });
 
   const testContent = 'This is a test content for demo operations.';
   const guidanceSettings = {
@@ -142,7 +145,7 @@ describe('Demo API Integration Tests', () => {
       // Simulate a network error by temporarily removing the API key
       const originalApiKey = process.env.API_KEY;
       process.env.API_KEY = '';
-      
+
       try {
         await expect(
           submitRewrite(
