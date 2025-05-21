@@ -1,4 +1,5 @@
 import { Status, AnalysisPollingResponse, AnalysisSuccessResponse } from '../api/style';
+import { AcrolinxError } from './errors';
 
 export const DEFAULT_PLATFORM_URL = 'https://app.acrolinx.com';
 export let PLATFORM_URL = DEFAULT_PLATFORM_URL;
@@ -23,16 +24,18 @@ export async function getData<T>(endpoint: string, apiKey: string): Promise<T> {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.detail || errorData.message || `HTTP error! status: ${response.status}`;
-      throw new Error(errorMessage);
+      throw AcrolinxError.fromResponse(response, errorData);
     }
 
     const data = await response.json();
     console.log('Response data:', JSON.stringify(data, null, 2));
     return data;
   } catch (error) {
+    if (error instanceof AcrolinxError) {
+      throw error;
+    }
     console.error('Unknown HTTP error:', error);
-    throw error;
+    throw new AcrolinxError(error instanceof Error ? error.message : 'Unknown error occurred');
   }
 }
 
@@ -47,16 +50,18 @@ export async function postData<T>(endpoint: string, formData: FormData, apiKey: 
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.detail || errorData.message || `HTTP error! status: ${response.status}`;
-      throw new Error(errorMessage);
+      throw AcrolinxError.fromResponse(response, errorData);
     }
 
     const data = await response.json();
     console.log('Response data:', JSON.stringify(data, null, 2));
     return data;
   } catch (error) {
+    if (error instanceof AcrolinxError) {
+      throw error;
+    }
     console.error('Unknown HTTP error:', error);
-    throw error;
+    throw new AcrolinxError(error instanceof Error ? error.message : 'Unknown error occurred');
   }
 }
 
@@ -71,16 +76,18 @@ export async function putData<T>(endpoint: string, formData: FormData, apiKey: s
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.detail || errorData.message || `HTTP error! status: ${response.status}`;
-      throw new Error(errorMessage);
+      throw AcrolinxError.fromResponse(response, errorData);
     }
 
     const data = await response.json();
     console.log('Response data:', JSON.stringify(data, null, 2));
     return data;
   } catch (error) {
+    if (error instanceof AcrolinxError) {
+      throw error;
+    }
     console.error('Unknown HTTP error:', error);
-    throw error;
+    throw new AcrolinxError(error instanceof Error ? error.message : 'Unknown error occurred');
   }
 }
 
@@ -94,16 +101,18 @@ export async function deleteData<T>(endpoint: string, apiKey: string): Promise<T
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.detail || errorData.message || `HTTP error! status: ${response.status}`;
-      throw new Error(errorMessage);
+      throw AcrolinxError.fromResponse(response, errorData);
     }
 
     const data = await response.json();
     console.log('Response data:', JSON.stringify(data, null, 2));
     return data;
   } catch (error) {
+    if (error instanceof AcrolinxError) {
+      throw error;
+    }
     console.error('Unknown HTTP error:', error);
-    throw error;
+    throw new AcrolinxError(error instanceof Error ? error.message : 'Unknown error occurred');
   }
 }
 
@@ -118,7 +127,7 @@ export async function pollWorkflowForResult(
 
   const poll = async (): Promise<AnalysisSuccessResponse> => {
     if (attempts >= maxAttempts) {
-      throw new Error(`Workflow timed out after ${maxAttempts} attempts`);
+      throw new AcrolinxError(`Workflow timed out after ${maxAttempts} attempts`);
     }
 
     try {
@@ -134,8 +143,7 @@ export async function pollWorkflowForResult(
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.detail || errorData.message || `HTTP error! status: ${response.status}`;
-        throw new Error(errorMessage);
+        throw AcrolinxError.fromResponse(response, errorData);
       }
 
       const data = (await response.json()) as AnalysisPollingResponse;
@@ -144,7 +152,7 @@ export async function pollWorkflowForResult(
       const normalizedStatus = data.status.toLowerCase() as Status;
 
       if (normalizedStatus === Status.Failed) {
-        throw new Error(`Workflow failed with status: ${Status.Failed}`);
+        throw new AcrolinxError(`Workflow failed with status: ${Status.Failed}`);
       }
 
       if (normalizedStatus === Status.Completed && data.result) {
@@ -161,14 +169,14 @@ export async function pollWorkflowForResult(
         return poll();
       }
 
-      throw new Error(`Unexpected workflow status: ${data.status}`);
+      throw new AcrolinxError(`Unexpected workflow status: ${data.status}`);
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof AcrolinxError) {
         console.error(`Polling error (attempt ${attempts + 1}/${maxAttempts}):`, error.message);
-      } else {
-        console.error(`Unknown polling error (attempt ${attempts + 1}/${maxAttempts}):`, error);
+        throw error;
       }
-      throw error;
+      console.error(`Unknown polling error (attempt ${attempts + 1}/${maxAttempts}):`, error);
+      throw new AcrolinxError(error instanceof Error ? error.message : 'Unknown error occurred');
     }
   };
 
