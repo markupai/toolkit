@@ -1,3 +1,4 @@
+// Enums
 export enum Dialect {
   AmericanEnglish = 'american_english',
   AustralianEnglish = 'australian_english',
@@ -84,6 +85,7 @@ export enum ToneCategories {
   Other = 'other',
 }
 
+// Base Interfaces
 export interface AnalysisRequest {
   content: string;
   guidanceSettings: GuidanceSettings;
@@ -107,6 +109,7 @@ export interface AnalysisPollingResponse extends AnalysisResponseBase {
   status: Status;
   workflow_id: string;
   error_message?: string;
+  result?: AnalysisResult;
 }
 
 export interface AnalysisSuccessResponse extends AnalysisResponseBase {
@@ -144,6 +147,20 @@ export interface InitialScores {
   content_score: ContentScorerActivityOutput | null;
 }
 
+export interface Parameters {
+  dialect: Dialect | null;
+  tone: Tone | null;
+  style_guide: StyleGuide | null;
+  max_words: number | null;
+}
+
+export interface TokenUsage {
+  completion_tokens: number;
+  prompt_tokens: number;
+  total_tokens: number;
+}
+
+// Activity Outputs
 export interface AcrolinxScorerActivityOutput {
   error: string | null;
   duration: number;
@@ -181,6 +198,16 @@ export interface ContentScorerActivityOutput {
   target_score: TargetScore | null;
 }
 
+export interface ContentAnalysis {
+  avg_sentence_length: number;
+  avg_word_length: number;
+  complexity_score: number;
+  readability_score: number;
+  sentence_count: number;
+  vocabulary_score: number;
+  word_count: number;
+}
+
 export type ContentQualityFeedback =
   | 'Excellent content quality! Your text is clear, readable, and well-structured.'
   | 'Good content quality. Your text is readable but has room for improvement.'
@@ -199,29 +226,6 @@ export interface TargetScore {
   target_score: number | null;
   target_range: number | null;
   within_target: boolean | null;
-}
-
-export interface Parameters {
-  dialect: Dialect | null;
-  tone: Tone | null;
-  style_guide: StyleGuide | null;
-  max_words: number | null;
-}
-
-export interface TokenUsage {
-  completion_tokens: number;
-  prompt_tokens: number;
-  total_tokens: number;
-}
-
-export interface ContentAnalysis {
-  avg_sentence_length: number;
-  avg_word_length: number;
-  complexity_score: number;
-  readability_score: number;
-  sentence_count: number;
-  vocabulary_score: number;
-  word_count: number;
 }
 
 export interface HeliosOneWorkflowOutput {
@@ -383,4 +387,44 @@ export interface StyleGuideChange {
   modified: string;
   change_start_char_idx: number;
   category: ChangeCategory;
+}
+
+// Style Guide Specific Interfaces
+export interface CreateStyleGuideData {
+  name: string;
+  description?: string;
+  rules?: Record<string, unknown>;
+}
+
+export interface StyleGuideData extends CreateStyleGuideData {
+  id: string;
+}
+
+export interface StyleGuideResponse {
+  style_guide: StyleGuideData;
+}
+
+export interface StyleGuideListResponse {
+  style_guides: StyleGuideData[];
+}
+
+export interface StyleCheckRequest {
+  file_upload: Blob;
+  style_guide: StyleGuideData;
+  dialect: Dialect;
+  tone: Tone;
+}
+
+export interface StyleSuggestionRequest {
+  file_upload: Blob;
+  style_guide: StyleGuideData;
+  dialect: Dialect;
+  tone: Tone;
+}
+
+export interface StyleRewriteRequest {
+  file_upload: Blob;
+  style_guide?: StyleGuideData;
+  dialect?: Dialect;
+  tone?: Tone;
 }

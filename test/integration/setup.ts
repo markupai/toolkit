@@ -12,7 +12,7 @@ beforeAll(() => {
   }
 
   // Validate required environment variables
-  if (!process.env.ACROLINX_API_KEY) {
-    throw new Error('ACROLINX_API_KEY environment variable is required for integration tests');
+  if (!process.env.API_KEY) {
+    throw new Error('API_KEY environment variable is required for integration tests');
   }
 });
