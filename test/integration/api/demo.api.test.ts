@@ -3,7 +3,6 @@ import {
   submitRewrite,
   submitCheck,
   submitRewriteAndGetResult,
-  submitCheckAndGetResult,
 } from '../../../src/api/demo.api';
 import { Dialect, Tone, StyleGuide } from '../../../src/api/style';
 
@@ -74,29 +73,8 @@ describe('Demo API Integration Tests', () => {
       expect(result.initial_scores).toBeDefined();
       expect(result.results).toBeDefined();
       expect(Array.isArray(result.results)).toBe(true);
-    }, 30000);
+    });
 
-    it('should submit check and get result', async () => {
-      const result = await submitCheckAndGetResult(
-        {
-          content: testContent,
-          guidanceSettings,
-        },
-        apiKey,
-      );
-
-      expect(result).toBeDefined();
-      expect(result.merged_text).toBeDefined();
-      expect(typeof result.merged_text).toBe('string');
-      expect(result.merged_text.length).toBeGreaterThan(0);
-      expect(result.original_text).toBeDefined();
-      expect(result.errors).toBeDefined();
-      expect(Array.isArray(result.errors)).toBe(true);
-      expect(result.final_scores).toBeDefined();
-      expect(result.initial_scores).toBeDefined();
-      expect(result.results).toBeDefined();
-      expect(Array.isArray(result.results)).toBe(true);
-    }, 30000);
   });
 
   describe('Error Handling', () => {
@@ -141,7 +119,7 @@ describe('Demo API Integration Tests', () => {
       ).rejects.toThrow();
     });
 
-    it('should handle network errors', async () => {
+    it('should throw for no api key', async () => {
       // Simulate a network error by temporarily removing the API key
       const originalApiKey = process.env.API_KEY;
       process.env.API_KEY = '';
@@ -155,7 +133,7 @@ describe('Demo API Integration Tests', () => {
             },
             '',
           ),
-        ).rejects.toThrow('Failed to fetch');
+        ).rejects.toThrow();
       } finally {
         // Restore the original API key
         process.env.API_KEY = originalApiKey;

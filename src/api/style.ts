@@ -86,6 +86,40 @@ export enum ToneCategories {
 }
 
 // Base Interfaces
+interface BaseChange {
+  original: string;
+  modified: string;
+  change_start_char_idx: number;
+}
+
+interface BaseActivityOutput {
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+}
+
+export interface Analysis {
+  avg_sentence_length: number;
+  avg_word_length: number;
+  complexity_score: number;
+  readability_score: number;
+  sentence_count: number;
+  vocabulary_score: number;
+  word_count: number;
+}
+
+interface BaseResponse {
+  status: Status;
+  style_guide_id: StyleGuide | null;
+  scores: Analysis | null;
+}
+
+// Base Interfaces
 export interface AnalysisRequest {
   content: string;
   guidanceSettings: GuidanceSettings;
@@ -161,15 +195,7 @@ export interface TokenUsage {
 }
 
 // Activity Outputs
-export interface AcrolinxScorerActivityOutput {
-  error: string | null;
-  duration: number;
-  model: string;
-  parameters: Parameters;
-  provider: string;
-  run_id: string;
-  token_usage: TokenUsage;
-  workflow_id: string;
+export interface AcrolinxScorerActivityOutput extends BaseActivityOutput {
   issues: Issue[];
   score: number;
 }
@@ -182,15 +208,7 @@ export interface Issue {
   type: string;
 }
 
-export interface ContentScorerActivityOutput {
-  error: string | null;
-  duration: number;
-  model: string;
-  parameters: Parameters;
-  provider: string;
-  run_id: string;
-  token_usage: TokenUsage;
-  workflow_id: string;
+export interface ContentScorerActivityOutput extends BaseActivityOutput {
   analysis: ContentAnalysis | null;
   feedback: ContentQualityFeedback | null;
   score: number;
@@ -247,145 +265,63 @@ export interface HeliosOneWorkflowOutput {
   style_guide_result: StyleGuideOutput | null;
 }
 
-export interface GrammarActivityOutput {
-  error: string | null;
-  duration: number;
-  model: string;
-  parameters: Parameters;
-  provider: string;
-  run_id: string;
-  token_usage: TokenUsage;
-  workflow_id: string;
+export interface GrammarActivityOutput extends BaseActivityOutput {
   changes: GrammarChange[];
 }
 
-export interface GrammarChange {
-  original: string;
-  modified: string;
-  change_start_char_idx: number;
+export interface GrammarChange extends BaseChange {
   category: GrammarCategory;
 }
 
-export interface MergingActivityOutput {
-  error: string | null;
-  duration: number;
-  model: string;
-  parameters: Parameters;
-  provider: string;
-  run_id: string;
-  token_usage: TokenUsage;
-  workflow_id: string;
+export interface MergingActivityOutput extends BaseActivityOutput {
   merged_text: string;
 }
 
-export interface ParserResponse {
-  error: string | null;
-  duration: number;
-  model: string;
-  parameters: Parameters;
-  provider: string;
-  run_id: string;
-  token_usage: TokenUsage;
-  workflow_id: string;
+export interface ParserResponse extends BaseActivityOutput {
   extracted_text: string;
 }
 
-export interface SentenceLengthActivityOutput {
-  error: string | null;
-  duration: number;
-  model: string;
-  parameters: Parameters;
-  provider: string;
-  run_id: string;
-  token_usage: TokenUsage;
-  workflow_id: string;
+export interface SentenceLengthActivityOutput extends BaseActivityOutput {
   text: string;
   changes: SentenceLengthChange[];
 }
 
-export interface SentenceLengthChange {
-  original: string;
-  modified: string;
-  change_start_char_idx: number;
+export interface SentenceLengthChange extends BaseChange {
   category: SentenceLengthCategory;
 }
 
-export interface SentenceStructureOutput {
-  error: string | null;
-  duration: number;
-  model: string;
-  parameters: Parameters;
-  provider: string;
-  run_id: string;
-  token_usage: TokenUsage;
-  workflow_id: string;
+export interface SentenceStructureOutput extends BaseActivityOutput {
   text: string;
   changes: SentenceStructureChange[];
 }
 
-export interface SentenceStructureChange {
-  original: string;
-  modified: string;
-  change_start_char_idx: number;
+export interface SentenceStructureChange extends BaseChange {
   category: SentenceStructureCategory;
 }
 
-export interface SimpleVocabOutput {
-  error: string | null;
-  duration: number;
-  model: string;
-  parameters: Parameters;
-  provider: string;
-  run_id: string;
-  token_usage: TokenUsage;
-  workflow_id: string;
+export interface SimpleVocabOutput extends BaseActivityOutput {
   text: string;
   changes: SimpleVocabChange[];
 }
 
-export interface SimpleVocabChange {
-  original: string;
-  modified: string;
-  change_start_char_idx: number;
+export interface SimpleVocabChange extends BaseChange {
   category: SimpleVocabChangeCategory;
 }
 
-export interface ToneCheckOutput {
-  error: string | null;
-  duration: number;
-  model: string;
-  parameters: Parameters;
-  provider: string;
-  run_id: string;
-  token_usage: TokenUsage;
-  workflow_id: string;
+export interface ToneCheckOutput extends BaseActivityOutput {
   text: string;
   changes: ToneChange[];
 }
 
-export interface ToneChange {
-  original: string;
-  modified: string;
-  change_start_char_idx: number;
+export interface ToneChange extends BaseChange {
   category: ToneCategories;
 }
 
-export interface StyleGuideOutput {
-  error: string | null;
-  duration: number;
-  model: string;
-  parameters: Parameters;
-  provider: string;
-  run_id: string;
-  token_usage: TokenUsage;
-  workflow_id: string;
+export interface StyleGuideOutput extends BaseActivityOutput {
   changes: StyleGuideChange[];
 }
 
-export interface StyleGuideChange {
-  original: string;
-  modified: string;
-  change_start_char_idx: number;
+export interface StyleGuideChange extends BaseChange {
   category: ChangeCategory;
 }
 
@@ -427,4 +363,31 @@ export interface StyleRewriteRequest {
   style_guide?: StyleGuideData;
   dialect?: Dialect;
   tone?: Tone;
+}
+
+// Response Interfaces
+export interface StyleCheckResponse extends BaseResponse {
+  issues: Issue[];
+}
+
+export interface SuggestionResponse extends BaseResponse {
+  issues: Suggestion[];
+}
+
+export interface RewriteResponse extends BaseResponse {
+  issues: Suggestion[];
+  rewrite: string | null;
+}
+
+export interface Suggestion {
+  original: string;
+  change_start_char_idx: number;
+  category:
+    | GrammarCategory
+    | SimpleVocabChangeCategory
+    | SentenceStructureCategory
+    | SentenceLengthCategory
+    | ToneCategories
+    | ChangeCategory;
+  suggestion: string;
 }

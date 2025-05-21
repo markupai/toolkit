@@ -12,7 +12,7 @@ export async function getData<T>(endpoint: string, apiKey: string): Promise<T> {
     const fetchOptions: RequestInit = {
       method: 'GET',
       headers: {
-        'x-api-key': apiKey,
+        Authorization: `${apiKey}`,
       },
     };
     const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
@@ -37,7 +37,7 @@ export async function postData<T>(endpoint: string, formData: FormData, apiKey: 
     const fetchOptions: RequestInit = {
       method: 'POST',
       headers: {
-        'x-api-key': apiKey,
+        Authorization: `${apiKey}`,
       },
       body: formData,
     };
@@ -63,7 +63,7 @@ export async function putData<T>(endpoint: string, formData: FormData, apiKey: s
     const fetchOptions: RequestInit = {
       method: 'PUT',
       headers: {
-        'x-api-key': apiKey,
+        Authorization: `${apiKey}`,
       },
       body: formData,
     };
@@ -89,7 +89,7 @@ export async function deleteData<T>(endpoint: string, apiKey: string): Promise<T
     const fetchOptions: RequestInit = {
       method: 'DELETE',
       headers: {
-        'x-api-key': apiKey,
+        Authorization: `${apiKey}`,
       },
     };
     const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
@@ -124,10 +124,10 @@ export async function pollWorkflowForResult(
     }
 
     try {
-      const response = await fetch(`${PLATFORM_URL}${endpoint}/${workflowId}`, {
+      const response = await fetch(`${PLATFORM_URL}${endpoint}${workflowId}`, {
         method: 'GET',
         headers: {
-          'x-api-key': apiKey,
+          Authorization: `${apiKey}`,
           Accept: 'application/json',
         },
       });

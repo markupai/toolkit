@@ -60,25 +60,3 @@ export async function submitRewriteAndGetResult(
   }
 }
 
-export async function submitCheckAndGetResult(checkRequest: AnalysisRequest, apiKey: string): Promise<AnalysisResult> {
-  try {
-    const initialResponse = await submitCheck(checkRequest, apiKey);
-
-    if (initialResponse.workflow_id) {
-      const polledResponse = await pollWorkflowForResult(initialResponse.workflow_id, API_ENDPOINTS.CHECKS, apiKey);
-      if (polledResponse.status === Status.Completed && polledResponse.result) {
-        return polledResponse.result;
-      }
-      throw new Error(`Check failed with status: ${polledResponse.status}`);
-    }
-
-    throw new Error('No workflow_id received from initial check request');
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error('Error in checkContentAndPoll:', error.message);
-    } else {
-      console.error('Unknown error in checkContentAndPoll:', error);
-    }
-    throw error;
-  }
-}
