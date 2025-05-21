@@ -1,9 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  submitRewrite,
-  submitCheck,
-  submitRewriteAndGetResult,
-} from '../../../src/api/demo.api';
+import { submitRewrite, submitCheck, submitRewriteAndGetResult } from '../../../src/api/demo.api';
 import { postData, pollWorkflowForResult } from '../../../src/utils/api';
 import {
   Status,
@@ -98,7 +94,6 @@ describe('Demo API Unit Tests', () => {
       expect(result).toEqual(mockPolledResponse.result);
     });
 
-
     it('should handle rewrite polling failure', async () => {
       const mockSubmitResponse: AnalysisSubmissionResponse = {
         workflow_id: mockWorkflowId,
@@ -127,6 +122,5 @@ describe('Demo API Unit Tests', () => {
         'No workflow_id received from initial rewrite request',
       );
     });
-
   });
 });

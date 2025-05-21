@@ -18,12 +18,14 @@ npm install @acrolinx/typescript-sdk
 ### Setup
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/acrolinx/typescript-sdk.git
 cd typescript-sdk
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
@@ -37,6 +39,7 @@ npm run build
 ```
 
 This will:
+
 1. Compile TypeScript files
 2. Generate type definitions
 3. Create both ESM and UMD bundles
@@ -49,6 +52,7 @@ The project uses Vitest for testing. There are two types of tests:
 2. Integration Tests: Located in `test/integration/`
 
 To run all tests:
+
 ```bash
 npm test
 ```

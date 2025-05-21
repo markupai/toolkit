@@ -2,7 +2,7 @@ export class AcrolinxError extends Error {
   constructor(
     message: string,
     public statusCode?: number,
-    public details?: Record<string, unknown>
+    public details?: Record<string, unknown>,
   ) {
     super(message);
     this.name = 'AcrolinxError';
@@ -16,4 +16,4 @@ export class AcrolinxError extends Error {
     const errorMessage = detail || message || `HTTP error! status: ${response.status}`;
     return new AcrolinxError(errorMessage, response.status, errorData);
   }
-} 
+}
