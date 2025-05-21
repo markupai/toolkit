@@ -43,6 +43,12 @@ export const handlers = {
       post: http.post('*/test-endpoint', () => {
         return HttpResponse.json({ data: 'test data' });
       }),
+      put: http.put('*/test-endpoint', () => {
+        return HttpResponse.json({ data: 'test data' });
+      }),
+      delete: http.delete('*/test-endpoint', () => {
+        return HttpResponse.json({ data: 'test data' });
+      }),
     },
     error: {
       detail: http.get('*/error-detail', () => {

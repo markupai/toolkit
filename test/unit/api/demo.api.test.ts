@@ -5,7 +5,7 @@ import {
   submitRewriteAndGetResult,
   submitCheckAndGetResult,
 } from '../../../src/api/demo.api';
-import { makeRequest, pollWorkflowForResult } from '../../../src/utils/api';
+import { postData, pollWorkflowForResult } from '../../../src/utils/api';
 import {
   Status,
   Dialect,
@@ -18,7 +18,7 @@ import {
 
 // Mock the utility functions
 vi.mock('../../../src/utils/api', () => ({
-  makeRequest: vi.fn(),
+  postData: vi.fn(),
   pollWorkflowForResult: vi.fn(),
 }));
 
@@ -45,13 +45,12 @@ describe('Demo API Unit Tests', () => {
         message: 'Rewrite workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockResponse);
 
       const result = await submitRewrite(mockRequest, mockApiKey);
       expect(result).toEqual(mockResponse);
-      expect(makeRequest).toHaveBeenCalledWith(
+      expect(postData).toHaveBeenCalledWith(
         expect.stringContaining('/v1/rewrites/'),
-        'POST',
         expect.any(FormData),
         mockApiKey,
       );
@@ -63,13 +62,12 @@ describe('Demo API Unit Tests', () => {
         message: 'Check workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockResponse);
 
       const result = await submitCheck(mockRequest, mockApiKey);
       expect(result).toEqual(mockResponse);
-      expect(makeRequest).toHaveBeenCalledWith(
+      expect(postData).toHaveBeenCalledWith(
         expect.stringContaining('/v1/checks/'),
-        'POST',
         expect.any(FormData),
         mockApiKey,
       );
@@ -102,7 +100,7 @@ describe('Demo API Unit Tests', () => {
         },
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockResolvedValueOnce(mockPolledResponse);
 
       const result = await submitRewriteAndGetResult(mockRequest, mockApiKey);
@@ -134,7 +132,7 @@ describe('Demo API Unit Tests', () => {
         },
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockResolvedValueOnce(mockPolledResponse);
 
       const result = await submitCheckAndGetResult(mockRequest, mockApiKey);
@@ -147,7 +145,7 @@ describe('Demo API Unit Tests', () => {
         message: 'Rewrite workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockRejectedValueOnce(
         new Error(`Workflow failed with status: ${Status.Failed}`),
       );
@@ -163,7 +161,7 @@ describe('Demo API Unit Tests', () => {
         message: 'Check workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockRejectedValueOnce(
         new Error(`Workflow failed with status: ${Status.Failed}`),
       );
@@ -179,7 +177,7 @@ describe('Demo API Unit Tests', () => {
         message: 'Rewrite workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
 
       await expect(submitRewriteAndGetResult(mockRequest, mockApiKey)).rejects.toThrow(
         'No workflow_id received from initial rewrite request',
@@ -192,7 +190,7 @@ describe('Demo API Unit Tests', () => {
         message: 'Check workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
 
       await expect(submitCheckAndGetResult(mockRequest, mockApiKey)).rejects.toThrow(
         'No workflow_id received from initial check request',

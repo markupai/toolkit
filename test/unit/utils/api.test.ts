@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
-import { makeRequest, pollWorkflowForResult, PLATFORM_URL } from '../../../src/utils/api';
-import { Status } from '../../../src/types/style';
+import { getData, postData, putData, deleteData, pollWorkflowForResult, PLATFORM_URL } from '../../../src/utils/api';
+import { Status } from '../../../src/api/style';
 import { server, handlers } from '../setup';
 import { HttpResponse } from 'msw';
 import { http } from 'msw';
@@ -14,10 +14,10 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('API Utilities Unit Tests', () => {
-  describe('makeRequest', () => {
+  describe('HTTP Method Functions', () => {
     it('should make a successful GET request', async () => {
       server.use(handlers.api.success.get);
-      const result = await makeRequest(mockEndpoint, 'GET', null as unknown as FormData, mockApiKey);
+      const result = await getData(mockEndpoint, mockApiKey);
       expect(result).toEqual({ data: 'test data' });
     });
 
@@ -25,28 +25,42 @@ describe('API Utilities Unit Tests', () => {
       server.use(handlers.api.success.post);
       const formData = new FormData();
       formData.append('test', 'value');
-      const result = await makeRequest(mockEndpoint, 'POST', formData, mockApiKey);
+      const result = await postData(mockEndpoint, formData, mockApiKey);
+      expect(result).toEqual({ data: 'test data' });
+    });
+
+    it('should make a successful PUT request with FormData', async () => {
+      server.use(handlers.api.success.put);
+      const formData = new FormData();
+      formData.append('test', 'value');
+      const result = await putData(mockEndpoint, formData, mockApiKey);
+      expect(result).toEqual({ data: 'test data' });
+    });
+
+    it('should make a successful DELETE request', async () => {
+      server.use(handlers.api.success.delete);
+      const result = await deleteData(mockEndpoint, mockApiKey);
       expect(result).toEqual({ data: 'test data' });
     });
 
     it('should handle API errors with detail message', async () => {
       server.use(handlers.api.error.detail);
-      await expect(makeRequest('/error-detail', 'GET', null as unknown as FormData, mockApiKey)).rejects.toThrow('API Error');
+      await expect(getData('/error-detail', mockApiKey)).rejects.toThrow('API Error');
     });
 
     it('should handle API errors with message field', async () => {
       server.use(handlers.api.error.message);
-      await expect(makeRequest('/error-message', 'GET', null as unknown as FormData, mockApiKey)).rejects.toThrow('API Error');
+      await expect(getData('/error-message', mockApiKey)).rejects.toThrow('API Error');
     });
 
     it('should handle API errors without error message', async () => {
       server.use(handlers.api.error.noMessage);
-      await expect(makeRequest('/error-nomsg', 'GET', null as unknown as FormData, mockApiKey)).rejects.toThrow('HTTP error! status: 400');
+      await expect(getData('/error-nomsg', mockApiKey)).rejects.toThrow('HTTP error! status: 400');
     });
 
     it('should handle network errors', async () => {
       server.use(handlers.api.error.network);
-      await expect(makeRequest('/network-error', 'GET', null as unknown as FormData, mockApiKey)).rejects.toThrow('Failed to fetch');
+      await expect(getData('/network-error', mockApiKey)).rejects.toThrow('Failed to fetch');
     });
   });
 

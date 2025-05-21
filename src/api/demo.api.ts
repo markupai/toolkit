@@ -1,6 +1,6 @@
 import { AnalysisRequest, AnalysisSubmissionResponse, AnalysisResult, Status } from './style';
 
-import { makeRequest, pollWorkflowForResult } from '../utils/api';
+import { postData, pollWorkflowForResult } from '../utils/api';
 
 const API_ENDPOINTS = {
   REWRITES: '/v1/rewrites/',
@@ -19,7 +19,7 @@ export async function submitRewrite(
   formData.append('tone', rewriteRequest.guidanceSettings.tone.toString());
   formData.append('style_guide', rewriteRequest.guidanceSettings.styleGuide);
 
-  return makeRequest<AnalysisSubmissionResponse>(API_ENDPOINTS.REWRITES, 'POST', formData, apiKey);
+  return postData<AnalysisSubmissionResponse>(API_ENDPOINTS.REWRITES, formData, apiKey);
 }
 
 export async function submitCheck(checkRequest: AnalysisRequest, apiKey: string): Promise<AnalysisSubmissionResponse> {
@@ -31,7 +31,7 @@ export async function submitCheck(checkRequest: AnalysisRequest, apiKey: string)
   formData.append('tone', checkRequest.guidanceSettings.tone.toString());
   formData.append('style_guide', checkRequest.guidanceSettings.styleGuide);
 
-  return makeRequest<AnalysisSubmissionResponse>(API_ENDPOINTS.CHECKS, 'POST', formData, apiKey);
+  return postData<AnalysisSubmissionResponse>(API_ENDPOINTS.CHECKS, formData, apiKey);
 }
 
 export async function submitRewriteAndGetResult(

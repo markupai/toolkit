@@ -12,7 +12,7 @@ import {
   submitStyleSuggestionAndGetResult,
   submitStyleRewriteAndGetResult,
 } from '../../../src/api/style.api';
-import { makeRequest, pollWorkflowForResult } from '../../../src/utils/api';
+import { getData, postData, putData, deleteData, pollWorkflowForResult } from '../../../src/utils/api';
 import {
   Status,
   Dialect,
@@ -27,7 +27,10 @@ import {
 
 // Mock the utility functions
 vi.mock('../../../src/utils/api', () => ({
-  makeRequest: vi.fn(),
+  getData: vi.fn(),
+  postData: vi.fn(),
+  putData: vi.fn(),
+  deleteData: vi.fn(),
   pollWorkflowForResult: vi.fn(),
 }));
 
@@ -53,16 +56,11 @@ describe('Style API Unit Tests', () => {
         ],
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockResponse);
+      vi.mocked(getData).mockResolvedValueOnce(mockResponse);
 
       const result = await listStyleGuides(mockApiKey);
       expect(result).toEqual(mockResponse);
-      expect(makeRequest).toHaveBeenCalledWith(
-        '/v1/style-guides',
-        'GET',
-        expect.any(FormData),
-        mockApiKey,
-      );
+      expect(getData).toHaveBeenCalledWith('/v1/style-guides', mockApiKey);
     });
 
     it('should create a style guide', async () => {
@@ -79,16 +77,11 @@ describe('Style API Unit Tests', () => {
         rules: {},
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockResponse);
 
       const result = await createStyleGuide(mockRequest, mockApiKey);
       expect(result).toEqual(mockResponse);
-      expect(makeRequest).toHaveBeenCalledWith(
-        '/v1/style-guides',
-        'POST',
-        expect.any(FormData),
-        mockApiKey,
-      );
+      expect(postData).toHaveBeenCalledWith('/v1/style-guides', expect.any(FormData), mockApiKey);
     });
 
     it('should get a style guide', async () => {
@@ -99,16 +92,11 @@ describe('Style API Unit Tests', () => {
         rules: {},
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockResponse);
+      vi.mocked(getData).mockResolvedValueOnce(mockResponse);
 
       const result = await getStyleGuide(mockStyleGuideId, mockApiKey);
       expect(result).toEqual(mockResponse);
-      expect(makeRequest).toHaveBeenCalledWith(
-        `/v1/style-guides/${mockStyleGuideId}`,
-        'GET',
-        expect.any(FormData),
-        mockApiKey,
-      );
+      expect(getData).toHaveBeenCalledWith(`/v1/style-guides/${mockStyleGuideId}`, mockApiKey);
     });
 
     it('should update a style guide', async () => {
@@ -125,31 +113,21 @@ describe('Style API Unit Tests', () => {
         rules: {},
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockResponse);
+      vi.mocked(putData).mockResolvedValueOnce(mockResponse);
 
       const result = await updateStyleGuide(mockStyleGuideId, mockRequest, mockApiKey);
       expect(result).toEqual(mockResponse);
-      expect(makeRequest).toHaveBeenCalledWith(
-        `/v1/style-guides/${mockStyleGuideId}`,
-        'PUT',
-        expect.any(FormData),
-        mockApiKey,
-      );
+      expect(putData).toHaveBeenCalledWith(`/v1/style-guides/${mockStyleGuideId}`, expect.any(FormData), mockApiKey);
     });
 
     it('should delete a style guide', async () => {
       const mockResponse = {
         message: 'Style guide deleted successfully',
       };
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockResponse);
+      vi.mocked(deleteData).mockResolvedValueOnce(mockResponse);
       const result = await deleteStyleGuide(mockStyleGuideId, mockApiKey);
       expect(result).toEqual(mockResponse);
-      expect(makeRequest).toHaveBeenCalledWith(
-        `/v1/style-guides/${mockStyleGuideId}`,
-        'DELETE',
-        expect.any(FormData),
-        mockApiKey,
-      );
+      expect(deleteData).toHaveBeenCalledWith(`/v1/style-guides/${mockStyleGuideId}`, mockApiKey);
     });
   });
 
@@ -188,16 +166,11 @@ describe('Style API Unit Tests', () => {
         message: 'Style check workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockResponse);
 
       const result = await submitStyleCheck(mockCheckRequest, mockApiKey);
       expect(result).toEqual(mockResponse);
-      expect(makeRequest).toHaveBeenCalledWith(
-        '/v1/style/checks',
-        'POST',
-        expect.any(FormData),
-        mockApiKey,
-      );
+      expect(postData).toHaveBeenCalledWith('/v1/style/checks', expect.any(FormData), mockApiKey);
     });
 
     it('should submit a style suggestion', async () => {
@@ -206,16 +179,11 @@ describe('Style API Unit Tests', () => {
         message: 'Style suggestion workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockResponse);
 
       const result = await submitStyleSuggestion(mockSuggestionRequest, mockApiKey);
       expect(result).toEqual(mockResponse);
-      expect(makeRequest).toHaveBeenCalledWith(
-        '/v1/style/suggestions',
-        'POST',
-        expect.any(FormData),
-        mockApiKey,
-      );
+      expect(postData).toHaveBeenCalledWith('/v1/style/suggestions', expect.any(FormData), mockApiKey);
     });
 
     it('should submit a style rewrite', async () => {
@@ -224,16 +192,11 @@ describe('Style API Unit Tests', () => {
         message: 'Style rewrite workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockResponse);
 
       const result = await submitStyleRewrite(mockRewriteRequest, mockApiKey);
       expect(result).toEqual(mockResponse);
-      expect(makeRequest).toHaveBeenCalledWith(
-        '/v1/style-rewrites',
-        'POST',
-        expect.any(FormData),
-        mockApiKey,
-      );
+      expect(postData).toHaveBeenCalledWith('/v1/style-rewrites', expect.any(FormData), mockApiKey);
     });
 
     it('should submit a style check and get result', async () => {
@@ -261,7 +224,7 @@ describe('Style API Unit Tests', () => {
         },
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockResolvedValueOnce(mockPolledResponse);
 
       const result = await submitStyleCheckAndGetResult(mockCheckRequest, mockApiKey);
@@ -293,7 +256,7 @@ describe('Style API Unit Tests', () => {
         },
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockResolvedValueOnce(mockPolledResponse);
 
       const result = await submitStyleSuggestionAndGetResult(mockSuggestionRequest, mockApiKey);
@@ -325,7 +288,7 @@ describe('Style API Unit Tests', () => {
         },
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockResolvedValueOnce(mockPolledResponse);
 
       const result = await submitStyleRewriteAndGetResult(mockRewriteRequest, mockApiKey);
@@ -338,7 +301,7 @@ describe('Style API Unit Tests', () => {
         message: 'Style check workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockRejectedValueOnce(
         new Error(`Workflow failed with status: ${Status.Failed}`),
       );
@@ -354,7 +317,7 @@ describe('Style API Unit Tests', () => {
         message: 'Style suggestion workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockRejectedValueOnce(
         new Error(`Workflow failed with status: ${Status.Failed}`),
       );
@@ -370,7 +333,7 @@ describe('Style API Unit Tests', () => {
         message: 'Style rewrite workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockRejectedValueOnce(
         new Error(`Workflow failed with status: ${Status.Failed}`),
       );
@@ -386,7 +349,7 @@ describe('Style API Unit Tests', () => {
         message: 'Style check workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
 
       await expect(submitStyleCheckAndGetResult(mockCheckRequest, mockApiKey)).rejects.toThrow(
         'No workflow_id received from initial style check request',
@@ -399,7 +362,7 @@ describe('Style API Unit Tests', () => {
         message: 'Style suggestion workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
 
       await expect(submitStyleSuggestionAndGetResult(mockSuggestionRequest, mockApiKey)).rejects.toThrow(
         'No workflow_id received from initial style suggestion request',
@@ -412,7 +375,7 @@ describe('Style API Unit Tests', () => {
         message: 'Style rewrite workflow started successfully.',
       };
 
-      vi.mocked(makeRequest).mockResolvedValueOnce(mockSubmitResponse);
+      vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
 
       await expect(submitStyleRewriteAndGetResult(mockRewriteRequest, mockApiKey)).rejects.toThrow(
         'No workflow_id received from initial style rewrite request',

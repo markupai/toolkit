@@ -7,17 +7,91 @@ export function setPlatformUrl(url: string) {
   PLATFORM_URL = url;
 }
 
-export async function makeRequest<T>(endpoint: string, method: string, formData: FormData, apiKey: string): Promise<T> {
+export async function getData<T>(endpoint: string, apiKey: string): Promise<T> {
   try {
     const fetchOptions: RequestInit = {
-      method,
+      method: 'GET',
       headers: {
         'x-api-key': apiKey,
       },
     };
-    if (method !== 'GET' && method !== 'HEAD') {
-      fetchOptions.body = formData;
+    const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.detail || errorData.message || `HTTP error! status: ${response.status}`;
+      throw new Error(errorMessage);
     }
+
+    const data = await response.json();
+    console.log('Response data:', JSON.stringify(data, null, 2));
+    return data;
+  } catch (error) {
+    console.error('Unknown HTTP error:', error);
+    throw error;
+  }
+}
+
+export async function postData<T>(endpoint: string, formData: FormData, apiKey: string): Promise<T> {
+  try {
+    const fetchOptions: RequestInit = {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+      },
+      body: formData,
+    };
+    const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.detail || errorData.message || `HTTP error! status: ${response.status}`;
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+    console.log('Response data:', JSON.stringify(data, null, 2));
+    return data;
+  } catch (error) {
+    console.error('Unknown HTTP error:', error);
+    throw error;
+  }
+}
+
+export async function putData<T>(endpoint: string, formData: FormData, apiKey: string): Promise<T> {
+  try {
+    const fetchOptions: RequestInit = {
+      method: 'PUT',
+      headers: {
+        'x-api-key': apiKey,
+      },
+      body: formData,
+    };
+    const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.detail || errorData.message || `HTTP error! status: ${response.status}`;
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+    console.log('Response data:', JSON.stringify(data, null, 2));
+    return data;
+  } catch (error) {
+    console.error('Unknown HTTP error:', error);
+    throw error;
+  }
+}
+
+export async function deleteData<T>(endpoint: string, apiKey: string): Promise<T> {
+  try {
+    const fetchOptions: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        'x-api-key': apiKey,
+      },
+    };
     const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
 
     if (!response.ok) {

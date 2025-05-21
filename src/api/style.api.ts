@@ -10,7 +10,7 @@ import {
   Status,
 } from './style';
 
-import { makeRequest, pollWorkflowForResult } from '../utils/api';
+import { getData, postData, putData, deleteData, pollWorkflowForResult } from '../utils/api';
 
 const API_ENDPOINTS = {
   STYLE_GUIDES: '/v1/style-guides',
@@ -21,7 +21,7 @@ const API_ENDPOINTS = {
 
 // Style Guide Operations
 export async function listStyleGuides(apiKey: string): Promise<StyleGuideListResponse> {
-  return makeRequest<StyleGuideListResponse>(API_ENDPOINTS.STYLE_GUIDES, 'GET', new FormData(), apiKey);
+  return getData<StyleGuideListResponse>(API_ENDPOINTS.STYLE_GUIDES, apiKey);
 }
 
 export async function createStyleGuide(styleGuide: CreateStyleGuideData, apiKey: string): Promise<StyleGuideResponse> {
@@ -33,16 +33,11 @@ export async function createStyleGuide(styleGuide: CreateStyleGuideData, apiKey:
   if (styleGuide.rules) {
     formData.append('rules', JSON.stringify(styleGuide.rules));
   }
-  return makeRequest<StyleGuideResponse>(API_ENDPOINTS.STYLE_GUIDES, 'POST', formData, apiKey);
+  return postData<StyleGuideResponse>(API_ENDPOINTS.STYLE_GUIDES, formData, apiKey);
 }
 
 export async function getStyleGuide(styleGuideId: string, apiKey: string): Promise<StyleGuideResponse> {
-  return makeRequest<StyleGuideResponse>(
-    `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`,
-    'GET',
-    new FormData(),
-    apiKey,
-  );
+  return getData<StyleGuideResponse>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, apiKey);
 }
 
 export async function updateStyleGuide(
@@ -58,11 +53,11 @@ export async function updateStyleGuide(
   if (styleGuide.rules) {
     formData.append('rules', JSON.stringify(styleGuide.rules));
   }
-  return makeRequest<StyleGuideResponse>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, 'PUT', formData, apiKey);
+  return putData<StyleGuideResponse>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, formData, apiKey);
 }
 
 export async function deleteStyleGuide(styleGuideId: string, apiKey: string): Promise<{ message: string }> {
-  return makeRequest<{ message: string }>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, 'DELETE', new FormData(), apiKey);
+  return deleteData<{ message: string }>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, apiKey);
 }
 
 // Style Check Operations
@@ -76,7 +71,7 @@ export async function submitStyleCheck(
   formData.append('dialect', checkRequest.dialect.toString());
   formData.append('tone', checkRequest.tone.toString());
 
-  return makeRequest<AnalysisSubmissionResponse>(API_ENDPOINTS.STYLE_CHECKS, 'POST', formData, apiKey);
+  return postData<AnalysisSubmissionResponse>(API_ENDPOINTS.STYLE_CHECKS, formData, apiKey);
 }
 
 export async function submitStyleSuggestion(
@@ -89,7 +84,7 @@ export async function submitStyleSuggestion(
   formData.append('dialect', suggestionRequest.dialect.toString());
   formData.append('tone', suggestionRequest.tone.toString());
 
-  return makeRequest<AnalysisSubmissionResponse>(API_ENDPOINTS.STYLE_SUGGESTIONS, 'POST', formData, apiKey);
+  return postData<AnalysisSubmissionResponse>(API_ENDPOINTS.STYLE_SUGGESTIONS, formData, apiKey);
 }
 
 export async function submitStyleRewrite(
@@ -108,7 +103,7 @@ export async function submitStyleRewrite(
     formData.append('tone', rewriteRequest.tone.toString());
   }
 
-  return makeRequest<AnalysisSubmissionResponse>(API_ENDPOINTS.STYLE_REWRITES, 'POST', formData, apiKey);
+  return postData<AnalysisSubmissionResponse>(API_ENDPOINTS.STYLE_REWRITES, formData, apiKey);
 }
 
 // Convenience methods for style operations with polling
