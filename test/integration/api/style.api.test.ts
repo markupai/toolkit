@@ -8,9 +8,9 @@ import {
   submitStyleCheck,
   submitStyleSuggestion,
   submitStyleRewrite,
-  submitStyleCheckAndGetResult,
-  submitStyleSuggestionAndGetResult,
-  submitStyleRewriteAndGetResult,
+  styleCheck,
+  styleSuggestions,
+  styleRewrite,
 } from '../../../src/api/style.api';
 import { Dialect, Tone, CreateStyleGuideData } from '../../../src/api/style';
 
@@ -140,7 +140,7 @@ describe('Style API Integration Tests', () => {
     });
 
     it('should submit a style check and get result', async () => {
-      const result = await submitStyleCheckAndGetResult(
+      const result = await styleCheck(
         {
           file_upload: new Blob([testContent]),
           style_guide: styleGuide,
@@ -162,7 +162,7 @@ describe('Style API Integration Tests', () => {
     });
 
     it('should submit a style suggestion and get result', async () => {
-      const result = await submitStyleSuggestionAndGetResult(
+      const result = await styleSuggestions(
         {
           file_upload: new Blob([testContent]),
           style_guide: styleGuide,
@@ -184,7 +184,7 @@ describe('Style API Integration Tests', () => {
     });
 
     it('should submit a style rewrite and get result', async () => {
-      const result = await submitStyleRewriteAndGetResult(
+      const result = await styleRewrite(
         {
           file_upload: new Blob([testContent]),
           style_guide: styleGuide,

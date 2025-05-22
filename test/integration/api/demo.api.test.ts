@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { submitRewrite, submitCheck, submitRewriteAndGetResult } from '../../../src/api/demo.api';
+import { submitRewrite, check, rewrite } from '../../../src/api/demo.api';
 import { Dialect, Tone, StyleGuide } from '../../../src/api/style';
 
 describe('Demo API Integration Tests', () => {
@@ -34,7 +34,7 @@ describe('Demo API Integration Tests', () => {
     });
 
     it('should submit a check', async () => {
-      const response = await submitCheck(
+      const response = await check(
         {
           content: testContent,
           guidanceSettings,
@@ -50,7 +50,7 @@ describe('Demo API Integration Tests', () => {
 
   describe('Operations with Polling', () => {
     it('should submit rewrite and get result', async () => {
-      const result = await submitRewriteAndGetResult(
+      const result = await rewrite(
         {
           content: testContent,
           guidanceSettings,

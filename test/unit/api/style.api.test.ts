@@ -8,9 +8,9 @@ import {
   submitStyleCheck,
   submitStyleSuggestion,
   submitStyleRewrite,
-  submitStyleCheckAndGetResult,
-  submitStyleSuggestionAndGetResult,
-  submitStyleRewriteAndGetResult,
+  styleCheck,
+  styleSuggestions,
+  styleRewrite,
 } from '../../../src/api/style.api';
 import { getData, postData, putData, deleteData, pollWorkflowForResult } from '../../../src/utils/api';
 import {
@@ -227,7 +227,7 @@ describe('Style API Unit Tests', () => {
       vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockResolvedValueOnce(mockPolledResponse);
 
-      const result = await submitStyleCheckAndGetResult(mockCheckRequest, mockApiKey);
+      const result = await styleCheck(mockCheckRequest, mockApiKey);
       expect(result).toEqual(mockPolledResponse.result);
     });
 
@@ -259,7 +259,7 @@ describe('Style API Unit Tests', () => {
       vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockResolvedValueOnce(mockPolledResponse);
 
-      const result = await submitStyleSuggestionAndGetResult(mockSuggestionRequest, mockApiKey);
+      const result = await styleSuggestions(mockSuggestionRequest, mockApiKey);
       expect(result).toEqual(mockPolledResponse.result);
     });
 
@@ -291,7 +291,7 @@ describe('Style API Unit Tests', () => {
       vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockResolvedValueOnce(mockPolledResponse);
 
-      const result = await submitStyleRewriteAndGetResult(mockRewriteRequest, mockApiKey);
+      const result = await styleRewrite(mockRewriteRequest, mockApiKey);
       expect(result).toEqual(mockPolledResponse.result);
     });
 
@@ -306,7 +306,7 @@ describe('Style API Unit Tests', () => {
         new Error(`Workflow failed with status: ${Status.Failed}`),
       );
 
-      await expect(submitStyleCheckAndGetResult(mockCheckRequest, mockApiKey)).rejects.toThrow(
+      await expect(styleCheck(mockCheckRequest, mockApiKey)).rejects.toThrow(
         `Workflow failed with status: ${Status.Failed}`,
       );
     });
@@ -322,7 +322,7 @@ describe('Style API Unit Tests', () => {
         new Error(`Workflow failed with status: ${Status.Failed}`),
       );
 
-      await expect(submitStyleSuggestionAndGetResult(mockSuggestionRequest, mockApiKey)).rejects.toThrow(
+      await expect(styleSuggestions(mockSuggestionRequest, mockApiKey)).rejects.toThrow(
         `Workflow failed with status: ${Status.Failed}`,
       );
     });
@@ -338,7 +338,7 @@ describe('Style API Unit Tests', () => {
         new Error(`Workflow failed with status: ${Status.Failed}`),
       );
 
-      await expect(submitStyleRewriteAndGetResult(mockRewriteRequest, mockApiKey)).rejects.toThrow(
+      await expect(styleRewrite(mockRewriteRequest, mockApiKey)).rejects.toThrow(
         `Workflow failed with status: ${Status.Failed}`,
       );
     });
@@ -351,7 +351,7 @@ describe('Style API Unit Tests', () => {
 
       vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
 
-      await expect(submitStyleCheckAndGetResult(mockCheckRequest, mockApiKey)).rejects.toThrow(
+      await expect(styleCheck(mockCheckRequest, mockApiKey)).rejects.toThrow(
         'No workflow_id received from initial style check request',
       );
     });
@@ -364,7 +364,7 @@ describe('Style API Unit Tests', () => {
 
       vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
 
-      await expect(submitStyleSuggestionAndGetResult(mockSuggestionRequest, mockApiKey)).rejects.toThrow(
+      await expect(styleSuggestions(mockSuggestionRequest, mockApiKey)).rejects.toThrow(
         'No workflow_id received from initial style suggestion request',
       );
     });
@@ -377,7 +377,7 @@ describe('Style API Unit Tests', () => {
 
       vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
 
-      await expect(submitStyleRewriteAndGetResult(mockRewriteRequest, mockApiKey)).rejects.toThrow(
+      await expect(styleRewrite(mockRewriteRequest, mockApiKey)).rejects.toThrow(
         'No workflow_id received from initial style rewrite request',
       );
     });

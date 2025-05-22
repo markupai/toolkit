@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { submitRewrite, submitCheck, submitRewriteAndGetResult } from '../../../src/api/demo.api';
+import { submitRewrite, check, rewrite } from '../../../src/api/demo.api';
 import { postData, pollWorkflowForResult } from '../../../src/utils/api';
 import {
   Status,
@@ -55,7 +55,7 @@ describe('Demo API Unit Tests', () => {
 
       vi.mocked(postData).mockResolvedValueOnce(mockResponse);
 
-      const result = await submitCheck(mockRequest, mockApiKey);
+      const result = await check(mockRequest, mockApiKey);
       expect(result).toEqual(mockResponse);
       expect(postData).toHaveBeenCalledWith(expect.stringContaining('/v1/checks/'), expect.any(FormData), mockApiKey);
     });
@@ -90,7 +90,7 @@ describe('Demo API Unit Tests', () => {
       vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockResolvedValueOnce(mockPolledResponse);
 
-      const result = await submitRewriteAndGetResult(mockRequest, mockApiKey);
+      const result = await rewrite(mockRequest, mockApiKey);
       expect(result).toEqual(mockPolledResponse.result);
     });
 
@@ -105,7 +105,7 @@ describe('Demo API Unit Tests', () => {
         new Error(`Workflow failed with status: ${Status.Failed}`),
       );
 
-      await expect(submitRewriteAndGetResult(mockRequest, mockApiKey)).rejects.toThrow(
+      await expect(rewrite(mockRequest, mockApiKey)).rejects.toThrow(
         `Workflow failed with status: ${Status.Failed}`,
       );
     });
@@ -118,7 +118,7 @@ describe('Demo API Unit Tests', () => {
 
       vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
 
-      await expect(submitRewriteAndGetResult(mockRequest, mockApiKey)).rejects.toThrow(
+      await expect(rewrite(mockRequest, mockApiKey)).rejects.toThrow(
         'No workflow_id received from initial rewrite request',
       );
     });

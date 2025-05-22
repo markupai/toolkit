@@ -22,7 +22,7 @@ export async function submitRewrite(
   return postData<AnalysisSubmissionResponse>(API_ENDPOINTS.REWRITES, formData, apiKey);
 }
 
-export async function submitCheck(checkRequest: AnalysisRequest, apiKey: string): Promise<AnalysisSubmissionResponse> {
+export async function check(checkRequest: AnalysisRequest, apiKey: string): Promise<AnalysisSubmissionResponse> {
   console.log(checkRequest);
 
   const formData = new FormData();
@@ -34,7 +34,7 @@ export async function submitCheck(checkRequest: AnalysisRequest, apiKey: string)
   return postData<AnalysisSubmissionResponse>(API_ENDPOINTS.CHECKS, formData, apiKey);
 }
 
-export async function submitRewriteAndGetResult(
+export async function rewrite(
   rewriteRequest: AnalysisRequest,
   apiKey: string,
 ): Promise<AnalysisResult> {

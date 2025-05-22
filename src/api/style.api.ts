@@ -107,7 +107,7 @@ export async function submitStyleRewrite(
 }
 
 // Convenience methods for style operations with polling
-export async function submitStyleCheckAndGetResult(
+export async function styleCheck(
   checkRequest: StyleCheckRequest,
   apiKey: string,
 ): Promise<AnalysisResult> {
@@ -122,7 +122,7 @@ export async function submitStyleCheckAndGetResult(
   throw new Error('No workflow_id received from initial style check request');
 }
 
-export async function submitStyleSuggestionAndGetResult(
+export async function styleSuggestions(
   suggestionRequest: StyleSuggestionRequest,
   apiKey: string,
 ): Promise<AnalysisResult> {
@@ -141,7 +141,7 @@ export async function submitStyleSuggestionAndGetResult(
   throw new Error('No workflow_id received from initial style suggestion request');
 }
 
-export async function submitStyleRewriteAndGetResult(
+export async function styleRewrite(
   rewriteRequest: StyleRewriteRequest,
   apiKey: string,
 ): Promise<AnalysisResult> {
