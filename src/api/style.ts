@@ -92,17 +92,6 @@ interface BaseChange {
   change_start_char_idx: number;
 }
 
-interface BaseActivityOutput {
-  error: string | null;
-  duration: number;
-  model: string;
-  parameters: Parameters;
-  provider: string;
-  run_id: string;
-  token_usage: TokenUsage;
-  workflow_id: string;
-}
-
 export interface Analysis {
   avg_sentence_length: number;
   avg_word_length: number;
@@ -142,7 +131,7 @@ export interface AnalysisSubmissionResponse extends AnalysisResponseBase {
 export interface AnalysisPollingResponse extends AnalysisResponseBase {
   status: Status;
   workflow_id: string;
-  error_message?: string;
+  error_message?: string | null;
   result?: AnalysisResult;
 }
 
@@ -165,6 +154,7 @@ export interface AnalysisResult {
   merged_text: string;
   original_text: string;
   results: HeliosOneWorkflowOutput[];
+  error_message?: string | null;
 }
 
 export interface WorkflowError {
@@ -195,9 +185,18 @@ export interface TokenUsage {
 }
 
 // Activity Outputs
-export interface AcrolinxScorerActivityOutput extends BaseActivityOutput {
+export interface AcrolinxScorerActivityOutput {
   issues: Issue[];
   score: number;
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  repair_log?: RepairLog[];
 }
 
 export interface Issue {
@@ -208,12 +207,26 @@ export interface Issue {
   type: string;
 }
 
-export interface ContentScorerActivityOutput extends BaseActivityOutput {
+export interface ContentScorerActivityOutput {
   analysis: ContentAnalysis | null;
   feedback: ContentQualityFeedback | null;
   score: number;
   suggestions: ContentSuggestions[] | null;
   target_score: TargetScore | null;
+  repair_log: RepairLog[];
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+}
+
+export interface RepairLog {
+  text: string;
+  context: string;
 }
 
 export interface ContentAnalysis {
@@ -263,62 +276,135 @@ export interface HeliosOneWorkflowOutput {
   simple_vocabulary_result: SimpleVocabOutput | null;
   tone_result: ToneCheckOutput | null;
   style_guide_result: StyleGuideOutput | null;
+  repair_log?: RepairLog[];
 }
 
-export interface GrammarActivityOutput extends BaseActivityOutput {
+export interface GrammarActivityOutput {
   changes: GrammarChange[];
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  repair_log?: RepairLog[];
 }
 
 export interface GrammarChange extends BaseChange {
   category: GrammarCategory;
 }
 
-export interface MergingActivityOutput extends BaseActivityOutput {
+export interface MergingActivityOutput {
   merged_text: string;
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  repair_log?: RepairLog[];
 }
 
-export interface ParserResponse extends BaseActivityOutput {
+export interface ParserResponse {
   extracted_text: string;
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  repair_log?: RepairLog[];
 }
 
-export interface SentenceLengthActivityOutput extends BaseActivityOutput {
+export interface SentenceLengthActivityOutput {
   text: string;
   changes: SentenceLengthChange[];
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  repair_log?: RepairLog[];
 }
 
 export interface SentenceLengthChange extends BaseChange {
   category: SentenceLengthCategory;
 }
 
-export interface SentenceStructureOutput extends BaseActivityOutput {
+export interface SentenceStructureOutput {
   text: string;
   changes: SentenceStructureChange[];
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  repair_log?: RepairLog[];
 }
 
 export interface SentenceStructureChange extends BaseChange {
   category: SentenceStructureCategory;
 }
 
-export interface SimpleVocabOutput extends BaseActivityOutput {
+export interface SimpleVocabOutput {
   text: string;
   changes: SimpleVocabChange[];
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  repair_log?: RepairLog[];
 }
 
 export interface SimpleVocabChange extends BaseChange {
   category: SimpleVocabChangeCategory;
 }
 
-export interface ToneCheckOutput extends BaseActivityOutput {
+export interface ToneCheckOutput {
   text: string;
   changes: ToneChange[];
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  repair_log?: RepairLog[];
 }
 
 export interface ToneChange extends BaseChange {
   category: ToneCategories;
 }
 
-export interface StyleGuideOutput extends BaseActivityOutput {
+export interface StyleGuideOutput {
   changes: StyleGuideChange[];
+  error: string | null;
+  duration: number;
+  model: string;
+  parameters: Parameters;
+  provider: string;
+  run_id: string;
+  token_usage: TokenUsage;
+  workflow_id: string;
+  repair_log?: RepairLog[];
 }
 
 export interface StyleGuideChange extends BaseChange {

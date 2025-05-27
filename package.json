@@ -2,17 +2,18 @@
   "name": "@acrolinx/typescript-sdk",
   "version": "0.0.19",
   "type": "module",
-  "main": "./dist/acrolinx-typescript-sdk.umd.js",
+  "main": "./dist/acrolinx-typescript-sdk.umd.cjs",
   "module": "./dist/acrolinx-typescript-sdk.js",
   "types": "./dist/main.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "dist/**/*.d.ts"
   ],
   "exports": {
     ".": {
       "types": "./dist/main.d.ts",
       "import": "./dist/acrolinx-typescript-sdk.js",
-      "require": "./dist/acrolinx-typescript-sdk.umd.js"
+      "require": "./dist/acrolinx-typescript-sdk.umd.cjs"
     }
   },
   "scripts": {

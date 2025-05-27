@@ -1,0 +1,1927 @@
+{
+  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+  "status": "completed",
+  "result": {
+      "errors": [],
+      "final_scores": {
+          "acrolinx_score": null,
+          "content_score": {
+              "error": null,
+              "duration": 0.01502,
+              "model": "",
+              "parameters": {
+                  "dialect": null,
+                  "tone": null,
+                  "style_guide": null,
+                  "max_words": null
+              },
+              "provider": "",
+              "repair_log": [],
+              "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+              "token_usage": {
+                  "completion_tokens": -1,
+                  "prompt_tokens": -1,
+                  "total_tokens": -1
+              },
+              "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+              "analysis": {
+                  "avg_sentence_length": 20.964285714285715,
+                  "avg_word_length": 4.916524701873935,
+                  "complexity_score": 13.29,
+                  "readability_score": 28.13,
+                  "sentence_count": 28,
+                  "vocabulary_score": 54.855195911413965,
+                  "word_count": 587
+              },
+              "feedback": "Low content quality. The text needs significant revision for better readability.",
+              "score": 0.0,
+              "suggestions": [
+                  "Use shorter sentences and simpler words to improve readability.",
+                  "Your text may be too complex. Consider simplifying vocabulary and sentence structure."
+              ],
+              "target_score": null
+          }
+      },
+      "initial_scores": {
+          "acrolinx_score": null,
+          "content_score": {
+              "error": null,
+              "duration": 0.01183,
+              "model": "",
+              "parameters": {
+                  "dialect": null,
+                  "tone": null,
+                  "style_guide": null,
+                  "max_words": null
+              },
+              "provider": "",
+              "repair_log": [],
+              "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+              "token_usage": {
+                  "completion_tokens": -1,
+                  "prompt_tokens": -1,
+                  "total_tokens": -1
+              },
+              "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+              "analysis": {
+                  "avg_sentence_length": 24.26923076923077,
+                  "avg_word_length": 4.946117274167987,
+                  "complexity_score": 15.24,
+                  "readability_score": 25.49,
+                  "sentence_count": 26,
+                  "vocabulary_score": 55.942947702060216,
+                  "word_count": 631
+              },
+              "feedback": "Low content quality. The text needs significant revision for better readability.",
+              "score": 0.0,
+              "suggestions": [
+                  "Use shorter sentences and simpler words to improve readability.",
+                  "Your text may be too complex. Consider simplifying vocabulary and sentence structure."
+              ],
+              "target_score": null
+          }
+      },
+      "merged_text": "Palma de Mallorca is a beautiful island paradise in the Mediterranean. It's often called Palma—Palma de Mallorca, often simply called Palma—is the capital of the Balearic Islands, an autonomous region of Spain. It blends rich history, stunning natural beauty, and lively modern life, and is a popular vacation destination.\n\nThe following article discusses vacationing in Palma, Spain:\n\nPalma: Your Perfect Mediterranean Escape\nDiscover Mallorca's Lively Capital\nLocated on the south-western coast of Mallorca, Palma is a city that combines historical beauty with modern style. Palma offers an appealing blend of relaxation and adventure. With its impressive Gothic cathedral, winding old town, sun-drenched beaches and a lively culinary scene, making it a perfect destination for every type of traveler.\n\nA Journey Through History and Beauty\nYour Palma adventure likely starts at its amazing main attraction, Palma Cathedral. This Gothic masterpiece overlooks the Bay of Palma. Inside, the size and stunning stained-glass windows, including the world's largest rose window, are truly impressive.\n\nNext to the cathedral is the Royal Palace of La Almudaina, a former Arab fortress made into a royal residence. Its beautiful courtyards and richly decorated rooms give a glimpse into the island's royal past. From here, walk into the Casco Antiguo (Old Town), a maze of narrow cobbled streets, charming squares, and hidden courtyards. One will find boutique shops, traditional tapas bars, and ancient churches; each turn showing a new delight. Visit the Arab Baths (Banys Àrabs), one of the few left examples of Moorish architecture in Palma. \n\nBeyond the historical core, Palma includes its coastal location. The Paseo Marítimo, a palm-lined promenade stretching along the waterfront, is perfect for relaxed walks, cycling, or simply enjoying the sea breeze. Several urban beaches, such as Playa de Palma and Cala Mayor, are readily accessible and provide golden sands and clear waters for sunbathing and swimming. For a more secluded coves, a short drive takes you to some of Mallorca's most untouched beaches.\n\nArt and culture prosper in Palma. The Es Baluard Museum of Modern and Contemporary Art presents an impressive collection of Balearic and international artists within a remarkable contemporary building integrated into the city's old defenses. El Pueblo Español provides a compelling architectural tour, reproducing famous Spanish buildings and plazas in miniature.\n\nPalma offers a delightful gastronomic experience. From traditional Mallorcan cuisine including fresh seafood, 'sobrassada' (cured sausage) and 'tumbet' (vegetable dish), to international haute cuisine, the city satisfies diverse culinary preferences. The Santa Catalina neighborhood is particularly notable for its upscale restaurants and vibrant nightlife. A visit to Palma would be incomplete without trying some local wine and ensaimada, a spiral-shaped pastry.\n\nPalma: An Unforgettable Island Getaway\n\nPalma provides a holiday experience that combines cultural experiences, historical discovery, beach relaxation, and culinary delights. If one is fascinated by old architecture, attracted to the shimmering Mediterranean, or wishes to sample authentic Spanish flavors, Palma satisfies in all aspects. Its welcoming vibe, varied things to do, and stunning views make it an unforgettable and enriching destination.",
+      "original_text": "A captivating island paradise in the Mediterranean, Palma de Mallorca, often simply called Palma, is the capital of the Balearic Islands, an autonomous community of Spain. It seamlessly blends rich history, stunning natural beauty, and vibrant modern life, making it a perennial favorite for vacationers.\n\nHere's an article about vacationing in Palma, Spain:\n\nPalma: Your Perfect Mediterranean Escape\nDiscover the Charms of Mallorca's Vibrant Capital\nNestled on the southwestern coast of Mallorca, Palma is a city that effortlessly marries historical grandeur with contemporary flair. With its imposing Gothic cathedral, labyrinthine old town, sun-drenched beaches, and a lively culinary scene, Palma offers an irresistible blend of relaxation and adventure, making it an ideal destination for every type of traveler.\n\nA Journey Through History and Beauty\nYour Palma adventure will likely begin and revolve around its magnificent centerpiece: La Seu, Palma Cathedral. This breathtaking Gothic masterpiece stands proudly overlooking the Bay of Palma, its intricate details and soaring architecture a testament to centuries of artistry. Inside, the sheer scale and stunning stained-glass windows, including the world's largest rose window, are truly awe-inspiring.\n\nAdjacent to the cathedral lies the Royal Palace of La Almudaina, a former Arab fortress transformed into a royal residence. Its beautiful courtyards and richly decorated rooms offer a glimpse into the island's regal past. From here, wander into the Casco Antiguo (Old Town), a maze of narrow cobbled streets, charming squares, and hidden courtyards. You'll stumble upon boutique shops, traditional tapas bars, and ancient churches, each turn revealing a new delight. Don't miss the chance to explore the Arab Baths (Banys Àrabs), one of the few remaining examples of Moorish architecture in Palma.\n\nBeyond the historical core, Palma embraces its coastal location. The Paseo Marítimo, a palm-lined promenade stretching along the waterfront, is perfect for leisurely strolls, cycling, or simply enjoying the sea breeze. Several urban beaches, such as Playa de Palma and Cala Mayor, are easily accessible, offering golden sands and clear waters for sunbathing and swimming. For those seeking more secluded coves, a short drive will lead you to some of Mallorca's most pristine beaches.\n\nArt and culture thrive in Palma. The Es Baluard Museum of Modern and Contemporary Art showcases an impressive collection of Balearic and international artists within a striking contemporary building integrated into the city's old fortifications. The Pueblo Español offers a fascinating architectural tour, reproducing famous Spanish buildings and plazas in miniature.\n\nWhen it comes to dining, Palma is a gastronomic delight. From traditional Mallorcan cuisine featuring fresh seafood, 'sobrassada' (cured sausage), and 'tumbet' (vegetable dish), to international fine dining, the city caters to every palate. The Santa Catalina neighborhood is particularly renowned for its trendy restaurants and vibrant nightlife. And, of course, no visit to Palma is complete without sampling some local wine and ensaimada, a spiral-shaped pastry.\n\nPalma: An Unforgettable Island Getaway\nPalma offers a vacation experience that combines cultural immersion, historical exploration, beach relaxation, and culinary delights. Whether you're captivated by ancient architecture, drawn to the shimmering Mediterranean, or eager to savor authentic Spanish flavors, Palma delivers on all fronts. Its welcoming atmosphere, diverse attractions, and stunning scenery make it an unforgettable destination for a truly enriching escape.",
+      "results": [
+          {
+              "created_at": "2025-05-27T15:02:07.761860+00:00Z",
+              "errors": [],
+              "initial_scores": {
+                  "acrolinx_score": null,
+                  "content_score": null
+              },
+              "final_scores": {
+                  "acrolinx_score": null,
+                  "content_score": null
+              },
+              "input_file": "A captivating island paradise in the Mediterranean, Palma de Mallorca, often simply called Palma, is the capital of the Balearic Islands, an autonomous community of Spain. It seamlessly blends rich history, stunning natural beauty, and vibrant modern life, making it a perennial favorite for vacationers.\n\nHere's an article about vacationing in Palma, Spain:",
+              "parameters": {
+                  "dialect": "american_english",
+                  "tone": "formal",
+                  "style_guide": "microsoft",
+                  "max_words": 25
+              },
+              "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+              "workflow_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+              "grammar_result": {
+                  "error": null,
+                  "duration": 1.086775,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": "american_english",
+                      "tone": "formal",
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "ges\": []\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": ": []\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 14,
+                      "prompt_tokens": 683,
+                      "total_tokens": 697
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "changes": []
+              },
+              "merging_result": null,
+              "parser_result": null,
+              "sentence_length_result": {
+                  "error": null,
+                  "duration": 1.064083,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": 25
+                  },
+                  "provider": "azure",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 126,
+                      "prompt_tokens": 677,
+                      "total_tokens": 803
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "A captivating island paradise in the Mediterranean, Palma de Mallorca, often simply called Palma, is the capital of the Balearic Islands, an autonomous community of Spain. It seamlessly blends rich history, stunning natural beauty, and vibrant modern life, making it a perennial favorite for vacationers.\n\nHere's an article about vacationing in Palma, Spain:",
+                  "changes": [
+                      {
+                          "original": "A captivating island paradise in the Mediterranean, Palma de Mallorca, often simply called Palma, is the capital of the Balearic Islands, an autonomous community of Spain.",
+                          "modified": "Palma de Mallorca is a captivating island paradise in the Mediterranean. It's often called Palma and is the capital of the Balearic Islands, an autonomous community of Spain.",
+                          "change_start_char_idx": 0,
+                          "category": "extract"
+                      }
+                  ]
+              },
+              "sentence_structure_result": {
+                  "error": null,
+                  "duration": 1.430438,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 76,
+                      "prompt_tokens": 937,
+                      "total_tokens": 1013
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "A captivating island paradise in the Mediterranean, Palma de Mallorca, often simply called Palma, is the capital of the Balearic Islands, an autonomous community of Spain. It seamlessly blends rich history, stunning natural beauty, and vibrant modern life, making it a perennial favorite for vacationers.\n\nHere's an article about vacationing in Palma, Spain:",
+                  "changes": [
+                      {
+                          "original": "making it a perennial favorite for vacationers.",
+                          "modified": "Vacationers often favor it.",
+                          "change_start_char_idx": 230,
+                          "category": "hidden_verbs"
+                      }
+                  ]
+              },
+              "simple_vocabulary_result": {
+                  "error": null,
+                  "duration": 2.603402,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 304,
+                      "prompt_tokens": 732,
+                      "total_tokens": 1036
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "A captivating island paradise in the Mediterranean, Palma de Mallorca, often simply called Palma, is the capital of the Balearic Islands, an autonomous community of Spain. It seamlessly blends rich history, stunning natural beauty, and vibrant modern life, making it a perennial favorite for vacationers.\n\nHere's an article about vacationing in Palma, Spain:",
+                  "changes": [
+                      {
+                          "original": "captivating",
+                          "modified": "beautiful",
+                          "change_start_char_idx": 2,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "autonomous community",
+                          "modified": "region",
+                          "change_start_char_idx": 144,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "seamlessly blends",
+                          "modified": "mixes",
+                          "change_start_char_idx": 162,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "vibrant",
+                          "modified": "lively",
+                          "change_start_char_idx": 199,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "perennial favorite",
+                          "modified": "popular choice",
+                          "change_start_char_idx": 213,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "vacationers",
+                          "modified": "tourists",
+                          "change_start_char_idx": 233,
+                          "category": "vocabulary"
+                      }
+                  ]
+              },
+              "tone_result": {
+                  "error": null,
+                  "duration": 2.046352,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": "american_english",
+                      "tone": "formal",
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 196,
+                      "prompt_tokens": 794,
+                      "total_tokens": 990
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "A captivating island paradise in the Mediterranean, Palma de Mallorca, often simply called Palma, is the capital of the Balearic Islands, an autonomous community of Spain. It seamlessly blends rich history, stunning natural beauty, and vibrant modern life, making it a perennial favorite for vacationers.\n\nHere's an article about vacationing in Palma, Spain:",
+                  "changes": [
+                      {
+                          "original": "seamlessly blends",
+                          "modified": "blends",
+                          "change_start_char_idx": 145,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "making it a perennial favorite for vacationers.",
+                          "modified": "and is a popular vacation destination.",
+                          "change_start_char_idx": 170,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "Here's an article about vacationing in Palma, Spain:",
+                          "modified": "The following article discusses vacationing in Palma, Spain:",
+                          "change_start_char_idx": 220,
+                          "category": "word_choice"
+                      }
+                  ]
+              },
+              "style_guide_result": {
+                  "error": null,
+                  "duration": 2.420708,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 230,
+                      "prompt_tokens": 1532,
+                      "total_tokens": 1762
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "changes": [
+                      {
+                          "original": "A",
+                          "modified": "A",
+                          "change_start_char_idx": 0,
+                          "category": "capitalization"
+                      },
+                      {
+                          "original": ", Palma de Mallorca, often simply called Palma, is",
+                          "modified": "—Palma de Mallorca, often simply called Palma—is",
+                          "change_start_char_idx": 47,
+                          "category": "punctuation"
+                      },
+                      {
+                          "original": "making",
+                          "modified": "making",
+                          "change_start_char_idx": 310,
+                          "category": "grammar_and_usage"
+                      },
+                      {
+                          "original": "Here's",
+                          "modified": "Here is",
+                          "change_start_char_idx": 392,
+                          "category": "grammar_and_usage"
+                      }
+                  ]
+              }
+          },
+          {
+              "created_at": "2025-05-27T15:02:11.163986+00:00Z",
+              "errors": [],
+              "initial_scores": {
+                  "acrolinx_score": null,
+                  "content_score": null
+              },
+              "final_scores": {
+                  "acrolinx_score": null,
+                  "content_score": null
+              },
+              "input_file": "Palma: Your Perfect Mediterranean Escape\nDiscover the Charms of Mallorca's Vibrant Capital\nNestled on the southwestern coast of Mallorca, Palma is a city that effortlessly marries historical grandeur with contemporary flair. With its imposing Gothic cathedral, labyrinthine old town, sun-drenched beaches, and a lively culinary scene, Palma offers an irresistible blend of relaxation and adventure, making it an ideal destination for every type of traveler.\n\nA Journey Through History and Beauty\nYour Palma adventure will likely begin and revolve around its magnificent centerpiece: La Seu, Palma Cathedral. This breathtaking Gothic masterpiece stands proudly overlooking the Bay of Palma, its intricate details and soaring architecture a testament to centuries of artistry. Inside, the sheer scale and stunning stained-glass windows, including the world's largest rose window, are truly awe-inspiring.",
+              "parameters": {
+                  "dialect": "american_english",
+                  "tone": "formal",
+                  "style_guide": "microsoft",
+                  "max_words": 25
+              },
+              "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+              "workflow_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+              "grammar_result": {
+                  "error": null,
+                  "duration": 1.337651,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": "american_english",
+                      "tone": "formal",
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 64,
+                      "prompt_tokens": 776,
+                      "total_tokens": 840
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "changes": [
+                      {
+                          "original": "marries",
+                          "modified": "marry",
+                          "change_start_char_idx": 120,
+                          "category": "verbs"
+                      }
+                  ]
+              },
+              "merging_result": null,
+              "parser_result": null,
+              "sentence_length_result": {
+                  "error": null,
+                  "duration": 2.464107,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": 25
+                  },
+                  "provider": "azure",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 287,
+                      "prompt_tokens": 730,
+                      "total_tokens": 1017
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Palma: Your Perfect Mediterranean Escape\nDiscover the Charms of Mallorca's Vibrant Capital\nNestled on the southwestern coast of Mallorca, Palma is a city that effortlessly marries historical grandeur with contemporary flair. With its imposing Gothic cathedral, labyrinthine old town, sun-drenched beaches, and a lively culinary scene, Palma offers an irresistible blend of relaxation and adventure, making it an ideal destination for every type of traveler.\n\nA Journey Through History and Beauty\nYour Palma adventure will likely begin and revolve around its magnificent centerpiece: La Seu, Palma Cathedral. This breathtaking Gothic masterpiece stands proudly overlooking the Bay of Palma, its intricate details and soaring architecture a testament to centuries of artistry. Inside, the sheer scale and stunning stained-glass windows, including the world's largest rose window, are truly awe-inspiring.",
+                  "changes": [
+                      {
+                          "original": "Nestled on the southwestern coast of Mallorca, Palma is a city that effortlessly marries historical grandeur with contemporary flair.",
+                          "modified": "Palma is nestled on Mallorca's southwestern coast. It effortlessly marries historical grandeur with contemporary flair.",
+                          "change_start_char_idx": 69,
+                          "category": "extract"
+                      },
+                      {
+                          "original": "With its imposing Gothic cathedral, labyrinthine old town, sun-drenched beaches, and a lively culinary scene, Palma offers an irresistible blend of relaxation and adventure, making it an ideal destination for every type of traveler.",
+                          "modified": "Palma offers an irresistible blend of relaxation and adventure. It has an imposing Gothic cathedral, labyrinthine old town, sun-drenched beaches, and a lively culinary scene, making it an ideal destination.",
+                          "change_start_char_idx": 195,
+                          "category": "extract"
+                      },
+                      {
+                          "original": "making it an ideal destination for every type of traveler",
+                          "modified": "It is an ideal destination",
+                          "change_start_char_idx": 361,
+                          "category": "shorten"
+                      }
+                  ]
+              },
+              "sentence_structure_result": {
+                  "error": null,
+                  "duration": 2.644981,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 240,
+                      "prompt_tokens": 1030,
+                      "total_tokens": 1270
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Palma: Your Perfect Mediterranean Escape\nDiscover the Charms of Mallorca's Vibrant Capital\nNestled on the southwestern coast of Mallorca, Palma is a city that effortlessly marries historical grandeur with contemporary flair. With its imposing Gothic cathedral, labyrinthine old town, sun-drenched beaches, and a lively culinary scene, Palma offers an irresistible blend of relaxation and adventure, making it an ideal destination for every type of traveler.\n\nA Journey Through History and Beauty\nYour Palma adventure will likely begin and revolve around its magnificent centerpiece: La Seu, Palma Cathedral. This breathtaking Gothic masterpiece stands proudly overlooking the Bay of Palma, its intricate details and soaring architecture a testament to centuries of artistry. Inside, the sheer scale and stunning stained-glass windows, including the world's largest rose window, are truly awe-inspiring.",
+                  "changes": [
+                      {
+                          "original": "is a city that effortlessly marries",
+                          "modified": "marries",
+                          "change_start_char_idx": 91,
+                          "category": "complex_verbs"
+                      },
+                      {
+                          "original": "making it an ideal destination for every type of traveler.",
+                          "modified": "It is a great place for all travelers.",
+                          "change_start_char_idx": 374,
+                          "category": "complex_verbs"
+                      },
+                      {
+                          "original": "will likely begin and revolve around",
+                          "modified": "likely starts at",
+                          "change_start_char_idx": 483,
+                          "category": "complex_verbs"
+                      },
+                      {
+                          "original": "stands proudly overlooking",
+                          "modified": "overlooks",
+                          "change_start_char_idx": 590,
+                          "category": "complex_verbs"
+                      }
+                  ]
+              },
+              "simple_vocabulary_result": {
+                  "error": null,
+                  "duration": 5.665143,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 825,
+                      "prompt_tokens": 825,
+                      "total_tokens": 1650
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Palma: Your Perfect Mediterranean Escape\nDiscover the Charms of Mallorca's Vibrant Capital\nNestled on the southwestern coast of Mallorca, Palma is a city that effortlessly marries historical grandeur with contemporary flair. With its imposing Gothic cathedral, labyrinthine old town, sun-drenched beaches, and a lively culinary scene, Palma offers an irresistible blend of relaxation and adventure, making it an ideal destination for every type of traveler.\n\nA Journey Through History and Beauty\nYour Palma adventure will likely begin and revolve around its magnificent centerpiece: La Seu, Palma Cathedral. This breathtaking Gothic masterpiece stands proudly overlooking the Bay of Palma, its intricate details and soaring architecture a testament to centuries of artistry. Inside, the sheer scale and stunning stained-glass windows, including the world's largest rose window, are truly awe-inspiring.",
+                  "changes": [
+                      {
+                          "original": "vibrant",
+                          "modified": "lively",
+                          "change_start_char_idx": 52,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "Nestled",
+                          "modified": "Located",
+                          "change_start_char_idx": 59,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "marries",
+                          "modified": "combines",
+                          "change_start_char_idx": 105,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "grandeur",
+                          "modified": "beauty",
+                          "change_start_char_idx": 116,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "contemporary flair",
+                          "modified": "modern style",
+                          "change_start_char_idx": 126,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "imposing",
+                          "modified": "impressive",
+                          "change_start_char_idx": 145,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "labyrinthine",
+                          "modified": "winding",
+                          "change_start_char_idx": 171,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "irresistible",
+                          "modified": "appealing",
+                          "change_start_char_idx": 213,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "ideal",
+                          "modified": "perfect",
+                          "change_start_char_idx": 261,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "magnificent",
+                          "modified": "amazing",
+                          "change_start_char_idx": 335,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "centerpiece",
+                          "modified": "main attraction",
+                          "change_start_char_idx": 346,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "breathtaking",
+                          "modified": "amazing",
+                          "change_start_char_idx": 378,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "intricate",
+                          "modified": "detailed",
+                          "change_start_char_idx": 424,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "soaring",
+                          "modified": "tall",
+                          "change_start_char_idx": 434,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "testament",
+                          "modified": "example",
+                          "change_start_char_idx": 460,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "sheer scale",
+                          "modified": "size",
+                          "change_start_char_idx": 501,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "awe-inspiring",
+                          "modified": "impressive",
+                          "change_start_char_idx": 562,
+                          "category": "vocabulary"
+                      }
+                  ]
+              },
+              "tone_result": {
+                  "error": null,
+                  "duration": 3.99343,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": "american_english",
+                      "tone": "formal",
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 551,
+                      "prompt_tokens": 887,
+                      "total_tokens": 1438
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Palma: Your Perfect Mediterranean Escape\nDiscover the Charms of Mallorca's Vibrant Capital\nNestled on the southwestern coast of Mallorca, Palma is a city that effortlessly marries historical grandeur with contemporary flair. With its imposing Gothic cathedral, labyrinthine old town, sun-drenched beaches, and a lively culinary scene, Palma offers an irresistible blend of relaxation and adventure, making it an ideal destination for every type of traveler.\n\nA Journey Through History and Beauty\nYour Palma adventure will likely begin and revolve around its magnificent centerpiece: La Seu, Palma Cathedral. This breathtaking Gothic masterpiece stands proudly overlooking the Bay of Palma, its intricate details and soaring architecture a testament to centuries of artistry. Inside, the sheer scale and stunning stained-glass windows, including the world's largest rose window, are truly awe-inspiring.",
+                  "changes": [
+                      {
+                          "original": "Discover the Charms of Mallorca's Vibrant Capital",
+                          "modified": "Discover Mallorca's Vibrant Capital",
+                          "change_start_char_idx": 38,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "effortlessly marries",
+                          "modified": "combines",
+                          "change_start_char_idx": 119,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "imposing Gothic cathedral, labyrinthine old town, sun-drenched beaches, and a lively culinary scene",
+                          "modified": "Gothic cathedral, old town, beaches, and culinary scene",
+                          "change_start_char_idx": 137,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "an irresistible blend of relaxation and adventure, making it an ideal destination for every type of traveler.",
+                          "modified": "a blend of relaxation and adventure.",
+                          "change_start_char_idx": 232,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "Your Palma adventure will likely begin and revolve around its magnificent centerpiece",
+                          "modified": "Your Palma adventure begins with its centerpiece",
+                          "change_start_char_idx": 314,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": ": La Seu, Palma Cathedral.",
+                          "modified": ", Palma Cathedral.",
+                          "change_start_char_idx": 390,
+                          "category": "punctuation"
+                      },
+                      {
+                          "original": "This breathtaking Gothic masterpiece stands proudly overlooking the Bay of Palma, its intricate details and soaring architecture a testament to centuries of artistry.",
+                          "modified": "This Gothic masterpiece overlooks the Bay of Palma.",
+                          "change_start_char_idx": 393,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "the sheer scale and stunning stained-glass windows, including the world's largest rose window, are truly awe-inspiring.",
+                          "modified": "the stained-glass windows are awe-inspiring.",
+                          "change_start_char_idx": 570,
+                          "category": "word_choice"
+                      }
+                  ]
+              },
+              "style_guide_result": {
+                  "error": null,
+                  "duration": 2.190095,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 203,
+                      "prompt_tokens": 1625,
+                      "total_tokens": 1828
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "changes": [
+                      {
+                          "original": "southwestern",
+                          "modified": "south-western",
+                          "change_start_char_idx": 101,
+                          "category": "punctuation"
+                      },
+                      {
+                          "original": "With its imposing Gothic cathedral, labyrinthine old town, sun-drenched beaches, and a lively culinary scene",
+                          "modified": "With its imposing Gothic cathedral, labyrinthine old town, sun-drenched beaches and a lively culinary scene",
+                          "change_start_char_idx": 172,
+                          "category": "punctuation"
+                      },
+                      {
+                          "original": "will",
+                          "modified": "should",
+                          "change_start_char_idx": 431,
+                          "category": "grammar_and_usage"
+                      }
+                  ]
+              }
+          },
+          {
+              "created_at": "2025-05-27T15:02:09.948236+00:00Z",
+              "errors": [],
+              "initial_scores": {
+                  "acrolinx_score": null,
+                  "content_score": null
+              },
+              "final_scores": {
+                  "acrolinx_score": null,
+                  "content_score": null
+              },
+              "input_file": "Adjacent to the cathedral lies the Royal Palace of La Almudaina, a former Arab fortress transformed into a royal residence. Its beautiful courtyards and richly decorated rooms offer a glimpse into the island's regal past. From here, wander into the Casco Antiguo (Old Town), a maze of narrow cobbled streets, charming squares, and hidden courtyards. You'll stumble upon boutique shops, traditional tapas bars, and ancient churches, each turn revealing a new delight. Don't miss the chance to explore the Arab Baths (Banys Àrabs), one of the few remaining examples of Moorish architecture in Palma.\n\nBeyond the historical core, Palma embraces its coastal location. The Paseo Marítimo, a palm-lined promenade stretching along the waterfront, is perfect for leisurely strolls, cycling, or simply enjoying the sea breeze. Several urban beaches, such as Playa de Palma and Cala Mayor, are easily accessible, offering golden sands and clear waters for sunbathing and swimming. For those seeking more secluded coves, a short drive will lead you to some of Mallorca's most pristine beaches.",
+              "parameters": {
+                  "dialect": "american_english",
+                  "tone": "formal",
+                  "style_guide": "microsoft",
+                  "max_words": 25
+              },
+              "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+              "workflow_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+              "grammar_result": {
+                  "error": null,
+                  "duration": 1.142603,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": "american_english",
+                      "tone": "formal",
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "ges\": []\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": ": []\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 14,
+                      "prompt_tokens": 837,
+                      "total_tokens": 851
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "changes": []
+              },
+              "merging_result": null,
+              "parser_result": null,
+              "sentence_length_result": {
+                  "error": null,
+                  "duration": 1.020643,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": 25
+                  },
+                  "provider": "azure",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "ges\": []\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": ": []\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 14,
+                      "prompt_tokens": 644,
+                      "total_tokens": 658
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Adjacent to the cathedral lies the Royal Palace of La Almudaina, a former Arab fortress transformed into a royal residence. Its beautiful courtyards and richly decorated rooms offer a glimpse into the island's regal past. From here, wander into the Casco Antiguo (Old Town), a maze of narrow cobbled streets, charming squares, and hidden courtyards. You'll stumble upon boutique shops, traditional tapas bars, and ancient churches, each turn revealing a new delight. Don't miss the chance to explore the Arab Baths (Banys Àrabs), one of the few remaining examples of Moorish architecture in Palma.\n\nBeyond the historical core, Palma embraces its coastal location. The Paseo Marítimo, a palm-lined promenade stretching along the waterfront, is perfect for leisurely strolls, cycling, or simply enjoying the sea breeze. Several urban beaches, such as Playa de Palma and Cala Mayor, are easily accessible, offering golden sands and clear waters for sunbathing and swimming. For those seeking more secluded coves, a short drive will lead you to some of Mallorca's most pristine beaches.",
+                  "changes": []
+              },
+              "sentence_structure_result": {
+                  "error": null,
+                  "duration": 4.192686,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 532,
+                      "prompt_tokens": 1091,
+                      "total_tokens": 1623
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Adjacent to the cathedral lies the Royal Palace of La Almudaina, a former Arab fortress transformed into a royal residence. Its beautiful courtyards and richly decorated rooms offer a glimpse into the island's regal past. From here, wander into the Casco Antiguo (Old Town), a maze of narrow cobbled streets, charming squares, and hidden courtyards. You'll stumble upon boutique shops, traditional tapas bars, and ancient churches, each turn revealing a new delight. Don't miss the chance to explore the Arab Baths (Banys Àrabs), one of the few remaining examples of Moorish architecture in Palma.\n\nBeyond the historical core, Palma embraces its coastal location. The Paseo Marítimo, a palm-lined promenade stretching along the waterfront, is perfect for leisurely strolls, cycling, or simply enjoying the sea breeze. Several urban beaches, such as Playa de Palma and Cala Mayor, are easily accessible, offering golden sands and clear waters for sunbathing and swimming. For those seeking more secluded coves, a short drive will lead you to some of Mallorca's most pristine beaches.",
+                  "changes": [
+                      {
+                          "original": "lies",
+                          "modified": "is",
+                          "change_start_char_idx": 22,
+                          "category": "hidden_verbs"
+                      },
+                      {
+                          "original": "transformed into",
+                          "modified": "now is",
+                          "change_start_char_idx": 69,
+                          "category": "passive"
+                      },
+                      {
+                          "original": "offer",
+                          "modified": "give",
+                          "change_start_char_idx": 153,
+                          "category": "hidden_verbs"
+                      },
+                      {
+                          "original": "You'll stumble upon",
+                          "modified": "You can find",
+                          "change_start_char_idx": 308,
+                          "category": "phrasal_verbs"
+                      },
+                      {
+                          "original": "revealing",
+                          "modified": "that reveals",
+                          "change_start_char_idx": 394,
+                          "category": "hidden_verbs"
+                      },
+                      {
+                          "original": "Don't miss the chance to explore",
+                          "modified": "Visit",
+                          "change_start_char_idx": 412,
+                          "category": "hidden_verbs"
+                      },
+                      {
+                          "original": "embraces",
+                          "modified": "makes use of",
+                          "change_start_char_idx": 526,
+                          "category": "hidden_verbs"
+                      },
+                      {
+                          "original": "is perfect for",
+                          "modified": "lets you",
+                          "change_start_char_idx": 601,
+                          "category": "hidden_verbs"
+                      },
+                      {
+                          "original": "are easily accessible, offering",
+                          "modified": "are easy to reach, and they give",
+                          "change_start_char_idx": 682,
+                          "category": "hidden_verbs"
+                      },
+                      {
+                          "original": "will lead you",
+                          "modified": "takes you",
+                          "change_start_char_idx": 796,
+                          "category": "modal_verbs"
+                      }
+                  ]
+              },
+              "simple_vocabulary_result": {
+                  "error": null,
+                  "duration": 4.117552,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 581,
+                      "prompt_tokens": 886,
+                      "total_tokens": 1467
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Adjacent to the cathedral lies the Royal Palace of La Almudaina, a former Arab fortress transformed into a royal residence. Its beautiful courtyards and richly decorated rooms offer a glimpse into the island's regal past. From here, wander into the Casco Antiguo (Old Town), a maze of narrow cobbled streets, charming squares, and hidden courtyards. You'll stumble upon boutique shops, traditional tapas bars, and ancient churches, each turn revealing a new delight. Don't miss the chance to explore the Arab Baths (Banys Àrabs), one of the few remaining examples of Moorish architecture in Palma.\n\nBeyond the historical core, Palma embraces its coastal location. The Paseo Marítimo, a palm-lined promenade stretching along the waterfront, is perfect for leisurely strolls, cycling, or simply enjoying the sea breeze. Several urban beaches, such as Playa de Palma and Cala Mayor, are easily accessible, offering golden sands and clear waters for sunbathing and swimming. For those seeking more secluded coves, a short drive will lead you to some of Mallorca's most pristine beaches.",
+                  "changes": [
+                      {
+                          "original": "Adjacent to",
+                          "modified": "Next to",
+                          "change_start_char_idx": 0,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "lies",
+                          "modified": "is",
+                          "change_start_char_idx": 20,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "transformed into",
+                          "modified": "made into",
+                          "change_start_char_idx": 75,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "regal",
+                          "modified": "royal",
+                          "change_start_char_idx": 163,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "wander into",
+                          "modified": "walk into",
+                          "change_start_char_idx": 179,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "revealing",
+                          "modified": "showing",
+                          "change_start_char_idx": 361,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "explore",
+                          "modified": "see",
+                          "change_start_char_idx": 385,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "remaining",
+                          "modified": "left",
+                          "change_start_char_idx": 431,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "embraces",
+                          "modified": "includes",
+                          "change_start_char_idx": 507,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "leisurely strolls",
+                          "modified": "relaxed walks",
+                          "change_start_char_idx": 586,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "accessible",
+                          "modified": "easy to reach",
+                          "change_start_char_idx": 649,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "pristine",
+                          "modified": "untouched",
+                          "change_start_char_idx": 738,
+                          "category": "vocabulary"
+                      }
+                  ]
+              },
+              "tone_result": {
+                  "error": null,
+                  "duration": 3.400159,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": "american_english",
+                      "tone": "formal",
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 431,
+                      "prompt_tokens": 948,
+                      "total_tokens": 1379
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Adjacent to the cathedral lies the Royal Palace of La Almudaina, a former Arab fortress transformed into a royal residence. Its beautiful courtyards and richly decorated rooms offer a glimpse into the island's regal past. From here, wander into the Casco Antiguo (Old Town), a maze of narrow cobbled streets, charming squares, and hidden courtyards. You'll stumble upon boutique shops, traditional tapas bars, and ancient churches, each turn revealing a new delight. Don't miss the chance to explore the Arab Baths (Banys Àrabs), one of the few remaining examples of Moorish architecture in Palma.\n\nBeyond the historical core, Palma embraces its coastal location. The Paseo Marítimo, a palm-lined promenade stretching along the waterfront, is perfect for leisurely strolls, cycling, or simply enjoying the sea breeze. Several urban beaches, such as Playa de Palma and Cala Mayor, are easily accessible, offering golden sands and clear waters for sunbathing and swimming. For those seeking more secluded coves, a short drive will lead you to some of Mallorca's most pristine beaches.",
+                  "changes": [
+                      {
+                          "original": "lies",
+                          "modified": "is",
+                          "change_start_char_idx": 25,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "Its",
+                          "modified": "Its'",
+                          "change_start_char_idx": 128,
+                          "category": "implicit_style"
+                      },
+                      {
+                          "original": "You'll",
+                          "modified": "One will",
+                          "change_start_char_idx": 303,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "Don't miss",
+                          "modified": "It is recommended not to miss",
+                          "change_start_char_idx": 441,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "embraces",
+                          "modified": "highlights",
+                          "change_start_char_idx": 609,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "is perfect for",
+                          "modified": "provides an ideal setting for",
+                          "change_start_char_idx": 700,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "easily accessible, offering",
+                          "modified": "readily accessible and provide",
+                          "change_start_char_idx": 814,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "For those seeking",
+                          "modified": "For individuals in search of",
+                          "change_start_char_idx": 919,
+                          "category": "word_choice"
+                      }
+                  ]
+              },
+              "style_guide_result": {
+                  "error": null,
+                  "duration": 1.138557,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "ges\": []\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": ": []\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 14,
+                      "prompt_tokens": 1686,
+                      "total_tokens": 1700
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "changes": []
+              }
+          },
+          {
+              "created_at": "2025-05-27T15:02:09.723344+00:00Z",
+              "errors": [],
+              "initial_scores": {
+                  "acrolinx_score": null,
+                  "content_score": null
+              },
+              "final_scores": {
+                  "acrolinx_score": null,
+                  "content_score": null
+              },
+              "input_file": "Art and culture thrive in Palma. The Es Baluard Museum of Modern and Contemporary Art showcases an impressive collection of Balearic and international artists within a striking contemporary building integrated into the city's old fortifications. The Pueblo Español offers a fascinating architectural tour, reproducing famous Spanish buildings and plazas in miniature.\n\nWhen it comes to dining, Palma is a gastronomic delight. From traditional Mallorcan cuisine featuring fresh seafood, 'sobrassada' (cured sausage), and 'tumbet' (vegetable dish), to international fine dining, the city caters to every palate. The Santa Catalina neighborhood is particularly renowned for its trendy restaurants and vibrant nightlife. And, of course, no visit to Palma is complete without sampling some local wine and ensaimada, a spiral-shaped pastry.",
+              "parameters": {
+                  "dialect": "american_english",
+                  "tone": "formal",
+                  "style_guide": "microsoft",
+                  "max_words": 25
+              },
+              "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+              "workflow_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+              "grammar_result": {
+                  "error": null,
+                  "duration": 1.082366,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": "american_english",
+                      "tone": "formal",
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "ges\": []\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": ": []\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 14,
+                      "prompt_tokens": 770,
+                      "total_tokens": 784
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "changes": []
+              },
+              "merging_result": null,
+              "parser_result": null,
+              "sentence_length_result": {
+                  "error": null,
+                  "duration": 1.317359,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": 25
+                  },
+                  "provider": "azure",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 129,
+                      "prompt_tokens": 680,
+                      "total_tokens": 809
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Art and culture thrive in Palma. The Es Baluard Museum of Modern and Contemporary Art showcases an impressive collection of Balearic and international artists within a striking contemporary building integrated into the city's old fortifications. The Pueblo Español offers a fascinating architectural tour, reproducing famous Spanish buildings and plazas in miniature.\n\nWhen it comes to dining, Palma is a gastronomic delight. From traditional Mallorcan cuisine featuring fresh seafood, 'sobrassada' (cured sausage), and 'tumbet' (vegetable dish), to international fine dining, the city caters to every palate. The Santa Catalina neighborhood is particularly renowned for its trendy restaurants and vibrant nightlife. And, of course, no visit to Palma is complete without sampling some local wine and ensaimada, a spiral-shaped pastry.",
+                  "changes": [
+                      {
+                          "original": "The Es Baluard Museum of Modern and Contemporary Art showcases an impressive collection of Balearic and international artists within a striking contemporary building integrated into the city's old fortifications.",
+                          "modified": "The Es Baluard Museum showcases Balearic and international art. Its collection is impressive. It is housed in a striking contemporary building integrated into the city's old fortifications.",
+                          "change_start_char_idx": 0,
+                          "category": "extract"
+                      }
+                  ]
+              },
+              "sentence_structure_result": {
+                  "error": null,
+                  "duration": 2.906828,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 399,
+                      "prompt_tokens": 1024,
+                      "total_tokens": 1423
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Art and culture thrive in Palma. The Es Baluard Museum of Modern and Contemporary Art showcases an impressive collection of Balearic and international artists within a striking contemporary building integrated into the city's old fortifications. The Pueblo Español offers a fascinating architectural tour, reproducing famous Spanish buildings and plazas in miniature.\n\nWhen it comes to dining, Palma is a gastronomic delight. From traditional Mallorcan cuisine featuring fresh seafood, 'sobrassada' (cured sausage), and 'tumbet' (vegetable dish), to international fine dining, the city caters to every palate. The Santa Catalina neighborhood is particularly renowned for its trendy restaurants and vibrant nightlife. And, of course, no visit to Palma is complete without sampling some local wine and ensaimada, a spiral-shaped pastry.",
+                  "changes": [
+                      {
+                          "original": "showcases an impressive collection of Balearic and international artists within a striking contemporary building integrated into the city's old fortifications.",
+                          "modified": "displays a great collection of Balearic and international artists. The museum is located in a modern building that blends with the city's old walls.",
+                          "change_start_char_idx": 49,
+                          "category": "complex_verbs"
+                      },
+                      {
+                          "original": "offers a fascinating architectural tour, reproducing famous Spanish buildings and plazas in miniature.",
+                          "modified": "presents an interesting architectural tour. It recreates famous Spanish buildings and squares in small sizes.",
+                          "change_start_char_idx": 237,
+                          "category": "complex_verbs"
+                      },
+                      {
+                          "original": "When it comes to dining, Palma is a gastronomic delight. From traditional Mallorcan cuisine featuring fresh seafood, 'sobrassada' (cured sausage), and 'tumbet' (vegetable dish), to international fine dining, the city caters to every palate.",
+                          "modified": "Palma is a great place to eat. You can find traditional Mallorcan food with fresh seafood, 'sobrassada' (cured sausage), and 'tumbet' (vegetable dish). The city also offers international fine dining for everyone.",
+                          "change_start_char_idx": 329,
+                          "category": "complex_verbs"
+                      },
+                      {
+                          "original": "is complete without sampling",
+                          "modified": "is complete if you don't try",
+                          "change_start_char_idx": 707,
+                          "category": "complex_verbs"
+                      }
+                  ]
+              },
+              "simple_vocabulary_result": {
+                  "error": null,
+                  "duration": 3.410249,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 457,
+                      "prompt_tokens": 819,
+                      "total_tokens": 1276
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Art and culture thrive in Palma. The Es Baluard Museum of Modern and Contemporary Art showcases an impressive collection of Balearic and international artists within a striking contemporary building integrated into the city's old fortifications. The Pueblo Español offers a fascinating architectural tour, reproducing famous Spanish buildings and plazas in miniature.\n\nWhen it comes to dining, Palma is a gastronomic delight. From traditional Mallorcan cuisine featuring fresh seafood, 'sobrassada' (cured sausage), and 'tumbet' (vegetable dish), to international fine dining, the city caters to every palate. The Santa Catalina neighborhood is particularly renowned for its trendy restaurants and vibrant nightlife. And, of course, no visit to Palma is complete without sampling some local wine and ensaimada, a spiral-shaped pastry.",
+                  "changes": [
+                      {
+                          "original": "thrive",
+                          "modified": "flourish",
+                          "change_start_char_idx": 20,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "showcases",
+                          "modified": "displays",
+                          "change_start_char_idx": 65,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "striking contemporary building integrated into",
+                          "modified": "modern building that fits into",
+                          "change_start_char_idx": 120,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "fortifications",
+                          "modified": "defenses",
+                          "change_start_char_idx": 176,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "offers a fascinating architectural tour, reproducing",
+                          "modified": "shows a copy of",
+                          "change_start_char_idx": 193,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "gastronomic delight",
+                          "modified": "foodie paradise",
+                          "change_start_char_idx": 287,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "featuring",
+                          "modified": "with",
+                          "change_start_char_idx": 330,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "renowned",
+                          "modified": "known",
+                          "change_start_char_idx": 465,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "sampling",
+                          "modified": "trying",
+                          "change_start_char_idx": 543,
+                          "category": "vocabulary"
+                      }
+                  ]
+              },
+              "tone_result": {
+                  "error": null,
+                  "duration": 4.089464,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": "american_english",
+                      "tone": "formal",
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 669,
+                      "prompt_tokens": 881,
+                      "total_tokens": 1550
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Art and culture thrive in Palma. The Es Baluard Museum of Modern and Contemporary Art showcases an impressive collection of Balearic and international artists within a striking contemporary building integrated into the city's old fortifications. The Pueblo Español offers a fascinating architectural tour, reproducing famous Spanish buildings and plazas in miniature.\n\nWhen it comes to dining, Palma is a gastronomic delight. From traditional Mallorcan cuisine featuring fresh seafood, 'sobrassada' (cured sausage), and 'tumbet' (vegetable dish), to international fine dining, the city caters to every palate. The Santa Catalina neighborhood is particularly renowned for its trendy restaurants and vibrant nightlife. And, of course, no visit to Palma is complete without sampling some local wine and ensaimada, a spiral-shaped pastry.",
+                  "changes": [
+                      {
+                          "original": "thrive",
+                          "modified": "prosper",
+                          "change_start_char_idx": 20,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "showcases",
+                          "modified": "presents",
+                          "change_start_char_idx": 68,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "striking",
+                          "modified": "remarkable",
+                          "change_start_char_idx": 110,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "offers",
+                          "modified": "provides",
+                          "change_start_char_idx": 202,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "fascinating",
+                          "modified": "compelling",
+                          "change_start_char_idx": 209,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "When it comes to dining, Palma is a gastronomic delight.",
+                          "modified": "Palma offers a delightful gastronomic experience.",
+                          "change_start_char_idx": 281,
+                          "category": "syntax"
+                      },
+                      {
+                          "original": "features",
+                          "modified": "including",
+                          "change_start_char_idx": 344,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "fine dining",
+                          "modified": "haute cuisine",
+                          "change_start_char_idx": 408,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "caters to every palate",
+                          "modified": "satisfies diverse culinary preferences",
+                          "change_start_char_idx": 426,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "renowned",
+                          "modified": "notable",
+                          "change_start_char_idx": 487,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "trendy",
+                          "modified": "upscale",
+                          "change_start_char_idx": 479,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "And, of course, no visit to Palma is complete without sampling some local wine and ensaimada, a spiral-shaped pastry.",
+                          "modified": "A visit to Palma would be incomplete without sampling local wine and ensaimada, a spiral-shaped pastry.",
+                          "change_start_char_idx": 539,
+                          "category": "syntax"
+                      }
+                  ]
+              },
+              "style_guide_result": {
+                  "error": null,
+                  "duration": 2.014079,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 192,
+                      "prompt_tokens": 1619,
+                      "total_tokens": 1811
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "changes": [
+                      {
+                          "original": "Pueblo Español",
+                          "modified": "El Pueblo Español",
+                          "change_start_char_idx": 243,
+                          "category": "capitalization"
+                      },
+                      {
+                          "original": "From traditional Mallorcan cuisine featuring fresh seafood, 'sobrassada' (cured sausage), and 'tumbet' (vegetable dish), to international fine dining, the city caters to every palate.",
+                          "modified": "From traditional Mallorcan cuisine featuring fresh seafood, 'sobrassada' (cured sausage) and 'tumbet' (vegetable dish), to international fine dining, the city caters to every palate.",
+                          "change_start_char_idx": 385,
+                          "category": "punctuation"
+                      }
+                  ]
+              }
+          },
+          {
+              "created_at": "2025-05-27T15:02:08.855726+00:00Z",
+              "errors": [],
+              "initial_scores": {
+                  "acrolinx_score": null,
+                  "content_score": null
+              },
+              "final_scores": {
+                  "acrolinx_score": null,
+                  "content_score": null
+              },
+              "input_file": "Palma: An Unforgettable Island Getaway\nPalma offers a vacation experience that combines cultural immersion, historical exploration, beach relaxation, and culinary delights. Whether you're captivated by ancient architecture, drawn to the shimmering Mediterranean, or eager to savor authentic Spanish flavors, Palma delivers on all fronts. Its welcoming atmosphere, diverse attractions, and stunning scenery make it an unforgettable destination for a truly enriching escape.",
+              "parameters": {
+                  "dialect": "american_english",
+                  "tone": "formal",
+                  "style_guide": "microsoft",
+                  "max_words": 25
+              },
+              "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+              "workflow_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+              "grammar_result": {
+                  "error": null,
+                  "duration": 1.121603,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": "american_english",
+                      "tone": "formal",
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "ges\": []\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": ": []\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 14,
+                      "prompt_tokens": 693,
+                      "total_tokens": 707
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "changes": []
+              },
+              "merging_result": null,
+              "parser_result": null,
+              "sentence_length_result": {
+                  "error": null,
+                  "duration": 1.109985,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": 25
+                  },
+                  "provider": "azure",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "ges\": []\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": ": []\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 14,
+                      "prompt_tokens": 644,
+                      "total_tokens": 658
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Palma: An Unforgettable Island Getaway\nPalma offers a vacation experience that combines cultural immersion, historical exploration, beach relaxation, and culinary delights. Whether you're captivated by ancient architecture, drawn to the shimmering Mediterranean, or eager to savor authentic Spanish flavors, Palma delivers on all fronts. Its welcoming atmosphere, diverse attractions, and stunning scenery make it an unforgettable destination for a truly enriching escape.",
+                  "changes": []
+              },
+              "sentence_structure_result": {
+                  "error": null,
+                  "duration": 2.676625,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 269,
+                      "prompt_tokens": 947,
+                      "total_tokens": 1216
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Palma: An Unforgettable Island Getaway\nPalma offers a vacation experience that combines cultural immersion, historical exploration, beach relaxation, and culinary delights. Whether you're captivated by ancient architecture, drawn to the shimmering Mediterranean, or eager to savor authentic Spanish flavors, Palma delivers on all fronts. Its welcoming atmosphere, diverse attractions, and stunning scenery make it an unforgettable destination for a truly enriching escape.",
+                  "changes": [
+                      {
+                          "original": "Palma offers a vacation experience that combines cultural immersion, historical exploration, beach relaxation, and culinary delights.",
+                          "modified": "Palma provides a vacation experience. It combines cultural immersion, historical exploration, beach relaxation, and culinary delights.",
+                          "change_start_char_idx": 0,
+                          "category": "complex_verbs"
+                      },
+                      {
+                          "original": "Whether you're captivated by ancient architecture, drawn to the shimmering Mediterranean, or eager to savor authentic Spanish flavors, Palma delivers on all fronts.",
+                          "modified": "You might be captivated by ancient architecture. You may be drawn to the shimmering Mediterranean. You could be eager to savor authentic Spanish flavors. Palma still delivers.",
+                          "change_start_char_idx": 143,
+                          "category": "modal_verbs"
+                      },
+                      {
+                          "original": "make it an unforgettable destination for a truly enriching escape.",
+                          "modified": "makes it an unforgettable and enriching destination.",
+                          "change_start_char_idx": 423,
+                          "category": "complex_verbs"
+                      }
+                  ]
+              },
+              "simple_vocabulary_result": {
+                  "error": null,
+                  "duration": 3.588094,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": null,
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 538,
+                      "prompt_tokens": 742,
+                      "total_tokens": 1280
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Palma: An Unforgettable Island Getaway\nPalma offers a vacation experience that combines cultural immersion, historical exploration, beach relaxation, and culinary delights. Whether you're captivated by ancient architecture, drawn to the shimmering Mediterranean, or eager to savor authentic Spanish flavors, Palma delivers on all fronts. Its welcoming atmosphere, diverse attractions, and stunning scenery make it an unforgettable destination for a truly enriching escape.",
+                  "changes": [
+                      {
+                          "original": "offers",
+                          "modified": "gives",
+                          "change_start_char_idx": 6,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "immersion",
+                          "modified": "experiences",
+                          "change_start_char_idx": 65,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "exploration",
+                          "modified": "discovery",
+                          "change_start_char_idx": 77,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "captivated by",
+                          "modified": "fascinated by",
+                          "change_start_char_idx": 142,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "ancient",
+                          "modified": "old",
+                          "change_start_char_idx": 156,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "delivers on all fronts",
+                          "modified": "has it all",
+                          "change_start_char_idx": 215,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "atmosphere",
+                          "modified": "vibe",
+                          "change_start_char_idx": 228,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "diverse",
+                          "modified": "varied",
+                          "change_start_char_idx": 241,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "attractions",
+                          "modified": "things to do",
+                          "change_start_char_idx": 249,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "scenery",
+                          "modified": "views",
+                          "change_start_char_idx": 269,
+                          "category": "vocabulary"
+                      },
+                      {
+                          "original": "enriching",
+                          "modified": "fulfilling",
+                          "change_start_char_idx": 309,
+                          "category": "vocabulary"
+                      }
+                  ]
+              },
+              "tone_result": {
+                  "error": null,
+                  "duration": 3.217298,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": "american_english",
+                      "tone": "formal",
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "   }\n  ]\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": "\n  ]\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 414,
+                      "prompt_tokens": 804,
+                      "total_tokens": 1218
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "text": "Palma: An Unforgettable Island Getaway\nPalma offers a vacation experience that combines cultural immersion, historical exploration, beach relaxation, and culinary delights. Whether you're captivated by ancient architecture, drawn to the shimmering Mediterranean, or eager to savor authentic Spanish flavors, Palma delivers on all fronts. Its welcoming atmosphere, diverse attractions, and stunning scenery make it an unforgettable destination for a truly enriching escape.",
+                  "changes": [
+                      {
+                          "original": "offers",
+                          "modified": "provides",
+                          "change_start_char_idx": 6,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "vacation experience",
+                          "modified": "holiday experience",
+                          "change_start_char_idx": 14,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "Whether you're captivated by",
+                          "modified": "If one is captivated by",
+                          "change_start_char_idx": 107,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "drawn to",
+                          "modified": "attracted to",
+                          "change_start_char_idx": 141,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "or eager to savor",
+                          "modified": "or wishes to sample",
+                          "change_start_char_idx": 171,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "delivers on all fronts",
+                          "modified": "satisfies in all aspects",
+                          "change_start_char_idx": 209,
+                          "category": "word_choice"
+                      },
+                      {
+                          "original": "Its welcoming atmosphere, diverse attractions, and stunning scenery make it an unforgettable destination for a truly enriching escape.",
+                          "modified": "Its welcoming atmosphere, diverse attractions, and stunning scenery render it an unforgettable destination, offering a truly enriching escape.",
+                          "change_start_char_idx": 233,
+                          "category": "syntax"
+                      }
+                  ]
+              },
+              "style_guide_result": {
+                  "error": null,
+                  "duration": 1.131202,
+                  "model": "gemini-2.0-flash",
+                  "parameters": {
+                      "dialect": null,
+                      "tone": null,
+                      "style_guide": "microsoft",
+                      "max_words": null
+                  },
+                  "provider": "google",
+                  "repair_log": [
+                      {
+                          "text": "The parser returned early, checking if there's more json elements",
+                          "context": "ges\": []\n}\n```"
+                      },
+                      {
+                          "text": "There were no more elements, returning the element without the array",
+                          "context": ": []\n}\n```"
+                      }
+                  ],
+                  "run_id": "01971243-c7ad-75cc-b2fb-7d9b4995e7d9",
+                  "token_usage": {
+                      "completion_tokens": 14,
+                      "prompt_tokens": 1542,
+                      "total_tokens": 1556
+                  },
+                  "workflow_id": "c269953f-2aa6-40ac-873a-bde715e2703c",
+                  "changes": []
+              }
+          }
+      ]
+  },
+  "error_message": null
+}

@@ -214,14 +214,49 @@ describe('Style API Unit Tests', () => {
           errors: [],
           final_scores: {
             acrolinx_score: null,
-            content_score: null,
+            content_score: {
+              error: null,
+              duration: 0.01502,
+              model: '',
+              parameters: {
+                dialect: null,
+                tone: null,
+                style_guide: null,
+                max_words: null
+              },
+              provider: '',
+              repair_log: [],
+              run_id: '01971243-c7ad-75cc-b2fb-7d9b4995e7d9',
+              token_usage: {
+                completion_tokens: -1,
+                prompt_tokens: -1,
+                total_tokens: -1
+              },
+              workflow_id: mockWorkflowId,
+              analysis: {
+                avg_sentence_length: 20.96,
+                avg_word_length: 4.92,
+                complexity_score: 13.29,
+                readability_score: 28.13,
+                sentence_count: 28,
+                vocabulary_score: 54.86,
+                word_count: 587
+              },
+              feedback: 'Low content quality. The text needs significant revision for better readability.',
+              score: 0.0,
+              suggestions: [
+                'Use shorter sentences and simpler words to improve readability.',
+                'Your text may be too complex. Consider simplifying vocabulary and sentence structure.'
+              ],
+              target_score: null
+            }
           },
           initial_scores: {
             acrolinx_score: null,
-            content_score: null,
+            content_score: null
           },
-          results: [],
-        },
+          results: []
+        }
       };
 
       vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
@@ -246,14 +281,49 @@ describe('Style API Unit Tests', () => {
           errors: [],
           final_scores: {
             acrolinx_score: null,
-            content_score: null,
+            content_score: {
+              error: null,
+              duration: 0.01502,
+              model: '',
+              parameters: {
+                dialect: null,
+                tone: null,
+                style_guide: null,
+                max_words: null
+              },
+              provider: '',
+              repair_log: [],
+              run_id: '01971243-c7ad-75cc-b2fb-7d9b4995e7d9',
+              token_usage: {
+                completion_tokens: -1,
+                prompt_tokens: -1,
+                total_tokens: -1
+              },
+              workflow_id: mockWorkflowId,
+              analysis: {
+                avg_sentence_length: 20.96,
+                avg_word_length: 4.92,
+                complexity_score: 13.29,
+                readability_score: 28.13,
+                sentence_count: 28,
+                vocabulary_score: 54.86,
+                word_count: 587
+              },
+              feedback: 'Low content quality. The text needs significant revision for better readability.',
+              score: 0.0,
+              suggestions: [
+                'Use shorter sentences and simpler words to improve readability.',
+                'Your text may be too complex. Consider simplifying vocabulary and sentence structure.'
+              ],
+              target_score: null
+            }
           },
           initial_scores: {
             acrolinx_score: null,
-            content_score: null,
+            content_score: null
           },
-          results: [],
-        },
+          results: []
+        }
       };
 
       vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
@@ -278,14 +348,49 @@ describe('Style API Unit Tests', () => {
           errors: [],
           final_scores: {
             acrolinx_score: null,
-            content_score: null,
+            content_score: {
+              error: null,
+              duration: 0.01502,
+              model: '',
+              parameters: {
+                dialect: null,
+                tone: null,
+                style_guide: null,
+                max_words: null
+              },
+              provider: '',
+              repair_log: [],
+              run_id: '01971243-c7ad-75cc-b2fb-7d9b4995e7d9',
+              token_usage: {
+                completion_tokens: -1,
+                prompt_tokens: -1,
+                total_tokens: -1
+              },
+              workflow_id: mockWorkflowId,
+              analysis: {
+                avg_sentence_length: 20.96,
+                avg_word_length: 4.92,
+                complexity_score: 13.29,
+                readability_score: 28.13,
+                sentence_count: 28,
+                vocabulary_score: 54.86,
+                word_count: 587
+              },
+              feedback: 'Low content quality. The text needs significant revision for better readability.',
+              score: 0.0,
+              suggestions: [
+                'Use shorter sentences and simpler words to improve readability.',
+                'Your text may be too complex. Consider simplifying vocabulary and sentence structure.'
+              ],
+              target_score: null
+            }
           },
           initial_scores: {
             acrolinx_score: null,
-            content_score: null,
+            content_score: null
           },
-          results: [],
-        },
+          results: []
+        }
       };
 
       vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
