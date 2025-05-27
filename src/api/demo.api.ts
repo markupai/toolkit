@@ -34,10 +34,7 @@ export async function check(checkRequest: AnalysisRequest, apiKey: string): Prom
   return postData<AnalysisSubmissionResponse>(API_ENDPOINTS.CHECKS, formData, apiKey);
 }
 
-export async function rewrite(
-  rewriteRequest: AnalysisRequest,
-  apiKey: string,
-): Promise<AnalysisResult> {
+export async function rewrite(rewriteRequest: AnalysisRequest, apiKey: string): Promise<AnalysisResult> {
   try {
     const initialResponse = await submitRewrite(rewriteRequest, apiKey);
 

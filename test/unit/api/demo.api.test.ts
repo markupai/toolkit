@@ -85,7 +85,7 @@ describe('Demo API Unit Tests', () => {
                 dialect: null,
                 tone: null,
                 style_guide: null,
-                max_words: null
+                max_words: null,
               },
               provider: '',
               repair_log: [],
@@ -93,7 +93,7 @@ describe('Demo API Unit Tests', () => {
               token_usage: {
                 completion_tokens: -1,
                 prompt_tokens: -1,
-                total_tokens: -1
+                total_tokens: -1,
               },
               workflow_id: mockWorkflowId,
               analysis: {
@@ -103,23 +103,23 @@ describe('Demo API Unit Tests', () => {
                 readability_score: 28.13,
                 sentence_count: 28,
                 vocabulary_score: 54.86,
-                word_count: 587
+                word_count: 587,
               },
               feedback: 'Low content quality. The text needs significant revision for better readability.',
               score: 0.0,
               suggestions: [
                 'Use shorter sentences and simpler words to improve readability.',
-                'Your text may be too complex. Consider simplifying vocabulary and sentence structure.'
+                'Your text may be too complex. Consider simplifying vocabulary and sentence structure.',
               ],
-              target_score: null
-            }
+              target_score: null,
+            },
           },
           initial_scores: {
             acrolinx_score: null,
-            content_score: null
+            content_score: null,
           },
-          results: []
-        }
+          results: [],
+        },
       };
 
       vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
@@ -140,9 +140,7 @@ describe('Demo API Unit Tests', () => {
         new Error(`Workflow failed with status: ${Status.Failed}`),
       );
 
-      await expect(rewrite(mockRequest, mockApiKey)).rejects.toThrow(
-        `Workflow failed with status: ${Status.Failed}`,
-      );
+      await expect(rewrite(mockRequest, mockApiKey)).rejects.toThrow(`Workflow failed with status: ${Status.Failed}`);
     });
 
     it('should handle missing workflow ID for rewrite', async () => {
