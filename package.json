@@ -5,6 +5,9 @@
   "main": "./dist/acrolinx-typescript-sdk.umd.cjs",
   "module": "./dist/acrolinx-typescript-sdk.js",
   "types": "./dist/main.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "files": [
     "dist",
     "dist/**/*.d.ts"
