@@ -2,11 +2,6 @@ name: Release
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version to release (e.g., 1.0.0)'
-        required: true
-        type: string
 
 permissions:
   contents: write
@@ -37,21 +32,16 @@ jobs:
           npm run test:unit
           npm run build
 
-      - name: Update version
-        id: version
-        run: |
-          npm version ${{ github.event.inputs.version }} --no-git-tag-version
-          echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-
       - name: Publish to GitHub Package Registry
-        run: |
-          echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" > .npmrc
-          npm publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: publish
+        uses: JS-DevTools/npm-publish@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          registry: https://npm.pkg.github.com
+          scope: '@acrolinx'
 
       - name: Push Tag
         uses: anothrNick/github-tag-action@v1
         env:
-          CUSTOM_TAG: v${{ steps.version.outputs.version }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          CUSTOM_TAG: v${{ steps.publish.outputs.version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
