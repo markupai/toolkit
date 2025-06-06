@@ -1,7 +1,5 @@
 import {
-  CreateStyleGuideData,
-  StyleGuideResponse,
-  StyleGuideListResponse,
+  StyleGuideList,
   StyleCheckRequest as StyleAnalysisRequest,
   AnalysisSubmissionResponse,
   Status,
@@ -10,7 +8,7 @@ import {
   AnalysisSuccessResponseWithRewrite,
 } from './style';
 
-import { getData, postData, putData, deleteData, pollWorkflowForResult } from '../../utils/api';
+import { getData, postData, pollWorkflowForResult } from '../../utils/api';
 
 const API_ENDPOINTS = {
   STYLE_GUIDES: '/v1/style-guides',
@@ -20,44 +18,8 @@ const API_ENDPOINTS = {
 } as const;
 
 // Style Guide Operations
-export async function listStyleGuides(apiKey: string): Promise<StyleGuideListResponse> {
-  return getData<StyleGuideListResponse>(API_ENDPOINTS.STYLE_GUIDES, apiKey);
-}
-
-export async function createStyleGuide(styleGuide: CreateStyleGuideData, apiKey: string): Promise<StyleGuideResponse> {
-  const formData = new FormData();
-  formData.append('name', styleGuide.name);
-  if (styleGuide.description) {
-    formData.append('description', styleGuide.description);
-  }
-  if (styleGuide.rules) {
-    formData.append('rules', JSON.stringify(styleGuide.rules));
-  }
-  return postData<StyleGuideResponse>(API_ENDPOINTS.STYLE_GUIDES, formData, apiKey);
-}
-
-export async function getStyleGuide(styleGuideId: string, apiKey: string): Promise<StyleGuideResponse> {
-  return getData<StyleGuideResponse>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, apiKey);
-}
-
-export async function updateStyleGuide(
-  styleGuideId: string,
-  styleGuide: CreateStyleGuideData,
-  apiKey: string,
-): Promise<StyleGuideResponse> {
-  const formData = new FormData();
-  formData.append('name', styleGuide.name);
-  if (styleGuide.description) {
-    formData.append('description', styleGuide.description);
-  }
-  if (styleGuide.rules) {
-    formData.append('rules', JSON.stringify(styleGuide.rules));
-  }
-  return putData<StyleGuideResponse>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, formData, apiKey);
-}
-
-export async function deleteStyleGuide(styleGuideId: string, apiKey: string): Promise<StyleGuideResponse> {
-  return deleteData<StyleGuideResponse>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, apiKey);
+export async function listStyleGuides(apiKey: string): Promise<StyleGuideList> {
+  return getData<StyleGuideList>(API_ENDPOINTS.STYLE_GUIDES, apiKey);
 }
 
 // Style Check Operations
