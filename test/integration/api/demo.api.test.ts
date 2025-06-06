@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { submitRewrite, check, rewrite } from '../../../src/api/demo.api';
-import { Dialect, Tone, StyleGuide } from '../../../src/api/style';
+import { submitRewrite, check, rewrite } from '../../../src/api/demo/demo.api';
+import { defaults } from '../../../src/api/demo/demo';
 
 describe('Demo API Integration Tests', () => {
   let apiKey: string;
@@ -13,9 +13,9 @@ describe('Demo API Integration Tests', () => {
 
   const testContent = 'This is a test content for demo operations.';
   const guidanceSettings = {
-    dialect: Dialect.AmericanEnglish,
-    tone: Tone.Formal,
-    styleGuide: StyleGuide.Microsoft,
+    dialect: defaults.dialects.americanEnglish,
+    tone: defaults.tones.formal,
+    styleGuide: defaults.styleGuides.microsoft,
   };
 
   describe('Basic Operations', () => {
@@ -50,7 +50,7 @@ describe('Demo API Integration Tests', () => {
 
   describe('Operations with Polling', () => {
     it('should submit rewrite and get result', async () => {
-      const result = await rewrite(
+      const response = await rewrite(
         {
           content: testContent,
           guidanceSettings,
@@ -58,17 +58,17 @@ describe('Demo API Integration Tests', () => {
         apiKey,
       );
 
-      expect(result).toBeDefined();
-      expect(result.merged_text).toBeDefined();
-      expect(typeof result.merged_text).toBe('string');
-      expect(result.merged_text.length).toBeGreaterThan(0);
-      expect(result.original_text).toBeDefined();
-      expect(result.errors).toBeDefined();
-      expect(Array.isArray(result.errors)).toBe(true);
-      expect(result.final_scores).toBeDefined();
-      expect(result.initial_scores).toBeDefined();
-      expect(result.results).toBeDefined();
-      expect(Array.isArray(result.results)).toBe(true);
+      expect(response.result).toBeDefined();
+      expect(response.result.merged_text).toBeDefined();
+      expect(typeof response.result.merged_text).toBe('string');
+      expect(response.result.merged_text.length).toBeGreaterThan(0);
+      expect(response.result.original_text).toBeDefined();
+      expect(response.result.errors).toBeDefined();
+      expect(Array.isArray(response.result.errors)).toBe(true);
+      expect(response.result.final_scores).toBeDefined();
+      expect(response.result.initial_scores).toBeDefined();
+      expect(response.result.results).toBeDefined();
+      expect(Array.isArray(response.result.results)).toBe(true);
     });
   });
 
@@ -104,9 +104,9 @@ describe('Demo API Integration Tests', () => {
           {
             content: testContent,
             guidanceSettings: {
-              dialect: 'invalid_dialect' as Dialect,
-              tone: 'invalid_tone' as Tone,
-              styleGuide: 'invalid_guide' as StyleGuide,
+              dialect: 'invalid_dialect',
+              tone: 'invalid_tone',
+              styleGuide: 'invalid_guide',
             },
           },
           apiKey,

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getAdminConstants, submitFeedback } from '../../../src/api/internal.api';
+import { getAdminConstants, submitFeedback } from '../../../src/api/internal/internal.api';
 import { getData, postData } from '../../../src/utils/api';
-import { ConstantsResponse, FeedbackRequest } from '../../../src/api/internal.api';
+import { Constants, FeedbackRequest } from '../../../src/api/internal/internal';
 
 // Mock the utility functions
 vi.mock('../../../src/utils/api', () => ({
@@ -18,7 +18,7 @@ describe('Internal API Unit Tests', () => {
 
   describe('getAdminConstants', () => {
     it('should get admin constants', async () => {
-      const mockResponse: ConstantsResponse = {
+      const mockResponse: Constants = {
         dialects: ['american_english', 'british_english'],
         tones: ['formal', 'casual'],
         style_guides: {

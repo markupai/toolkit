@@ -1,4 +1,4 @@
-import { Status, AnalysisPollingResponse, AnalysisSuccessResponse } from '../api/style';
+import { Status, AnalysisResponseBase } from '../api/style/style';
 import { AcrolinxError } from './errors';
 
 // export const DEFAULT_PLATFORM_URL = 'https://app.acrolinx.com';
@@ -117,16 +117,12 @@ export async function deleteData<T>(endpoint: string, apiKey: string): Promise<T
   }
 }
 
-export async function pollWorkflowForResult(
-  workflowId: string,
-  endpoint: string,
-  apiKey: string,
-): Promise<AnalysisSuccessResponse> {
+export async function pollWorkflowForResult<T>(workflowId: string, endpoint: string, apiKey: string): Promise<T> {
   let attempts = 0;
   const maxAttempts = 30;
   const pollInterval = 2000;
 
-  const poll = async (): Promise<AnalysisSuccessResponse> => {
+  const poll = async (): Promise<T> => {
     if (attempts >= maxAttempts) {
       throw new AcrolinxError(`Workflow timed out after ${maxAttempts} attempts`);
     }
@@ -147,7 +143,7 @@ export async function pollWorkflowForResult(
         throw AcrolinxError.fromResponse(response, errorData);
       }
 
-      const data = (await response.json()) as AnalysisPollingResponse;
+      const data = (await response.json()) as AnalysisResponseBase;
 
       // Normalize status to match enum values
       const normalizedStatus = data.status.toLowerCase() as Status;
@@ -156,12 +152,8 @@ export async function pollWorkflowForResult(
         throw new AcrolinxError(`Workflow failed with status: ${Status.Failed}`);
       }
 
-      if (normalizedStatus === Status.Completed && data.result) {
-        return {
-          status: Status.Completed,
-          workflow_id: data.workflow_id,
-          result: data.result,
-        };
+      if (normalizedStatus === Status.Completed) {
+        return data as T;
       }
 
       if (normalizedStatus === Status.Running || normalizedStatus === Status.Queued) {

@@ -1,88 +1,35 @@
+export const defaults = {
+  dialects: {
+    americanEnglish: 'american_english',
+    australianEnglish: 'australian_english',
+    britishOxford: 'british_oxford',
+    canadianEnglish: 'canadian_english',
+    indianEnglish: 'indian_english',
+  },
+  tones: {
+    academic: 'academic',
+    business: 'business',
+    casual: 'casual',
+    conversational: 'conversational',
+    formal: 'formal',
+    genZ: 'gen-z',
+    informal: 'informal',
+    technical: 'technical',
+  },
+  styleGuides: {
+    ap: 'ap',
+    chicago: 'chicago',
+    microsoft: 'microsoft',
+  },
+} as const;
+
 // Enums
-export enum Dialect {
-  AmericanEnglish = 'american_english',
-  AustralianEnglish = 'australian_english',
-  BritishOxford = 'british_oxford',
-  CanadianEnglish = 'canadian_english',
-  IndianEnglish = 'indian_english',
-}
 
 export enum Status {
   Queued = 'queued',
   Running = 'running',
   Completed = 'completed',
   Failed = 'failed',
-}
-
-export enum Tone {
-  Academic = 'academic',
-  Business = 'business',
-  Casual = 'casual',
-  Conversational = 'conversational',
-  Formal = 'formal',
-  GenZ = 'gen-z',
-  Informal = 'informal',
-  Technical = 'technical',
-}
-
-export enum StyleGuide {
-  AP = 'ap',
-  Chicago = 'chicago',
-  Microsoft = 'microsoft',
-}
-
-export enum ChangeCategory {
-  Punctuation = 'punctuation',
-  Capitalization = 'capitalization',
-  GrammarAndUsage = 'grammar_and_usage',
-  NumbersAndDates = 'numbers_and_dates',
-  FormattingAndStructure = 'formatting_and_structure',
-  Other = 'other',
-}
-
-export enum GrammarCategory {
-  SvaPronoun = 'sva_pronoun',
-  PunctCap = 'punct_cap',
-  Spelling = 'spelling',
-  Syntax = 'syntax',
-  Verbs = 'verbs',
-  WordUsage = 'word_usage',
-  Other = 'other',
-}
-
-export enum SentenceLengthCategory {
-  Capitalization = 'capitalization',
-  Remove = 'remove',
-  Extract = 'extract',
-  Shorten = 'shorten',
-  Deletion = 'deletion',
-  Replace = 'replace',
-  Other = 'other',
-}
-
-export enum SentenceStructureCategory {
-  ComplexVerbs = 'complex_verbs',
-  HiddenVerbs = 'hidden_verbs',
-  Insertion = 'insertion',
-  ModalVerbs = 'modal_verbs',
-  Passive = 'passive',
-  PhrasalVerbs = 'phrasal_verbs',
-  Subjunctive = 'subjunctive',
-  Other = 'other',
-}
-
-export enum SimpleVocabChangeCategory {
-  Vocabulary = 'vocabulary',
-  Other = 'other',
-}
-
-export enum ToneCategories {
-  WordChoice = 'word_choice',
-  Syntax = 'syntax',
-  Punctuation = 'punctuation',
-  DiscourseFeatures = 'discourse_features',
-  ImplicitStyle = 'implicit_style',
-  Other = 'other',
 }
 
 // Base Interfaces
@@ -104,7 +51,7 @@ export interface Analysis {
 
 interface BaseResponse {
   status: Status;
-  style_guide_id: StyleGuide | null;
+  style_guide_id: string | null;
   scores: Analysis | null;
 }
 
@@ -115,35 +62,25 @@ export interface AnalysisRequest {
 }
 
 export interface GuidanceSettings {
-  dialect: Dialect;
-  tone: Tone;
-  styleGuide: StyleGuide;
+  dialect: string;
+  tone: string;
+  styleGuide: string;
 }
 
 export interface AnalysisResponseBase {
   workflow_id: string;
+  status: Status;
 }
 
 export interface AnalysisSubmissionResponse extends AnalysisResponseBase {
-  message: string;
-}
-
-export interface AnalysisPollingResponse extends AnalysisResponseBase {
-  status: Status;
-  workflow_id: string;
-  error_message?: string | null;
-  result?: AnalysisResult;
+  message?: string;
 }
 
 export interface AnalysisSuccessResponse extends AnalysisResponseBase {
-  status: Status.Completed;
-  workflow_id: string;
   result: AnalysisResult;
 }
 
 export interface AnalysisErrorResponse extends AnalysisResponseBase {
-  status: Status.Failed;
-  workflow_id: string;
   error_message: string;
 }
 
@@ -172,9 +109,9 @@ export interface InitialScores {
 }
 
 export interface Parameters {
-  dialect: Dialect | null;
-  tone: Tone | null;
-  style_guide: StyleGuide | null;
+  dialect: string | null;
+  tone: string | null;
+  style_guide: string | null;
   max_words: number | null;
 }
 
@@ -293,7 +230,7 @@ export interface GrammarActivityOutput {
 }
 
 export interface GrammarChange extends BaseChange {
-  category: GrammarCategory;
+  category: string;
 }
 
 export interface MergingActivityOutput {
@@ -337,7 +274,7 @@ export interface SentenceLengthActivityOutput {
 }
 
 export interface SentenceLengthChange extends BaseChange {
-  category: SentenceLengthCategory;
+  category: string;
 }
 
 export interface SentenceStructureOutput {
@@ -355,7 +292,7 @@ export interface SentenceStructureOutput {
 }
 
 export interface SentenceStructureChange extends BaseChange {
-  category: SentenceStructureCategory;
+  category: string;
 }
 
 export interface SimpleVocabOutput {
@@ -373,7 +310,7 @@ export interface SimpleVocabOutput {
 }
 
 export interface SimpleVocabChange extends BaseChange {
-  category: SimpleVocabChangeCategory;
+  category: string;
 }
 
 export interface ToneCheckOutput {
@@ -391,7 +328,7 @@ export interface ToneCheckOutput {
 }
 
 export interface ToneChange extends BaseChange {
-  category: ToneCategories;
+  category: string;
 }
 
 export interface StyleGuideOutput {
@@ -408,7 +345,7 @@ export interface StyleGuideOutput {
 }
 
 export interface StyleGuideChange extends BaseChange {
-  category: ChangeCategory;
+  category: string;
 }
 
 // Style Guide Specific Interfaces
@@ -418,37 +355,31 @@ export interface CreateStyleGuideData {
   rules?: Record<string, unknown>;
 }
 
-export interface StyleGuideData extends CreateStyleGuideData {
-  id: string;
-}
+// The list endpoint now returns an object mapping id to name
+export type StyleGuideListResponse = Record<string, string>;
 
-export interface StyleGuideResponse {
-  style_guide: StyleGuideData;
-}
-
-export interface StyleGuideListResponse {
-  style_guides: StyleGuideData[];
-}
+// The create/get/update/delete endpoints now return an empty object
+export type StyleGuideResponse = Record<string, never>;
 
 export interface StyleCheckRequest {
   file_upload: Blob;
-  style_guide: StyleGuideData;
-  dialect: Dialect;
-  tone: Tone;
+  style_guide: string; // Can be style guide ID or name (e.g. 'ap', 'chicago', 'microsoft')
+  dialect: string;
+  tone: string;
 }
 
 export interface StyleSuggestionRequest {
   file_upload: Blob;
-  style_guide: StyleGuideData;
-  dialect: Dialect;
-  tone: Tone;
+  style_guide: string; // Can be style guide ID or name (e.g. 'ap', 'chicago', 'microsoft')
+  dialect: string;
+  tone: string;
 }
 
 export interface StyleRewriteRequest {
   file_upload: Blob;
-  style_guide?: StyleGuideData;
-  dialect?: Dialect;
-  tone?: Tone;
+  style_guide?: string; // Can be style guide ID or name (e.g. 'ap', 'chicago', 'microsoft')
+  dialect?: string;
+  tone?: string;
 }
 
 // Response Interfaces
@@ -468,12 +399,6 @@ export interface RewriteResponse extends BaseResponse {
 export interface Suggestion {
   original: string;
   change_start_char_idx: number;
-  category:
-    | GrammarCategory
-    | SimpleVocabChangeCategory
-    | SentenceStructureCategory
-    | SentenceLengthCategory
-    | ToneCategories
-    | ChangeCategory;
+  category: string;
   suggestion: string;
 }

@@ -2,21 +2,21 @@ import {
   CreateStyleGuideData,
   StyleGuideResponse,
   StyleGuideListResponse,
-  StyleCheckRequest,
-  StyleSuggestionRequest,
-  StyleRewriteRequest,
+  StyleCheckRequest as StyleAnalysisRequest,
   AnalysisSubmissionResponse,
-  AnalysisResult,
   Status,
+  AnalysisSuccessResponse,
+  AnalysisSuccessResponseWithSuggestion,
+  AnalysisSuccessResponseWithRewrite,
 } from './style';
 
-import { getData, postData, putData, deleteData, pollWorkflowForResult } from '../utils/api';
+import { getData, postData, putData, deleteData, pollWorkflowForResult } from '../../utils/api';
 
 const API_ENDPOINTS = {
   STYLE_GUIDES: '/v1/style-guides',
   STYLE_CHECKS: '/v1/style/checks',
   STYLE_SUGGESTIONS: '/v1/style/suggestions',
-  STYLE_REWRITES: '/v1/style-rewrites',
+  STYLE_REWRITES: '/v1/style/rewrites',
 } as const;
 
 // Style Guide Operations
@@ -56,18 +56,18 @@ export async function updateStyleGuide(
   return putData<StyleGuideResponse>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, formData, apiKey);
 }
 
-export async function deleteStyleGuide(styleGuideId: string, apiKey: string): Promise<{ message: string }> {
-  return deleteData<{ message: string }>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, apiKey);
+export async function deleteStyleGuide(styleGuideId: string, apiKey: string): Promise<StyleGuideResponse> {
+  return deleteData<StyleGuideResponse>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, apiKey);
 }
 
 // Style Check Operations
 export async function submitStyleCheck(
-  checkRequest: StyleCheckRequest,
+  checkRequest: StyleAnalysisRequest,
   apiKey: string,
 ): Promise<AnalysisSubmissionResponse> {
   const formData = new FormData();
   formData.append('file_upload', checkRequest.file_upload);
-  formData.append('style_guide', checkRequest.style_guide.id);
+  formData.append('style_guide', checkRequest.style_guide);
   formData.append('dialect', checkRequest.dialect.toString());
   formData.append('tone', checkRequest.tone.toString());
 
@@ -75,12 +75,12 @@ export async function submitStyleCheck(
 }
 
 export async function submitStyleSuggestion(
-  suggestionRequest: StyleSuggestionRequest,
+  suggestionRequest: StyleAnalysisRequest,
   apiKey: string,
 ): Promise<AnalysisSubmissionResponse> {
   const formData = new FormData();
   formData.append('file_upload', suggestionRequest.file_upload);
-  formData.append('style_guide', suggestionRequest.style_guide.id);
+  formData.append('style_guide', suggestionRequest.style_guide);
   formData.append('dialect', suggestionRequest.dialect.toString());
   formData.append('tone', suggestionRequest.tone.toString());
 
@@ -88,13 +88,13 @@ export async function submitStyleSuggestion(
 }
 
 export async function submitStyleRewrite(
-  rewriteRequest: StyleRewriteRequest,
+  rewriteRequest: StyleAnalysisRequest,
   apiKey: string,
 ): Promise<AnalysisSubmissionResponse> {
   const formData = new FormData();
   formData.append('file_upload', rewriteRequest.file_upload);
   if (rewriteRequest.style_guide) {
-    formData.append('style_guide', rewriteRequest.style_guide.id);
+    formData.append('style_guide', rewriteRequest.style_guide);
   }
   if (rewriteRequest.dialect) {
     formData.append('dialect', rewriteRequest.dialect.toString());
@@ -107,12 +107,16 @@ export async function submitStyleRewrite(
 }
 
 // Convenience methods for style operations with polling
-export async function styleCheck(checkRequest: StyleCheckRequest, apiKey: string): Promise<AnalysisResult> {
+export async function styleCheck(checkRequest: StyleAnalysisRequest, apiKey: string): Promise<AnalysisSuccessResponse> {
   const initialResponse = await submitStyleCheck(checkRequest, apiKey);
   if (initialResponse.workflow_id) {
-    const polledResponse = await pollWorkflowForResult(initialResponse.workflow_id, API_ENDPOINTS.STYLE_CHECKS, apiKey);
-    if (polledResponse.status === Status.Completed && polledResponse.result) {
-      return polledResponse.result;
+    const polledResponse = await pollWorkflowForResult<AnalysisSuccessResponse>(
+      initialResponse.workflow_id,
+      API_ENDPOINTS.STYLE_CHECKS,
+      apiKey,
+    );
+    if (polledResponse.status === Status.Completed) {
+      return polledResponse;
     }
     throw new Error(`Style check failed with status: ${polledResponse.status}`);
   }
@@ -120,34 +124,37 @@ export async function styleCheck(checkRequest: StyleCheckRequest, apiKey: string
 }
 
 export async function styleSuggestions(
-  suggestionRequest: StyleSuggestionRequest,
+  suggestionRequest: StyleAnalysisRequest,
   apiKey: string,
-): Promise<AnalysisResult> {
+): Promise<AnalysisSuccessResponseWithSuggestion> {
   const initialResponse = await submitStyleSuggestion(suggestionRequest, apiKey);
   if (initialResponse.workflow_id) {
-    const polledResponse = await pollWorkflowForResult(
+    const polledResponse = await pollWorkflowForResult<AnalysisSuccessResponseWithSuggestion>(
       initialResponse.workflow_id,
       API_ENDPOINTS.STYLE_SUGGESTIONS,
       apiKey,
     );
-    if (polledResponse.status === Status.Completed && polledResponse.result) {
-      return polledResponse.result;
+    if (polledResponse.status === Status.Completed) {
+      return polledResponse;
     }
     throw new Error(`Style suggestion failed with status: ${polledResponse.status}`);
   }
   throw new Error('No workflow_id received from initial style suggestion request');
 }
 
-export async function styleRewrite(rewriteRequest: StyleRewriteRequest, apiKey: string): Promise<AnalysisResult> {
+export async function styleRewrite(
+  rewriteRequest: StyleAnalysisRequest,
+  apiKey: string,
+): Promise<AnalysisSuccessResponseWithRewrite> {
   const initialResponse = await submitStyleRewrite(rewriteRequest, apiKey);
   if (initialResponse.workflow_id) {
-    const polledResponse = await pollWorkflowForResult(
+    const polledResponse = await pollWorkflowForResult<AnalysisSuccessResponseWithRewrite>(
       initialResponse.workflow_id,
       API_ENDPOINTS.STYLE_REWRITES,
       apiKey,
     );
-    if (polledResponse.status === Status.Completed && polledResponse.result) {
-      return polledResponse.result;
+    if (polledResponse.status === Status.Completed) {
+      return polledResponse;
     }
     throw new Error(`Style rewrite failed with status: ${polledResponse.status}`);
   }

@@ -8,9 +8,9 @@ export const API_ENDPOINTS = {
 } as const;
 
 // Export all API functions
-export * from './api/style.api';
-export * from './api/demo.api';
-export * from './api/style';
+export * from './api/style/style.api';
+export * from './api/demo/demo.api';
+export * from './api/style/style';
 
 // Export all utility functions
 export * from './utils/errors';

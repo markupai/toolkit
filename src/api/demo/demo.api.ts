@@ -1,6 +1,6 @@
-import { AnalysisRequest, AnalysisSubmissionResponse, AnalysisResult, Status } from './style';
+import { AnalysisRequest, AnalysisSubmissionResponse, AnalysisSuccessResponse, Status } from './demo';
 
-import { postData, pollWorkflowForResult } from '../utils/api';
+import { postData, pollWorkflowForResult } from '../../utils/api';
 
 const API_ENDPOINTS = {
   REWRITES: '/v1/rewrites/',
@@ -34,14 +34,18 @@ export async function check(checkRequest: AnalysisRequest, apiKey: string): Prom
   return postData<AnalysisSubmissionResponse>(API_ENDPOINTS.CHECKS, formData, apiKey);
 }
 
-export async function rewrite(rewriteRequest: AnalysisRequest, apiKey: string): Promise<AnalysisResult> {
+export async function rewrite(rewriteRequest: AnalysisRequest, apiKey: string): Promise<AnalysisSuccessResponse> {
   try {
     const initialResponse = await submitRewrite(rewriteRequest, apiKey);
 
     if (initialResponse.workflow_id) {
-      const polledResponse = await pollWorkflowForResult(initialResponse.workflow_id, API_ENDPOINTS.REWRITES, apiKey);
+      const polledResponse = await pollWorkflowForResult<AnalysisSuccessResponse>(
+        initialResponse.workflow_id,
+        API_ENDPOINTS.REWRITES,
+        apiKey,
+      );
       if (polledResponse.status === Status.Completed && polledResponse.result) {
-        return polledResponse.result;
+        return polledResponse;
       }
       throw new Error(`Rewrite failed with status: ${polledResponse.status}`);
     }

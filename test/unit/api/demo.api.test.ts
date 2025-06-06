@@ -1,15 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { submitRewrite, check, rewrite } from '../../../src/api/demo.api';
+import { submitRewrite, check, rewrite } from '../../../src/api/demo/demo.api';
 import { postData, pollWorkflowForResult } from '../../../src/utils/api';
 import {
   Status,
-  Dialect,
-  Tone,
-  StyleGuide,
   AnalysisRequest,
   AnalysisSubmissionResponse,
   AnalysisSuccessResponse,
-} from '../../../src/api/style';
+  defaults,
+} from '../../../src/api/demo/demo';
 
 // Mock the utility functions
 vi.mock('../../../src/utils/api', () => ({
@@ -23,9 +21,9 @@ describe('Demo API Unit Tests', () => {
   const mockRequest: AnalysisRequest = {
     content: 'test content',
     guidanceSettings: {
-      dialect: Dialect.AmericanEnglish,
-      tone: Tone.Formal,
-      styleGuide: StyleGuide.Microsoft,
+      dialect: defaults.dialects.americanEnglish,
+      tone: defaults.tones.formal,
+      styleGuide: defaults.styleGuides.microsoft,
     },
   };
 
@@ -36,6 +34,7 @@ describe('Demo API Unit Tests', () => {
   describe('Basic Operations', () => {
     it('should submit a rewrite', async () => {
       const mockResponse: AnalysisSubmissionResponse = {
+        status: Status.Running,
         workflow_id: mockWorkflowId,
         message: 'Rewrite workflow started successfully.',
       };
@@ -49,6 +48,7 @@ describe('Demo API Unit Tests', () => {
 
     it('should submit a check', async () => {
       const mockResponse: AnalysisSubmissionResponse = {
+        status: Status.Running,
         workflow_id: mockWorkflowId,
         message: 'Check workflow started successfully.',
       };
@@ -64,6 +64,7 @@ describe('Demo API Unit Tests', () => {
   describe('Operations with Polling', () => {
     it('should submit rewrite and get result', async () => {
       const mockSubmitResponse: AnalysisSubmissionResponse = {
+        status: Status.Running,
         workflow_id: mockWorkflowId,
         message: 'Rewrite workflow started successfully.',
       };
@@ -125,12 +126,13 @@ describe('Demo API Unit Tests', () => {
       vi.mocked(postData).mockResolvedValueOnce(mockSubmitResponse);
       vi.mocked(pollWorkflowForResult).mockResolvedValueOnce(mockPolledResponse);
 
-      const result = await rewrite(mockRequest, mockApiKey);
-      expect(result).toEqual(mockPolledResponse.result);
+      const response = await rewrite(mockRequest, mockApiKey);
+      expect(response).toEqual(mockPolledResponse);
     });
 
     it('should handle rewrite polling failure', async () => {
       const mockSubmitResponse: AnalysisSubmissionResponse = {
+        status: Status.Failed,
         workflow_id: mockWorkflowId,
         message: 'Rewrite workflow started successfully.',
       };
@@ -145,6 +147,7 @@ describe('Demo API Unit Tests', () => {
 
     it('should handle missing workflow ID for rewrite', async () => {
       const mockSubmitResponse: AnalysisSubmissionResponse = {
+        status: Status.Failed,
         workflow_id: '',
         message: 'Rewrite workflow started successfully.',
       };
