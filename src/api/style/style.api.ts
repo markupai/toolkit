@@ -2,11 +2,11 @@ import {
   StyleGuideList,
   StyleCheckRequest as StyleAnalysisRequest,
   AnalysisSubmissionResponse,
-  Status,
   AnalysisSuccessResponse,
   AnalysisSuccessResponseWithSuggestion,
   AnalysisSuccessResponseWithRewrite,
-} from './style.api.d';
+} from './style.api.types';
+import { Status } from '../../utils/api.types';
 
 import { getData, postData, pollWorkflowForResult } from '../../utils/api';
 

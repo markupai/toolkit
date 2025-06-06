@@ -1,6 +1,7 @@
-import { AnalysisRequest, AnalysisSubmissionResponse, AnalysisSuccessResponse, Status } from './demo.api.d';
+import { AnalysisRequest, AnalysisSubmissionResponse, AnalysisSuccessResponse } from './demo.api.types';
 
 import { postData, pollWorkflowForResult } from '../../utils/api';
+import { Status } from '../../utils/api.types';
 
 const API_ENDPOINTS = {
   REWRITES: '/v1/rewrites/',

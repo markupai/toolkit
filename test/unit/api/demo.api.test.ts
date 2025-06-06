@@ -6,7 +6,7 @@ import {
   AnalysisRequest,
   AnalysisSubmissionResponse,
   AnalysisSuccessResponse,
-} from '../../../src/api/demo/demo.api.d';
+} from '../../../src/api/demo/demo.api.types';
 import { defaults } from '../../../src/api/demo/demo.api.defaults';
 
 // Mock the utility functions

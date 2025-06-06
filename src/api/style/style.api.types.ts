@@ -1,13 +1,6 @@
-import { ResponseBase } from '../../utils/api.d';
+import { ResponseBase, Status } from '../../utils/api.types';
 
 // Enums
-
-export enum Status {
-  Queued = 'queued',
-  Running = 'running',
-  Completed = 'completed',
-  Failed = 'failed',
-}
 
 export interface Analysis {
   avg_sentence_length: number;
