@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { submitRewrite, check, rewrite } from '../../../src/api/demo/demo.api';
-import { defaults } from '../../../src/api/demo/demo.api.defaults';
+import { DEMO_DEFAULTS } from '../../../src/api/demo/demo.api.defaults';
 
 describe('Demo API Integration Tests', () => {
   let apiKey: string;
@@ -13,9 +13,9 @@ describe('Demo API Integration Tests', () => {
 
   const testContent = 'This is a test content for demo operations.';
   const guidanceSettings = {
-    dialect: defaults.dialects.americanEnglish,
-    tone: defaults.tones.formal,
-    styleGuide: defaults.styleGuides.microsoft,
+    dialect: DEMO_DEFAULTS.dialects.americanEnglish,
+    tone: DEMO_DEFAULTS.tones.formal,
+    styleGuide: DEMO_DEFAULTS.styleGuides.microsoft,
   };
 
   describe('Basic Operations', () => {

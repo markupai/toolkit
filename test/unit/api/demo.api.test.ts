@@ -2,12 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { submitRewrite, check, rewrite } from '../../../src/api/demo/demo.api';
 import { postData, pollWorkflowForResult } from '../../../src/utils/api';
 import {
-  Status,
   AnalysisRequest,
   AnalysisSubmissionResponse,
   AnalysisSuccessResponse,
 } from '../../../src/api/demo/demo.api.types';
-import { defaults } from '../../../src/api/demo/demo.api.defaults';
+import { DEMO_DEFAULTS } from '../../../src/api/demo/demo.api.defaults';
+import { Status } from '../../../src/utils/api.types';
 
 // Mock the utility functions
 vi.mock('../../../src/utils/api', () => ({
@@ -21,9 +21,9 @@ describe('Demo API Unit Tests', () => {
   const mockRequest: AnalysisRequest = {
     content: 'test content',
     guidanceSettings: {
-      dialect: defaults.dialects.americanEnglish,
-      tone: defaults.tones.formal,
-      styleGuide: defaults.styleGuides.microsoft,
+      dialect: DEMO_DEFAULTS.dialects.americanEnglish,
+      tone: DEMO_DEFAULTS.tones.formal,
+      styleGuide: DEMO_DEFAULTS.styleGuides.microsoft,
     },
   };
 

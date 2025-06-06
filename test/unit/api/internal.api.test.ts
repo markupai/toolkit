@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getAdminConstants, submitFeedback } from '../../../src/api/internal/internal.api';
 import { getData, postData } from '../../../src/utils/api';
-import { Constants, FeedbackRequest } from '../../../src/api/internal/internal';
+import { Constants, FeedbackRequest } from '../../../src/api/internal/internal.api.types';
 
 // Mock the utility functions
 vi.mock('../../../src/utils/api', () => ({

@@ -8,7 +8,7 @@ import {
   styleSuggestions,
   styleRewrite,
 } from '../../../src/api/style/style.api';
-import { defaults } from '../../../src/api/style/style.api.defaults';
+import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 
 describe('Style API Integration Tests', () => {
   let apiKey: string;
@@ -37,8 +37,8 @@ describe('Style API Integration Tests', () => {
         {
           file_upload: new Blob([testContent]),
           style_guide: styleGuideId,
-          dialect: defaults.dialects.americanEnglish,
-          tone: defaults.tones.formal,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
         },
         apiKey,
       );
@@ -52,8 +52,8 @@ describe('Style API Integration Tests', () => {
         {
           file_upload: new Blob([testContent]),
           style_guide: styleGuideId,
-          dialect: defaults.dialects.americanEnglish,
-          tone: defaults.tones.formal,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
         },
         apiKey,
       );
@@ -67,8 +67,8 @@ describe('Style API Integration Tests', () => {
         {
           file_upload: new Blob([testContent]),
           style_guide: styleGuideId,
-          dialect: defaults.dialects.americanEnglish,
-          tone: defaults.tones.formal,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
         },
         apiKey,
       );
@@ -82,8 +82,8 @@ describe('Style API Integration Tests', () => {
         {
           file_upload: new Blob([testContent]),
           style_guide: styleGuideId,
-          dialect: defaults.dialects.americanEnglish,
-          tone: defaults.tones.formal,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
         },
         apiKey,
       );
@@ -96,8 +96,8 @@ describe('Style API Integration Tests', () => {
         {
           file_upload: new Blob([testContent]),
           style_guide: styleGuideId,
-          dialect: defaults.dialects.americanEnglish,
-          tone: defaults.tones.formal,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
         },
         apiKey,
       );
@@ -110,8 +110,8 @@ describe('Style API Integration Tests', () => {
         {
           file_upload: new Blob([testContent]),
           style_guide: styleGuideId,
-          dialect: defaults.dialects.americanEnglish,
-          tone: defaults.tones.formal,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
         },
         apiKey,
       );

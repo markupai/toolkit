@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { getAdminConstants, submitFeedback } from '../../../src/api/internal/internal.api';
-import { FeedbackRequest } from '../../../src/api/internal/internal';
+import { FeedbackRequest } from '../../../src/api/internal/internal.api.types';
 
 describe('Internal API Integration Tests', () => {
   let apiKey: string;

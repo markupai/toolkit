@@ -1,4 +1,4 @@
-export const defaults = {
+export const DEMO_DEFAULTS = {
   dialects: {
     americanEnglish: 'american_english',
     australianEnglish: 'australian_english',
