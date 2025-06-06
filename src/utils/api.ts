@@ -1,8 +1,9 @@
 import { Status, AnalysisPollingResponse, AnalysisSuccessResponse } from '../api/style';
 import { AcrolinxError } from './errors';
 
-export const DEFAULT_PLATFORM_URL = 'https://app.acrolinx.com';
-export let PLATFORM_URL = DEFAULT_PLATFORM_URL;
+// export const DEFAULT_PLATFORM_URL = 'https://app.acrolinx.com';
+export const DEFAULT_PLATFORM_URL_DEMO = 'https://demo.acrolinx.com';
+export let PLATFORM_URL = DEFAULT_PLATFORM_URL_DEMO;
 
 export function setPlatformUrl(url: string) {
   PLATFORM_URL = url;
@@ -39,12 +40,12 @@ export async function getData<T>(endpoint: string, apiKey: string): Promise<T> {
   }
 }
 
-export async function postData<T>(endpoint: string, formData: FormData, apiKey: string): Promise<T> {
+export async function postData<T>(endpoint: string, body: BodyInit, apiKey: string): Promise<T> {
   try {
     const fetchOptions: RequestInit = {
       method: 'POST',
       headers: getCommonHeaders(apiKey),
-      body: formData,
+      body: body,
     };
     const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
 
@@ -65,12 +66,12 @@ export async function postData<T>(endpoint: string, formData: FormData, apiKey: 
   }
 }
 
-export async function putData<T>(endpoint: string, formData: FormData, apiKey: string): Promise<T> {
+export async function putData<T>(endpoint: string, body: BodyInit, apiKey: string): Promise<T> {
   try {
     const fetchOptions: RequestInit = {
       method: 'PUT',
       headers: getCommonHeaders(apiKey),
-      body: formData,
+      body: body,
     };
     const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
 

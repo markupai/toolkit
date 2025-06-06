@@ -8,89 +8,47 @@
   "paths": {
     "/v1/rewrites/": {
       "post": {
-        "tags": ["Demo Tool", "Demo Tool"],
+        "tags": ["Demo Tool"],
         "summary": "Submit a document for editing",
         "description": "Uploads a .txt file and starts the Helios One editing workflow.",
         "operationId": "Demo Tool-submit_edit_workflow",
         "requestBody": {
           "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_Demo_Tool-submit_edit_workflow"
-              }
-            }
+            "multipart/form-data": { "schema": { "$ref": "#/components/schemas/Body_Demo_Tool-submit_edit_workflow" } }
           }
         },
         "responses": {
           "202": {
             "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StartEditResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StartEditResponse" } } }
           },
           "400": {
             "description": "Invalid input parameters or file",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
           },
           "403": {
             "description": "Invalid API Key",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
           },
           "500": {
             "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
           },
           "422": {
             "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ]
+        "security": [{ "APIKeyHeader": [] }]
       }
     },
     "/v1/rewrites/{workflow_id}": {
       "get": {
-        "tags": ["Demo Tool", "Demo Tool"],
+        "tags": ["Demo Tool"],
         "summary": "Get the status of an edit workflow",
         "description": "Returns the current status of a Helios One editing workflow.",
         "operationId": "Demo Tool-get_edit_status",
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ],
+        "security": [{ "APIKeyHeader": [] }],
         "parameters": [
           {
             "name": "workflow_id",
@@ -107,53 +65,23 @@
         "responses": {
           "200": {
             "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EditStatusResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EditStatusResponse" } } }
           },
           "403": {
             "description": "Invalid API Key",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
           },
           "404": {
             "description": "Workflow not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
           },
           "500": {
             "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
           },
           "422": {
             "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         }
       }
@@ -166,113 +94,70 @@
         "operationId": "Demo Tool-submit_check_workflow",
         "requestBody": {
           "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_Demo_Tool-submit_check_workflow"
-              }
-            }
+            "multipart/form-data": { "schema": { "$ref": "#/components/schemas/Body_Demo_Tool-submit_check_workflow" } }
           },
           "required": true
         },
         "responses": {
           "202": {
             "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StartCheckResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StartCheckResponse" } } }
           },
           "400": {
             "description": "Invalid input parameters or file",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
           },
           "403": {
             "description": "Invalid API Key",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
           },
           "500": {
             "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
           },
           "422": {
             "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ]
+        "security": [{ "APIKeyHeader": [] }]
       }
     },
     "/v1/style-guides": {
       "get": {
         "tags": ["Style Guides"],
         "summary": "Get Style Guides",
+        "description": "Get all style guides. Keys are style guide IDs and values are style guide names.",
         "operationId": "Style Guides-get_style_guides",
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Style guides",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "additionalProperties": { "type": "string" },
+                  "type": "object",
+                  "title": "Response Style Guides-Get Style Guides"
+                },
+                "example": {
+                  "01971e03-dd27-75ee-9044-b48e654848cf": "ap",
+                  "01971e03-dd27-77d8-a6fa-5edb6a1f4ad2": "chicago",
+                  "01971e03-dd27-779f-b3ec-b724a2cf809f": "microsoft"
+                }
               }
             }
           }
         },
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ]
+        "security": [{ "APIKeyHeader": [] }]
       },
       "post": {
         "tags": ["Style Guides"],
         "summary": "Create Style Guide",
         "operationId": "Style Guides-create_style_guide",
         "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } }
         },
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ]
+        "security": [{ "APIKeyHeader": [] }]
       }
     },
     "/v1/style-guides/{style_guide_id}": {
@@ -280,40 +165,20 @@
         "tags": ["Style Guides"],
         "summary": "Get Style Guide",
         "operationId": "Style Guides-get_style_guide",
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ],
+        "security": [{ "APIKeyHeader": [] }],
         "parameters": [
           {
             "name": "style_guide_id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Style Guide Id"
-            }
+            "schema": { "type": "string", "title": "Style Guide Id" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
           "422": {
             "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         }
       },
@@ -321,40 +186,20 @@
         "tags": ["Style Guides"],
         "summary": "Update Style Guide",
         "operationId": "Style Guides-update_style_guide",
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ],
+        "security": [{ "APIKeyHeader": [] }],
         "parameters": [
           {
             "name": "style_guide_id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Style Guide Id"
-            }
+            "schema": { "type": "string", "title": "Style Guide Id" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
           "422": {
             "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         }
       },
@@ -362,40 +207,20 @@
         "tags": ["Style Guides"],
         "summary": "Delete Style Guide",
         "operationId": "Style Guides-delete_style_guide",
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ],
+        "security": [{ "APIKeyHeader": [] }],
         "parameters": [
           {
             "name": "style_guide_id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Style Guide Id"
-            }
+            "schema": { "type": "string", "title": "Style Guide Id" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
+          "200": { "description": "Successful Response", "content": { "application/json": { "schema": {} } } },
           "422": {
             "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         }
       }
@@ -407,42 +232,20 @@
         "description": "Start a style and brand check run. Returns a workflow ID for each file.",
         "operationId": "Style Checks-create_style_check",
         "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_Style_Checks-create_style_check"
-              }
-            }
-          },
+          "content": { "multipart/form-data": { "schema": { "$ref": "#/components/schemas/StyleRequestBody" } } },
           "required": true
         },
         "responses": {
           "200": {
             "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WorkflowResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/WorkflowResponse" } } }
           },
           "422": {
             "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ]
+        "security": [{ "APIKeyHeader": [] }]
       }
     },
     "/v1/style/checks/{workflow_id}": {
@@ -451,20 +254,13 @@
         "summary": "Get Style Check",
         "description": "get the results of a style and brand check run.",
         "operationId": "Style Checks-get_style_check",
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ],
+        "security": [{ "APIKeyHeader": [] }],
         "parameters": [
           {
             "name": "workflow_id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Workflow Id"
-            }
+            "schema": { "type": "string", "title": "Workflow Id" }
           }
         ],
         "responses": {
@@ -474,12 +270,8 @@
               "application/json": {
                 "schema": {
                   "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/StyleCheckResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/WorkflowStatusResponse"
-                    }
+                    { "$ref": "#/components/schemas/StyleCheckResponse" },
+                    { "$ref": "#/components/schemas/WorkflowStatusResponse" }
                   ],
                   "title": "Response Style Checks-Get Style Check"
                 }
@@ -488,13 +280,7 @@
           },
           "422": {
             "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         }
       }
@@ -506,42 +292,20 @@
         "description": "Start a style and brand suggestion run. Returns a workflow ID for each file.",
         "operationId": "Style Suggestions-create_style_suggestion",
         "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_Style_Suggestions-create_style_suggestion"
-              }
-            }
-          },
+          "content": { "multipart/form-data": { "schema": { "$ref": "#/components/schemas/StyleRequestBody" } } },
           "required": true
         },
         "responses": {
           "200": {
             "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WorkflowResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/WorkflowResponse" } } }
           },
           "422": {
             "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ]
+        "security": [{ "APIKeyHeader": [] }]
       }
     },
     "/v1/style/suggestions/{workflow_id}": {
@@ -550,20 +314,13 @@
         "summary": "Get Style Suggestion",
         "description": "Get the results of a suggestion run.",
         "operationId": "Style Suggestions-get_style_suggestion",
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ],
+        "security": [{ "APIKeyHeader": [] }],
         "parameters": [
           {
             "name": "workflow_id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Workflow Id"
-            }
+            "schema": { "type": "string", "title": "Workflow Id" }
           }
         ],
         "responses": {
@@ -573,12 +330,8 @@
               "application/json": {
                 "schema": {
                   "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/SuggestionResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/WorkflowStatusResponse"
-                    }
+                    { "$ref": "#/components/schemas/SuggestionResponse" },
+                    { "$ref": "#/components/schemas/WorkflowStatusResponse" }
                   ],
                   "title": "Response Style Suggestions-Get Style Suggestion"
                 }
@@ -587,82 +340,47 @@
           },
           "422": {
             "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         }
       }
     },
-    "/v1/style-rewrites": {
+    "/v1/style/rewrites": {
       "post": {
-        "tags": ["Style Rewrites", "Style Rewrites"],
+        "tags": ["Style Rewrites"],
         "summary": "Create Style Rewrite",
         "description": "Start a rewrite run for one or many files. Returns a workflow ID for each file.",
         "operationId": "Style Rewrites-create_style_rewrite",
         "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_Style_Rewrites-create_style_rewrite"
-              }
-            }
-          },
+          "content": { "multipart/form-data": { "schema": { "$ref": "#/components/schemas/StyleRequestBody" } } },
           "required": true
         },
         "responses": {
           "200": {
             "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WorkflowResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/WorkflowResponse" } } }
           },
           "422": {
             "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         },
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ]
+        "security": [{ "APIKeyHeader": [] }]
       }
     },
-    "/v1/style-rewrites/{workflow_id}": {
+    "/v1/style/rewrites/{workflow_id}": {
       "get": {
-        "tags": ["Style Rewrites", "Style Rewrites"],
+        "tags": ["Style Rewrites"],
         "summary": "Get Style Rewrite",
         "description": "Get the results of a rewrite run.",
         "operationId": "Style Rewrites-get_style_rewrite",
-        "security": [
-          {
-            "APIKeyHeader": []
-          }
-        ],
+        "security": [{ "APIKeyHeader": [] }],
         "parameters": [
           {
             "name": "workflow_id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Workflow Id"
-            }
+            "schema": { "type": "string", "title": "Workflow Id" }
           }
         ],
         "responses": {
@@ -672,12 +390,8 @@
               "application/json": {
                 "schema": {
                   "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/RewriteResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/WorkflowStatusResponse"
-                    }
+                    { "$ref": "#/components/schemas/RewriteResponse" },
+                    { "$ref": "#/components/schemas/WorkflowStatusResponse" }
                   ],
                   "title": "Response Style Rewrites-Get Style Rewrite"
                 }
@@ -686,15 +400,42 @@
           },
           "422": {
             "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
           }
         }
+      }
+    },
+    "/internal/v1/constants": {
+      "get": {
+        "tags": ["Internal"],
+        "summary": "Get Admin Constants",
+        "operationId": "Internal-get_admin_constants",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ConstantsResponse" } } }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/internal/v1/demo-feedback": {
+      "post": {
+        "tags": ["Internal"],
+        "summary": "Submit Feedback",
+        "operationId": "Internal-submit_feedback",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FeedbackRequest" } } },
+          "required": true
+        },
+        "responses": {
+          "204": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HTTPValidationError" } } }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
       }
     }
   },
@@ -702,15 +443,14 @@
     "schemas": {
       "AcrolinxScorerActivityOutput": {
         "properties": {
+          "msg_hash": {
+            "type": "string",
+            "title": "Msg Hash",
+            "description": "The hash of the messages used to run the activity",
+            "default": ""
+          },
           "error": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Error",
             "description": "The error that occurred during the activity"
           },
@@ -729,38 +469,38 @@
             "$ref": "#/components/schemas/Parameters",
             "description": "The parameters used to run the activity"
           },
+          "prompt": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Prompt",
+            "description": "The prompt used to run the activity"
+          },
+          "completion": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Completion",
+            "description": "The completion used to run the activity"
+          },
           "provider": {
             "type": "string",
             "title": "Provider",
             "description": "The provider used to run the activity",
             "default": ""
           },
-          "run_id": {
-            "type": "string",
-            "title": "Run Id",
-            "description": "The Temporal workflow run ID"
+          "repair_log": {
+            "items": { "additionalProperties": { "type": "string" }, "type": "object" },
+            "type": "array",
+            "title": "Repair Log",
+            "description": "The LLM output's JSON repair log for the activity"
           },
-          "token_usage": {
-            "$ref": "#/components/schemas/TokenUsage",
-            "description": "The token usage for the activity"
-          },
-          "workflow_id": {
-            "type": "string",
-            "title": "Workflow Id",
-            "description": "The Temporal workflow ID"
-          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
           "issues": {
-            "items": {
-              "$ref": "#/components/schemas/helios_one__activities__acrolinx_scorer__models__Issue"
-            },
+            "items": { "$ref": "#/components/schemas/helios_one__activities__acrolinx_scorer__models__Issue" },
             "type": "array",
             "title": "Issues"
           },
-          "score": {
-            "type": "number",
-            "title": "Score",
-            "default": -1
-          }
+          "score": { "type": "number", "title": "Score", "default": -1 }
         },
         "type": "object",
         "required": ["duration", "run_id", "workflow_id"],
@@ -768,41 +508,13 @@
       },
       "Analysis": {
         "properties": {
-          "avg_sentence_length": {
-            "type": "number",
-            "title": "Avg Sentence Length",
-            "default": -1
-          },
-          "avg_word_length": {
-            "type": "number",
-            "title": "Avg Word Length",
-            "default": -1
-          },
-          "complexity_score": {
-            "type": "number",
-            "title": "Complexity Score",
-            "default": -1
-          },
-          "readability_score": {
-            "type": "number",
-            "title": "Readability Score",
-            "default": -1
-          },
-          "sentence_count": {
-            "type": "integer",
-            "title": "Sentence Count",
-            "default": -1
-          },
-          "vocabulary_score": {
-            "type": "number",
-            "title": "Vocabulary Score",
-            "default": -1
-          },
-          "word_count": {
-            "type": "integer",
-            "title": "Word Count",
-            "default": -1
-          }
+          "avg_sentence_length": { "type": "number", "title": "Avg Sentence Length", "default": -1 },
+          "avg_word_length": { "type": "number", "title": "Avg Word Length", "default": -1 },
+          "complexity_score": { "type": "number", "title": "Complexity Score", "default": -1 },
+          "readability_score": { "type": "number", "title": "Readability Score", "default": -1 },
+          "sentence_count": { "type": "integer", "title": "Sentence Count", "default": -1 },
+          "vocabulary_score": { "type": "number", "title": "Vocabulary Score", "default": -1 },
+          "word_count": { "type": "integer", "title": "Word Count", "default": -1 }
         },
         "type": "object",
         "title": "Analysis"
@@ -845,15 +557,7 @@
       "Body_Demo_Tool-submit_edit_workflow": {
         "properties": {
           "file": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "binary"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string", "format": "binary" }, { "type": "null" }],
             "title": "File",
             "description": "The .txt file to process.",
             "content_type": "text/plain"
@@ -900,55 +604,22 @@
         "type": "object",
         "title": "Body_Demo Tool-submit_edit_workflow"
       },
-      "Body_Style_Checks-create_style_check": {
+      "Color": {
         "properties": {
-          "file_upload": {
-            "type": "string",
-            "format": "binary",
-            "title": "File Upload",
-            "description": "The files to check",
-            "content_type": "text/plain"
-          },
-          "style_guide": {
-            "$ref": "#/components/schemas/StyleGuides",
-            "description": "The intended style guide to use for the text to check.",
-            "examples": ["ap", "chicago", "microsoft"]
-          },
-          "dialect": {
-            "$ref": "#/components/schemas/Dialects",
-            "description": "The intended dialect of the text to check.",
-            "examples": [
-              "american_english",
-              "australian_english",
-              "british_oxford",
-              "canadian_english",
-              "indian_english"
-            ]
-          },
-          "tone": {
-            "$ref": "#/components/schemas/Tones",
-            "description": "The intended tone of the text to check.",
-            "examples": ["academic", "business", "casual", "conversational", "formal", "gen-z", "informal", "technical"]
-          }
+          "value": { "type": "string", "title": "Value" },
+          "min_score": { "type": "integer", "title": "Min Score" }
         },
         "type": "object",
-        "required": ["file_upload", "style_guide", "dialect", "tone"],
-        "title": "Body_Style Checks-create_style_check"
+        "required": ["value", "min_score"],
+        "title": "Color"
       },
-      "Body_Style_Rewrites-create_style_rewrite": {
+      "ConstantsResponse": {
         "properties": {
-          "file_upload": {
-            "type": "string",
-            "format": "binary",
-            "title": "File Upload",
-            "description": "The .txt file to process.",
-            "content_type": "text/plain"
-          },
-          "dialect": {
-            "$ref": "#/components/schemas/Dialects",
-            "description": "The intended dialect of the text to edit.",
-            "default": "american_english",
-            "examples": [
+          "dialects": {
+            "items": { "$ref": "#/components/schemas/Dialects" },
+            "type": "array",
+            "title": "Dialects",
+            "default": [
               "american_english",
               "australian_english",
               "british_oxford",
@@ -956,57 +627,35 @@
               "indian_english"
             ]
           },
-          "tone": {
-            "$ref": "#/components/schemas/Tones",
-            "description": "The intended tone of the text to edit.",
-            "default": "formal",
-            "examples": ["academic", "business", "casual", "conversational", "formal", "gen-z", "informal", "technical"]
+          "tones": {
+            "items": { "$ref": "#/components/schemas/Tones" },
+            "type": "array",
+            "title": "Tones",
+            "default": ["academic", "business", "casual", "conversational", "formal", "gen-z", "informal", "technical"]
           },
-          "style_guide": {
-            "$ref": "#/components/schemas/StyleGuides",
-            "description": "The intended style guide to use for the text to edit.",
-            "default": "microsoft",
-            "examples": ["ap", "chicago", "microsoft"]
+          "style_guides": {
+            "additionalProperties": { "type": "string" },
+            "type": "object",
+            "title": "Style Guides",
+            "default": {
+              "01971e03-dd27-75ee-9044-b48e654848cf": "ap",
+              "01971e03-dd27-77d8-a6fa-5edb6a1f4ad2": "chicago",
+              "01971e03-dd27-779f-b3ec-b724a2cf809f": "microsoft"
+            }
+          },
+          "colors": {
+            "additionalProperties": { "$ref": "#/components/schemas/Color" },
+            "type": "object",
+            "title": "Colors",
+            "default": {
+              "green": { "min_score": 80, "value": "rgb(120, 253, 134)" },
+              "yellow": { "min_score": 60, "value": "rgb(246, 240, 104)" },
+              "red": { "min_score": 0, "value": "rgb(235, 94, 94)" }
+            }
           }
         },
         "type": "object",
-        "required": ["file_upload"],
-        "title": "Body_Style Rewrites-create_style_rewrite"
-      },
-      "Body_Style_Suggestions-create_style_suggestion": {
-        "properties": {
-          "file_upload": {
-            "type": "string",
-            "format": "binary",
-            "title": "File Upload",
-            "description": "The file to get suggestions for",
-            "content_type": "text/plain"
-          },
-          "style_guide": {
-            "$ref": "#/components/schemas/StyleGuides",
-            "description": "The intended style guide to use for the text to check.",
-            "examples": ["ap", "chicago", "microsoft"]
-          },
-          "dialect": {
-            "$ref": "#/components/schemas/Dialects",
-            "description": "The intended dialect of the text to check.",
-            "examples": [
-              "american_english",
-              "australian_english",
-              "british_oxford",
-              "canadian_english",
-              "indian_english"
-            ]
-          },
-          "tone": {
-            "$ref": "#/components/schemas/Tones",
-            "description": "The intended tone of the text to check.",
-            "examples": ["academic", "business", "casual", "conversational", "formal", "gen-z", "informal", "technical"]
-          }
-        },
-        "type": "object",
-        "required": ["file_upload", "style_guide", "dialect", "tone"],
-        "title": "Body_Style Suggestions-create_style_suggestion"
+        "title": "ConstantsResponse"
       },
       "ContentQualityFeedback": {
         "type": "string",
@@ -1020,15 +669,14 @@
       },
       "ContentScorerActivityOutput": {
         "properties": {
+          "msg_hash": {
+            "type": "string",
+            "title": "Msg Hash",
+            "description": "The hash of the messages used to run the activity",
+            "default": ""
+          },
           "error": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Error",
             "description": "The error that occurred during the activity"
           },
@@ -1047,75 +695,43 @@
             "$ref": "#/components/schemas/Parameters",
             "description": "The parameters used to run the activity"
           },
+          "prompt": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Prompt",
+            "description": "The prompt used to run the activity"
+          },
+          "completion": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Completion",
+            "description": "The completion used to run the activity"
+          },
           "provider": {
             "type": "string",
             "title": "Provider",
             "description": "The provider used to run the activity",
             "default": ""
           },
-          "run_id": {
-            "type": "string",
-            "title": "Run Id",
-            "description": "The Temporal workflow run ID"
+          "repair_log": {
+            "items": { "additionalProperties": { "type": "string" }, "type": "object" },
+            "type": "array",
+            "title": "Repair Log",
+            "description": "The LLM output's JSON repair log for the activity"
           },
-          "token_usage": {
-            "$ref": "#/components/schemas/TokenUsage",
-            "description": "The token usage for the activity"
-          },
-          "workflow_id": {
-            "type": "string",
-            "title": "Workflow Id",
-            "description": "The Temporal workflow ID"
-          },
-          "analysis": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Analysis"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "feedback": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ContentQualityFeedback"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "score": {
-            "type": "number",
-            "title": "Score",
-            "default": -1
-          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
+          "analysis": { "anyOf": [{ "$ref": "#/components/schemas/Analysis" }, { "type": "null" }] },
+          "feedback": { "anyOf": [{ "$ref": "#/components/schemas/ContentQualityFeedback" }, { "type": "null" }] },
+          "score": { "type": "number", "title": "Score", "default": -1 },
           "suggestions": {
             "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/ContentSuggestions"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
+              { "items": { "$ref": "#/components/schemas/ContentSuggestions" }, "type": "array" },
+              { "type": "null" }
             ],
             "title": "Suggestions"
           },
-          "target_score": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/TargetScore"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
+          "target_score": { "anyOf": [{ "$ref": "#/components/schemas/TargetScore" }, { "type": "null" }] }
         },
         "type": "object",
         "required": ["duration", "run_id", "workflow_id"],
@@ -1140,72 +756,44 @@
       },
       "EditStatusResponse": {
         "properties": {
-          "workflow_id": {
-            "type": "string",
-            "title": "Workflow Id"
-          },
-          "status": {
-            "$ref": "#/components/schemas/WorkflowStatus"
-          },
-          "result": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/TheiaOutput"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "error_message": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Error Message"
-          }
+          "workflow_id": { "type": "string", "title": "Workflow Id" },
+          "status": { "$ref": "#/components/schemas/WorkflowStatus" },
+          "run_id": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Run Id" },
+          "result": { "anyOf": [{ "$ref": "#/components/schemas/TheiaOutput" }, { "type": "null" }] },
+          "error_message": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Error Message" }
         },
         "type": "object",
         "required": ["workflow_id", "status"],
         "title": "EditStatusResponse"
       },
       "ErrorResponse": {
-        "properties": {
-          "detail": {
-            "type": "string",
-            "title": "Detail"
-          }
-        },
+        "properties": { "detail": { "type": "string", "title": "Detail" } },
         "type": "object",
         "required": ["detail"],
         "title": "ErrorResponse",
         "description": "Standard error response model."
       },
+      "FeedbackRequest": {
+        "properties": {
+          "workflow_id": { "type": "string", "title": "Workflow Id" },
+          "run_id": { "type": "string", "title": "Run Id" },
+          "helpful": { "type": "boolean", "title": "Helpful" },
+          "feedback": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Feedback" },
+          "original": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Original" },
+          "suggestion": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Suggestion" },
+          "category": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Category" }
+        },
+        "type": "object",
+        "required": ["workflow_id", "run_id", "helpful"],
+        "title": "FeedbackRequest"
+      },
       "FinalScores": {
         "properties": {
           "acrolinx_score": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AcrolinxScorerActivityOutput"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "anyOf": [{ "$ref": "#/components/schemas/AcrolinxScorerActivityOutput" }, { "type": "null" }]
           },
           "content_score": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ContentScorerActivityOutput"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "anyOf": [{ "$ref": "#/components/schemas/ContentScorerActivityOutput" }, { "type": "null" }]
           }
         },
         "type": "object",
@@ -1213,15 +801,14 @@
       },
       "GrammarActivityOutput": {
         "properties": {
+          "msg_hash": {
+            "type": "string",
+            "title": "Msg Hash",
+            "description": "The hash of the messages used to run the activity",
+            "default": ""
+          },
           "error": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Error",
             "description": "The error that occurred during the activity"
           },
@@ -1240,33 +827,33 @@
             "$ref": "#/components/schemas/Parameters",
             "description": "The parameters used to run the activity"
           },
+          "prompt": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Prompt",
+            "description": "The prompt used to run the activity"
+          },
+          "completion": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Completion",
+            "description": "The completion used to run the activity"
+          },
           "provider": {
             "type": "string",
             "title": "Provider",
             "description": "The provider used to run the activity",
             "default": ""
           },
-          "run_id": {
-            "type": "string",
-            "title": "Run Id",
-            "description": "The Temporal workflow run ID"
-          },
-          "token_usage": {
-            "$ref": "#/components/schemas/TokenUsage",
-            "description": "The token usage for the activity"
-          },
-          "workflow_id": {
-            "type": "string",
-            "title": "Workflow Id",
-            "description": "The Temporal workflow ID"
-          },
-          "changes": {
-            "items": {
-              "$ref": "#/components/schemas/GrammarChange"
-            },
+          "repair_log": {
+            "items": { "additionalProperties": { "type": "string" }, "type": "object" },
             "type": "array",
-            "title": "Changes"
-          }
+            "title": "Repair Log",
+            "description": "The LLM output's JSON repair log for the activity"
+          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
+          "changes": { "items": { "$ref": "#/components/schemas/GrammarChange" }, "type": "array", "title": "Changes" }
         },
         "type": "object",
         "required": ["duration", "run_id", "workflow_id", "changes"],
@@ -1279,24 +866,14 @@
       },
       "GrammarChange": {
         "properties": {
-          "original": {
-            "type": "string",
-            "title": "Original",
-            "description": "The original text"
-          },
-          "modified": {
-            "type": "string",
-            "title": "Modified",
-            "description": "The modified text"
-          },
+          "original": { "type": "string", "title": "Original", "description": "The original text" },
+          "modified": { "type": "string", "title": "Modified", "description": "The modified text" },
           "change_start_char_idx": {
             "type": "integer",
             "title": "Change Start Char Idx",
             "description": "The start index of the change"
           },
-          "category": {
-            "$ref": "#/components/schemas/GrammarCategory"
-          }
+          "category": { "$ref": "#/components/schemas/GrammarCategory" }
         },
         "type": "object",
         "required": ["original", "modified", "change_start_char_idx", "category"],
@@ -1304,13 +881,7 @@
       },
       "HTTPValidationError": {
         "properties": {
-          "detail": {
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            },
-            "type": "array",
-            "title": "Detail"
-          }
+          "detail": { "items": { "$ref": "#/components/schemas/ValidationError" }, "type": "array", "title": "Detail" }
         },
         "type": "object",
         "title": "HTTPValidationError"
@@ -1323,9 +894,7 @@
             "description": "The date and time the workflow was created"
           },
           "errors": {
-            "items": {
-              "$ref": "#/components/schemas/WorkflowError"
-            },
+            "items": { "$ref": "#/components/schemas/WorkflowError" },
             "type": "array",
             "title": "Errors",
             "description": "The errors that occurred during the workflow"
@@ -1338,111 +907,43 @@
             "$ref": "#/components/schemas/FinalScores",
             "description": "The final scores of the workflow"
           },
-          "input_file": {
-            "type": "string",
-            "title": "Input File",
-            "description": "The path to the input file"
-          },
+          "input_file": { "type": "string", "title": "Input File", "description": "The path to the input file" },
           "parameters": {
             "$ref": "#/components/schemas/Parameters",
             "description": "The parameters used to run the workflow"
           },
-          "run_id": {
-            "type": "string",
-            "title": "Run Id",
-            "description": "The Temporal workflow run ID"
-          },
-          "workflow_id": {
-            "type": "string",
-            "title": "Workflow Id",
-            "description": "The Temporal workflow ID"
-          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
           "grammar_result": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/GrammarActivityOutput"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "$ref": "#/components/schemas/GrammarActivityOutput" }, { "type": "null" }],
             "description": "The result of the grammar activity"
           },
           "merging_result": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/MergingActivityOutput"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "$ref": "#/components/schemas/MergingActivityOutput" }, { "type": "null" }],
             "description": "The result of the merging activity"
           },
           "parser_result": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ParserResponse"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "$ref": "#/components/schemas/ParserResponse" }, { "type": "null" }],
             "description": "The result of the parser activity"
           },
           "sentence_length_result": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/SentenceLengthActivityOutput"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "$ref": "#/components/schemas/SentenceLengthActivityOutput" }, { "type": "null" }],
             "description": "The result of the sentence length activity"
           },
           "sentence_structure_result": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/SentenceStructureOutput"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "$ref": "#/components/schemas/SentenceStructureOutput" }, { "type": "null" }],
             "description": "The result of the sentence structure activity"
           },
           "simple_vocabulary_result": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/SimpleVocabOutput"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "$ref": "#/components/schemas/SimpleVocabOutput" }, { "type": "null" }],
             "description": "The result of the simple vocabulary activity"
           },
           "tone_result": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ToneCheckOutput"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "$ref": "#/components/schemas/ToneCheckOutput" }, { "type": "null" }],
             "description": "The result of the tone activity"
           },
           "style_guide_result": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/StyleGuideOutput"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "$ref": "#/components/schemas/StyleGuideOutput" }, { "type": "null" }],
             "description": "The result of the style guide activity"
           }
         },
@@ -1453,24 +954,10 @@
       "InitialScores": {
         "properties": {
           "acrolinx_score": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AcrolinxScorerActivityOutput"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "anyOf": [{ "$ref": "#/components/schemas/AcrolinxScorerActivityOutput" }, { "type": "null" }]
           },
           "content_score": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ContentScorerActivityOutput"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "anyOf": [{ "$ref": "#/components/schemas/ContentScorerActivityOutput" }, { "type": "null" }]
           }
         },
         "type": "object",
@@ -1478,15 +965,14 @@
       },
       "MergingActivityOutput": {
         "properties": {
+          "msg_hash": {
+            "type": "string",
+            "title": "Msg Hash",
+            "description": "The hash of the messages used to run the activity",
+            "default": ""
+          },
           "error": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Error",
             "description": "The error that occurred during the activity"
           },
@@ -1505,26 +991,32 @@
             "$ref": "#/components/schemas/Parameters",
             "description": "The parameters used to run the activity"
           },
+          "prompt": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Prompt",
+            "description": "The prompt used to run the activity"
+          },
+          "completion": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Completion",
+            "description": "The completion used to run the activity"
+          },
           "provider": {
             "type": "string",
             "title": "Provider",
             "description": "The provider used to run the activity",
             "default": ""
           },
-          "run_id": {
-            "type": "string",
-            "title": "Run Id",
-            "description": "The Temporal workflow run ID"
+          "repair_log": {
+            "items": { "additionalProperties": { "type": "string" }, "type": "object" },
+            "type": "array",
+            "title": "Repair Log",
+            "description": "The LLM output's JSON repair log for the activity"
           },
-          "token_usage": {
-            "$ref": "#/components/schemas/TokenUsage",
-            "description": "The token usage for the activity"
-          },
-          "workflow_id": {
-            "type": "string",
-            "title": "Workflow Id",
-            "description": "The Temporal workflow ID"
-          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
           "merged_text": {
             "type": "string",
             "minLength": 1,
@@ -1539,47 +1031,19 @@
       "Parameters": {
         "properties": {
           "dialect": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Dialects"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "$ref": "#/components/schemas/Dialects" }, { "type": "null" }],
             "description": "The dialect used for the activity"
           },
           "tone": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Tones"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "$ref": "#/components/schemas/Tones" }, { "type": "null" }],
             "description": "The tone used for the activity"
           },
           "style_guide": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/StyleGuides"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "$ref": "#/components/schemas/StyleGuides" }, { "type": "null" }],
             "description": "The style guide used for the activity"
           },
           "max_words": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
             "title": "Max Words",
             "description": "The maximum number of words allowed for the activity"
           }
@@ -1589,15 +1053,14 @@
       },
       "ParserResponse": {
         "properties": {
+          "msg_hash": {
+            "type": "string",
+            "title": "Msg Hash",
+            "description": "The hash of the messages used to run the activity",
+            "default": ""
+          },
           "error": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Error",
             "description": "The error that occurred during the activity"
           },
@@ -1616,26 +1079,32 @@
             "$ref": "#/components/schemas/Parameters",
             "description": "The parameters used to run the activity"
           },
+          "prompt": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Prompt",
+            "description": "The prompt used to run the activity"
+          },
+          "completion": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Completion",
+            "description": "The completion used to run the activity"
+          },
           "provider": {
             "type": "string",
             "title": "Provider",
             "description": "The provider used to run the activity",
             "default": ""
           },
-          "run_id": {
-            "type": "string",
-            "title": "Run Id",
-            "description": "The Temporal workflow run ID"
+          "repair_log": {
+            "items": { "additionalProperties": { "type": "string" }, "type": "object" },
+            "type": "array",
+            "title": "Repair Log",
+            "description": "The LLM output's JSON repair log for the activity"
           },
-          "token_usage": {
-            "$ref": "#/components/schemas/TokenUsage",
-            "description": "The token usage for the activity"
-          },
-          "workflow_id": {
-            "type": "string",
-            "title": "Workflow Id",
-            "description": "The Temporal workflow ID"
-          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
           "extracted_text": {
             "type": "string",
             "minLength": 1,
@@ -1649,65 +1118,39 @@
       },
       "RewriteResponse": {
         "properties": {
-          "status": {
-            "$ref": "#/components/schemas/WorkflowStatus"
-          },
-          "style_guide_id": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/StyleGuides"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "scores": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Analysis"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "issues": {
-            "items": {
-              "$ref": "#/components/schemas/Suggestion"
-            },
-            "type": "array",
-            "title": "Issues"
-          },
-          "rewrite": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Rewrite"
-          }
+          "status": { "$ref": "#/components/schemas/WorkflowStatus" },
+          "style_guide_id": { "anyOf": [{ "$ref": "#/components/schemas/StyleGuides" }, { "type": "null" }] },
+          "scores": { "anyOf": [{ "$ref": "#/components/schemas/ScoreOutput" }, { "type": "null" }] },
+          "issues": { "items": { "$ref": "#/components/schemas/Suggestion" }, "type": "array", "title": "Issues" },
+          "rewrite": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Rewrite" }
         },
         "type": "object",
         "required": ["status", "style_guide_id", "scores", "issues"],
         "title": "RewriteResponse"
       },
+      "ScoreOutput": {
+        "properties": {
+          "avg_sentence_length": { "type": "number", "title": "Avg Sentence Length", "default": -1 },
+          "avg_word_length": { "type": "number", "title": "Avg Word Length", "default": -1 },
+          "complexity_score": { "type": "number", "title": "Complexity Score", "default": -1 },
+          "readability_score": { "type": "number", "title": "Readability Score", "default": -1 },
+          "sentence_count": { "type": "integer", "title": "Sentence Count", "default": -1 },
+          "vocabulary_score": { "type": "number", "title": "Vocabulary Score", "default": -1 },
+          "word_count": { "type": "integer", "title": "Word Count", "default": -1 },
+          "overall_score": { "type": "number", "title": "Overall Score", "default": -1 }
+        },
+        "type": "object",
+        "title": "ScoreOutput"
+      },
       "SentenceLengthActivityOutput": {
         "properties": {
-          "error": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Error"
+          "msg_hash": {
+            "type": "string",
+            "title": "Msg Hash",
+            "description": "The hash of the messages used to run the activity",
+            "default": ""
           },
+          "error": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Error" },
           "duration": {
             "type": "number",
             "title": "Duration",
@@ -1723,32 +1166,35 @@
             "$ref": "#/components/schemas/Parameters",
             "description": "The parameters used to run the activity"
           },
+          "prompt": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Prompt",
+            "description": "The prompt used to run the activity"
+          },
+          "completion": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Completion",
+            "description": "The completion used to run the activity"
+          },
           "provider": {
             "type": "string",
             "title": "Provider",
             "description": "The provider used to run the activity",
             "default": ""
           },
-          "run_id": {
-            "type": "string",
-            "title": "Run Id"
+          "repair_log": {
+            "items": { "additionalProperties": { "type": "string" }, "type": "object" },
+            "type": "array",
+            "title": "Repair Log",
+            "description": "The LLM output's JSON repair log for the activity"
           },
-          "token_usage": {
-            "$ref": "#/components/schemas/TokenUsage",
-            "description": "The token usage for the activity"
-          },
-          "workflow_id": {
-            "type": "string",
-            "title": "Workflow Id"
-          },
-          "text": {
-            "type": "string",
-            "title": "Text"
-          },
+          "run_id": { "type": "string", "title": "Run Id" },
+          "workflow_id": { "type": "string", "title": "Workflow Id" },
+          "text": { "type": "string", "title": "Text" },
           "changes": {
-            "items": {
-              "$ref": "#/components/schemas/SentenceLengthChange"
-            },
+            "items": { "$ref": "#/components/schemas/SentenceLengthChange" },
             "type": "array",
             "title": "Changes"
           }
@@ -1764,24 +1210,14 @@
       },
       "SentenceLengthChange": {
         "properties": {
-          "original": {
-            "type": "string",
-            "title": "Original",
-            "description": "The original text"
-          },
-          "modified": {
-            "type": "string",
-            "title": "Modified",
-            "description": "The modified text"
-          },
+          "original": { "type": "string", "title": "Original", "description": "The original text" },
+          "modified": { "type": "string", "title": "Modified", "description": "The modified text" },
           "change_start_char_idx": {
             "type": "integer",
             "title": "Change Start Char Idx",
             "description": "The start index of the change"
           },
-          "category": {
-            "$ref": "#/components/schemas/SentenceLengthCategory"
-          }
+          "category": { "$ref": "#/components/schemas/SentenceLengthCategory" }
         },
         "type": "object",
         "required": ["original", "modified", "change_start_char_idx", "category"],
@@ -1803,24 +1239,14 @@
       },
       "SentenceStructureChange": {
         "properties": {
-          "original": {
-            "type": "string",
-            "title": "Original",
-            "description": "The original text"
-          },
-          "modified": {
-            "type": "string",
-            "title": "Modified",
-            "description": "The modified text"
-          },
+          "original": { "type": "string", "title": "Original", "description": "The original text" },
+          "modified": { "type": "string", "title": "Modified", "description": "The modified text" },
           "change_start_char_idx": {
             "type": "integer",
             "title": "Change Start Char Idx",
             "description": "The start index of the change"
           },
-          "category": {
-            "$ref": "#/components/schemas/SentenceStructureCategory"
-          }
+          "category": { "$ref": "#/components/schemas/SentenceStructureCategory" }
         },
         "type": "object",
         "required": ["original", "modified", "change_start_char_idx", "category"],
@@ -1828,17 +1254,13 @@
       },
       "SentenceStructureOutput": {
         "properties": {
-          "error": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Error"
+          "msg_hash": {
+            "type": "string",
+            "title": "Msg Hash",
+            "description": "The hash of the messages used to run the activity",
+            "default": ""
           },
+          "error": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Error" },
           "duration": {
             "type": "number",
             "title": "Duration",
@@ -1854,32 +1276,35 @@
             "$ref": "#/components/schemas/Parameters",
             "description": "The parameters used to run the activity"
           },
+          "prompt": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Prompt",
+            "description": "The prompt used to run the activity"
+          },
+          "completion": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Completion",
+            "description": "The completion used to run the activity"
+          },
           "provider": {
             "type": "string",
             "title": "Provider",
             "description": "The provider used to run the activity",
             "default": ""
           },
-          "run_id": {
-            "type": "string",
-            "title": "Run Id"
+          "repair_log": {
+            "items": { "additionalProperties": { "type": "string" }, "type": "object" },
+            "type": "array",
+            "title": "Repair Log",
+            "description": "The LLM output's JSON repair log for the activity"
           },
-          "token_usage": {
-            "$ref": "#/components/schemas/TokenUsage",
-            "description": "The token usage for the activity"
-          },
-          "workflow_id": {
-            "type": "string",
-            "title": "Workflow Id"
-          },
-          "text": {
-            "type": "string",
-            "title": "Text"
-          },
+          "run_id": { "type": "string", "title": "Run Id" },
+          "workflow_id": { "type": "string", "title": "Workflow Id" },
+          "text": { "type": "string", "title": "Text" },
           "changes": {
-            "items": {
-              "$ref": "#/components/schemas/SentenceStructureChange"
-            },
+            "items": { "$ref": "#/components/schemas/SentenceStructureChange" },
             "type": "array",
             "title": "Changes"
           }
@@ -1888,31 +1313,17 @@
         "required": ["duration", "run_id", "workflow_id", "text", "changes"],
         "title": "SentenceStructureOutput"
       },
-      "SimpleVocabCategory": {
-        "type": "string",
-        "enum": ["vocabulary", "other"],
-        "title": "SimpleVocabCategory"
-      },
+      "SimpleVocabCategory": { "type": "string", "enum": ["vocabulary", "other"], "title": "SimpleVocabCategory" },
       "SimpleVocabChange": {
         "properties": {
-          "original": {
-            "type": "string",
-            "title": "Original",
-            "description": "The original text"
-          },
-          "modified": {
-            "type": "string",
-            "title": "Modified",
-            "description": "The modified text"
-          },
+          "original": { "type": "string", "title": "Original", "description": "The original text" },
+          "modified": { "type": "string", "title": "Modified", "description": "The modified text" },
           "change_start_char_idx": {
             "type": "integer",
             "title": "Change Start Char Idx",
             "description": "The start index of the change"
           },
-          "category": {
-            "$ref": "#/components/schemas/SimpleVocabCategory"
-          }
+          "category": { "$ref": "#/components/schemas/SimpleVocabCategory" }
         },
         "type": "object",
         "required": ["original", "modified", "change_start_char_idx", "category"],
@@ -1920,17 +1331,13 @@
       },
       "SimpleVocabOutput": {
         "properties": {
-          "error": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Error"
+          "msg_hash": {
+            "type": "string",
+            "title": "Msg Hash",
+            "description": "The hash of the messages used to run the activity",
+            "default": ""
           },
+          "error": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Error" },
           "duration": {
             "type": "number",
             "title": "Duration",
@@ -1946,32 +1353,35 @@
             "$ref": "#/components/schemas/Parameters",
             "description": "The parameters used to run the activity"
           },
+          "prompt": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Prompt",
+            "description": "The prompt used to run the activity"
+          },
+          "completion": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Completion",
+            "description": "The completion used to run the activity"
+          },
           "provider": {
             "type": "string",
             "title": "Provider",
             "description": "The provider used to run the activity",
             "default": ""
           },
-          "run_id": {
-            "type": "string",
-            "title": "Run Id"
+          "repair_log": {
+            "items": { "additionalProperties": { "type": "string" }, "type": "object" },
+            "type": "array",
+            "title": "Repair Log",
+            "description": "The LLM output's JSON repair log for the activity"
           },
-          "token_usage": {
-            "$ref": "#/components/schemas/TokenUsage",
-            "description": "The token usage for the activity"
-          },
-          "workflow_id": {
-            "type": "string",
-            "title": "Workflow Id"
-          },
-          "text": {
-            "type": "string",
-            "title": "Text"
-          },
+          "run_id": { "type": "string", "title": "Run Id" },
+          "workflow_id": { "type": "string", "title": "Workflow Id" },
+          "text": { "type": "string", "title": "Text" },
           "changes": {
-            "items": {
-              "$ref": "#/components/schemas/SimpleVocabChange"
-            },
+            "items": { "$ref": "#/components/schemas/SimpleVocabChange" },
             "type": "array",
             "title": "Changes"
           }
@@ -1982,11 +1392,7 @@
       },
       "StartCheckResponse": {
         "properties": {
-          "message": {
-            "type": "string",
-            "title": "Message",
-            "default": "Check workflow started successfully."
-          },
+          "message": { "type": "string", "title": "Message", "default": "Check workflow started successfully." },
           "workflow_id": {
             "type": "string",
             "title": "Workflow Id",
@@ -2000,11 +1406,7 @@
       },
       "StartEditResponse": {
         "properties": {
-          "message": {
-            "type": "string",
-            "title": "Message",
-            "default": "Rewrite workflow started successfully."
-          },
+          "message": { "type": "string", "title": "Message", "default": "Rewrite workflow started successfully." },
           "workflow_id": {
             "type": "string",
             "title": "Workflow Id",
@@ -2018,33 +1420,11 @@
       },
       "StyleCheckResponse": {
         "properties": {
-          "status": {
-            "$ref": "#/components/schemas/WorkflowStatus"
-          },
-          "style_guide_id": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/StyleGuides"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "scores": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Analysis"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
+          "status": { "$ref": "#/components/schemas/WorkflowStatus" },
+          "style_guide_id": { "anyOf": [{ "$ref": "#/components/schemas/StyleGuides" }, { "type": "null" }] },
+          "scores": { "anyOf": [{ "$ref": "#/components/schemas/ScoreOutput" }, { "type": "null" }] },
           "issues": {
-            "items": {
-              "$ref": "#/components/schemas/helios_one__api__schemas__v1__style__checks__Issue"
-            },
+            "items": { "$ref": "#/components/schemas/helios_one__api__schemas__v1__style__checks__Issue" },
             "type": "array",
             "title": "Issues"
           }
@@ -2067,24 +1447,14 @@
       },
       "StyleGuideChange": {
         "properties": {
-          "original": {
-            "type": "string",
-            "title": "Original",
-            "description": "The original text"
-          },
-          "modified": {
-            "type": "string",
-            "title": "Modified",
-            "description": "The modified text"
-          },
+          "original": { "type": "string", "title": "Original", "description": "The original text" },
+          "modified": { "type": "string", "title": "Modified", "description": "The modified text" },
           "change_start_char_idx": {
             "type": "integer",
             "title": "Change Start Char Idx",
             "description": "The start index of the change"
           },
-          "category": {
-            "$ref": "#/components/schemas/StyleGuideCategory"
-          }
+          "category": { "$ref": "#/components/schemas/StyleGuideCategory" }
         },
         "type": "object",
         "required": ["original", "modified", "change_start_char_idx", "category"],
@@ -2092,15 +1462,14 @@
       },
       "StyleGuideOutput": {
         "properties": {
+          "msg_hash": {
+            "type": "string",
+            "title": "Msg Hash",
+            "description": "The hash of the messages used to run the activity",
+            "default": ""
+          },
           "error": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Error",
             "description": "The error that occurred during the activity"
           },
@@ -2119,30 +1488,34 @@
             "$ref": "#/components/schemas/Parameters",
             "description": "The parameters used to run the activity"
           },
+          "prompt": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Prompt",
+            "description": "The prompt used to run the activity"
+          },
+          "completion": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Completion",
+            "description": "The completion used to run the activity"
+          },
           "provider": {
             "type": "string",
             "title": "Provider",
             "description": "The provider used to run the activity",
             "default": ""
           },
-          "run_id": {
-            "type": "string",
-            "title": "Run Id",
-            "description": "The Temporal workflow run ID"
+          "repair_log": {
+            "items": { "additionalProperties": { "type": "string" }, "type": "object" },
+            "type": "array",
+            "title": "Repair Log",
+            "description": "The LLM output's JSON repair log for the activity"
           },
-          "token_usage": {
-            "$ref": "#/components/schemas/TokenUsage",
-            "description": "The token usage for the activity"
-          },
-          "workflow_id": {
-            "type": "string",
-            "title": "Workflow Id",
-            "description": "The Temporal workflow ID"
-          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
           "changes": {
-            "items": {
-              "$ref": "#/components/schemas/StyleGuideChange"
-            },
+            "items": { "$ref": "#/components/schemas/StyleGuideChange" },
             "type": "array",
             "title": "Changes"
           }
@@ -2151,88 +1524,77 @@
         "required": ["duration", "run_id", "workflow_id", "changes"],
         "title": "StyleGuideOutput"
       },
-      "StyleGuides": {
-        "type": "string",
-        "enum": ["ap", "chicago", "microsoft"],
-        "title": "StyleGuides"
+      "StyleGuides": { "type": "string", "enum": ["ap", "chicago", "microsoft"], "title": "StyleGuides" },
+      "StyleRequestBody": {
+        "properties": {
+          "file_upload": {
+            "type": "string",
+            "format": "binary",
+            "title": "File Upload",
+            "description": "The file to process."
+          },
+          "dialect": {
+            "$ref": "#/components/schemas/Dialects",
+            "description": "The intended dialect of the text to edit.",
+            "default": "american_english",
+            "examples": [
+              "american_english",
+              "australian_english",
+              "british_oxford",
+              "canadian_english",
+              "indian_english"
+            ]
+          },
+          "tone": {
+            "$ref": "#/components/schemas/Tones",
+            "description": "The intended tone of the text to edit.",
+            "default": "formal",
+            "examples": ["academic", "business", "casual", "conversational", "formal", "gen-z", "informal", "technical"]
+          },
+          "style_guide": {
+            "type": "string",
+            "title": "Style Guide",
+            "description": "The style guide to use for the text to edit. Can be a style guide ID or the name of a generic style guide, e.g. 'ap', 'chicago', or 'microsoft'.",
+            "default": "microsoft",
+            "examples": [
+              "01971e03-dd27-75ee-9044-b48e654848cf",
+              "01971e03-dd27-77d8-a6fa-5edb6a1f4ad2",
+              "01971e03-dd27-779f-b3ec-b724a2cf809f"
+            ]
+          }
+        },
+        "type": "object",
+        "required": ["file_upload"],
+        "title": "StyleRequestBody"
       },
       "Suggestion": {
         "properties": {
-          "original": {
-            "type": "string",
-            "title": "Original",
-            "description": "The original text"
-          },
-          "change_start_char_idx": {
-            "type": "integer",
-            "title": "Change Start Char Idx",
-            "description": "The start index of the change"
-          },
+          "original": { "type": "string", "title": "Original", "description": "The original text" },
+          "char_index": { "type": "integer", "title": "Char Index", "description": "The start index of the change" },
           "category": {
             "anyOf": [
-              {
-                "$ref": "#/components/schemas/GrammarCategory"
-              },
-              {
-                "$ref": "#/components/schemas/SimpleVocabCategory"
-              },
-              {
-                "$ref": "#/components/schemas/SentenceStructureCategory"
-              },
-              {
-                "$ref": "#/components/schemas/SentenceLengthCategory"
-              },
-              {
-                "$ref": "#/components/schemas/ToneCategory"
-              },
-              {
-                "$ref": "#/components/schemas/StyleGuideCategory"
-              }
+              { "$ref": "#/components/schemas/GrammarCategory" },
+              { "$ref": "#/components/schemas/SimpleVocabCategory" },
+              { "$ref": "#/components/schemas/SentenceStructureCategory" },
+              { "$ref": "#/components/schemas/SentenceLengthCategory" },
+              { "$ref": "#/components/schemas/ToneCategory" },
+              { "$ref": "#/components/schemas/StyleGuideCategory" }
             ],
             "title": "Category",
             "description": "The category of the change"
           },
-          "suggestion": {
-            "type": "string",
-            "title": "Suggestion"
-          }
+          "suggestion": { "type": "string", "title": "Suggestion" }
         },
         "type": "object",
-        "required": ["original", "change_start_char_idx", "category", "suggestion"],
+        "required": ["original", "char_index", "category", "suggestion"],
         "title": "Suggestion"
       },
       "SuggestionResponse": {
         "properties": {
-          "status": {
-            "$ref": "#/components/schemas/WorkflowStatus"
-          },
-          "style_guide_id": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/StyleGuides"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "scores": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Analysis"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "issues": {
-            "items": {
-              "$ref": "#/components/schemas/Suggestion"
-            },
-            "type": "array",
-            "title": "Issues"
-          }
+          "status": { "$ref": "#/components/schemas/WorkflowStatus" },
+          "style_guide_id": { "anyOf": [{ "$ref": "#/components/schemas/StyleGuides" }, { "type": "null" }] },
+          "scores": { "anyOf": [{ "$ref": "#/components/schemas/ScoreOutput" }, { "type": "null" }] },
+          "issues": { "items": { "$ref": "#/components/schemas/Suggestion" }, "type": "array", "title": "Issues" }
         },
         "type": "object",
         "required": ["status", "style_guide_id", "scores", "issues"],
@@ -2241,38 +1603,17 @@
       "TargetScore": {
         "properties": {
           "target_score": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
             "title": "Target Score",
             "default": -1
           },
           "target_range": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
             "title": "Target Range",
             "default": -1
           },
           "within_target": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
             "title": "Within Target",
             "default": false
           }
@@ -2283,45 +1624,17 @@
       "TheiaOutput": {
         "properties": {
           "errors": {
-            "items": {
-              "$ref": "#/components/schemas/WorkflowError"
-            },
+            "items": { "$ref": "#/components/schemas/WorkflowError" },
             "type": "array",
             "title": "Errors",
             "default": []
           },
-          "final_scores": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/FinalScores"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "initial_scores": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/InitialScores"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "merged_text": {
-            "type": "string",
-            "title": "Merged Text"
-          },
-          "original_text": {
-            "type": "string",
-            "title": "Original Text"
-          },
+          "final_scores": { "anyOf": [{ "$ref": "#/components/schemas/FinalScores" }, { "type": "null" }] },
+          "initial_scores": { "anyOf": [{ "$ref": "#/components/schemas/InitialScores" }, { "type": "null" }] },
+          "merged_text": { "type": "string", "title": "Merged Text" },
+          "original_text": { "type": "string", "title": "Original Text" },
           "results": {
-            "items": {
-              "$ref": "#/components/schemas/HeliosOneWorkflowOutput"
-            },
+            "items": { "$ref": "#/components/schemas/HeliosOneWorkflowOutput" },
             "type": "array",
             "title": "Results"
           }
@@ -2330,30 +1643,6 @@
         "required": ["merged_text", "original_text", "results"],
         "title": "TheiaOutput"
       },
-      "TokenUsage": {
-        "properties": {
-          "completion_tokens": {
-            "type": "integer",
-            "title": "Completion Tokens",
-            "description": "The number of completion tokens used",
-            "default": -1
-          },
-          "prompt_tokens": {
-            "type": "integer",
-            "title": "Prompt Tokens",
-            "description": "The number of prompt tokens used",
-            "default": -1
-          },
-          "total_tokens": {
-            "type": "integer",
-            "title": "Total Tokens",
-            "description": "The total number of tokens used",
-            "default": -1
-          }
-        },
-        "type": "object",
-        "title": "TokenUsage"
-      },
       "ToneCategory": {
         "type": "string",
         "enum": ["word_choice", "syntax", "punctuation", "discourse_features", "implicit_style", "other"],
@@ -2361,25 +1650,14 @@
       },
       "ToneChange": {
         "properties": {
-          "original": {
-            "type": "string",
-            "title": "Original",
-            "description": "The original text"
-          },
-          "modified": {
-            "type": "string",
-            "title": "Modified",
-            "description": "The modified text"
-          },
+          "original": { "type": "string", "title": "Original", "description": "The original text" },
+          "modified": { "type": "string", "title": "Modified", "description": "The modified text" },
           "change_start_char_idx": {
             "type": "integer",
             "title": "Change Start Char Idx",
             "description": "The start index of the change"
           },
-          "category": {
-            "$ref": "#/components/schemas/ToneCategory",
-            "description": "The category of the change"
-          }
+          "category": { "$ref": "#/components/schemas/ToneCategory", "description": "The category of the change" }
         },
         "type": "object",
         "required": ["original", "modified", "change_start_char_idx", "category"],
@@ -2387,15 +1665,14 @@
       },
       "ToneCheckOutput": {
         "properties": {
+          "msg_hash": {
+            "type": "string",
+            "title": "Msg Hash",
+            "description": "The hash of the messages used to run the activity",
+            "default": ""
+          },
           "error": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Error",
             "description": "The error that occurred during the activity"
           },
@@ -2414,35 +1691,35 @@
             "$ref": "#/components/schemas/Parameters",
             "description": "The parameters used to run the activity"
           },
+          "prompt": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Prompt",
+            "description": "The prompt used to run the activity"
+          },
+          "completion": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Completion",
+            "description": "The completion used to run the activity"
+          },
           "provider": {
             "type": "string",
             "title": "Provider",
             "description": "The provider used to run the activity",
             "default": ""
           },
-          "run_id": {
-            "type": "string",
-            "title": "Run Id",
-            "description": "The Temporal workflow run ID"
+          "repair_log": {
+            "items": { "additionalProperties": { "type": "string" }, "type": "object" },
+            "type": "array",
+            "title": "Repair Log",
+            "description": "The LLM output's JSON repair log for the activity"
           },
-          "token_usage": {
-            "$ref": "#/components/schemas/TokenUsage",
-            "description": "The token usage for the activity"
-          },
-          "workflow_id": {
-            "type": "string",
-            "title": "Workflow Id",
-            "description": "The Temporal workflow ID"
-          },
-          "text": {
-            "type": "string",
-            "title": "Text",
-            "description": "The original text"
-          },
+          "run_id": { "type": "string", "title": "Run Id", "description": "The Temporal workflow run ID" },
+          "workflow_id": { "type": "string", "title": "Workflow Id", "description": "The Temporal workflow ID" },
+          "text": { "type": "string", "title": "Text", "description": "The original text" },
           "changes": {
-            "items": {
-              "$ref": "#/components/schemas/ToneChange"
-            },
+            "items": { "$ref": "#/components/schemas/ToneChange" },
             "type": "array",
             "title": "Changes",
             "description": "Suggested changes to the text"
@@ -2460,52 +1737,27 @@
       "ValidationError": {
         "properties": {
           "loc": {
-            "items": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
-            },
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
             "type": "array",
             "title": "Location"
           },
-          "msg": {
-            "type": "string",
-            "title": "Message"
-          },
-          "type": {
-            "type": "string",
-            "title": "Error Type"
-          }
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
         },
         "type": "object",
         "required": ["loc", "msg", "type"],
         "title": "ValidationError"
       },
       "WorkflowError": {
-        "properties": {
-          "error": {
-            "type": "string",
-            "title": "Error"
-          }
-        },
+        "properties": { "error": { "type": "string", "title": "Error" } },
         "type": "object",
         "required": ["error"],
         "title": "WorkflowError"
       },
       "WorkflowResponse": {
         "properties": {
-          "status": {
-            "$ref": "#/components/schemas/WorkflowStatus"
-          },
-          "workflow_id": {
-            "type": "string",
-            "title": "Workflow Id"
-          }
+          "status": { "$ref": "#/components/schemas/WorkflowStatus" },
+          "workflow_id": { "type": "string", "title": "Workflow Id" }
         },
         "type": "object",
         "required": ["status", "workflow_id"],
@@ -2518,34 +1770,10 @@
       },
       "WorkflowStatusResponse": {
         "properties": {
-          "workflow_id": {
-            "type": "string",
-            "title": "Workflow Id"
-          },
-          "status": {
-            "$ref": "#/components/schemas/WorkflowStatus"
-          },
-          "error_message": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Error Message"
-          },
-          "result": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/TheiaOutput"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
+          "workflow_id": { "type": "string", "title": "Workflow Id" },
+          "status": { "$ref": "#/components/schemas/WorkflowStatus" },
+          "error_message": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Error Message" },
+          "result": { "anyOf": [{ "$ref": "#/components/schemas/TheiaOutput" }, { "type": "null" }] }
         },
         "type": "object",
         "required": ["workflow_id", "status"],
@@ -2553,29 +1781,11 @@
       },
       "helios_one__activities__acrolinx_scorer__models__Issue": {
         "properties": {
-          "description": {
-            "type": "string",
-            "title": "Description"
-          },
-          "originalText": {
-            "type": "string",
-            "title": "Originaltext"
-          },
-          "position": {
-            "type": "integer",
-            "title": "Position"
-          },
-          "suggestedReplacements": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Suggestedreplacements"
-          },
-          "type": {
-            "type": "string",
-            "title": "Type"
-          }
+          "description": { "type": "string", "title": "Description" },
+          "originalText": { "type": "string", "title": "Originaltext" },
+          "position": { "type": "integer", "title": "Position" },
+          "suggestedReplacements": { "items": { "type": "string" }, "type": "array", "title": "Suggestedreplacements" },
+          "type": { "type": "string", "title": "Type" }
         },
         "type": "object",
         "required": ["description", "originalText", "position", "suggestedReplacements", "type"],
@@ -2583,55 +1793,33 @@
       },
       "helios_one__api__schemas__v1__style__checks__Issue": {
         "properties": {
-          "original": {
-            "type": "string",
-            "title": "Original",
-            "description": "The original text"
-          },
-          "change_start_char_idx": {
-            "type": "integer",
-            "title": "Change Start Char Idx",
-            "description": "The start index of the change"
-          },
+          "original": { "type": "string", "title": "Original", "description": "The original text" },
+          "char_index": { "type": "integer", "title": "Char Index", "description": "The start index of the change" },
           "category": {
             "anyOf": [
-              {
-                "$ref": "#/components/schemas/GrammarCategory"
-              },
-              {
-                "$ref": "#/components/schemas/SimpleVocabCategory"
-              },
-              {
-                "$ref": "#/components/schemas/SentenceStructureCategory"
-              },
-              {
-                "$ref": "#/components/schemas/SentenceLengthCategory"
-              },
-              {
-                "$ref": "#/components/schemas/ToneCategory"
-              },
-              {
-                "$ref": "#/components/schemas/StyleGuideCategory"
-              }
+              { "$ref": "#/components/schemas/GrammarCategory" },
+              { "$ref": "#/components/schemas/SimpleVocabCategory" },
+              { "$ref": "#/components/schemas/SentenceStructureCategory" },
+              { "$ref": "#/components/schemas/SentenceLengthCategory" },
+              { "$ref": "#/components/schemas/ToneCategory" },
+              { "$ref": "#/components/schemas/StyleGuideCategory" }
             ],
             "title": "Category",
             "description": "The category of the change"
           }
         },
         "type": "object",
-        "required": ["original", "change_start_char_idx", "category"],
+        "required": ["original", "char_index", "category"],
         "title": "Issue"
       }
     },
-    "securitySchemes": {
-      "APIKeyHeader": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "Authorization"
-      }
-    }
+    "securitySchemes": { "APIKeyHeader": { "type": "apiKey", "in": "header", "name": "Authorization" } }
   },
   "tags": [
+    {
+      "name": "Internal",
+      "description": "Endpoints meant to support Acrolinx products, but not intended for public use. These will be accessible in production, but not publicly documented."
+    },
     {
       "name": "Style Guides",
       "description": "Endpoints related to creating, updating, and organizing style guides for content consistency across teams."
