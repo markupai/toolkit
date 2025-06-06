@@ -21,4 +21,4 @@ export const defaults = {
     chicago: 'chicago',
     microsoft: 'microsoft',
   },
-} as const
+} as const;
