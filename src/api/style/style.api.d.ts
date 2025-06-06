@@ -1,27 +1,4 @@
-export const defaults = {
-  dialects: {
-    americanEnglish: 'american_english',
-    australianEnglish: 'australian_english',
-    britishOxford: 'british_oxford',
-    canadianEnglish: 'canadian_english',
-    indianEnglish: 'indian_english',
-  },
-  tones: {
-    academic: 'academic',
-    business: 'business',
-    casual: 'casual',
-    conversational: 'conversational',
-    formal: 'formal',
-    genZ: 'gen-z',
-    informal: 'informal',
-    technical: 'technical',
-  },
-  styleGuides: {
-    ap: 'ap',
-    chicago: 'chicago',
-    microsoft: 'microsoft',
-  },
-} as const;
+import { ResponseBase } from '../../utils/api.d';
 
 // Enums
 
@@ -54,12 +31,7 @@ export interface GuidanceSettings {
   styleGuide: string;
 }
 
-export interface AnalysisResponseBase {
-  workflow_id: string;
-  status: Status;
-}
-
-export interface AnalysisSubmissionResponse extends AnalysisResponseBase {
+export interface AnalysisSubmissionResponse extends ResponseBase {
   message?: string;
 }
 
@@ -96,7 +68,7 @@ export interface AnalysisSuccessResponseWithRewrite extends AnalysisSuccessRespo
   rewrite: string;
 }
 
-export interface AnalysisErrorResponse extends AnalysisResponseBase {
+export interface AnalysisErrorResponse extends ResponseBase {
   error_message: string;
 }
 

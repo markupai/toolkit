@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { submitRewrite, check, rewrite } from '../../../src/api/demo/demo.api';
-import { defaults } from '../../../src/api/demo/demo';
+import { defaults } from '../../../src/api/demo/demo.api.defaults';
 
 describe('Demo API Integration Tests', () => {
   let apiKey: string;

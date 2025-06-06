@@ -6,8 +6,8 @@ import {
   AnalysisRequest,
   AnalysisSubmissionResponse,
   AnalysisSuccessResponse,
-  defaults,
-} from '../../../src/api/demo/demo';
+} from '../../../src/api/demo/demo.api.d';
+import { defaults } from '../../../src/api/demo/demo.api.defaults';
 
 // Mock the utility functions
 vi.mock('../../../src/utils/api', () => ({

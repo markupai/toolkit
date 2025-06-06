@@ -10,7 +10,7 @@ export const API_ENDPOINTS = {
 // Export all API functions
 export * from './api/style/style.api';
 export * from './api/demo/demo.api';
-export * from './api/style/style';
+export * from './api/style/style.api';
 
 // Export all utility functions
 export * from './utils/errors';

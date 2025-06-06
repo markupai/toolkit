@@ -1,4 +1,4 @@
-import { AnalysisRequest, AnalysisSubmissionResponse, AnalysisSuccessResponse, Status } from './demo';
+import { AnalysisRequest, AnalysisSubmissionResponse, AnalysisSuccessResponse, Status } from './demo.api.d';
 
 import { postData, pollWorkflowForResult } from '../../utils/api';
 

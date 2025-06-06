@@ -6,7 +6,7 @@ import {
   AnalysisSuccessResponse,
   AnalysisSuccessResponseWithSuggestion,
   AnalysisSuccessResponseWithRewrite,
-} from './style';
+} from './style.api.d';
 
 import { getData, postData, pollWorkflowForResult } from '../../utils/api';
 

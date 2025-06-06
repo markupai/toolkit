@@ -1,4 +1,4 @@
-import { Status, AnalysisResponseBase } from '../api/style/style';
+import { Status, ResponseBase } from './api.d';
 import { AcrolinxError } from './errors';
 
 // export const DEFAULT_PLATFORM_URL = 'https://app.acrolinx.com';
@@ -143,7 +143,7 @@ export async function pollWorkflowForResult<T>(workflowId: string, endpoint: str
         throw AcrolinxError.fromResponse(response, errorData);
       }
 
-      const data = (await response.json()) as AnalysisResponseBase;
+      const data = (await response.json()) as ResponseBase;
 
       // Normalize status to match enum values
       const normalizedStatus = data.status.toLowerCase() as Status;

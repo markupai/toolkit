@@ -8,7 +8,7 @@ import {
   styleSuggestions,
   styleRewrite,
 } from '../../../src/api/style/style.api';
-import { defaults } from '../../../src/api/style/style';
+import { defaults } from '../../../src/api/style/style.api.defaults';
 
 describe('Style API Integration Tests', () => {
   let apiKey: string;
