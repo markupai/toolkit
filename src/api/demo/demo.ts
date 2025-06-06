@@ -49,12 +49,6 @@ export interface Analysis {
   word_count: number;
 }
 
-interface BaseResponse {
-  status: Status;
-  style_guide_id: string | null;
-  scores: Analysis | null;
-}
-
 // Base Interfaces
 export interface AnalysisRequest {
   content: string;
@@ -146,9 +140,9 @@ export interface Issue {
 
 export interface ContentScorerActivityOutput {
   analysis: ContentAnalysis | null;
-  feedback: ContentQualityFeedback | null;
+  feedback: string | null;
   score: number;
-  suggestions: ContentSuggestions[] | null;
+  suggestions: string[] | null;
   target_score: TargetScore | null;
   repair_log: RepairLog[];
   error: string | null;
@@ -175,20 +169,6 @@ export interface ContentAnalysis {
   vocabulary_score: number;
   word_count: number;
 }
-
-export type ContentQualityFeedback =
-  | 'Excellent content quality! Your text is clear, readable, and well-structured.'
-  | 'Good content quality. Your text is readable but has room for improvement.'
-  | 'Moderate content quality. Consider revising for better readability.'
-  | 'Low content quality. The text needs significant revision for better readability.';
-
-export type ContentSuggestions =
-  | 'Use shorter sentences and simpler words to improve readability.'
-  | 'Your text may be too complex. Consider simplifying vocabulary and sentence structure.'
-  | 'Your sentences are quite long. Consider breaking them into shorter ones.'
-  | 'Your sentences are very short. Consider combining some for better flow.'
-  | 'Your vocabulary diversity is low. Try using a wider range of words.'
-  | 'Your text is well-balanced. Consider proofreading for minor improvements.';
 
 export interface TargetScore {
   target_score: number | null;
@@ -346,54 +326,6 @@ export interface StyleGuideOutput {
 
 export interface StyleGuideChange extends BaseChange {
   category: string;
-}
-
-// Style Guide Specific Interfaces
-export interface CreateStyleGuideData {
-  name: string;
-  description?: string;
-  rules?: Record<string, unknown>;
-}
-
-// The list endpoint now returns an object mapping id to name
-export type StyleGuideListResponse = Record<string, string>;
-
-// The create/get/update/delete endpoints now return an empty object
-export type StyleGuideResponse = Record<string, never>;
-
-export interface StyleCheckRequest {
-  file_upload: Blob;
-  style_guide: string; // Can be style guide ID or name (e.g. 'ap', 'chicago', 'microsoft')
-  dialect: string;
-  tone: string;
-}
-
-export interface StyleSuggestionRequest {
-  file_upload: Blob;
-  style_guide: string; // Can be style guide ID or name (e.g. 'ap', 'chicago', 'microsoft')
-  dialect: string;
-  tone: string;
-}
-
-export interface StyleRewriteRequest {
-  file_upload: Blob;
-  style_guide?: string; // Can be style guide ID or name (e.g. 'ap', 'chicago', 'microsoft')
-  dialect?: string;
-  tone?: string;
-}
-
-// Response Interfaces
-export interface StyleCheckResponse extends BaseResponse {
-  issues: Issue[];
-}
-
-export interface SuggestionResponse extends BaseResponse {
-  issues: Suggestion[];
-}
-
-export interface RewriteResponse extends BaseResponse {
-  issues: Suggestion[];
-  rewrite: string | null;
 }
 
 export interface Suggestion {
