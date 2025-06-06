@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { getData, postData, putData, deleteData, pollWorkflowForResult, PLATFORM_URL } from '../../../src/utils/api';
-import { Status } from '../../../src/api/style';
+import { ResponseBase, Status } from '../../../src/utils/api.types';
 import { server, handlers } from '../setup';
 import { HttpResponse } from 'msw';
 import { http } from 'msw';
@@ -111,7 +111,7 @@ describe('API Utilities Unit Tests', () => {
           });
         }),
       );
-      const result = await pollWorkflowForResult(mockWorkflowId, mockEndpoint, mockApiKey);
+      const result = await pollWorkflowForResult<ResponseBase>(mockWorkflowId, mockEndpoint, mockApiKey);
       expect(result.status).toBe(Status.Completed);
       expect(result.workflow_id).toBe(mockWorkflowId);
     });
