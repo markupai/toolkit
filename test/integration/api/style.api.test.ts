@@ -35,7 +35,7 @@ describe('Style API Integration Tests', () => {
     it('should submit a style check', async () => {
       const response = await submitStyleCheck(
         {
-          file_upload: new Blob([testContent]),
+          content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -50,7 +50,7 @@ describe('Style API Integration Tests', () => {
     it('should submit a style suggestion', async () => {
       const response = await submitStyleSuggestion(
         {
-          file_upload: new Blob([testContent]),
+          content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -65,7 +65,7 @@ describe('Style API Integration Tests', () => {
     it('should submit a style rewrite', async () => {
       const response = await submitStyleRewrite(
         {
-          file_upload: new Blob([testContent]),
+          content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -80,7 +80,7 @@ describe('Style API Integration Tests', () => {
     it('should submit a style check and get result', async () => {
       const response = await styleCheck(
         {
-          file_upload: new Blob([testContent]),
+          content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -95,7 +95,7 @@ describe('Style API Integration Tests', () => {
     it('should submit a style suggestion and get result', async () => {
       const response = await styleSuggestions(
         {
-          file_upload: new Blob([testContent]),
+          content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -109,7 +109,7 @@ describe('Style API Integration Tests', () => {
     it('should submit a style rewrite and get result', async () => {
       const response = await styleRewrite(
         {
-          file_upload: new Blob([testContent]),
+          content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,

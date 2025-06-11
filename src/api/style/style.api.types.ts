@@ -65,8 +65,8 @@ export interface AnalysisErrorResponse extends ResponseBase {
   error_message: string;
 }
 
-export interface StyleCheckRequest {
-  file_upload: Blob;
+export interface StyleAnalysisRequest {
+  content: string;
   style_guide: string; // Can be style guide ID or name (e.g. 'ap', 'chicago', 'microsoft')
   dialect: string;
   tone: string;
