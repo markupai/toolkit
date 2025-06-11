@@ -2,7 +2,7 @@ import type { ResponseBase, Status } from '../../utils/api.types';
 
 // Enums
 
-export interface Analysis {
+export interface StyleAnalysis {
   avg_sentence_length: number;
   avg_word_length: number;
   complexity_score: number;
@@ -12,23 +12,11 @@ export interface Analysis {
   word_count: number;
 }
 
-// Base Interfaces
-export interface AnalysisRequest {
-  content: string;
-  guidanceSettings: GuidanceSettings;
-}
-
-export interface GuidanceSettings {
-  dialect: string;
-  tone: string;
-  styleGuide: string;
-}
-
-export interface AnalysisSubmissionResponse extends ResponseBase {
+export interface StyleAnalysisSubmitResp extends ResponseBase {
   message?: string;
 }
 
-export interface AnalysisSuccessResponse {
+export interface StyleAnalysisSuccessResp {
   status: Status;
   style_guide_id: string;
   scores: {
@@ -48,7 +36,7 @@ export interface AnalysisSuccessResponse {
   }>;
 }
 
-export interface AnalysisSuccessResponseWithSuggestion extends Omit<AnalysisSuccessResponse, 'issues'> {
+export interface StyleAnalysisSuggestionResp extends Omit<StyleAnalysisSuccessResp, 'issues'> {
   issues: Array<{
     original: string;
     char_index: number;
@@ -57,19 +45,19 @@ export interface AnalysisSuccessResponseWithSuggestion extends Omit<AnalysisSucc
   }>;
 }
 
-export interface AnalysisSuccessResponseWithRewrite extends AnalysisSuccessResponseWithSuggestion {
+export interface StyleAnalysisRewriteResp extends StyleAnalysisSuggestionResp {
   rewrite: string;
 }
 
-export interface AnalysisErrorResponse extends ResponseBase {
+export interface StyleAnalysisErrorResp extends ResponseBase {
   error_message: string;
 }
 
-export interface StyleAnalysisRequest {
+export interface StyleAnalysisReq {
   content: string;
   style_guide: string; // Can be style guide ID or name (e.g. 'ap', 'chicago', 'microsoft')
   dialect: string;
   tone: string;
 }
 
-export type StyleGuideList = Record<string, string>;
+export type StyleGuides = Record<string, string>;

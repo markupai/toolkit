@@ -1,11 +1,11 @@
 import { getData, postData } from '../../utils/api';
 import type {
-  StyleGuideList,
-  StyleAnalysisRequest,
-  AnalysisSubmissionResponse,
-  AnalysisSuccessResponse,
-  AnalysisSuccessResponseWithSuggestion,
-  AnalysisSuccessResponseWithRewrite,
+  StyleGuides,
+  StyleAnalysisReq,
+  StyleAnalysisSubmitResp,
+  StyleAnalysisSuccessResp,
+  StyleAnalysisSuggestionResp,
+  StyleAnalysisRewriteResp,
 } from './style.api.types';
 import { Status } from '../../utils/api.types';
 
@@ -19,7 +19,7 @@ const API_ENDPOINTS = {
 } as const;
 
 // Helper function to create form data from style analysis request
-function createStyleFormData(request: StyleAnalysisRequest): FormData {
+function createStyleFormData(request: StyleAnalysisReq): FormData {
   const formData = new FormData();
   formData.append('file_upload', new Blob([request.content], { type: 'text/plain' }));
   formData.append('style_guide', request.style_guide);
@@ -31,11 +31,11 @@ function createStyleFormData(request: StyleAnalysisRequest): FormData {
 // Helper function to handle style analysis submission and polling
 async function submitAndPollStyleAnalysis<T extends { status: Status }>(
   endpoint: string,
-  request: StyleAnalysisRequest,
+  request: StyleAnalysisReq,
   apiKey: string,
 ): Promise<T> {
   const formData = createStyleFormData(request);
-  const initialResponse = await postData<AnalysisSubmissionResponse>(endpoint, formData, apiKey);
+  const initialResponse = await postData<StyleAnalysisSubmitResp>(endpoint, formData, apiKey);
 
   if (!initialResponse.workflow_id) {
     throw new Error(`No workflow_id received from initial ${endpoint} request`);
@@ -50,48 +50,48 @@ async function submitAndPollStyleAnalysis<T extends { status: Status }>(
 }
 
 // Style Guide Operations
-export async function listStyleGuides(apiKey: string): Promise<StyleGuideList> {
-  return getData<StyleGuideList>(API_ENDPOINTS.STYLE_GUIDES, apiKey);
+export async function listStyleGuides(apiKey: string): Promise<StyleGuides> {
+  return getData<StyleGuides>(API_ENDPOINTS.STYLE_GUIDES, apiKey);
 }
 
 // Style Check Operations
 export async function submitStyleCheck(
-  styleAnalysisRequest: StyleAnalysisRequest,
+  styleAnalysisRequest: StyleAnalysisReq,
   apiKey: string,
-): Promise<AnalysisSubmissionResponse> {
+): Promise<StyleAnalysisSubmitResp> {
   const formData = createStyleFormData(styleAnalysisRequest);
-  return postData<AnalysisSubmissionResponse>(API_ENDPOINTS.STYLE_CHECKS, formData, apiKey);
+  return postData<StyleAnalysisSubmitResp>(API_ENDPOINTS.STYLE_CHECKS, formData, apiKey);
 }
 
 export async function submitStyleSuggestion(
-  styleAnalysisRequest: StyleAnalysisRequest,
+  styleAnalysisRequest: StyleAnalysisReq,
   apiKey: string,
-): Promise<AnalysisSubmissionResponse> {
+): Promise<StyleAnalysisSubmitResp> {
   const formData = createStyleFormData(styleAnalysisRequest);
-  return postData<AnalysisSubmissionResponse>(API_ENDPOINTS.STYLE_SUGGESTIONS, formData, apiKey);
+  return postData<StyleAnalysisSubmitResp>(API_ENDPOINTS.STYLE_SUGGESTIONS, formData, apiKey);
 }
 
 export async function submitStyleRewrite(
-  styleAnalysisRequest: StyleAnalysisRequest,
+  styleAnalysisRequest: StyleAnalysisReq,
   apiKey: string,
-): Promise<AnalysisSubmissionResponse> {
+): Promise<StyleAnalysisSubmitResp> {
   const formData = createStyleFormData(styleAnalysisRequest);
-  return postData<AnalysisSubmissionResponse>(API_ENDPOINTS.STYLE_REWRITES, formData, apiKey);
+  return postData<StyleAnalysisSubmitResp>(API_ENDPOINTS.STYLE_REWRITES, formData, apiKey);
 }
 
 // Convenience methods for style operations with polling
 export async function styleCheck(
-  styleAnalysisRequest: StyleAnalysisRequest,
+  styleAnalysisRequest: StyleAnalysisReq,
   apiKey: string,
-): Promise<AnalysisSuccessResponse> {
-  return submitAndPollStyleAnalysis<AnalysisSuccessResponse>(API_ENDPOINTS.STYLE_CHECKS, styleAnalysisRequest, apiKey);
+): Promise<StyleAnalysisSuccessResp> {
+  return submitAndPollStyleAnalysis<StyleAnalysisSuccessResp>(API_ENDPOINTS.STYLE_CHECKS, styleAnalysisRequest, apiKey);
 }
 
 export async function styleSuggestions(
-  styleAnalysisRequest: StyleAnalysisRequest,
+  styleAnalysisRequest: StyleAnalysisReq,
   apiKey: string,
-): Promise<AnalysisSuccessResponseWithSuggestion> {
-  return submitAndPollStyleAnalysis<AnalysisSuccessResponseWithSuggestion>(
+): Promise<StyleAnalysisSuggestionResp> {
+  return submitAndPollStyleAnalysis<StyleAnalysisSuggestionResp>(
     API_ENDPOINTS.STYLE_SUGGESTIONS,
     styleAnalysisRequest,
     apiKey,
@@ -99,10 +99,10 @@ export async function styleSuggestions(
 }
 
 export async function styleRewrite(
-  styleAnalysisRequest: StyleAnalysisRequest,
+  styleAnalysisRequest: StyleAnalysisReq,
   apiKey: string,
-): Promise<AnalysisSuccessResponseWithRewrite> {
-  return submitAndPollStyleAnalysis<AnalysisSuccessResponseWithRewrite>(
+): Promise<StyleAnalysisRewriteResp> {
+  return submitAndPollStyleAnalysis<StyleAnalysisRewriteResp>(
     API_ENDPOINTS.STYLE_REWRITES,
     styleAnalysisRequest,
     apiKey,

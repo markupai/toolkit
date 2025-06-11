@@ -1,6 +1,7 @@
 // Export all Style API functions and types
 export * from './api/style/style.api';
 export * from './api/style/style.api.defaults';
+export * from './api/style/style.api.types';
 
 // Export all Demo API functions and types
 export * from './api/demo/demo.api';
