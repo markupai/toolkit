@@ -1,6 +1,6 @@
 {
   "name": "@acrolinx/typescript-sdk",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "type": "module",
   "main": "./dist/acrolinx-typescript-sdk.umd.cjs",
   "module": "./dist/acrolinx-typescript-sdk.js",
