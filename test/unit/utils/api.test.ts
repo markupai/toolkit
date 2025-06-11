@@ -2,8 +2,8 @@ import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { getData, postData, putData, deleteData, pollWorkflowForResult, PLATFORM_URL } from '../../../src/utils/api';
 import { ResponseBase, Status } from '../../../src/utils/api.types';
 import { server, handlers } from '../setup';
-import { HttpResponse } from 'msw';
 import { http } from 'msw';
+import { HttpResponse } from 'msw';
 
 const mockApiKey = 'test-api-key';
 const mockEndpoint = '/test-endpoint';
