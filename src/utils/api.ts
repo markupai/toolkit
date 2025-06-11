@@ -1,4 +1,5 @@
-import { Status, ResponseBase } from './api.types';
+import { Status } from './api.types';
+import type { ResponseBase } from './api.types';
 import { AcrolinxError } from './errors';
 
 // export const DEFAULT_PLATFORM_URL = 'https://app.acrolinx.com';

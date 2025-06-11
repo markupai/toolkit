@@ -1,5 +1,5 @@
 import { getData, postData } from '../../utils/api';
-import { Constants, FeedbackRequest } from './internal.api.types';
+import type { Constants, FeedbackRequest } from './internal.api.types';
 
 const API_ENDPOINTS = {
   CONSTANTS: '/internal/v1/constants',

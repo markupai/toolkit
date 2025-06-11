@@ -1,4 +1,4 @@
-import { ResponseBase, Status } from '../../utils/api.types';
+import type { ResponseBase, Status } from '../../utils/api.types';
 
 // Enums
 

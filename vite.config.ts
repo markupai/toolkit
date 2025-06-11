@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import { resolve } from 'path';
 
 export default defineConfig({
   build: {
@@ -7,7 +8,32 @@ export default defineConfig({
       entry: './src/main.ts',
       name: 'acrolinx-typescript-sdk',
       fileName: 'acrolinx-typescript-sdk',
+      formats: ['es', 'umd'],
+    },
+    rollupOptions: {
+      external: [],
+      output: {
+        globals: {},
+      },
     },
   },
-  plugins: [dts()],
+  plugins: [
+    dts({
+      include: ['src/**/*.ts'],
+      outDir: 'dist/types',
+      rollupTypes: true,
+      copyDtsFiles: true,
+      compilerOptions: {
+        declaration: true,
+        emitDeclarationOnly: true,
+        declarationMap: true,
+        composite: true,
+      },
+    }),
+  ],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+    },
+  },
 });

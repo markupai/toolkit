@@ -4,17 +4,17 @@
   "type": "module",
   "main": "./dist/acrolinx-typescript-sdk.umd.cjs",
   "module": "./dist/acrolinx-typescript-sdk.js",
-  "types": "./dist/main.d.ts",
+  "types": "./dist/types/main.d.ts",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
   "files": [
     "dist",
-    "dist/**/*.d.ts"
+    "dist/types/**/*.d.ts"
   ],
   "exports": {
     ".": {
-      "types": "./dist/main.d.ts",
+      "types": "./dist/types/main.d.ts",
       "import": "./dist/acrolinx-typescript-sdk.js",
       "require": "./dist/acrolinx-typescript-sdk.umd.cjs"
     }

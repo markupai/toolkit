@@ -1,4 +1,4 @@
-import { AnalysisRequest, AnalysisSubmissionResponse, AnalysisSuccessResponse } from './demo.api.types';
+import type { AnalysisRequest, AnalysisSubmissionResponse, AnalysisSuccessResponse } from './demo.api.types';
 
 import { postData, pollWorkflowForResult } from '../../utils/api';
 import { Status } from '../../utils/api.types';

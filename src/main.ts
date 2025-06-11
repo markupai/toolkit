@@ -1,15 +1,17 @@
-// Export all Style API functions
+// Export all Style API functions and types
 export * from './api/style/style.api';
 export * from './api/style/style.api.defaults';
 
-// Export all Demo API functions
+// Export all Demo API functions and types
 export * from './api/demo/demo.api';
 export * from './api/demo/demo.api.defaults';
+export * from './api/demo/demo.api.types';
 
-// Export all Internal API functions
+// Export all Internal API functions and types
 export * from './api/internal/internal.api';
 export * from './api/internal/internal.api.types';
 
-// Export all utility functions
+// Export all utility functions and types
 export * from './utils/errors';
 export * from './utils/api';
+export * from './utils/api.types';

@@ -1,4 +1,5 @@
-import {
+import { getData, postData } from '../../utils/api';
+import type {
   StyleGuideList,
   StyleCheckRequest as StyleAnalysisRequest,
   AnalysisSubmissionResponse,
@@ -8,7 +9,7 @@ import {
 } from './style.api.types';
 import { Status } from '../../utils/api.types';
 
-import { getData, postData, pollWorkflowForResult } from '../../utils/api';
+import { pollWorkflowForResult } from '../../utils/api';
 
 const API_ENDPOINTS = {
   STYLE_GUIDES: '/v1/style-guides',
