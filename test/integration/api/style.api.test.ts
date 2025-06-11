@@ -91,6 +91,7 @@ describe('Style API Integration Tests', () => {
       expect(response).toBeDefined();
     });
 
+    // The style suggestions endpoint is currently throwing errors
     it('should submit a style suggestion and get result', async () => {
       const response = await styleSuggestions(
         {

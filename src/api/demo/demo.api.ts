@@ -23,7 +23,7 @@ export async function submitRewrite(
   return postData<AnalysisSubmissionResponse>(API_ENDPOINTS.REWRITES, formData, apiKey);
 }
 
-export async function check(checkRequest: AnalysisRequest, apiKey: string): Promise<AnalysisSubmissionResponse> {
+export async function submitCheck(checkRequest: AnalysisRequest, apiKey: string): Promise<AnalysisSubmissionResponse> {
   console.log(checkRequest);
 
   const formData = new FormData();
@@ -58,6 +58,32 @@ export async function rewrite(rewriteRequest: AnalysisRequest, apiKey: string): 
     } else {
       console.error('Unknown error in rewriteContentAndPoll:', error);
     }
+    throw error;
+  }
+}
+
+export async function check(checkRequest: AnalysisRequest, apiKey: string): Promise<AnalysisSuccessResponse> {
+  try {
+    const initialResponse = await submitCheck(checkRequest, apiKey);
+
+    if (!initialResponse.workflow_id) {
+      throw new Error('No workflow_id received from initial check request');
+    }
+
+    const polledResponse = await pollWorkflowForResult<AnalysisSuccessResponse>(
+      initialResponse.workflow_id,
+      API_ENDPOINTS.CHECKS,
+      apiKey,
+    );
+
+    if (polledResponse.status === Status.Completed && polledResponse.result) {
+      return polledResponse;
+    }
+
+    throw new Error(`Check failed with status: ${polledResponse.status}`);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error in checkAndPoll';
+    console.error('Error in checkAndPoll:', errorMessage);
     throw error;
   }
 }
