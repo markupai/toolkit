@@ -11,7 +11,7 @@ import { Status } from '../../utils/api.types';
 
 import { pollWorkflowForResult } from '../../utils/api';
 
-const API_ENDPOINTS = {
+export const API_ENDPOINTS = {
   STYLE_GUIDES: '/v1/style-guides',
   STYLE_CHECKS: '/v1/style/checks',
   STYLE_SUGGESTIONS: '/v1/style/suggestions',
