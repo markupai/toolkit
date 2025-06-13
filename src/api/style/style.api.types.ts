@@ -16,6 +16,15 @@ export interface StyleAnalysisSubmitResp extends ResponseBase {
   message?: string;
 }
 
+export enum IssueCategory {
+  Grammar = 'grammar',
+  SimpleVocab = 'simple_vocab',
+  SentenceStructure = 'sentence_structure',
+  SentenceLength = 'sentence_length',
+  Tone = 'tone',
+  StyleGuide = 'style_guide',
+}
+
 export interface StyleAnalysisSuccessResp {
   status: Status;
   style_guide_id: string;
@@ -29,18 +38,29 @@ export interface StyleAnalysisSuccessResp {
     word_count: number;
     overall_score: number;
   };
+
   issues: Array<{
     original: string;
     char_index: number;
-    category: string;
+    subcategory: string;
+    category: IssueCategory;
   }>;
+  check_options: {
+    style_guide: {
+      id: string;
+      name: string;
+    };
+    dialect: string;
+    tone: string;
+  };
 }
 
 export interface StyleAnalysisSuggestionResp extends Omit<StyleAnalysisSuccessResp, 'issues'> {
   issues: Array<{
     original: string;
     char_index: number;
-    category: string;
+    subcategory: string;
+    category: IssueCategory;
     suggestion: string;
   }>;
 }

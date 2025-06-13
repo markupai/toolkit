@@ -55,6 +55,11 @@ type ApiHandlers = {
       success: HttpHandler;
       error: HttpHandler;
     };
+    checks: {
+      success: HttpHandler;
+      error: HttpHandler;
+      poll: HttpHandler;
+    };
   };
   api: {
     success: {
@@ -168,6 +173,50 @@ const styleHandlers = {
     }),
     error: http.get(`${PLATFORM_URL}/v1/style-guides`, () => {
       return HttpResponse.json({ message: 'Failed to list style guides' }, { status: 500 });
+    }),
+  },
+  checks: {
+    success: http.post(`${PLATFORM_URL}/v1/style/checks`, () => {
+      return HttpResponse.json({
+        status: Status.Running,
+        workflow_id: 'test-workflow-id',
+        message: 'Style check workflow started successfully.',
+      });
+    }),
+    error: http.post(`${PLATFORM_URL}/v1/style/checks`, () => {
+      return HttpResponse.json({ message: 'Could not validate credentials' }, { status: 401 });
+    }),
+    poll: http.get(`${PLATFORM_URL}/v1/style/checks/:workflowId`, () => {
+      return HttpResponse.json({
+        status: Status.Completed,
+        style_guide_id: 'test-style-guide-id',
+        scores: {
+          avg_sentence_length: 15,
+          avg_word_length: 4.5,
+          complexity_score: 75,
+          readability_score: 80,
+          sentence_count: 5,
+          vocabulary_score: 85,
+          word_count: 75,
+          overall_score: 80,
+        },
+        issues: [
+          {
+            original: 'This is a test sentence.',
+            char_index: 0,
+            subcategory: 'passive_voice',
+            category: 'grammar',
+          },
+        ],
+        check_options: {
+          style_guide: {
+            id: 'test-style-guide-id',
+            name: 'ap',
+          },
+          dialect: 'american_english',
+          tone: 'academic',
+        },
+      });
     }),
   },
 };

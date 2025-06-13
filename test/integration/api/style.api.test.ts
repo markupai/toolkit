@@ -9,6 +9,7 @@ import {
   styleRewrite,
 } from '../../../src/api/style/style.api';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
+import { IssueCategory } from '../../../src/api/style/style.api.types';
 
 describe('Style API Integration Tests', () => {
   let apiKey: string;
@@ -89,6 +90,20 @@ describe('Style API Integration Tests', () => {
       );
 
       expect(response).toBeDefined();
+      expect(response.check_options).toBeDefined();
+      expect(response.check_options.style_guide).toBeDefined();
+      expect(response.check_options.style_guide.id).toBeDefined();
+      expect(response.check_options.style_guide.name).toBeDefined();
+      expect(response.check_options.dialect).toBe(STYLE_DEFAULTS.dialects.americanEnglish);
+      expect(response.check_options.tone).toBe(STYLE_DEFAULTS.tones.formal);
+
+      if (response.issues && response.issues.length > 0) {
+        const issue = response.issues[0];
+        expect(issue.subcategory).toBeDefined();
+        expect(typeof issue.subcategory).toBe('string');
+        expect(issue.category).toBeDefined();
+        expect(Object.values(IssueCategory)).toContain(issue.category);
+      }
     });
 
     // The style suggestions endpoint is currently throwing errors
