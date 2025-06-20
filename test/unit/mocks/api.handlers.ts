@@ -167,9 +167,17 @@ const internalHandlers = {
 const styleHandlers = {
   guides: {
     success: http.get(`${PLATFORM_URL}/v1/style-guides`, () => {
-      return HttpResponse.json({
-        'test-style-guide-id': 'Test Style Guide',
-      });
+      return HttpResponse.json([
+        {
+          id: 'test-style-guide-id',
+          name: 'Test Style Guide',
+          created_at: '2025-06-20T11:46:30.537Z',
+          created_by: 'test-user',
+          status: 'running',
+          updated_at: '2025-06-20T11:46:30.537Z',
+          updated_by: 'test-user',
+        },
+      ]);
     }),
     error: http.get(`${PLATFORM_URL}/v1/style-guides`, () => {
       return HttpResponse.json({ message: 'Failed to list style guides' }, { status: 500 });

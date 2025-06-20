@@ -80,4 +80,14 @@ export interface StyleAnalysisReq {
   tone: string;
 }
 
-export type StyleGuides = Record<string, string>;
+export interface StyleGuide {
+  id: string;
+  name: string;
+  created_at: string;
+  created_by: string;
+  status: string;
+  updated_at: string;
+  updated_by: string;
+}
+
+export type StyleGuides = StyleGuide[];

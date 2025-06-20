@@ -18,9 +18,17 @@ describe('Style API Unit Tests', () => {
       server.use(apiHandlers.style.guides.success);
 
       const result = await listStyleGuides(mockApiKey);
-      expect(result).toEqual({
-        [mockStyleGuideId]: 'Test Style Guide',
-      });
+      expect(result).toEqual([
+        {
+          id: mockStyleGuideId,
+          name: 'Test Style Guide',
+          created_at: '2025-06-20T11:46:30.537Z',
+          created_by: 'test-user',
+          status: 'running',
+          updated_at: '2025-06-20T11:46:30.537Z',
+          updated_by: 'test-user',
+        },
+      ]);
     });
 
     it('should handle list style guides error', async () => {

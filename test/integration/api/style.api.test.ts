@@ -24,8 +24,18 @@ describe('Style API Integration Tests', () => {
     it('should list style guides', async () => {
       const response = await listStyleGuides(apiKey);
       expect(response).toBeDefined();
-      expect(typeof response).toBe('object');
-      expect(Object.keys(response).length).toBeGreaterThan(0);
+      expect(Array.isArray(response)).toBe(true);
+      expect(response.length).toBeGreaterThan(0);
+
+      // Validate the structure of the first style guide
+      const firstStyleGuide = response[0];
+      expect(firstStyleGuide).toHaveProperty('id');
+      expect(firstStyleGuide).toHaveProperty('name');
+      expect(firstStyleGuide).toHaveProperty('created_at');
+      expect(firstStyleGuide).toHaveProperty('created_by');
+      expect(firstStyleGuide).toHaveProperty('status');
+      expect(firstStyleGuide).toHaveProperty('updated_at');
+      expect(firstStyleGuide).toHaveProperty('updated_by');
     });
   });
 
