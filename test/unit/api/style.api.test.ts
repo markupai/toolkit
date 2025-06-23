@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
-import { listStyleGuides, styleCheck } from '../../../src/api/style/style.api';
+import { listStyleGuides, styleCheck, styleSuggestions, styleRewrite } from '../../../src/api/style/style.api';
 import { server } from '../setup';
 import { apiHandlers } from '../mocks/api.handlers';
 import { IssueCategory } from '../../../src/api/style/style.api.types';
@@ -44,7 +44,7 @@ describe('Style API Unit Tests', () => {
     const mockDialect = 'american_english';
     const mockTone = 'academic';
 
-    it('should return style check result with new fields', async () => {
+    it('should return style check result with new scores structure', async () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
       const result = await styleCheck(
@@ -65,6 +65,23 @@ describe('Style API Unit Tests', () => {
       expect(result.check_options.dialect).toBe('american_english');
       expect(result.check_options.tone).toBe('academic');
 
+      // Test new scores structure
+      expect(result.scores).toBeDefined();
+      expect(result.scores.overall.score).toBe(80);
+      expect(result.scores.clarity.score).toBe(75);
+      expect(result.scores.clarity.word_count).toBe(75);
+      expect(result.scores.clarity.sentence_count).toBe(5);
+      expect(result.scores.clarity.average_sentence_length).toBe(15);
+      expect(result.scores.clarity.flesch_reading_ease).toBe(80);
+      expect(result.scores.clarity.vocabulary_complexity).toBe(85);
+      expect(result.scores.grammar.score).toBe(90);
+      expect(result.scores.grammar.issues).toBe(1);
+      expect(result.scores.style_guide.score).toBe(85);
+      expect(result.scores.style_guide.issues).toBe(0);
+      expect(result.scores.tone.score).toBe(70);
+      expect(result.scores.tone.informality).toBe(30);
+      expect(result.scores.tone.liveliness).toBe(60);
+
       expect(result.issues).toHaveLength(1);
       const issue = result.issues[0];
       expect(issue.subcategory).toBe('passive_voice');
@@ -76,6 +93,123 @@ describe('Style API Unit Tests', () => {
 
       await expect(
         styleCheck(
+          {
+            content: mockContent,
+            style_guide: mockStyleGuide,
+            dialect: mockDialect,
+            tone: mockTone,
+          },
+          mockApiKey,
+        ),
+      ).rejects.toThrow('Could not validate credentials');
+    });
+  });
+
+  describe('styleSuggestions', () => {
+    const mockContent = 'This is a test content.';
+    const mockStyleGuide = 'ap';
+    const mockDialect = 'american_english';
+    const mockTone = 'academic';
+
+    it('should return style suggestions result with suggestions', async () => {
+      server.use(apiHandlers.style.suggestions.success, apiHandlers.style.suggestions.poll);
+
+      const result = await styleSuggestions(
+        {
+          content: mockContent,
+          style_guide: mockStyleGuide,
+          dialect: mockDialect,
+          tone: mockTone,
+        },
+        mockApiKey,
+      );
+
+      expect(result.check_options).toBeDefined();
+      expect(result.scores).toBeDefined();
+      expect(result.scores.overall.score).toBe(80);
+      expect(result.scores.clarity.score).toBe(75);
+      expect(result.scores.grammar.score).toBe(90);
+      expect(result.scores.style_guide.score).toBe(85);
+      expect(result.scores.tone.score).toBe(70);
+
+      expect(result.issues).toHaveLength(1);
+      const issue = result.issues[0];
+      expect(issue.subcategory).toBe('passive_voice');
+      expect(issue.category).toBe(IssueCategory.Grammar);
+      expect(issue.suggestion).toBe('This sentence should be rewritten.');
+    });
+
+    it('should handle style suggestions error', async () => {
+      server.use(apiHandlers.style.suggestions.error);
+
+      await expect(
+        styleSuggestions(
+          {
+            content: mockContent,
+            style_guide: mockStyleGuide,
+            dialect: mockDialect,
+            tone: mockTone,
+          },
+          mockApiKey,
+        ),
+      ).rejects.toThrow('Could not validate credentials');
+    });
+  });
+
+  describe('styleRewrite', () => {
+    const mockContent = 'This is a test content.';
+    const mockStyleGuide = 'ap';
+    const mockDialect = 'american_english';
+    const mockTone = 'academic';
+
+    it('should return style rewrite result with rewrite and rewrite_scores', async () => {
+      server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
+
+      const result = await styleRewrite(
+        {
+          content: mockContent,
+          style_guide: mockStyleGuide,
+          dialect: mockDialect,
+          tone: mockTone,
+        },
+        mockApiKey,
+      );
+
+      expect(result.check_options).toBeDefined();
+      expect(result.scores).toBeDefined();
+      expect(result.scores.overall.score).toBe(80);
+      expect(result.scores.clarity.score).toBe(75);
+      expect(result.scores.grammar.score).toBe(90);
+      expect(result.scores.style_guide.score).toBe(85);
+      expect(result.scores.tone.score).toBe(70);
+
+      expect(result.issues).toHaveLength(1);
+      const issue = result.issues[0];
+      expect(issue.subcategory).toBe('passive_voice');
+      expect(issue.category).toBe(IssueCategory.Grammar);
+      expect(issue.suggestion).toBe('This sentence should be rewritten.');
+
+      // Test rewrite and rewrite_scores
+      expect(result.rewrite).toBe('This is an improved test sentence.');
+      expect(result.rewrite_scores).toBeDefined();
+      expect(result.rewrite_scores.overall.score).toBe(85);
+      expect(result.rewrite_scores.clarity.score).toBe(80);
+      expect(result.rewrite_scores.clarity.flesch_reading_ease).toBe(85);
+      expect(result.rewrite_scores.clarity.vocabulary_complexity).toBe(90);
+      expect(result.rewrite_scores.grammar.score).toBe(95);
+      expect(result.rewrite_scores.grammar.issues).toBe(0);
+      expect(result.rewrite_scores.style_guide.score).toBe(90);
+      expect(result.rewrite_scores.style_guide.issues).toBe(0);
+      expect(result.rewrite_scores.tone.score).toBe(75);
+      expect(result.rewrite_scores.tone.informality).toBe(25);
+      expect(result.rewrite_scores.tone.liveliness).toBe(65);
+    });
+
+    it('should handle style rewrite error', async () => {
+      server.use(apiHandlers.style.rewrites.error);
+
+      await expect(
+        styleRewrite(
           {
             content: mockContent,
             style_guide: mockStyleGuide,

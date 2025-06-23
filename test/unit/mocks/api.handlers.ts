@@ -60,6 +60,16 @@ type ApiHandlers = {
       error: HttpHandler;
       poll: HttpHandler;
     };
+    suggestions: {
+      success: HttpHandler;
+      error: HttpHandler;
+      poll: HttpHandler;
+    };
+    rewrites: {
+      success: HttpHandler;
+      error: HttpHandler;
+      poll: HttpHandler;
+    };
   };
   api: {
     success: {
@@ -199,14 +209,30 @@ const styleHandlers = {
         status: Status.Completed,
         style_guide_id: 'test-style-guide-id',
         scores: {
-          avg_sentence_length: 15,
-          avg_word_length: 4.5,
-          complexity_score: 75,
-          readability_score: 80,
-          sentence_count: 5,
-          vocabulary_score: 85,
-          word_count: 75,
-          overall_score: 80,
+          overall: {
+            score: 80,
+          },
+          clarity: {
+            score: 75,
+            word_count: 75,
+            sentence_count: 5,
+            average_sentence_length: 15,
+            flesch_reading_ease: 80,
+            vocabulary_complexity: 85,
+          },
+          grammar: {
+            score: 90,
+            issues: 1,
+          },
+          style_guide: {
+            score: 85,
+            issues: 0,
+          },
+          tone: {
+            score: 70,
+            informality: 30,
+            liveliness: 60,
+          },
         },
         issues: [
           {
@@ -223,6 +249,155 @@ const styleHandlers = {
           },
           dialect: 'american_english',
           tone: 'academic',
+        },
+      });
+    }),
+  },
+  suggestions: {
+    success: http.post(`${PLATFORM_URL}/v1/style/suggestions`, () => {
+      return HttpResponse.json({
+        status: Status.Running,
+        workflow_id: 'test-workflow-id',
+        message: 'Style suggestions workflow started successfully.',
+      });
+    }),
+    error: http.post(`${PLATFORM_URL}/v1/style/suggestions`, () => {
+      return HttpResponse.json({ message: 'Could not validate credentials' }, { status: 401 });
+    }),
+    poll: http.get(`${PLATFORM_URL}/v1/style/suggestions/:workflowId`, () => {
+      return HttpResponse.json({
+        status: Status.Completed,
+        style_guide_id: 'test-style-guide-id',
+        scores: {
+          overall: {
+            score: 80,
+          },
+          clarity: {
+            score: 75,
+            word_count: 75,
+            sentence_count: 5,
+            average_sentence_length: 15,
+            flesch_reading_ease: 80,
+            vocabulary_complexity: 85,
+          },
+          grammar: {
+            score: 90,
+            issues: 1,
+          },
+          style_guide: {
+            score: 85,
+            issues: 0,
+          },
+          tone: {
+            score: 70,
+            informality: 30,
+            liveliness: 60,
+          },
+        },
+        issues: [
+          {
+            original: 'This is a test sentence.',
+            char_index: 0,
+            subcategory: 'passive_voice',
+            category: 'grammar',
+            suggestion: 'This sentence should be rewritten.',
+          },
+        ],
+        check_options: {
+          style_guide: {
+            id: 'test-style-guide-id',
+            name: 'ap',
+          },
+          dialect: 'american_english',
+          tone: 'academic',
+        },
+      });
+    }),
+  },
+  rewrites: {
+    success: http.post(`${PLATFORM_URL}/v1/style/rewrites`, () => {
+      return HttpResponse.json({
+        status: Status.Running,
+        workflow_id: 'test-workflow-id',
+        message: 'Style rewrite workflow started successfully.',
+      });
+    }),
+    error: http.post(`${PLATFORM_URL}/v1/style/rewrites`, () => {
+      return HttpResponse.json({ message: 'Could not validate credentials' }, { status: 401 });
+    }),
+    poll: http.get(`${PLATFORM_URL}/v1/style/rewrites/:workflowId`, () => {
+      return HttpResponse.json({
+        status: Status.Completed,
+        style_guide_id: 'test-style-guide-id',
+        scores: {
+          overall: {
+            score: 80,
+          },
+          clarity: {
+            score: 75,
+            word_count: 75,
+            sentence_count: 5,
+            average_sentence_length: 15,
+            flesch_reading_ease: 80,
+            vocabulary_complexity: 85,
+          },
+          grammar: {
+            score: 90,
+            issues: 1,
+          },
+          style_guide: {
+            score: 85,
+            issues: 0,
+          },
+          tone: {
+            score: 70,
+            informality: 30,
+            liveliness: 60,
+          },
+        },
+        issues: [
+          {
+            original: 'This is a test sentence.',
+            char_index: 0,
+            subcategory: 'passive_voice',
+            category: 'grammar',
+            suggestion: 'This sentence should be rewritten.',
+          },
+        ],
+        check_options: {
+          style_guide: {
+            id: 'test-style-guide-id',
+            name: 'ap',
+          },
+          dialect: 'american_english',
+          tone: 'academic',
+        },
+        rewrite: 'This is an improved test sentence.',
+        rewrite_scores: {
+          overall: {
+            score: 85,
+          },
+          clarity: {
+            score: 80,
+            word_count: 75,
+            sentence_count: 5,
+            average_sentence_length: 15,
+            flesch_reading_ease: 85,
+            vocabulary_complexity: 90,
+          },
+          grammar: {
+            score: 95,
+            issues: 0,
+          },
+          style_guide: {
+            score: 90,
+            issues: 0,
+          },
+          tone: {
+            score: 75,
+            informality: 25,
+            liveliness: 65,
+          },
         },
       });
     }),

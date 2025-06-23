@@ -107,6 +107,32 @@ describe('Style API Integration Tests', () => {
       expect(response.check_options.dialect).toBe(STYLE_DEFAULTS.dialects.americanEnglish);
       expect(response.check_options.tone).toBe(STYLE_DEFAULTS.tones.formal);
 
+      // Test new scores structure
+      expect(response.scores).toBeDefined();
+      expect(response.scores.overall).toBeDefined();
+      expect(typeof response.scores.overall.score).toBe('number');
+
+      expect(response.scores.clarity).toBeDefined();
+      expect(typeof response.scores.clarity.score).toBe('number');
+      expect(typeof response.scores.clarity.word_count).toBe('number');
+      expect(typeof response.scores.clarity.sentence_count).toBe('number');
+      expect(typeof response.scores.clarity.average_sentence_length).toBe('number');
+      expect(typeof response.scores.clarity.flesch_reading_ease).toBe('number');
+      expect(typeof response.scores.clarity.vocabulary_complexity).toBe('number');
+
+      expect(response.scores.grammar).toBeDefined();
+      expect(typeof response.scores.grammar.score).toBe('number');
+      expect(typeof response.scores.grammar.issues).toBe('number');
+
+      expect(response.scores.style_guide).toBeDefined();
+      expect(typeof response.scores.style_guide.score).toBe('number');
+      expect(typeof response.scores.style_guide.issues).toBe('number');
+
+      expect(response.scores.tone).toBeDefined();
+      expect(typeof response.scores.tone.score).toBe('number');
+      expect(typeof response.scores.tone.informality).toBe('number');
+      expect(typeof response.scores.tone.liveliness).toBe('number');
+
       if (response.issues && response.issues.length > 0) {
         const issue = response.issues[0];
         expect(issue.subcategory).toBeDefined();
@@ -129,6 +155,18 @@ describe('Style API Integration Tests', () => {
       );
 
       expect(response).toBeDefined();
+      expect(response.scores).toBeDefined();
+      expect(response.scores.overall).toBeDefined();
+      expect(response.scores.clarity).toBeDefined();
+      expect(response.scores.grammar).toBeDefined();
+      expect(response.scores.style_guide).toBeDefined();
+      expect(response.scores.tone).toBeDefined();
+
+      if (response.issues && response.issues.length > 0) {
+        const issue = response.issues[0];
+        expect(issue.suggestion).toBeDefined();
+        expect(typeof issue.suggestion).toBe('string');
+      }
     });
 
     it('should submit a style rewrite and get result', async () => {
@@ -143,6 +181,29 @@ describe('Style API Integration Tests', () => {
       );
 
       expect(response).toBeDefined();
+      expect(response.scores).toBeDefined();
+      expect(response.scores.overall).toBeDefined();
+      expect(response.scores.clarity).toBeDefined();
+      expect(response.scores.grammar).toBeDefined();
+      expect(response.scores.style_guide).toBeDefined();
+      expect(response.scores.tone).toBeDefined();
+
+      // Test rewrite and rewrite_scores
+      expect(response.rewrite).toBeDefined();
+      expect(typeof response.rewrite).toBe('string');
+
+      expect(response.rewrite_scores).toBeDefined();
+      expect(response.rewrite_scores.overall).toBeDefined();
+      expect(response.rewrite_scores.clarity).toBeDefined();
+      expect(response.rewrite_scores.grammar).toBeDefined();
+      expect(response.rewrite_scores.style_guide).toBeDefined();
+      expect(response.rewrite_scores.tone).toBeDefined();
+
+      if (response.issues && response.issues.length > 0) {
+        const issue = response.issues[0];
+        expect(issue.suggestion).toBeDefined();
+        expect(typeof issue.suggestion).toBe('string');
+      }
     });
   });
 });

@@ -29,14 +29,30 @@ export interface StyleAnalysisSuccessResp {
   status: Status;
   style_guide_id: string;
   scores: {
-    avg_sentence_length: number;
-    avg_word_length: number;
-    complexity_score: number;
-    readability_score: number;
-    sentence_count: number;
-    vocabulary_score: number;
-    word_count: number;
-    overall_score: number;
+    overall: {
+      score: number;
+    };
+    clarity: {
+      score: number;
+      word_count: number;
+      sentence_count: number;
+      average_sentence_length: number;
+      flesch_reading_ease: number;
+      vocabulary_complexity: number;
+    };
+    grammar: {
+      score: number;
+      issues: number;
+    };
+    style_guide: {
+      score: number;
+      issues: number;
+    };
+    tone: {
+      score: number;
+      informality: number;
+      liveliness: number;
+    };
   };
 
   issues: Array<{
@@ -67,6 +83,32 @@ export interface StyleAnalysisSuggestionResp extends Omit<StyleAnalysisSuccessRe
 
 export interface StyleAnalysisRewriteResp extends StyleAnalysisSuggestionResp {
   rewrite: string;
+  rewrite_scores: {
+    overall: {
+      score: number;
+    };
+    clarity: {
+      score: number;
+      word_count: number;
+      sentence_count: number;
+      average_sentence_length: number;
+      flesch_reading_ease: number;
+      vocabulary_complexity: number;
+    };
+    grammar: {
+      score: number;
+      issues: number;
+    };
+    style_guide: {
+      score: number;
+      issues: number;
+    };
+    tone: {
+      score: number;
+      informality: number;
+      liveliness: number;
+    };
+  };
 }
 
 export interface StyleAnalysisErrorResp extends ResponseBase {
