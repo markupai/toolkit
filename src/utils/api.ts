@@ -2,7 +2,7 @@ import { Status } from './api.types';
 import type { ResponseBase } from './api.types';
 import { AcrolinxError } from './errors';
 
-// export const DEFAULT_PLATFORM_URL = 'https://app.acrolinx.com';
+// export const DEFAULT_PLATFORM_URL = 'https://app.acrolinx.cloud';
 export const DEFAULT_PLATFORM_URL_DEMO = 'https://demo.acrolinx.com';
 export let PLATFORM_URL = DEFAULT_PLATFORM_URL_DEMO;
 
