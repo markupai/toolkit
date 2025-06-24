@@ -244,8 +244,8 @@ const styleHandlers = {
         ],
         check_options: {
           style_guide: {
-            id: 'test-style-guide-id',
-            name: 'ap',
+            style_guide_type: 'ap',
+            style_guide_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
           },
           dialect: 'american_english',
           tone: 'academic',
@@ -305,8 +305,8 @@ const styleHandlers = {
         ],
         check_options: {
           style_guide: {
-            id: 'test-style-guide-id',
-            name: 'ap',
+            style_guide_type: 'ap',
+            style_guide_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
           },
           dialect: 'american_english',
           tone: 'academic',
@@ -366,8 +366,8 @@ const styleHandlers = {
         ],
         check_options: {
           style_guide: {
-            id: 'test-style-guide-id',
-            name: 'ap',
+            style_guide_type: 'ap',
+            style_guide_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
           },
           dialect: 'american_english',
           tone: 'academic',

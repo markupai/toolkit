@@ -59,9 +59,14 @@ describe('Style API Unit Tests', () => {
 
       expect(result.check_options).toBeDefined();
       expect(result.check_options.style_guide).toEqual({
-        id: 'test-style-guide-id',
-        name: 'ap',
+        style_guide_type: 'ap',
+        style_guide_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
       });
+      expect(typeof result.check_options.style_guide.style_guide_type).toBe('string');
+      expect(typeof result.check_options.style_guide.style_guide_id).toBe('string');
+      expect(result.check_options.style_guide.style_guide_id).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      );
       expect(result.check_options.dialect).toBe('american_english');
       expect(result.check_options.tone).toBe('academic');
 
@@ -125,6 +130,15 @@ describe('Style API Unit Tests', () => {
       );
 
       expect(result.check_options).toBeDefined();
+      expect(result.check_options.style_guide).toEqual({
+        style_guide_type: 'ap',
+        style_guide_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+      });
+      expect(typeof result.check_options.style_guide.style_guide_type).toBe('string');
+      expect(typeof result.check_options.style_guide.style_guide_id).toBe('string');
+      expect(result.check_options.style_guide.style_guide_id).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      );
       expect(result.scores).toBeDefined();
       expect(result.scores.overall.score).toBe(80);
       expect(result.scores.clarity.score).toBe(75);
@@ -176,6 +190,15 @@ describe('Style API Unit Tests', () => {
       );
 
       expect(result.check_options).toBeDefined();
+      expect(result.check_options.style_guide).toEqual({
+        style_guide_type: 'ap',
+        style_guide_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+      });
+      expect(typeof result.check_options.style_guide.style_guide_type).toBe('string');
+      expect(typeof result.check_options.style_guide.style_guide_id).toBe('string');
+      expect(result.check_options.style_guide.style_guide_id).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      );
       expect(result.scores).toBeDefined();
       expect(result.scores.overall.score).toBe(80);
       expect(result.scores.clarity.score).toBe(75);

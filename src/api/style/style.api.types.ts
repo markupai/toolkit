@@ -63,8 +63,8 @@ export interface StyleAnalysisSuccessResp {
   }>;
   check_options: {
     style_guide: {
-      id: string;
-      name: string;
+      style_guide_type: string;
+      style_guide_id: string;
     };
     dialect: string;
     tone: string;

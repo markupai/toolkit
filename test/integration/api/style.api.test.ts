@@ -102,8 +102,13 @@ describe('Style API Integration Tests', () => {
       expect(response).toBeDefined();
       expect(response.check_options).toBeDefined();
       expect(response.check_options.style_guide).toBeDefined();
-      expect(response.check_options.style_guide.id).toBeDefined();
-      expect(response.check_options.style_guide.name).toBeDefined();
+      expect(response.check_options.style_guide.style_guide_type).toBeDefined();
+      expect(response.check_options.style_guide.style_guide_id).toBeDefined();
+      expect(typeof response.check_options.style_guide.style_guide_type).toBe('string');
+      expect(typeof response.check_options.style_guide.style_guide_id).toBe('string');
+      expect(response.check_options.style_guide.style_guide_id).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      );
       expect(response.check_options.dialect).toBe(STYLE_DEFAULTS.dialects.americanEnglish);
       expect(response.check_options.tone).toBe(STYLE_DEFAULTS.tones.formal);
 
