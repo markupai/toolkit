@@ -4,10 +4,12 @@ import { AcrolinxError } from './errors';
 
 // export const DEFAULT_PLATFORM_URL = 'https://app.acrolinx.cloud';
 export const DEFAULT_PLATFORM_URL_DEMO = 'https://demo.acrolinx.com';
-export let PLATFORM_URL = DEFAULT_PLATFORM_URL_DEMO;
+export const DEFAULT_PLATFORM_URL_STAGE = 'https://app.stg.acrolinx-cloud.net';
+export const DEFAULT_PLATFORM_URL_DEV = 'https://app.dev.acrolinx-cloud.net';
+export let PLATFORM_URL = DEFAULT_PLATFORM_URL_DEV;
 
 export function setPlatformUrl(url: string) {
-  PLATFORM_URL = url;
+  PLATFORM_URL = url.replace(/\/+$/, '');
 }
 
 function getCommonHeaders(apiKey: string): HeadersInit {

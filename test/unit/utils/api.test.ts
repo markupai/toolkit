@@ -1,5 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
-import { getData, postData, putData, deleteData, pollWorkflowForResult, PLATFORM_URL } from '../../../src/utils/api';
+import {
+  getData,
+  postData,
+  putData,
+  deleteData,
+  pollWorkflowForResult,
+  PLATFORM_URL,
+  setPlatformUrl,
+} from '../../../src/utils/api';
 import { ResponseBase, Status } from '../../../src/utils/api.types';
 import { server, handlers } from '../setup';
 import { http } from 'msw';
@@ -14,6 +22,44 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('API Utilities Unit Tests', () => {
+  describe('setPlatformUrl', () => {
+    it('should remove single trailing slash', () => {
+      const originalUrl = PLATFORM_URL;
+      setPlatformUrl('https://example.com/');
+      expect(PLATFORM_URL).toBe('https://example.com');
+      setPlatformUrl(originalUrl); // Reset to original
+    });
+
+    it('should remove multiple trailing slashes', () => {
+      const originalUrl = PLATFORM_URL;
+      setPlatformUrl('https://example.com///');
+      expect(PLATFORM_URL).toBe('https://example.com');
+      setPlatformUrl(originalUrl); // Reset to original
+    });
+
+    it('should not modify URL without trailing slashes', () => {
+      const originalUrl = PLATFORM_URL;
+      const testUrl = 'https://example.com';
+      setPlatformUrl(testUrl);
+      expect(PLATFORM_URL).toBe(testUrl);
+      setPlatformUrl(originalUrl); // Reset to original
+    });
+
+    it('should handle URL with path and trailing slashes', () => {
+      const originalUrl = PLATFORM_URL;
+      setPlatformUrl('https://example.com/api/v1///');
+      expect(PLATFORM_URL).toBe('https://example.com/api/v1');
+      setPlatformUrl(originalUrl); // Reset to original
+    });
+
+    it('should handle empty string', () => {
+      const originalUrl = PLATFORM_URL;
+      setPlatformUrl('');
+      expect(PLATFORM_URL).toBe('');
+      setPlatformUrl(originalUrl); // Reset to original
+    });
+  });
+
   describe('HTTP Method Functions', () => {
     it('should make a successful GET request', async () => {
       server.use(handlers.api.success.get);
