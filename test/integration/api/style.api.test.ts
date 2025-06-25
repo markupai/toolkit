@@ -41,8 +41,7 @@ describe('Style API Integration Tests', () => {
 
   describe('Style Operations', () => {
     const testContent = 'This is a test content for style operations.';
-    const styleGuideId = 'microsoft'; // Using a predefined style guide name
-
+    const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft
     it('should submit a style check', async () => {
       const response = await submitStyleCheck(
         {
