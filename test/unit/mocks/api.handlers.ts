@@ -54,6 +54,12 @@ type ApiHandlers = {
     guides: {
       success: HttpHandler;
       error: HttpHandler;
+      getSuccess: HttpHandler;
+      getError: HttpHandler;
+      createSuccess: HttpHandler;
+      createError: HttpHandler;
+      updateSuccess: HttpHandler;
+      updateError: HttpHandler;
     };
     checks: {
       success: HttpHandler;
@@ -191,6 +197,48 @@ const styleHandlers = {
     }),
     error: http.get(`${PLATFORM_URL}/v1/style-guides`, () => {
       return HttpResponse.json({ message: 'Failed to list style guides' }, { status: 500 });
+    }),
+    getSuccess: http.get(`${PLATFORM_URL}/v1/style-guides/:styleGuideId`, () => {
+      return HttpResponse.json({
+        id: 'test-style-guide-id',
+        name: 'Test Style Guide',
+        created_at: '2025-06-20T11:46:30.537Z',
+        created_by: 'test-user',
+        status: 'running',
+        updated_at: '2025-06-20T11:46:30.537Z',
+        updated_by: 'test-user',
+      });
+    }),
+    getError: http.get(`${PLATFORM_URL}/v1/style-guides/:styleGuideId`, () => {
+      return HttpResponse.json({ message: 'Style guide not found' }, { status: 404 });
+    }),
+    createSuccess: http.post(`${PLATFORM_URL}/v1/style-guides`, () => {
+      return HttpResponse.json({
+        id: 'new-style-guide-id',
+        name: 'New Style Guide',
+        created_at: '2025-06-20T11:46:30.537Z',
+        created_by: 'test-user',
+        status: 'running',
+        updated_at: '2025-06-20T11:46:30.537Z',
+        updated_by: 'test-user',
+      });
+    }),
+    createError: http.post(`${PLATFORM_URL}/v1/style-guides`, () => {
+      return HttpResponse.json({ message: 'Failed to create style guide' }, { status: 400 });
+    }),
+    updateSuccess: http.put(`${PLATFORM_URL}/v1/style-guides/:styleGuideId`, () => {
+      return HttpResponse.json({
+        id: 'test-style-guide-id',
+        name: 'Updated Style Guide',
+        created_at: '2025-06-20T11:46:30.537Z',
+        created_by: 'test-user',
+        status: 'running',
+        updated_at: '2025-06-20T12:00:00.000Z',
+        updated_by: 'test-user',
+      });
+    }),
+    updateError: http.put(`${PLATFORM_URL}/v1/style-guides/:styleGuideId`, () => {
+      return HttpResponse.json({ message: 'Failed to update style guide' }, { status: 400 });
     }),
   },
   checks: {

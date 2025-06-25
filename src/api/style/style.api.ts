@@ -1,4 +1,4 @@
-import { getData, postData } from '../../utils/api';
+import { getData, postData, PLATFORM_URL, AcrolinxError, putData } from '../../utils/api';
 import type {
   StyleGuides,
   StyleGuide,
@@ -113,4 +113,57 @@ export async function styleRewrite(
     styleAnalysisRequest,
     apiKey,
   );
+}
+
+// Create a new style guide from a TXT or Markdown file
+export async function createStyleGuide(filePath: string, apiKey: string, name?: string): Promise<any> {
+  // Read file from filesystem
+  const fs = require('fs');
+  const path = require('path');
+  
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`File not found: ${filePath}`);
+  }
+  
+  const fileContent = fs.readFileSync(filePath);
+  const fileName = path.basename(filePath);
+  const fileExtension = path.extname(filePath).toLowerCase();
+  
+  // Determine MIME type based on file extension
+  let mimeType = 'text/plain';
+  if (fileExtension === '.md' || fileExtension === '.markdown') {
+    mimeType = 'text/markdown';
+  } else if (fileExtension === '.txt') {
+    mimeType = 'text/plain';
+  } else {
+    throw new Error(`Unsupported file type: ${fileExtension}. Only .txt and .md files are supported.`);
+  }
+  
+  const formData = new FormData();
+  formData.append('file_upload', new Blob([fileContent], { type: mimeType }), fileName);
+  if (name) {
+    formData.append('name', name);
+  }
+  
+  // Use fetch directly because postData expects BodyInit, but we want to control headers for multipart
+  const response = await fetch(`${PLATFORM_URL}${API_ENDPOINTS.STYLE_GUIDES}`, {
+    method: 'POST',
+    headers: {
+      Authorization: apiKey
+      // Note: Do NOT set Content-Type; browser/Node will set it with boundary for multipart
+    },
+    body: formData
+  });
+  
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw AcrolinxError.fromResponse(response, errorData);
+  }
+  
+  return response.json();
+}
+
+// Update a style guide by ID
+export async function updateStyleGuide(styleGuideId: string, updates: { name?: string }, apiKey: string): Promise<any> {
+  return putData<any>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, JSON.stringify(updates), apiKey);
 }

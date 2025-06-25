@@ -178,3 +178,5 @@ export async function pollWorkflowForResult<T>(workflowId: string, endpoint: str
 
   return poll();
 }
+
+export { AcrolinxError };
