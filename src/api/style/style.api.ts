@@ -163,6 +163,11 @@ export async function createStyleGuide(filePath: string, apiKey: string, name?: 
   return response.json();
 }
 
+// Get style check results by workflow ID
+export async function getStyleCheck(workflowId: string, apiKey: string): Promise<any> {
+  return getData<any>(`${API_ENDPOINTS.STYLE_CHECKS}/${workflowId}`, apiKey);
+}
+
 // Update a style guide by ID
 export async function updateStyleGuide(styleGuideId: string, updates: { name?: string }, apiKey: string): Promise<any> {
   return putData<any>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, JSON.stringify(updates), apiKey);
