@@ -1,6 +1,7 @@
 import { getData, postData } from '../../utils/api';
 import type {
   StyleGuides,
+  StyleGuide,
   StyleAnalysisReq,
   StyleAnalysisSubmitResp,
   StyleAnalysisSuccessResp,
@@ -52,6 +53,11 @@ async function submitAndPollStyleAnalysis<T extends { status: Status }>(
 // Style Guide Operations
 export async function listStyleGuides(apiKey: string): Promise<StyleGuides> {
   return getData<StyleGuides>(API_ENDPOINTS.STYLE_GUIDES, apiKey);
+}
+
+// Fetch a single style guide by ID
+export async function getStyleGuide(styleGuideId: string, apiKey: string): Promise<StyleGuide> {
+  return getData<StyleGuide>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, apiKey);
 }
 
 // Style Check Operations
