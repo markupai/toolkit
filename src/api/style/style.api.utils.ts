@@ -1,6 +1,3 @@
-import { readFileSync } from 'fs';
-import { basename } from 'path';
-import { fileURLToPath } from 'url';
 import type { CreateStyleGuideReq } from './style.api.types';
 
 /**
@@ -28,6 +25,11 @@ export async function createStyleGuideReqFromUrl(fileUrl: string | URL, name?: s
   }
 
   try {
+    // Dynamic imports to avoid browser bundling issues
+    const { readFileSync } = await import('fs');
+    const { basename } = await import('path');
+    const { fileURLToPath } = await import('url');
+
     // Convert URL to path if it's a file:// URL
     let filePath: string;
     if (typeof fileUrl === 'string') {
