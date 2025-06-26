@@ -8,6 +8,7 @@ import {
   styleSuggestions,
   styleRewrite,
   createStyleGuide,
+  createStyleGuideReqFromPath,
 } from '../../../src/api/style/style.api';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 import { IssueCategory } from '../../../src/api/style/style.api.types';
@@ -106,6 +107,64 @@ describe('Style API Integration Tests', () => {
       expect(response1.name).toBe(styleGuideName1);
       expect(response2.name).toBe(styleGuideName2);
       expect(response1.id).not.toBe(response2.id); // IDs should be different
+    });
+
+    it('should create style guide using utility function from file path', async () => {
+      // Use the utility function to create request from file path
+      const pdfPath = join(__dirname, '../test-data/sample-style-guide.pdf');
+
+      // Generate a unique name with random number
+      const randomNumber = Math.floor(Math.random() * 10000);
+      const styleGuideName = `Utility Test Style Guide ${randomNumber}`;
+
+      const request = await createStyleGuideReqFromPath(pdfPath, styleGuideName);
+
+      // Verify the request was created correctly
+      expect(request).toBeDefined();
+      expect(request.file).toBeInstanceOf(File);
+      expect(request.file.name).toBe('sample-style-guide.pdf');
+      expect(request.file.type).toBe('application/pdf');
+      expect(request.name).toBe(styleGuideName);
+
+      // Create the style guide using the request
+      const response = await createStyleGuide(request, apiKey);
+
+      expect(response).toBeDefined();
+      expect(response.id).toBeDefined();
+      expect(response.name).toBe(styleGuideName);
+      expect(response.created_at).toBeDefined();
+      expect(response.created_by).toBeDefined();
+      expect(response.status).toBeDefined();
+
+      // Validate that the ID is a UUID format
+      expect(response.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    });
+
+    it('should create style guide using utility function without custom name', async () => {
+      // Use the utility function to create request from file path without custom name
+      const pdfPath = join(__dirname, '../test-data/sample-style-guide.pdf');
+
+      const request = await createStyleGuideReqFromPath(pdfPath);
+
+      // Verify the request was created correctly
+      expect(request).toBeDefined();
+      expect(request.file).toBeInstanceOf(File);
+      expect(request.file.name).toBe('sample-style-guide.pdf');
+      expect(request.file.type).toBe('application/pdf');
+      expect(request.name).toBe('sample-style-guide'); // Should use filename without extension
+
+      // Create the style guide using the request
+      const response = await createStyleGuide(request, apiKey);
+
+      expect(response).toBeDefined();
+      expect(response.id).toBeDefined();
+      expect(response.name).toBe('sample-style-guide');
+      expect(response.created_at).toBeDefined();
+      expect(response.created_by).toBeDefined();
+      expect(response.status).toBeDefined();
+
+      // Validate that the ID is a UUID format
+      expect(response.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
     });
   });
 
