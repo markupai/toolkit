@@ -7,7 +7,6 @@ import type {
   StyleAnalysisSuccessResp,
   StyleAnalysisSuggestionResp,
   StyleAnalysisRewriteResp,
-  StyleGuideCreateResp,
   CreateStyleGuideReq,
   StyleGuideUpdateReq,
 } from './style.api.types';
@@ -119,7 +118,7 @@ export async function styleRewrite(
 }
 
 // Create a new style guide from a File object
-export async function createStyleGuide(request: CreateStyleGuideReq, apiKey: string): Promise<StyleGuideCreateResp> {
+export async function createStyleGuide(request: CreateStyleGuideReq, apiKey: string): Promise<StyleGuide> {
   const { file, name } = request;
 
   // Validate file type - only PDF files are supported
@@ -132,7 +131,7 @@ export async function createStyleGuide(request: CreateStyleGuideReq, apiKey: str
   formData.append('file_upload', file);
   formData.append('name', name);
 
-  return postData<StyleGuideCreateResp>(API_ENDPOINTS.STYLE_GUIDES, formData, apiKey);
+  return postData<StyleGuide>(API_ENDPOINTS.STYLE_GUIDES, formData, apiKey);
 }
 
 // Get style check results by workflow ID
@@ -145,10 +144,6 @@ export async function updateStyleGuide(
   styleGuideId: string,
   updates: StyleGuideUpdateReq,
   apiKey: string,
-): Promise<StyleGuideCreateResp> {
-  return putData<StyleGuideCreateResp>(
-    `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`,
-    JSON.stringify(updates),
-    apiKey,
-  );
+): Promise<StyleGuide> {
+  return putData<StyleGuide>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, JSON.stringify(updates), apiKey);
 }
