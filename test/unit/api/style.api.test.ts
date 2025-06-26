@@ -1,5 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
-import { listStyleGuides, getStyleGuide, createStyleGuide, updateStyleGuide, styleCheck, styleSuggestions, styleRewrite } from '../../../src/api/style/style.api';
+import {
+  listStyleGuides,
+  getStyleGuide,
+  createStyleGuide,
+  updateStyleGuide,
+  styleCheck,
+  styleSuggestions,
+  styleRewrite,
+} from '../../../src/api/style/style.api';
 import { server } from '../setup';
 import { apiHandlers } from '../mocks/api.handlers';
 import { IssueCategory } from '../../../src/api/style/style.api.types';
@@ -62,72 +70,71 @@ describe('Style API Unit Tests', () => {
   });
 
   describe('createStyleGuide', () => {
-    it.skip('should create a new style guide', async () => {
+    it('should create a new style guide', async () => {
       server.use(apiHandlers.style.guides.createSuccess);
 
-      // Create a temporary test file
-      const fs = require('fs');
-      const path = require('path');
-      const tempFile = path.join(__dirname, 'temp-test.txt');
-      fs.writeFileSync(tempFile, 'Test content for style guide');
+      // Create a mock PDF File object
+      const mockFile = new File(['Test PDF content for style guide'], 'test-style-guide.pdf', {
+        type: 'application/pdf',
+      });
 
-      try {
-        const result = await createStyleGuide(tempFile, mockApiKey, 'New Style Guide');
-        expect(result).toEqual({
-          id: 'new-style-guide-id',
-          name: 'New Style Guide',
-          created_at: '2025-06-20T11:46:30.537Z',
-          created_by: 'test-user',
-          status: 'running',
-          updated_at: '2025-06-20T11:46:30.537Z',
-          updated_by: 'test-user',
-        });
-      } finally {
-        // Clean up temp file
-        if (fs.existsSync(tempFile)) {
-          fs.unlinkSync(tempFile);
-        }
-      }
+      const result = await createStyleGuide({ file: mockFile, name: 'New Style Guide' }, mockApiKey);
+
+      expect(result).toEqual({
+        id: 'new-style-guide-id',
+        name: 'New Style Guide',
+        created_at: '2025-06-20T11:46:30.537Z',
+        created_by: 'test-user',
+        status: 'running',
+        updated_at: '2025-06-20T11:46:30.537Z',
+        updated_by: 'test-user',
+      });
     });
 
-    it.skip('should handle create style guide error', async () => {
+    it('should handle create style guide error', async () => {
       server.use(apiHandlers.style.guides.createError);
 
-      // Create a temporary test file
-      const fs = require('fs');
-      const path = require('path');
-      const tempFile = path.join(__dirname, 'temp-test.txt');
-      fs.writeFileSync(tempFile, 'Test content for style guide');
+      const mockFile = new File(['Test PDF content for style guide'], 'test-style-guide.pdf', {
+        type: 'application/pdf',
+      });
 
-      try {
-        await expect(createStyleGuide(tempFile, mockApiKey, 'New Style Guide')).rejects.toThrow('Failed to create style guide');
-      } finally {
-        // Clean up temp file
-        if (fs.existsSync(tempFile)) {
-          fs.unlinkSync(tempFile);
-        }
-      }
+      await expect(createStyleGuide({ file: mockFile, name: 'New Style Guide' }, mockApiKey)).rejects.toThrow(
+        'Failed to create style guide',
+      );
     });
 
-    it.skip('should handle file not found error', async () => {
-      await expect(createStyleGuide('non-existent-file.txt', mockApiKey, 'New Style Guide')).rejects.toThrow('File not found: non-existent-file.txt');
+    it('should handle unsupported file type error', async () => {
+      const mockFile = new File(['Test content'], 'test-style-guide.txt', {
+        type: 'text/plain',
+      });
+
+      await expect(createStyleGuide({ file: mockFile, name: 'New Style Guide' }, mockApiKey)).rejects.toThrow(
+        'Unsupported file type: txt. Only .pdf files are supported.',
+      );
     });
 
-    it.skip('should handle unsupported file type error', async () => {
-      // Create a temporary test file with unsupported extension
-      const fs = require('fs');
-      const path = require('path');
-      const tempFile = path.join(__dirname, 'temp-test.pdf');
-      fs.writeFileSync(tempFile, 'Test content');
+    it('should handle markdown file type error', async () => {
+      const mockFile = new File(['# Test Style Guide\n\nThis is a markdown style guide.'], 'test-style-guide.md', {
+        type: 'text/markdown',
+      });
 
-      try {
-        await expect(createStyleGuide(tempFile, mockApiKey, 'New Style Guide')).rejects.toThrow('Unsupported file type: .pdf. Only .txt and .md files are supported.');
-      } finally {
-        // Clean up temp file
-        if (fs.existsSync(tempFile)) {
-          fs.unlinkSync(tempFile);
-        }
-      }
+      await expect(createStyleGuide({ file: mockFile, name: 'Markdown Style Guide' }, mockApiKey)).rejects.toThrow(
+        'Unsupported file type: md. Only .pdf files are supported.',
+      );
+    });
+
+    it('should handle .markdown extension file type error', async () => {
+      const mockFile = new File(
+        ['# Test Style Guide\n\nThis is a markdown style guide.'],
+        'test-style-guide.markdown',
+        {
+          type: 'text/markdown',
+        },
+      );
+
+      await expect(createStyleGuide({ file: mockFile, name: 'Markdown Style Guide' }, mockApiKey)).rejects.toThrow(
+        'Unsupported file type: markdown. Only .pdf files are supported.',
+      );
     });
   });
 
@@ -136,6 +143,7 @@ describe('Style API Unit Tests', () => {
       server.use(apiHandlers.style.guides.updateSuccess);
 
       const result = await updateStyleGuide(mockStyleGuideId, { name: 'Updated Style Guide' }, mockApiKey);
+
       expect(result).toEqual({
         id: mockStyleGuideId,
         name: 'Updated Style Guide',
@@ -150,7 +158,9 @@ describe('Style API Unit Tests', () => {
     it('should handle update style guide error', async () => {
       server.use(apiHandlers.style.guides.updateError);
 
-      await expect(updateStyleGuide(mockStyleGuideId, { name: 'Updated Style Guide' }, mockApiKey)).rejects.toThrow('Failed to update style guide');
+      await expect(updateStyleGuide(mockStyleGuideId, { name: 'Updated Style Guide' }, mockApiKey)).rejects.toThrow(
+        'Failed to update style guide',
+      );
     });
   });
 

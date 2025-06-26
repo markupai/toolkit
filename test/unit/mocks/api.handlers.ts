@@ -212,10 +212,19 @@ const styleHandlers = {
     getError: http.get(`${PLATFORM_URL}/v1/style-guides/:styleGuideId`, () => {
       return HttpResponse.json({ message: 'Style guide not found' }, { status: 404 });
     }),
-    createSuccess: http.post(`${PLATFORM_URL}/v1/style-guides`, () => {
+    createSuccess: http.post(`${PLATFORM_URL}/v1/style-guides`, async ({ request }) => {
+      // Verify that the request contains FormData with file_upload and name
+      const formData = await request.formData();
+      const file = formData.get('file_upload') as File;
+      const name = formData.get('name') as string;
+
+      if (!file || !name) {
+        return HttpResponse.json({ message: 'Missing required fields: file_upload and name' }, { status: 400 });
+      }
+
       return HttpResponse.json({
         id: 'new-style-guide-id',
-        name: 'New Style Guide',
+        name: name,
         created_at: '2025-06-20T11:46:30.537Z',
         created_by: 'test-user',
         status: 'running',
@@ -226,10 +235,17 @@ const styleHandlers = {
     createError: http.post(`${PLATFORM_URL}/v1/style-guides`, () => {
       return HttpResponse.json({ message: 'Failed to create style guide' }, { status: 400 });
     }),
-    updateSuccess: http.put(`${PLATFORM_URL}/v1/style-guides/:styleGuideId`, () => {
+    updateSuccess: http.put(`${PLATFORM_URL}/v1/style-guides/:styleGuideId`, async ({ request, params }) => {
+      // Verify that the request contains JSON with name
+      const body = (await request.json()) as { name?: string };
+
+      if (!body?.name) {
+        return HttpResponse.json({ message: 'Missing required field: name' }, { status: 400 });
+      }
+
       return HttpResponse.json({
-        id: 'test-style-guide-id',
-        name: 'Updated Style Guide',
+        id: params.styleGuideId,
+        name: body.name,
         created_at: '2025-06-20T11:46:30.537Z',
         created_by: 'test-user',
         status: 'running',

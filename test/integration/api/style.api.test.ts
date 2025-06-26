@@ -7,9 +7,12 @@ import {
   styleCheck,
   styleSuggestions,
   styleRewrite,
+  createStyleGuide,
 } from '../../../src/api/style/style.api';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 import { IssueCategory } from '../../../src/api/style/style.api.types';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 describe('Style API Integration Tests', () => {
   let apiKey: string;
@@ -39,9 +42,76 @@ describe('Style API Integration Tests', () => {
     });
   });
 
+  describe('Style Guide Creation', () => {
+    it('should create a new style guide from PDF file', async () => {
+      // Read the sample PDF file
+      const pdfPath = join(__dirname, '../test-data/sample-style-guide.pdf');
+      const pdfBuffer = readFileSync(pdfPath);
+
+      // Create a File object from the buffer
+      const pdfFile = new File([pdfBuffer], 'sample-style-guide.pdf', {
+        type: 'application/pdf',
+      });
+
+      // Generate a unique name with random number
+      const randomNumber = Math.floor(Math.random() * 10000);
+      const styleGuideName = `Integration Test Style Guide ${randomNumber}`;
+
+      const response = await createStyleGuide({ file: pdfFile, name: styleGuideName }, apiKey);
+
+      expect(response).toBeDefined();
+      expect(response.id).toBeDefined();
+      expect(response.name).toBe(styleGuideName);
+      expect(response.created_at).toBeDefined();
+      expect(response.created_by).toBeDefined();
+      expect(response.status).toBeDefined();
+      expect(response.updated_at).toBeDefined();
+      expect(response.updated_by).toBeDefined();
+
+      // Validate the response structure matches StyleGuideCreateResp
+      expect(typeof response.id).toBe('string');
+      expect(typeof response.name).toBe('string');
+      expect(typeof response.created_at).toBe('string');
+      expect(typeof response.created_by).toBe('string');
+      expect(typeof response.status).toBe('string');
+      // updated_at and updated_by can be null when first created
+      expect(typeof response.updated_at === 'string' || response.updated_at === null).toBe(true);
+      expect(typeof response.updated_by === 'string' || response.updated_by === null).toBe(true);
+
+      // Validate that the ID is a UUID format
+      expect(response.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    });
+
+    it('should create multiple style guides with unique names', async () => {
+      // Read the sample PDF file
+      const pdfPath = join(__dirname, '../test-data/sample-style-guide.pdf');
+      const pdfBuffer = readFileSync(pdfPath);
+
+      // Create a File object from the buffer
+      const pdfFile = new File([pdfBuffer], 'sample-style-guide.pdf', {
+        type: 'application/pdf',
+      });
+
+      // Create two style guides with different names
+      const randomNumber1 = Math.floor(Math.random() * 10000);
+      const randomNumber2 = Math.floor(Math.random() * 10000);
+      const styleGuideName1 = `Integration Test Style Guide A ${randomNumber1}`;
+      const styleGuideName2 = `Integration Test Style Guide B ${randomNumber2}`;
+
+      const response1 = await createStyleGuide({ file: pdfFile, name: styleGuideName1 }, apiKey);
+
+      const response2 = await createStyleGuide({ file: pdfFile, name: styleGuideName2 }, apiKey);
+
+      // Verify both were created successfully
+      expect(response1.name).toBe(styleGuideName1);
+      expect(response2.name).toBe(styleGuideName2);
+      expect(response1.id).not.toBe(response2.id); // IDs should be different
+    });
+  });
+
   describe('Style Operations', () => {
     const testContent = 'This is a test content for style operations.';
-    const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft
+    const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft;
     it('should submit a style check', async () => {
       const response = await submitStyleCheck(
         {

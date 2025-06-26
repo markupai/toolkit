@@ -133,3 +133,22 @@ export interface StyleGuide {
 }
 
 export type StyleGuides = StyleGuide[];
+
+export interface StyleGuideCreateResp {
+  id: string;
+  name: string;
+  created_at: string;
+  created_by: string;
+  status: string;
+  updated_at: string | null;
+  updated_by: string | null;
+}
+
+export interface CreateStyleGuideReq {
+  file: File;
+  name: string;
+}
+
+export interface StyleGuideUpdateReq {
+  name: string;
+}

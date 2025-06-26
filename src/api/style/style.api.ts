@@ -1,4 +1,4 @@
-import { getData, postData, PLATFORM_URL, AcrolinxError, putData } from '../../utils/api';
+import { getData, postData, putData } from '../../utils/api';
 import type {
   StyleGuides,
   StyleGuide,
@@ -7,6 +7,9 @@ import type {
   StyleAnalysisSuccessResp,
   StyleAnalysisSuggestionResp,
   StyleAnalysisRewriteResp,
+  StyleGuideCreateResp,
+  CreateStyleGuideReq,
+  StyleGuideUpdateReq,
 } from './style.api.types';
 import { Status } from '../../utils/api.types';
 
@@ -115,60 +118,37 @@ export async function styleRewrite(
   );
 }
 
-// Create a new style guide from a TXT or Markdown file
-export async function createStyleGuide(filePath: string, apiKey: string, name?: string): Promise<any> {
-  // Read file from filesystem
-  const fs = require('fs');
-  const path = require('path');
-  
-  if (!fs.existsSync(filePath)) {
-    throw new Error(`File not found: ${filePath}`);
+// Create a new style guide from a File object
+export async function createStyleGuide(request: CreateStyleGuideReq, apiKey: string): Promise<StyleGuideCreateResp> {
+  const { file, name } = request;
+
+  // Validate file type - only PDF files are supported
+  const fileExtension = file.name.split('.').pop()?.toLowerCase();
+  if (!fileExtension || fileExtension !== 'pdf') {
+    throw new Error(`Unsupported file type: ${fileExtension}. Only .pdf files are supported.`);
   }
-  
-  const fileContent = fs.readFileSync(filePath);
-  const fileName = path.basename(filePath);
-  const fileExtension = path.extname(filePath).toLowerCase();
-  
-  // Determine MIME type based on file extension
-  let mimeType = 'text/plain';
-  if (fileExtension === '.md' || fileExtension === '.markdown') {
-    mimeType = 'text/markdown';
-  } else if (fileExtension === '.txt') {
-    mimeType = 'text/plain';
-  } else {
-    throw new Error(`Unsupported file type: ${fileExtension}. Only .txt and .md files are supported.`);
-  }
-  
+
   const formData = new FormData();
-  formData.append('file_upload', new Blob([fileContent], { type: mimeType }), fileName);
-  if (name) {
-    formData.append('name', name);
-  }
-  
-  // Use fetch directly because postData expects BodyInit, but we want to control headers for multipart
-  const response = await fetch(`${PLATFORM_URL}${API_ENDPOINTS.STYLE_GUIDES}`, {
-    method: 'POST',
-    headers: {
-      Authorization: apiKey
-      // Note: Do NOT set Content-Type; browser/Node will set it with boundary for multipart
-    },
-    body: formData
-  });
-  
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw AcrolinxError.fromResponse(response, errorData);
-  }
-  
-  return response.json();
+  formData.append('file_upload', file);
+  formData.append('name', name);
+
+  return postData<StyleGuideCreateResp>(API_ENDPOINTS.STYLE_GUIDES, formData, apiKey);
 }
 
 // Get style check results by workflow ID
-export async function getStyleCheck(workflowId: string, apiKey: string): Promise<any> {
-  return getData<any>(`${API_ENDPOINTS.STYLE_CHECKS}/${workflowId}`, apiKey);
+export async function getStyleCheck(workflowId: string, apiKey: string): Promise<StyleAnalysisSuccessResp> {
+  return getData<StyleAnalysisSuccessResp>(`${API_ENDPOINTS.STYLE_CHECKS}/${workflowId}`, apiKey);
 }
 
 // Update a style guide by ID
-export async function updateStyleGuide(styleGuideId: string, updates: { name?: string }, apiKey: string): Promise<any> {
-  return putData<any>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, JSON.stringify(updates), apiKey);
+export async function updateStyleGuide(
+  styleGuideId: string,
+  updates: StyleGuideUpdateReq,
+  apiKey: string,
+): Promise<StyleGuideCreateResp> {
+  return putData<StyleGuideCreateResp>(
+    `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`,
+    JSON.stringify(updates),
+    apiKey,
+  );
 }
