@@ -357,23 +357,23 @@ describe('Style API Integration Tests', () => {
       let deletedCount = 0;
       let skippedCount = 0;
 
-      // Delete each integration test style guide that has "completed" status
+      // Delete each integration test style guide, skipping those with "running" status
       for (const guide of integrationTestGuides) {
         try {
           // Check the status of the style guide before attempting to delete
           const styleGuideDetails = await getStyleGuide(guide.id, apiKey);
 
-          if (styleGuideDetails.status === 'completed') {
+          if (styleGuideDetails.status === 'running') {
+            console.log(
+              `Skipping style guide: ${guide.name} (${guide.id}) - Status: ${styleGuideDetails.status} (still running)`,
+            );
+            skippedCount++;
+          } else {
             await deleteStyleGuide(guide.id, apiKey);
             console.log(
               `Successfully deleted style guide: ${guide.name} (${guide.id}) - Status: ${styleGuideDetails.status}`,
             );
             deletedCount++;
-          } else {
-            console.log(
-              `Skipping style guide: ${guide.name} (${guide.id}) - Status: ${styleGuideDetails.status} (not completed)`,
-            );
-            skippedCount++;
           }
         } catch (error) {
           console.error(`Failed to process style guide: ${guide.name} (${guide.id})`, error);
