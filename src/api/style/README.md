@@ -10,6 +10,7 @@ This module provides functionality for managing style guides and performing styl
 - `getStyleGuide(styleGuideId, apiKey)` - Get a specific style guide by ID
 - `createStyleGuide(request, apiKey)` - Create a new style guide from a PDF file
 - `updateStyleGuide(styleGuideId, updates, apiKey)` - Update an existing style guide
+- `deleteStyleGuide(styleGuideId, apiKey)` - Delete a style guide by ID
 - `styleCheck(request, apiKey)` - Perform style checking with polling
 - `styleSuggestions(request, apiKey)` - Get style suggestions with polling
 - `styleRewrite(request, apiKey)` - Get style rewrites with polling
@@ -37,12 +38,21 @@ const request = {
 
 const styleGuide = await createStyleGuide(request, apiKey);
 console.log('Created style guide:', styleGuide);
+
+// Delete a style guide
+await deleteStyleGuide(styleGuide.id, apiKey);
+console.log('Style guide deleted successfully');
 ```
 
 ### Node.js Environment
 
 ```typescript
-import { createStyleGuide, createStyleGuideReqFromUrl, createStyleGuideReqFromPath } from './style.api';
+import {
+  createStyleGuide,
+  createStyleGuideReqFromUrl,
+  createStyleGuideReqFromPath,
+  deleteStyleGuide,
+} from './style.api';
 
 // Method 1: Using file path
 const request1 = await createStyleGuideReqFromPath('/path/to/style-guide.pdf', 'Custom Name');
@@ -56,6 +66,11 @@ const styleGuide2 = await createStyleGuide(request2, apiKey);
 const url = new URL('file:///path/to/style-guide.pdf');
 const request3 = await createStyleGuideReqFromUrl(url, 'Another Style Guide');
 const styleGuide3 = await createStyleGuide(request3, apiKey);
+
+// Delete style guides when no longer needed
+await deleteStyleGuide(styleGuide1.id, apiKey);
+await deleteStyleGuide(styleGuide2.id, apiKey);
+await deleteStyleGuide(styleGuide3.id, apiKey);
 ```
 
 ## File Requirements

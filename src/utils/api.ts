@@ -108,6 +108,12 @@ export async function deleteData<T>(endpoint: string, apiKey: string): Promise<T
       throw AcrolinxError.fromResponse(response, errorData);
     }
 
+    // Handle 204 No Content responses (common for DELETE operations)
+    if (response.status === 204) {
+      console.log('DELETE operation successful (204 No Content)');
+      return {} as T;
+    }
+
     const data = await response.json();
     console.log('Response data:', JSON.stringify(data, null, 2));
     return data;

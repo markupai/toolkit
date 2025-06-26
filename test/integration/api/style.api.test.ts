@@ -9,6 +9,8 @@ import {
   styleRewrite,
   createStyleGuide,
   createStyleGuideReqFromPath,
+  deleteStyleGuide,
+  getStyleGuide,
 } from '../../../src/api/style/style.api';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 import { IssueCategory } from '../../../src/api/style/style.api.types';
@@ -337,6 +339,49 @@ describe('Style API Integration Tests', () => {
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe('string');
       }
+    });
+  });
+
+  describe('Style Guide Cleanup', () => {
+    it('should delete all integration test style guides', async () => {
+      // List all style guides
+      const styleGuides = await listStyleGuides(apiKey);
+
+      // Filter style guides that start with "Integration Test Style Guide"
+      const integrationTestGuides = styleGuides.filter((guide) =>
+        guide.name.startsWith('Integration Test Style Guide'),
+      );
+
+      console.log(`Found ${integrationTestGuides.length} integration test style guides to process`);
+
+      let deletedCount = 0;
+      let skippedCount = 0;
+
+      // Delete each integration test style guide that has "completed" status
+      for (const guide of integrationTestGuides) {
+        try {
+          // Check the status of the style guide before attempting to delete
+          const styleGuideDetails = await getStyleGuide(guide.id, apiKey);
+
+          if (styleGuideDetails.status === 'completed') {
+            await deleteStyleGuide(guide.id, apiKey);
+            console.log(
+              `Successfully deleted style guide: ${guide.name} (${guide.id}) - Status: ${styleGuideDetails.status}`,
+            );
+            deletedCount++;
+          } else {
+            console.log(
+              `Skipping style guide: ${guide.name} (${guide.id}) - Status: ${styleGuideDetails.status} (not completed)`,
+            );
+            skippedCount++;
+          }
+        } catch (error) {
+          console.error(`Failed to process style guide: ${guide.name} (${guide.id})`, error);
+          // Continue with other deletions even if one fails
+        }
+      }
+
+      console.log(`Cleanup summary: ${deletedCount} deleted, ${skippedCount} skipped`);
     });
   });
 });

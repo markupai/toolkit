@@ -60,6 +60,8 @@ type ApiHandlers = {
       createError: HttpHandler;
       updateSuccess: HttpHandler;
       updateError: HttpHandler;
+      deleteSuccess: HttpHandler;
+      deleteError: HttpHandler;
     };
     checks: {
       success: HttpHandler;
@@ -255,6 +257,12 @@ const styleHandlers = {
     }),
     updateError: http.put(`${PLATFORM_URL}/v1/style-guides/:styleGuideId`, () => {
       return HttpResponse.json({ message: 'Failed to update style guide' }, { status: 400 });
+    }),
+    deleteSuccess: http.delete(`${PLATFORM_URL}/v1/style-guides/:styleGuideId`, () => {
+      return new HttpResponse(null, { status: 204 });
+    }),
+    deleteError: http.delete(`${PLATFORM_URL}/v1/style-guides/:styleGuideId`, () => {
+      return HttpResponse.json({ message: 'Failed to delete style guide' }, { status: 404 });
     }),
   },
   checks: {

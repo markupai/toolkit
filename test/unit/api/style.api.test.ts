@@ -4,6 +4,7 @@ import {
   getStyleGuide,
   createStyleGuide,
   updateStyleGuide,
+  deleteStyleGuide,
   styleCheck,
   styleSuggestions,
   styleRewrite,
@@ -368,6 +369,20 @@ describe('Style API Unit Tests', () => {
           mockApiKey,
         ),
       ).rejects.toThrow('Could not validate credentials');
+    });
+  });
+
+  describe('deleteStyleGuide', () => {
+    it('should delete a style guide', async () => {
+      server.use(apiHandlers.style.guides.deleteSuccess);
+
+      await expect(deleteStyleGuide(mockStyleGuideId, mockApiKey)).resolves.not.toThrow();
+    });
+
+    it('should handle delete style guide error', async () => {
+      server.use(apiHandlers.style.guides.deleteError);
+
+      await expect(deleteStyleGuide(mockStyleGuideId, mockApiKey)).rejects.toThrow('Failed to delete style guide');
     });
   });
 });

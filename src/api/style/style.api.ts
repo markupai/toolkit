@@ -1,4 +1,4 @@
-import { getData, postData, putData } from '../../utils/api';
+import { getData, postData, putData, deleteData } from '../../utils/api';
 import type {
   StyleGuides,
   StyleGuide,
@@ -149,4 +149,9 @@ export async function updateStyleGuide(
   apiKey: string,
 ): Promise<StyleGuide> {
   return putData<StyleGuide>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, JSON.stringify(updates), apiKey);
+}
+
+// Delete a style guide by ID
+export async function deleteStyleGuide(styleGuideId: string, apiKey: string): Promise<void> {
+  await deleteData<void>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, apiKey);
 }
