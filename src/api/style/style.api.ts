@@ -14,6 +14,9 @@ import { Status } from '../../utils/api.types';
 
 import { pollWorkflowForResult } from '../../utils/api';
 
+// Export utility functions for Node.js environments
+export { createStyleGuideReqFromUrl, createStyleGuideReqFromPath } from './style.api.utils';
+
 export const API_ENDPOINTS = {
   STYLE_GUIDES: '/v1/style-guides',
   STYLE_CHECKS: '/v1/style/checks',
