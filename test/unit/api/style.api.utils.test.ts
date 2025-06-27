@@ -142,8 +142,8 @@ describe('Style API Utils', () => {
       const originalProcess = global.process;
       global.process = {
         ...originalProcess,
-        versions: { node: '18.0.0' },
-      } as any;
+        versions: { node: '22.0.0' },
+      } as NodeJS.Process;
 
       const result = await createStyleGuideReqFromUrl('/path/to/test-style-guide.pdf');
 
@@ -160,7 +160,7 @@ describe('Style API Utils', () => {
       global.process = {
         ...originalProcess,
         versions: {},
-      } as any;
+      } as NodeJS.Process;
 
       await expect(createStyleGuideReqFromUrl('/path/to/test-style-guide.pdf')).rejects.toThrow(
         'createStyleGuideReqFromUrl is only available in Node.js environments. In browser environments, use createStyleGuide directly with a File object.',
