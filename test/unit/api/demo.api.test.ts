@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
-import { submitRewrite, submitCheck, check, rewrite } from '../../../src/api/demo/demo.api';
+import { submitRewrite, rewrite } from '../../../src/api/demo/demo.api';
 import { AnalysisRequest } from '../../../src/api/demo/demo.api.types';
 import { DEMO_DEFAULTS } from '../../../src/api/demo/demo.api.defaults';
 import { Status } from '../../../src/utils/api.types';
@@ -34,17 +34,6 @@ describe('Demo API Unit Tests', () => {
         message: 'Rewrite workflow started successfully.',
       });
     });
-
-    it('should submit a check', async () => {
-      server.use(apiHandlers.demo.check.submit);
-
-      const result = await submitCheck(mockRequest, mockApiKey);
-      expect(result).toEqual({
-        status: Status.Running,
-        workflow_id: mockWorkflowId,
-        message: 'Check workflow started successfully.',
-      });
-    });
   });
 
   describe('Operations with Polling', () => {
@@ -68,29 +57,6 @@ describe('Demo API Unit Tests', () => {
 
       await expect(rewrite(mockRequest, mockApiKey)).rejects.toThrow(
         'No workflow_id received from initial rewrite request',
-      );
-    });
-
-    it('should submit check and get result', async () => {
-      server.use(apiHandlers.demo.check.submit, apiHandlers.demo.check.poll);
-
-      const response = await check(mockRequest, mockApiKey);
-      expect(response.status).toBe(Status.Completed);
-      expect(response.workflow_id).toBe(mockWorkflowId);
-      expect(response.result).toBeDefined();
-    });
-
-    it('should handle check polling failure', async () => {
-      server.use(apiHandlers.demo.check.submit, apiHandlers.demo.check.failed);
-
-      await expect(check(mockRequest, mockApiKey)).rejects.toThrow('Workflow failed with status: failed');
-    });
-
-    it('should handle missing workflow ID for check', async () => {
-      server.use(apiHandlers.demo.check.emptyWorkflowId);
-
-      await expect(check(mockRequest, mockApiKey)).rejects.toThrow(
-        'No workflow_id received from initial check request',
       );
     });
   });
