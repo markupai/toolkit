@@ -199,7 +199,7 @@ describe('Style API Unit Tests', () => {
 
       // Test new scores structure
       expect(result.scores).toBeDefined();
-      expect(result.scores.overall.score).toBe(80);
+      expect(result.scores.quality.score).toBe(80);
       expect(result.scores.clarity.score).toBe(75);
       expect(result.scores.clarity.word_count).toBe(75);
       expect(result.scores.clarity.sentence_count).toBe(5);
@@ -267,7 +267,7 @@ describe('Style API Unit Tests', () => {
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
       );
       expect(result.scores).toBeDefined();
-      expect(result.scores.overall.score).toBe(80);
+      expect(result.scores.quality.score).toBe(80);
       expect(result.scores.clarity.score).toBe(75);
       expect(result.scores.grammar.score).toBe(90);
       expect(result.scores.style_guide.score).toBe(85);
@@ -327,7 +327,7 @@ describe('Style API Unit Tests', () => {
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
       );
       expect(result.scores).toBeDefined();
-      expect(result.scores.overall.score).toBe(80);
+      expect(result.scores.quality.score).toBe(80);
       expect(result.scores.clarity.score).toBe(75);
       expect(result.scores.grammar.score).toBe(90);
       expect(result.scores.style_guide.score).toBe(85);
@@ -342,7 +342,7 @@ describe('Style API Unit Tests', () => {
       // Test rewrite and rewrite_scores
       expect(result.rewrite).toBe('This is an improved test sentence.');
       expect(result.rewrite_scores).toBeDefined();
-      expect(result.rewrite_scores.overall.score).toBe(85);
+      expect(result.rewrite_scores.quality.score).toBe(85);
       expect(result.rewrite_scores.clarity.score).toBe(80);
       expect(result.rewrite_scores.clarity.flesch_reading_ease).toBe(85);
       expect(result.rewrite_scores.clarity.vocabulary_complexity).toBe(90);

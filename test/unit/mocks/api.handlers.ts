@@ -281,7 +281,7 @@ const styleHandlers = {
         status: Status.Completed,
         style_guide_id: 'test-style-guide-id',
         scores: {
-          overall: {
+          quality: {
             score: 80,
           },
           clarity: {
@@ -341,7 +341,7 @@ const styleHandlers = {
         status: Status.Completed,
         style_guide_id: 'test-style-guide-id',
         scores: {
-          overall: {
+          quality: {
             score: 80,
           },
           clarity: {
@@ -402,7 +402,7 @@ const styleHandlers = {
         status: Status.Completed,
         style_guide_id: 'test-style-guide-id',
         scores: {
-          overall: {
+          quality: {
             score: 80,
           },
           clarity: {
@@ -446,7 +446,7 @@ const styleHandlers = {
         },
         rewrite: 'This is an improved test sentence.',
         rewrite_scores: {
-          overall: {
+          quality: {
             score: 85,
           },
           clarity: {

@@ -244,8 +244,8 @@ describe('Style API Integration Tests', () => {
 
       // Test new scores structure
       expect(response.scores).toBeDefined();
-      expect(response.scores.overall).toBeDefined();
-      expect(typeof response.scores.overall.score).toBe('number');
+      expect(response.scores.quality).toBeDefined();
+      expect(typeof response.scores.quality.score).toBe('number');
 
       expect(response.scores.clarity).toBeDefined();
       expect(typeof response.scores.clarity.score).toBe('number');
@@ -291,7 +291,7 @@ describe('Style API Integration Tests', () => {
 
       expect(response).toBeDefined();
       expect(response.scores).toBeDefined();
-      expect(response.scores.overall).toBeDefined();
+      expect(response.scores.quality).toBeDefined();
       expect(response.scores.clarity).toBeDefined();
       expect(response.scores.grammar).toBeDefined();
       expect(response.scores.style_guide).toBeDefined();
@@ -317,7 +317,7 @@ describe('Style API Integration Tests', () => {
 
       expect(response).toBeDefined();
       expect(response.scores).toBeDefined();
-      expect(response.scores.overall).toBeDefined();
+      expect(response.scores.quality).toBeDefined();
       expect(response.scores.clarity).toBeDefined();
       expect(response.scores.grammar).toBeDefined();
       expect(response.scores.style_guide).toBeDefined();
@@ -328,7 +328,7 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.rewrite).toBe('string');
 
       expect(response.rewrite_scores).toBeDefined();
-      expect(response.rewrite_scores.overall).toBeDefined();
+      expect(response.rewrite_scores.quality).toBeDefined();
       expect(response.rewrite_scores.clarity).toBeDefined();
       expect(response.rewrite_scores.grammar).toBeDefined();
       expect(response.rewrite_scores.style_guide).toBeDefined();
