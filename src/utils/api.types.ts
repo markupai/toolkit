@@ -10,7 +10,11 @@ export enum Status {
   Failed = 'failed',
 }
 
-export interface ApiConfig {
-  endpoint: string;
+export interface Config {
+  platformUrl?: string;
   apiKey: string;
+}
+
+export interface ApiConfig extends Config {
+  endpoint: string;
 }

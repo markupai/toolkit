@@ -2,7 +2,7 @@ import type { AnalysisRequest, AnalysisSubmissionResponse, AnalysisSuccessRespon
 
 import { postData, pollWorkflowForResult } from '../../utils/api';
 import { Status } from '../../utils/api.types';
-import type { ApiConfig } from '../../utils/api.types';
+import type { Config } from '../../utils/api.types';
 
 const API_ENDPOINTS = {
   REWRITES: '/v1/rewrites/',
@@ -10,7 +10,7 @@ const API_ENDPOINTS = {
 
 export async function submitRewrite(
   rewriteRequest: AnalysisRequest,
-  apiKey: string,
+  config: Config,
 ): Promise<AnalysisSubmissionResponse> {
   console.log(rewriteRequest);
 
@@ -20,25 +20,28 @@ export async function submitRewrite(
   formData.append('tone', rewriteRequest.guidanceSettings.tone.toString());
   formData.append('style_guide', rewriteRequest.guidanceSettings.styleGuide);
 
-  const config: ApiConfig = {
+  const apiConfig = {
+    ...config,
     endpoint: API_ENDPOINTS.REWRITES,
-    apiKey,
   };
 
-  return postData<AnalysisSubmissionResponse>(config, formData);
+  return postData<AnalysisSubmissionResponse>(apiConfig, formData);
 }
 
-export async function rewrite(rewriteRequest: AnalysisRequest, apiKey: string): Promise<AnalysisSuccessResponse> {
+export async function rewrite(rewriteRequest: AnalysisRequest, config: Config): Promise<AnalysisSuccessResponse> {
   try {
-    const config: ApiConfig = {
+    const apiConfig = {
+      ...config,
       endpoint: API_ENDPOINTS.REWRITES,
-      apiKey,
     };
 
-    const initialResponse = await submitRewrite(rewriteRequest, apiKey);
+    const initialResponse = await submitRewrite(rewriteRequest, config);
 
     if (initialResponse.workflow_id) {
-      const polledResponse = await pollWorkflowForResult<AnalysisSuccessResponse>(initialResponse.workflow_id, config);
+      const polledResponse = await pollWorkflowForResult<AnalysisSuccessResponse>(
+        initialResponse.workflow_id,
+        apiConfig,
+      );
       if (polledResponse.status === Status.Completed && polledResponse.result) {
         return polledResponse;
       }

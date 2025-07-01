@@ -1,21 +1,19 @@
 import { Status } from './api.types';
-import type { ResponseBase, ApiConfig } from './api.types';
+import type { ResponseBase, Config, ApiConfig } from './api.types';
 import { AcrolinxError } from './errors';
 
-// export const DEFAULT_PLATFORM_URL = 'https://app.acrolinx.cloud';
 export const DEFAULT_PLATFORM_URL_DEMO = 'https://demo.acrolinx.com';
 export const DEFAULT_PLATFORM_URL_STAGE = 'https://app.stg.acrolinx-cloud.net';
 export const DEFAULT_PLATFORM_URL_DEV = 'https://app.dev.acrolinx-cloud.net';
-export let PLATFORM_URL = DEFAULT_PLATFORM_URL_DEV;
-
-export function setPlatformUrl(url: string) {
-  PLATFORM_URL = url.replace(/\/+$/, '');
-}
 
 function getCommonHeaders(apiKey: string): HeadersInit {
   return {
     Authorization: `${apiKey}`,
   };
+}
+
+function getPlatformUrl(config: Config): string {
+  return config.platformUrl || DEFAULT_PLATFORM_URL_DEV;
 }
 
 export async function getData<T>(config: ApiConfig): Promise<T> {
@@ -24,7 +22,8 @@ export async function getData<T>(config: ApiConfig): Promise<T> {
       method: 'GET',
       headers: getCommonHeaders(config.apiKey),
     };
-    const response = await fetch(`${PLATFORM_URL}${config.endpoint}`, fetchOptions);
+    const platformUrl = getPlatformUrl(config);
+    const response = await fetch(`${platformUrl}${config.endpoint}`, fetchOptions);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -50,7 +49,8 @@ export async function postData<T>(config: ApiConfig, body: BodyInit): Promise<T>
       headers: getCommonHeaders(config.apiKey),
       body: body,
     };
-    const response = await fetch(`${PLATFORM_URL}${config.endpoint}`, fetchOptions);
+    const platformUrl = getPlatformUrl(config);
+    const response = await fetch(`${platformUrl}${config.endpoint}`, fetchOptions);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -76,7 +76,8 @@ export async function putData<T>(config: ApiConfig, body: BodyInit): Promise<T> 
       headers: getCommonHeaders(config.apiKey),
       body: body,
     };
-    const response = await fetch(`${PLATFORM_URL}${config.endpoint}`, fetchOptions);
+    const platformUrl = getPlatformUrl(config);
+    const response = await fetch(`${platformUrl}${config.endpoint}`, fetchOptions);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -101,7 +102,8 @@ export async function deleteData<T>(config: ApiConfig): Promise<T> {
       method: 'DELETE',
       headers: getCommonHeaders(config.apiKey),
     };
-    const response = await fetch(`${PLATFORM_URL}${config.endpoint}`, fetchOptions);
+    const platformUrl = getPlatformUrl(config);
+    const response = await fetch(`${platformUrl}${config.endpoint}`, fetchOptions);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -137,9 +139,10 @@ export async function pollWorkflowForResult<T>(workflowId: string, config: ApiCo
     }
 
     try {
+      const platformUrl = getPlatformUrl(config);
       // Ensure there's exactly one slash between endpoint and workflowId
       const normalizedEndpoint = config.endpoint.endsWith('/') ? config.endpoint : `${config.endpoint}/`;
-      const response = await fetch(`${PLATFORM_URL}${normalizedEndpoint}${workflowId}`, {
+      const response = await fetch(`${platformUrl}${normalizedEndpoint}${workflowId}`, {
         method: 'GET',
         headers: {
           ...getCommonHeaders(config.apiKey),

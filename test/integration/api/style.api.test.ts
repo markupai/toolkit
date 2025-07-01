@@ -14,21 +14,27 @@ import {
 } from '../../../src/api/style/style.api';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 import { IssueCategory } from '../../../src/api/style/style.api.types';
+import type { Config, ApiConfig } from '../../../src/utils/api.types';
+import { DEFAULT_PLATFORM_URL_DEV } from '../../../src/utils/api';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
 describe('Style API Integration Tests', () => {
-  let apiKey: string;
+  let config: Config;
   beforeAll(() => {
-    apiKey = process.env.API_KEY || '';
+    const apiKey = process.env.API_KEY || '';
     if (!apiKey) {
       throw new Error('API_KEY environment variable is required for integration tests');
     }
+    config = {
+      apiKey,
+      platformUrl: DEFAULT_PLATFORM_URL_DEV,
+    };
   });
 
   describe('Style Guide Listing', () => {
     it('should list style guides', async () => {
-      const response = await listStyleGuides(apiKey);
+      const response = await listStyleGuides(config);
       expect(response).toBeDefined();
       expect(Array.isArray(response)).toBe(true);
       expect(response.length).toBeGreaterThan(0);
@@ -60,7 +66,7 @@ describe('Style API Integration Tests', () => {
       const randomNumber = Math.floor(Math.random() * 10000);
       const styleGuideName = `Integration Test Style Guide ${randomNumber}`;
 
-      const response = await createStyleGuide({ file: pdfFile, name: styleGuideName }, apiKey);
+      const response = await createStyleGuide({ file: pdfFile, name: styleGuideName }, config);
 
       expect(response).toBeDefined();
       expect(response.id).toBeDefined();
@@ -101,9 +107,9 @@ describe('Style API Integration Tests', () => {
       const styleGuideName1 = `Integration Test Style Guide A ${randomNumber1}`;
       const styleGuideName2 = `Integration Test Style Guide B ${randomNumber2}`;
 
-      const response1 = await createStyleGuide({ file: pdfFile, name: styleGuideName1 }, apiKey);
+      const response1 = await createStyleGuide({ file: pdfFile, name: styleGuideName1 }, config);
 
-      const response2 = await createStyleGuide({ file: pdfFile, name: styleGuideName2 }, apiKey);
+      const response2 = await createStyleGuide({ file: pdfFile, name: styleGuideName2 }, config);
 
       // Verify both were created successfully
       expect(response1.name).toBe(styleGuideName1);
@@ -129,7 +135,7 @@ describe('Style API Integration Tests', () => {
       expect(request.name).toBe(styleGuideName);
 
       // Create the style guide using the request
-      const response = await createStyleGuide(request, apiKey);
+      const response = await createStyleGuide(request, config);
 
       expect(response).toBeDefined();
       expect(response.id).toBeDefined();
@@ -156,7 +162,7 @@ describe('Style API Integration Tests', () => {
       expect(request.name).toBe('sample-style-guide'); // Should use filename without extension
 
       // Create the style guide using the request
-      const response = await createStyleGuide(request, apiKey);
+      const response = await createStyleGuide(request, config);
 
       expect(response).toBeDefined();
       expect(response.id).toBeDefined();
@@ -181,7 +187,7 @@ describe('Style API Integration Tests', () => {
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
         },
-        apiKey,
+        config,
       );
 
       expect(response).toBeDefined();
@@ -196,7 +202,7 @@ describe('Style API Integration Tests', () => {
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
         },
-        apiKey,
+        config,
       );
 
       expect(response).toBeDefined();
@@ -211,7 +217,7 @@ describe('Style API Integration Tests', () => {
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
         },
-        apiKey,
+        config,
       );
 
       expect(response).toBeDefined();
@@ -226,7 +232,7 @@ describe('Style API Integration Tests', () => {
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
         },
-        apiKey,
+        config,
       );
 
       expect(response).toBeDefined();
@@ -286,7 +292,7 @@ describe('Style API Integration Tests', () => {
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
         },
-        apiKey,
+        config,
       );
 
       expect(response).toBeDefined();
@@ -312,7 +318,7 @@ describe('Style API Integration Tests', () => {
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
         },
-        apiKey,
+        config,
       );
 
       expect(response).toBeDefined();
@@ -345,7 +351,7 @@ describe('Style API Integration Tests', () => {
   describe('Style Guide Cleanup', () => {
     it('should delete all integration test style guides', async () => {
       // List all style guides
-      const styleGuides = await listStyleGuides(apiKey);
+      const styleGuides = await listStyleGuides(config);
 
       // Filter style guides that start with "Integration Test Style Guide"
       const integrationTestGuides = styleGuides.filter((guide) =>
@@ -361,7 +367,7 @@ describe('Style API Integration Tests', () => {
       for (const guide of integrationTestGuides) {
         try {
           // Check the status of the style guide before attempting to delete
-          const styleGuideDetails = await getStyleGuide(guide.id, apiKey);
+          const styleGuideDetails = await getStyleGuide(guide.id, config);
 
           if (styleGuideDetails.status === 'running') {
             console.log(
@@ -369,7 +375,7 @@ describe('Style API Integration Tests', () => {
             );
             skippedCount++;
           } else {
-            await deleteStyleGuide(guide.id, apiKey);
+            await deleteStyleGuide(guide.id, config);
             console.log(
               `Successfully deleted style guide: ${guide.name} (${guide.id}) - Status: ${styleGuideDetails.status}`,
             );

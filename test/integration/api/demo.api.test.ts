@@ -1,14 +1,20 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { submitRewrite, rewrite } from '../../../src/api/demo/demo.api';
 import { DEMO_DEFAULTS } from '../../../src/api/demo/demo.api.defaults';
+import { DEFAULT_PLATFORM_URL_DEV } from '../../../src/utils/api';
+import type { Config } from '../../../src/utils/api.types';
 
 describe('Demo API Integration Tests', () => {
-  let apiKey: string;
+  let config: Config;
   beforeAll(() => {
-    apiKey = process.env.API_KEY || '';
+    const apiKey = process.env.API_KEY || '';
     if (!apiKey) {
       throw new Error('API_KEY environment variable is required for integration tests');
     }
+    config = {
+      apiKey,
+      platformUrl: DEFAULT_PLATFORM_URL_DEV,
+    };
   });
 
   const testContent = 'This is a test content for demo operations.';
@@ -25,7 +31,7 @@ describe('Demo API Integration Tests', () => {
           content: testContent,
           guidanceSettings,
         },
-        apiKey,
+        config,
       );
 
       expect(response).toBeDefined();
@@ -41,7 +47,7 @@ describe('Demo API Integration Tests', () => {
           content: testContent,
           guidanceSettings,
         },
-        apiKey,
+        config,
       );
 
       expect(response.result).toBeDefined();
@@ -60,14 +66,17 @@ describe('Demo API Integration Tests', () => {
 
   describe('Error Handling', () => {
     it('should handle invalid API key', async () => {
-      const invalidApiKey = 'invalid-api-key';
+      const invalidConfig: Config = {
+        apiKey: 'invalid-api-key',
+        platformUrl: DEFAULT_PLATFORM_URL_DEV,
+      };
       await expect(
         submitRewrite(
           {
             content: testContent,
             guidanceSettings,
           },
-          invalidApiKey,
+          invalidConfig,
         ),
       ).rejects.toThrow();
     });
@@ -79,7 +88,7 @@ describe('Demo API Integration Tests', () => {
             content: '',
             guidanceSettings,
           },
-          apiKey,
+          config,
         ),
       ).rejects.toThrow();
     });
@@ -95,7 +104,7 @@ describe('Demo API Integration Tests', () => {
               styleGuide: 'invalid_guide',
             },
           },
-          apiKey,
+          config,
         ),
       ).rejects.toThrow();
     });
@@ -106,13 +115,17 @@ describe('Demo API Integration Tests', () => {
       process.env.API_KEY = '';
 
       try {
+        const emptyConfig: Config = {
+          apiKey: '',
+          platformUrl: DEFAULT_PLATFORM_URL_DEV,
+        };
         await expect(
           submitRewrite(
             {
               content: testContent,
               guidanceSettings,
             },
-            '',
+            emptyConfig,
           ),
         ).rejects.toThrow();
       } finally {

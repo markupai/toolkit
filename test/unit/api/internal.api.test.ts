@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { getAdminConstants, submitFeedback } from '../../../src/api/internal/internal.api';
+import type { FeedbackRequest } from '../../../src/api/internal/internal.api.types';
+import type { Config } from '../../../src/utils/api.types';
 import { server } from '../setup';
 import { apiHandlers } from '../mocks/api.handlers';
 
@@ -9,13 +11,13 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('Internal API Unit Tests', () => {
-  const mockApiKey = 'test-api-key';
+  const mockConfig: Config = { apiKey: 'test-api-key' };
 
   describe('getAdminConstants', () => {
     it('should fetch admin constants successfully', async () => {
       server.use(apiHandlers.internal.constants.success);
 
-      const result = await getAdminConstants(mockApiKey);
+      const result = await getAdminConstants(mockConfig);
       expect(result).toEqual({
         dialects: ['american_english', 'british_english'],
         tones: ['formal', 'casual'],
@@ -34,7 +36,7 @@ describe('Internal API Unit Tests', () => {
     it('should handle API errors', async () => {
       server.use(apiHandlers.internal.constants.error);
 
-      await expect(getAdminConstants(mockApiKey)).rejects.toThrow('Failed to get admin constants');
+      await expect(getAdminConstants(mockConfig)).rejects.toThrow('Failed to get admin constants');
     });
   });
 
@@ -42,26 +44,26 @@ describe('Internal API Unit Tests', () => {
     it('should submit feedback successfully', async () => {
       server.use(apiHandlers.internal.feedback.success);
 
-      const feedbackRequest = {
+      const feedbackRequest: FeedbackRequest = {
         rating: 5,
         comment: 'Great service!',
         category: 'general',
       };
 
-      const result = await submitFeedback(feedbackRequest, mockApiKey);
+      const result = await submitFeedback(feedbackRequest, mockConfig);
       expect(result).toEqual({ success: true });
     });
 
     it('should handle feedback submission errors', async () => {
       server.use(apiHandlers.internal.feedback.error);
 
-      const feedbackRequest = {
+      const feedbackRequest: FeedbackRequest = {
         rating: 5,
         comment: 'Great service!',
         category: 'general',
       };
 
-      await expect(submitFeedback(feedbackRequest, mockApiKey)).rejects.toThrow('Failed to submit feedback');
+      await expect(submitFeedback(feedbackRequest, mockConfig)).rejects.toThrow('Failed to submit feedback');
     });
   });
 });

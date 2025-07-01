@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import { beforeAll } from 'vitest';
 import path from 'path';
 import fs from 'fs';
-import { setPlatformUrl } from '../../src/utils/api';
 
 // Load environment variables before running integration tests
 beforeAll(() => {
@@ -31,6 +30,4 @@ beforeAll(() => {
   }
 
   // Set the platform URL for testing
-  const testUrl = process.env.TEST_PLATFORM_URL || 'http://localhost:8000';
-  setPlatformUrl(testUrl);
 });

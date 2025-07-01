@@ -1,20 +1,26 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { getAdminConstants, submitFeedback } from '../../../src/api/internal/internal.api';
 import { FeedbackRequest } from '../../../src/api/internal/internal.api.types';
+import { DEFAULT_PLATFORM_URL_DEV } from '../../../src/utils/api';
+import type { Config } from '../../../src/utils/api.types';
 
 // TODO: Skipped until we have a way to test the internal API
 describe.skip('Internal API Integration Tests', () => {
-  let apiKey: string;
+  let config: Config;
   beforeAll(() => {
-    apiKey = process.env.API_KEY || '';
+    const apiKey = process.env.API_KEY || '';
     if (!apiKey) {
       throw new Error('API_KEY environment variable is required for integration tests');
     }
+    config = {
+      apiKey,
+      platformUrl: DEFAULT_PLATFORM_URL_DEV,
+    };
   });
 
   describe('getAdminConstants', () => {
     it('should get admin constants', async () => {
-      const response = await getAdminConstants(apiKey);
+      const response = await getAdminConstants(config);
 
       expect(response).toBeDefined();
       expect(response.dialects).toBeDefined();
@@ -41,8 +47,11 @@ describe.skip('Internal API Integration Tests', () => {
 
   describe('Error Handling', () => {
     it('should handle invalid API key', async () => {
-      const invalidApiKey = 'invalid-api-key';
-      await expect(getAdminConstants(invalidApiKey)).rejects.toThrow();
+      const invalidConfig: Config = {
+        apiKey: 'invalid-api-key',
+        platformUrl: DEFAULT_PLATFORM_URL_DEV,
+      };
+      await expect(getAdminConstants(invalidConfig)).rejects.toThrow();
     });
 
     it('should handle missing required fields in feedback', async () => {
@@ -52,7 +61,7 @@ describe.skip('Internal API Integration Tests', () => {
         helpful: true,
       };
 
-      await expect(submitFeedback(invalidFeedbackRequest as FeedbackRequest, apiKey)).rejects.toThrow();
+      await expect(submitFeedback(invalidFeedbackRequest as FeedbackRequest, config)).rejects.toThrow();
     });
 
     it('should throw for no api key', async () => {
@@ -61,7 +70,11 @@ describe.skip('Internal API Integration Tests', () => {
       process.env.API_KEY = '';
 
       try {
-        await expect(getAdminConstants('')).rejects.toThrow();
+        const emptyConfig: Config = {
+          apiKey: '',
+          platformUrl: DEFAULT_PLATFORM_URL_DEV,
+        };
+        await expect(getAdminConstants(emptyConfig)).rejects.toThrow();
       } finally {
         // Restore the original API key
         process.env.API_KEY = originalApiKey;

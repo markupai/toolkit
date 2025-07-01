@@ -5,8 +5,7 @@ import {
   putData,
   deleteData,
   pollWorkflowForResult,
-  PLATFORM_URL,
-  setPlatformUrl,
+  DEFAULT_PLATFORM_URL_DEV,
 } from '../../../src/utils/api';
 import { ResponseBase, Status } from '../../../src/utils/api.types';
 import type { ApiConfig } from '../../../src/utils/api.types';
@@ -22,32 +21,13 @@ const mockConfig: ApiConfig = {
   apiKey: mockApiKey,
 };
 
-// Store original platform URL to restore after tests
-const originalPlatformUrl = PLATFORM_URL;
-
 beforeAll(() => server.listen());
 afterEach(() => {
   server.resetHandlers();
-  // Reset platform URL after each test
-  setPlatformUrl(originalPlatformUrl);
 });
 afterAll(() => server.close());
 
 describe('API Utilities Unit Tests', () => {
-  describe('Platform URL Management', () => {
-    it('should set platform URL correctly', () => {
-      const testUrl = 'https://test.example.com/';
-      setPlatformUrl(testUrl);
-      expect(PLATFORM_URL).toBe('https://test.example.com');
-    });
-
-    it('should remove trailing slashes from platform URL', () => {
-      const testUrl = 'https://test.example.com///';
-      setPlatformUrl(testUrl);
-      expect(PLATFORM_URL).toBe('https://test.example.com');
-    });
-  });
-
   describe('HTTP Method Functions', () => {
     it('should make successful GET request', async () => {
       server.use(handlers.api.success.get);
@@ -79,7 +59,7 @@ describe('API Utilities Unit Tests', () => {
 
     it('should handle API errors with detail', async () => {
       server.use(
-        http.get(`${PLATFORM_URL}${mockEndpoint}`, () => {
+        http.get(`${DEFAULT_PLATFORM_URL_DEV}${mockEndpoint}`, () => {
           return HttpResponse.json({ detail: 'API Error' }, { status: 400 });
         }),
       );
@@ -88,7 +68,7 @@ describe('API Utilities Unit Tests', () => {
 
     it('should handle API errors with message', async () => {
       server.use(
-        http.get(`${PLATFORM_URL}${mockEndpoint}`, () => {
+        http.get(`${DEFAULT_PLATFORM_URL_DEV}${mockEndpoint}`, () => {
           return HttpResponse.json({ message: 'API Error' }, { status: 400 });
         }),
       );
@@ -97,7 +77,7 @@ describe('API Utilities Unit Tests', () => {
 
     it('should handle API errors without message', async () => {
       server.use(
-        http.get(`${PLATFORM_URL}${mockEndpoint}`, () => {
+        http.get(`${DEFAULT_PLATFORM_URL_DEV}${mockEndpoint}`, () => {
           return HttpResponse.json({}, { status: 400 });
         }),
       );
@@ -106,11 +86,28 @@ describe('API Utilities Unit Tests', () => {
 
     it('should handle network errors', async () => {
       server.use(
-        http.get(`${PLATFORM_URL}${mockEndpoint}`, () => {
+        http.get(`${DEFAULT_PLATFORM_URL_DEV}${mockEndpoint}`, () => {
           return HttpResponse.error();
         }),
       );
       await expect(getData(mockConfig)).rejects.toThrow('Failed to fetch');
+    });
+
+    it('should use custom platform URL when provided', async () => {
+      const customPlatformUrl = 'https://custom.example.com';
+      const customConfig: ApiConfig = {
+        ...mockConfig,
+        platformUrl: customPlatformUrl,
+      };
+
+      server.use(
+        http.get(`${customPlatformUrl}${mockEndpoint}`, () => {
+          return HttpResponse.json({ data: 'custom data' });
+        }),
+      );
+
+      const result = await getData(customConfig);
+      expect(result).toEqual({ data: 'custom data' });
     });
   });
 
@@ -142,7 +139,7 @@ describe('API Utilities Unit Tests', () => {
     it('should retry when workflow is in progress', async () => {
       let callCount = 0;
       server.use(
-        http.get(`${PLATFORM_URL}${mockEndpoint}/${mockWorkflowId}`, () => {
+        http.get(`${DEFAULT_PLATFORM_URL_DEV}${mockEndpoint}/${mockWorkflowId}`, () => {
           callCount++;
           if (callCount === 1) {
             return HttpResponse.json({ status: 'running', workflow_id: mockWorkflowId });
