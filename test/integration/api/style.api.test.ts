@@ -14,7 +14,7 @@ import {
 } from '../../../src/api/style/style.api';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 import { IssueCategory } from '../../../src/api/style/style.api.types';
-import type { Config, ApiConfig } from '../../../src/utils/api.types';
+import type { Config } from '../../../src/utils/api.types';
 import { DEFAULT_PLATFORM_URL_DEV } from '../../../src/utils/api';
 import { readFileSync } from 'fs';
 import { join } from 'path';
