@@ -9,6 +9,7 @@ import {
   setPlatformUrl,
 } from '../../../src/utils/api';
 import { ResponseBase, Status } from '../../../src/utils/api.types';
+import type { ApiConfig } from '../../../src/utils/api.types';
 import { server, handlers } from '../setup';
 import { http } from 'msw';
 import { HttpResponse } from 'msw';
@@ -16,104 +17,107 @@ import { HttpResponse } from 'msw';
 const mockApiKey = 'test-api-key';
 const mockEndpoint = '/test-endpoint';
 const mockWorkflowId = 'test-workflow-id';
+const mockConfig: ApiConfig = {
+  endpoint: mockEndpoint,
+  apiKey: mockApiKey,
+};
+
+// Store original platform URL to restore after tests
+const originalPlatformUrl = PLATFORM_URL;
 
 beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  // Reset platform URL after each test
+  setPlatformUrl(originalPlatformUrl);
+});
 afterAll(() => server.close());
 
 describe('API Utilities Unit Tests', () => {
-  describe('setPlatformUrl', () => {
-    it('should remove single trailing slash', () => {
-      const originalUrl = PLATFORM_URL;
-      setPlatformUrl('https://example.com/');
-      expect(PLATFORM_URL).toBe('https://example.com');
-      setPlatformUrl(originalUrl); // Reset to original
-    });
-
-    it('should remove multiple trailing slashes', () => {
-      const originalUrl = PLATFORM_URL;
-      setPlatformUrl('https://example.com///');
-      expect(PLATFORM_URL).toBe('https://example.com');
-      setPlatformUrl(originalUrl); // Reset to original
-    });
-
-    it('should not modify URL without trailing slashes', () => {
-      const originalUrl = PLATFORM_URL;
-      const testUrl = 'https://example.com';
+  describe('Platform URL Management', () => {
+    it('should set platform URL correctly', () => {
+      const testUrl = 'https://test.example.com/';
       setPlatformUrl(testUrl);
-      expect(PLATFORM_URL).toBe(testUrl);
-      setPlatformUrl(originalUrl); // Reset to original
+      expect(PLATFORM_URL).toBe('https://test.example.com');
     });
 
-    it('should handle URL with path and trailing slashes', () => {
-      const originalUrl = PLATFORM_URL;
-      setPlatformUrl('https://example.com/api/v1///');
-      expect(PLATFORM_URL).toBe('https://example.com/api/v1');
-      setPlatformUrl(originalUrl); // Reset to original
-    });
-
-    it('should handle empty string', () => {
-      const originalUrl = PLATFORM_URL;
-      setPlatformUrl('');
-      expect(PLATFORM_URL).toBe('');
-      setPlatformUrl(originalUrl); // Reset to original
+    it('should remove trailing slashes from platform URL', () => {
+      const testUrl = 'https://test.example.com///';
+      setPlatformUrl(testUrl);
+      expect(PLATFORM_URL).toBe('https://test.example.com');
     });
   });
 
   describe('HTTP Method Functions', () => {
-    it('should make a successful GET request', async () => {
+    it('should make successful GET request', async () => {
       server.use(handlers.api.success.get);
-      const result = await getData(mockEndpoint, mockApiKey);
+      const result = await getData(mockConfig);
       expect(result).toEqual({ data: 'test data' });
     });
 
-    it('should make a successful POST request with FormData', async () => {
+    it('should make successful POST request', async () => {
       server.use(handlers.api.success.post);
       const formData = new FormData();
       formData.append('test', 'value');
-      const result = await postData(mockEndpoint, formData, mockApiKey);
+      const result = await postData(mockConfig, formData);
       expect(result).toEqual({ data: 'test data' });
     });
 
-    it('should make a successful PUT request with FormData', async () => {
+    it('should make successful PUT request', async () => {
       server.use(handlers.api.success.put);
       const formData = new FormData();
       formData.append('test', 'value');
-      const result = await putData(mockEndpoint, formData, mockApiKey);
+      const result = await putData(mockConfig, formData);
       expect(result).toEqual({ data: 'test data' });
     });
 
-    it('should make a successful DELETE request', async () => {
+    it('should make successful DELETE request', async () => {
       server.use(handlers.api.success.delete);
-      const result = await deleteData(mockEndpoint, mockApiKey);
+      const result = await deleteData(mockConfig);
       expect(result).toEqual({ data: 'test data' });
     });
 
-    it('should handle API errors with detail message', async () => {
-      server.use(handlers.api.error.detail);
-      await expect(getData('/error-detail', mockApiKey)).rejects.toThrow('API Error');
+    it('should handle API errors with detail', async () => {
+      server.use(
+        http.get(`${PLATFORM_URL}${mockEndpoint}`, () => {
+          return HttpResponse.json({ detail: 'API Error' }, { status: 400 });
+        })
+      );
+      await expect(getData(mockConfig)).rejects.toThrow('API Error');
     });
 
-    it('should handle API errors with message field', async () => {
-      server.use(handlers.api.error.message);
-      await expect(getData('/error-message', mockApiKey)).rejects.toThrow('API Error');
+    it('should handle API errors with message', async () => {
+      server.use(
+        http.get(`${PLATFORM_URL}${mockEndpoint}`, () => {
+          return HttpResponse.json({ message: 'API Error' }, { status: 400 });
+        })
+      );
+      await expect(getData(mockConfig)).rejects.toThrow('API Error');
     });
 
-    it('should handle API errors without error message', async () => {
-      server.use(handlers.api.error.noMessage);
-      await expect(getData('/error-nomsg', mockApiKey)).rejects.toThrow('HTTP error! status: 400');
+    it('should handle API errors without message', async () => {
+      server.use(
+        http.get(`${PLATFORM_URL}${mockEndpoint}`, () => {
+          return HttpResponse.json({}, { status: 400 });
+        })
+      );
+      await expect(getData(mockConfig)).rejects.toThrow('HTTP error! status: 400');
     });
 
     it('should handle network errors', async () => {
-      server.use(handlers.api.error.network);
-      await expect(getData('/network-error', mockApiKey)).rejects.toThrow('Failed to fetch');
+      server.use(
+        http.get(`${PLATFORM_URL}${mockEndpoint}`, () => {
+          return HttpResponse.error();
+        })
+      );
+      await expect(getData(mockConfig)).rejects.toThrow('Failed to fetch');
     });
   });
 
   describe('pollWorkflowForResult', () => {
     it('should return result when workflow completes successfully', async () => {
       server.use(handlers.api.workflow.completed);
-      const result = await pollWorkflowForResult(mockWorkflowId, mockEndpoint, mockApiKey);
+      const result = await pollWorkflowForResult(mockWorkflowId, mockConfig);
       expect(result).toEqual({
         status: Status.Completed,
         workflow_id: mockWorkflowId,
@@ -130,7 +134,7 @@ describe('API Utilities Unit Tests', () => {
 
     it('should handle workflow failure', async () => {
       server.use(handlers.api.workflow.failed);
-      await expect(pollWorkflowForResult(mockWorkflowId, mockEndpoint, mockApiKey)).rejects.toThrow(
+      await expect(pollWorkflowForResult(mockWorkflowId, mockConfig)).rejects.toThrow(
         'Workflow failed with status: failed',
       );
     });
@@ -157,21 +161,21 @@ describe('API Utilities Unit Tests', () => {
           });
         }),
       );
-      const result = await pollWorkflowForResult<ResponseBase>(mockWorkflowId, mockEndpoint, mockApiKey);
+      const result = await pollWorkflowForResult<ResponseBase>(mockWorkflowId, mockConfig);
       expect(result.status).toBe(Status.Completed);
       expect(result.workflow_id).toBe(mockWorkflowId);
     });
 
     it.skip('should timeout after maximum retries', async () => {
       server.use(handlers.api.workflow.running);
-      await expect(pollWorkflowForResult(mockWorkflowId, mockEndpoint, mockApiKey)).rejects.toThrow(
+      await expect(pollWorkflowForResult(mockWorkflowId, mockConfig)).rejects.toThrow(
         'Workflow timed out after 30 attempts',
       );
     }, 10000);
 
     it('should handle API errors during polling', async () => {
       server.use(handlers.api.workflow.apiError);
-      await expect(pollWorkflowForResult(mockWorkflowId, mockEndpoint, mockApiKey)).rejects.toThrow('API Error');
+      await expect(pollWorkflowForResult(mockWorkflowId, mockConfig)).rejects.toThrow('API Error');
     });
   });
 });

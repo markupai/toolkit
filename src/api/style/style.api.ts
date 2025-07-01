@@ -11,6 +11,7 @@ import type {
   StyleGuideUpdateReq,
 } from './style.api.types';
 import { Status } from '../../utils/api.types';
+import type { ApiConfig } from '../../utils/api.types';
 
 import { pollWorkflowForResult } from '../../utils/api';
 
@@ -40,14 +41,19 @@ async function submitAndPollStyleAnalysis<T extends { status: Status }>(
   request: StyleAnalysisReq,
   apiKey: string,
 ): Promise<T> {
+  const config: ApiConfig = {
+    endpoint,
+    apiKey,
+  };
+
   const formData = createStyleFormData(request);
-  const initialResponse = await postData<StyleAnalysisSubmitResp>(endpoint, formData, apiKey);
+  const initialResponse = await postData<StyleAnalysisSubmitResp>(config, formData);
 
   if (!initialResponse.workflow_id) {
     throw new Error(`No workflow_id received from initial ${endpoint} request`);
   }
 
-  const polledResponse = await pollWorkflowForResult<T>(initialResponse.workflow_id, endpoint, apiKey);
+  const polledResponse = await pollWorkflowForResult<T>(initialResponse.workflow_id, config);
 
   if (polledResponse.status === Status.Completed) {
     return polledResponse;
@@ -57,12 +63,20 @@ async function submitAndPollStyleAnalysis<T extends { status: Status }>(
 
 // Style Guide Operations
 export async function listStyleGuides(apiKey: string): Promise<StyleGuides> {
-  return getData<StyleGuides>(API_ENDPOINTS.STYLE_GUIDES, apiKey);
+  const config: ApiConfig = {
+    endpoint: API_ENDPOINTS.STYLE_GUIDES,
+    apiKey,
+  };
+  return getData<StyleGuides>(config);
 }
 
 // Fetch a single style guide by ID
 export async function getStyleGuide(styleGuideId: string, apiKey: string): Promise<StyleGuide> {
-  return getData<StyleGuide>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, apiKey);
+  const config: ApiConfig = {
+    endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`,
+    apiKey,
+  };
+  return getData<StyleGuide>(config);
 }
 
 // Style Check Operations
@@ -70,24 +84,36 @@ export async function submitStyleCheck(
   styleAnalysisRequest: StyleAnalysisReq,
   apiKey: string,
 ): Promise<StyleAnalysisSubmitResp> {
+  const config: ApiConfig = {
+    endpoint: API_ENDPOINTS.STYLE_CHECKS,
+    apiKey,
+  };
   const formData = createStyleFormData(styleAnalysisRequest);
-  return postData<StyleAnalysisSubmitResp>(API_ENDPOINTS.STYLE_CHECKS, formData, apiKey);
+  return postData<StyleAnalysisSubmitResp>(config, formData);
 }
 
 export async function submitStyleSuggestion(
   styleAnalysisRequest: StyleAnalysisReq,
   apiKey: string,
 ): Promise<StyleAnalysisSubmitResp> {
+  const config: ApiConfig = {
+    endpoint: API_ENDPOINTS.STYLE_SUGGESTIONS,
+    apiKey,
+  };
   const formData = createStyleFormData(styleAnalysisRequest);
-  return postData<StyleAnalysisSubmitResp>(API_ENDPOINTS.STYLE_SUGGESTIONS, formData, apiKey);
+  return postData<StyleAnalysisSubmitResp>(config, formData);
 }
 
 export async function submitStyleRewrite(
   styleAnalysisRequest: StyleAnalysisReq,
   apiKey: string,
 ): Promise<StyleAnalysisSubmitResp> {
+  const config: ApiConfig = {
+    endpoint: API_ENDPOINTS.STYLE_REWRITES,
+    apiKey,
+  };
   const formData = createStyleFormData(styleAnalysisRequest);
-  return postData<StyleAnalysisSubmitResp>(API_ENDPOINTS.STYLE_REWRITES, formData, apiKey);
+  return postData<StyleAnalysisSubmitResp>(config, formData);
 }
 
 // Convenience methods for style operations with polling
@@ -130,16 +156,25 @@ export async function createStyleGuide(request: CreateStyleGuideReq, apiKey: str
     throw new Error(`Unsupported file type: ${fileExtension}. Only .pdf files are supported.`);
   }
 
+  const config: ApiConfig = {
+    endpoint: API_ENDPOINTS.STYLE_GUIDES,
+    apiKey,
+  };
+
   const formData = new FormData();
   formData.append('file_upload', file);
   formData.append('name', name);
 
-  return postData<StyleGuide>(API_ENDPOINTS.STYLE_GUIDES, formData, apiKey);
+  return postData<StyleGuide>(config, formData);
 }
 
 // Get style check results by workflow ID
 export async function getStyleCheck(workflowId: string, apiKey: string): Promise<StyleAnalysisSuccessResp> {
-  return getData<StyleAnalysisSuccessResp>(`${API_ENDPOINTS.STYLE_CHECKS}/${workflowId}`, apiKey);
+  const config: ApiConfig = {
+    endpoint: `${API_ENDPOINTS.STYLE_CHECKS}/${workflowId}`,
+    apiKey,
+  };
+  return getData<StyleAnalysisSuccessResp>(config);
 }
 
 // Update a style guide by ID
@@ -148,10 +183,18 @@ export async function updateStyleGuide(
   updates: StyleGuideUpdateReq,
   apiKey: string,
 ): Promise<StyleGuide> {
-  return putData<StyleGuide>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, JSON.stringify(updates), apiKey);
+  const config: ApiConfig = {
+    endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`,
+    apiKey,
+  };
+  return putData<StyleGuide>(config, JSON.stringify(updates));
 }
 
 // Delete a style guide by ID
 export async function deleteStyleGuide(styleGuideId: string, apiKey: string): Promise<void> {
-  await deleteData<void>(`${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`, apiKey);
+  const config: ApiConfig = {
+    endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`,
+    apiKey,
+  };
+  await deleteData<void>(config);
 }

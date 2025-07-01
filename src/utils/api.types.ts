@@ -9,3 +9,8 @@ export enum Status {
   Completed = 'completed',
   Failed = 'failed',
 }
+
+export interface ApiConfig {
+  endpoint: string;
+  apiKey: string;
+}

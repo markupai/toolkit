@@ -1,5 +1,5 @@
 import { Status } from './api.types';
-import type { ResponseBase } from './api.types';
+import type { ResponseBase, ApiConfig } from './api.types';
 import { AcrolinxError } from './errors';
 
 // export const DEFAULT_PLATFORM_URL = 'https://app.acrolinx.cloud';
@@ -18,13 +18,13 @@ function getCommonHeaders(apiKey: string): HeadersInit {
   };
 }
 
-export async function getData<T>(endpoint: string, apiKey: string): Promise<T> {
+export async function getData<T>(config: ApiConfig): Promise<T> {
   try {
     const fetchOptions: RequestInit = {
       method: 'GET',
-      headers: getCommonHeaders(apiKey),
+      headers: getCommonHeaders(config.apiKey),
     };
-    const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
+    const response = await fetch(`${PLATFORM_URL}${config.endpoint}`, fetchOptions);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -43,14 +43,14 @@ export async function getData<T>(endpoint: string, apiKey: string): Promise<T> {
   }
 }
 
-export async function postData<T>(endpoint: string, body: BodyInit, apiKey: string): Promise<T> {
+export async function postData<T>(config: ApiConfig, body: BodyInit): Promise<T> {
   try {
     const fetchOptions: RequestInit = {
       method: 'POST',
-      headers: getCommonHeaders(apiKey),
+      headers: getCommonHeaders(config.apiKey),
       body: body,
     };
-    const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
+    const response = await fetch(`${PLATFORM_URL}${config.endpoint}`, fetchOptions);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -69,14 +69,14 @@ export async function postData<T>(endpoint: string, body: BodyInit, apiKey: stri
   }
 }
 
-export async function putData<T>(endpoint: string, body: BodyInit, apiKey: string): Promise<T> {
+export async function putData<T>(config: ApiConfig, body: BodyInit): Promise<T> {
   try {
     const fetchOptions: RequestInit = {
       method: 'PUT',
-      headers: getCommonHeaders(apiKey),
+      headers: getCommonHeaders(config.apiKey),
       body: body,
     };
-    const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
+    const response = await fetch(`${PLATFORM_URL}${config.endpoint}`, fetchOptions);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -95,13 +95,13 @@ export async function putData<T>(endpoint: string, body: BodyInit, apiKey: strin
   }
 }
 
-export async function deleteData<T>(endpoint: string, apiKey: string): Promise<T> {
+export async function deleteData<T>(config: ApiConfig): Promise<T> {
   try {
     const fetchOptions: RequestInit = {
       method: 'DELETE',
-      headers: getCommonHeaders(apiKey),
+      headers: getCommonHeaders(config.apiKey),
     };
-    const response = await fetch(`${PLATFORM_URL}${endpoint}`, fetchOptions);
+    const response = await fetch(`${PLATFORM_URL}${config.endpoint}`, fetchOptions);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -126,7 +126,7 @@ export async function deleteData<T>(endpoint: string, apiKey: string): Promise<T
   }
 }
 
-export async function pollWorkflowForResult<T>(workflowId: string, endpoint: string, apiKey: string): Promise<T> {
+export async function pollWorkflowForResult<T>(workflowId: string, config: ApiConfig): Promise<T> {
   let attempts = 0;
   const maxAttempts = 30;
   const pollInterval = 2000;
@@ -138,11 +138,11 @@ export async function pollWorkflowForResult<T>(workflowId: string, endpoint: str
 
     try {
       // Ensure there's exactly one slash between endpoint and workflowId
-      const normalizedEndpoint = endpoint.endsWith('/') ? endpoint : `${endpoint}/`;
+      const normalizedEndpoint = config.endpoint.endsWith('/') ? config.endpoint : `${config.endpoint}/`;
       const response = await fetch(`${PLATFORM_URL}${normalizedEndpoint}${workflowId}`, {
         method: 'GET',
         headers: {
-          ...getCommonHeaders(apiKey),
+          ...getCommonHeaders(config.apiKey),
           Accept: 'application/json',
         },
       });

@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { submitRewrite, rewrite } from '../../../src/api/demo/demo.api';
-import { AnalysisRequest } from '../../../src/api/demo/demo.api.types';
 import { DEMO_DEFAULTS } from '../../../src/api/demo/demo.api.defaults';
 import { Status } from '../../../src/utils/api.types';
 import { server } from '../setup';
@@ -14,7 +13,7 @@ afterAll(() => server.close());
 describe('Demo API Unit Tests', () => {
   const mockApiKey = 'test-api-key';
   const mockWorkflowId = 'test-workflow-id';
-  const mockRequest: AnalysisRequest = {
+  const mockRequest = {
     content: 'test content',
     guidanceSettings: {
       dialect: DEMO_DEFAULTS.dialects.americanEnglish,

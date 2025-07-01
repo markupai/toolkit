@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { getAdminConstants, submitFeedback } from '../../../src/api/internal/internal.api';
-import { FeedbackRequest } from '../../../src/api/internal/internal.api.types';
 import { server } from '../setup';
 import { apiHandlers } from '../mocks/api.handlers';
 
@@ -13,7 +12,7 @@ describe('Internal API Unit Tests', () => {
   const mockApiKey = 'test-api-key';
 
   describe('getAdminConstants', () => {
-    it('should get admin constants', async () => {
+    it('should fetch admin constants successfully', async () => {
       server.use(apiHandlers.internal.constants.success);
 
       const result = await getAdminConstants(mockApiKey);
@@ -32,7 +31,7 @@ describe('Internal API Unit Tests', () => {
       });
     });
 
-    it('should handle get admin constants error', async () => {
+    it('should handle API errors', async () => {
       server.use(apiHandlers.internal.constants.error);
 
       await expect(getAdminConstants(mockApiKey)).rejects.toThrow('Failed to get admin constants');
@@ -40,32 +39,29 @@ describe('Internal API Unit Tests', () => {
   });
 
   describe('submitFeedback', () => {
-    it('should submit feedback', async () => {
+    it('should submit feedback successfully', async () => {
       server.use(apiHandlers.internal.feedback.success);
 
-      const mockFeedbackRequest: FeedbackRequest = {
-        workflow_id: 'test-workflow-id',
-        run_id: 'test-run-id',
-        helpful: true,
-        feedback: 'Great suggestions!',
-        original: 'Original text',
-        suggestion: 'Suggested text',
-        category: 'grammar',
+      const feedbackRequest = {
+        rating: 5,
+        comment: 'Great service!',
+        category: 'general',
       };
 
-      await submitFeedback(mockFeedbackRequest, mockApiKey);
+      const result = await submitFeedback(feedbackRequest, mockApiKey);
+      expect(result).toEqual({ success: true });
     });
 
-    it('should handle submit feedback error', async () => {
+    it('should handle feedback submission errors', async () => {
       server.use(apiHandlers.internal.feedback.error);
 
-      const mockFeedbackRequest: FeedbackRequest = {
-        workflow_id: 'test-workflow-id',
-        run_id: 'test-run-id',
-        helpful: true,
+      const feedbackRequest = {
+        rating: 5,
+        comment: 'Great service!',
+        category: 'general',
       };
 
-      await expect(submitFeedback(mockFeedbackRequest, mockApiKey)).rejects.toThrow('Failed to submit feedback');
+      await expect(submitFeedback(feedbackRequest, mockApiKey)).rejects.toThrow('Failed to submit feedback');
     });
   });
 });

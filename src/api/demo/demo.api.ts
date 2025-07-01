@@ -2,6 +2,7 @@ import type { AnalysisRequest, AnalysisSubmissionResponse, AnalysisSuccessRespon
 
 import { postData, pollWorkflowForResult } from '../../utils/api';
 import { Status } from '../../utils/api.types';
+import type { ApiConfig } from '../../utils/api.types';
 
 const API_ENDPOINTS = {
   REWRITES: '/v1/rewrites/',
@@ -19,18 +20,27 @@ export async function submitRewrite(
   formData.append('tone', rewriteRequest.guidanceSettings.tone.toString());
   formData.append('style_guide', rewriteRequest.guidanceSettings.styleGuide);
 
-  return postData<AnalysisSubmissionResponse>(API_ENDPOINTS.REWRITES, formData, apiKey);
+  const config: ApiConfig = {
+    endpoint: API_ENDPOINTS.REWRITES,
+    apiKey,
+  };
+
+  return postData<AnalysisSubmissionResponse>(config, formData);
 }
 
 export async function rewrite(rewriteRequest: AnalysisRequest, apiKey: string): Promise<AnalysisSuccessResponse> {
   try {
+    const config: ApiConfig = {
+      endpoint: API_ENDPOINTS.REWRITES,
+      apiKey,
+    };
+
     const initialResponse = await submitRewrite(rewriteRequest, apiKey);
 
     if (initialResponse.workflow_id) {
       const polledResponse = await pollWorkflowForResult<AnalysisSuccessResponse>(
         initialResponse.workflow_id,
-        API_ENDPOINTS.REWRITES,
-        apiKey,
+        config,
       );
       if (polledResponse.status === Status.Completed && polledResponse.result) {
         return polledResponse;
