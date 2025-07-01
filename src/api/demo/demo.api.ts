@@ -38,10 +38,7 @@ export async function rewrite(rewriteRequest: AnalysisRequest, apiKey: string): 
     const initialResponse = await submitRewrite(rewriteRequest, apiKey);
 
     if (initialResponse.workflow_id) {
-      const polledResponse = await pollWorkflowForResult<AnalysisSuccessResponse>(
-        initialResponse.workflow_id,
-        config,
-      );
+      const polledResponse = await pollWorkflowForResult<AnalysisSuccessResponse>(initialResponse.workflow_id, config);
       if (polledResponse.status === Status.Completed && polledResponse.result) {
         return polledResponse;
       }

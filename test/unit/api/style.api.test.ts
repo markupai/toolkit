@@ -147,7 +147,9 @@ describe('Style API Unit Tests', () => {
     it('should handle style analysis errors', async () => {
       server.use(apiHandlers.style.checks.error);
 
-      await expect(submitStyleCheck(mockStyleAnalysisRequest, mockApiKey)).rejects.toThrow('Could not validate credentials');
+      await expect(submitStyleCheck(mockStyleAnalysisRequest, mockApiKey)).rejects.toThrow(
+        'Could not validate credentials',
+      );
     });
   });
 

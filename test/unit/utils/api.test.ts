@@ -81,7 +81,7 @@ describe('API Utilities Unit Tests', () => {
       server.use(
         http.get(`${PLATFORM_URL}${mockEndpoint}`, () => {
           return HttpResponse.json({ detail: 'API Error' }, { status: 400 });
-        })
+        }),
       );
       await expect(getData(mockConfig)).rejects.toThrow('API Error');
     });
@@ -90,7 +90,7 @@ describe('API Utilities Unit Tests', () => {
       server.use(
         http.get(`${PLATFORM_URL}${mockEndpoint}`, () => {
           return HttpResponse.json({ message: 'API Error' }, { status: 400 });
-        })
+        }),
       );
       await expect(getData(mockConfig)).rejects.toThrow('API Error');
     });
@@ -99,7 +99,7 @@ describe('API Utilities Unit Tests', () => {
       server.use(
         http.get(`${PLATFORM_URL}${mockEndpoint}`, () => {
           return HttpResponse.json({}, { status: 400 });
-        })
+        }),
       );
       await expect(getData(mockConfig)).rejects.toThrow('HTTP error! status: 400');
     });
@@ -108,7 +108,7 @@ describe('API Utilities Unit Tests', () => {
       server.use(
         http.get(`${PLATFORM_URL}${mockEndpoint}`, () => {
           return HttpResponse.error();
-        })
+        }),
       );
       await expect(getData(mockConfig)).rejects.toThrow('Failed to fetch');
     });
