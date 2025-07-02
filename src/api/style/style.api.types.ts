@@ -12,6 +12,24 @@ export enum IssueCategory {
   SentenceLength = 'sentence_length',
   Tone = 'tone',
   StyleGuide = 'style_guide',
+  Terminology = 'terminology',
+}
+
+/**
+ * Base issue type for style analysis
+ */
+export interface Issue {
+  original: string;
+  char_index: number;
+  subcategory: string;
+  category: IssueCategory;
+}
+
+/**
+ * Issue with suggestion for style analysis
+ */
+export interface IssueWithSuggestion extends Issue {
+  suggestion: string;
 }
 
 export interface StyleScores {
@@ -48,12 +66,7 @@ export interface StyleAnalysisSuccessResp {
   status: Status;
   style_guide_id: string;
   scores: StyleScores;
-  issues: Array<{
-    original: string;
-    char_index: number;
-    subcategory: string;
-    category: IssueCategory;
-  }>;
+  issues: Issue[];
   check_options: {
     style_guide: {
       style_guide_type: string;
@@ -65,13 +78,7 @@ export interface StyleAnalysisSuccessResp {
 }
 
 export interface StyleAnalysisSuggestionResp extends Omit<StyleAnalysisSuccessResp, 'issues'> {
-  issues: Array<{
-    original: string;
-    char_index: number;
-    subcategory: string;
-    category: IssueCategory;
-    suggestion: string;
-  }>;
+  issues: IssueWithSuggestion[];
 }
 
 export interface StyleAnalysisRewriteResp extends StyleAnalysisSuggestionResp {
