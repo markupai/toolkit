@@ -39,6 +39,10 @@ export interface StyleScores {
     informality: number;
     liveliness: number;
   };
+  terminology: {
+    score: number;
+    issues: number;
+  };
 }
 export interface StyleAnalysisSuccessResp {
   status: Status;

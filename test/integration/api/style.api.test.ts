@@ -274,6 +274,10 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.scores.tone.informality).toBe('number');
       expect(typeof response.scores.tone.liveliness).toBe('number');
 
+      expect(response.scores.terminology).toBeDefined();
+      expect(typeof response.scores.terminology.score).toBe('number');
+      expect(typeof response.scores.terminology.issues).toBe('number');
+
       if (response.issues && response.issues.length > 0) {
         const issue = response.issues[0];
         expect(issue.subcategory).toBeDefined();
@@ -302,6 +306,7 @@ describe('Style API Integration Tests', () => {
       expect(response.scores.grammar).toBeDefined();
       expect(response.scores.style_guide).toBeDefined();
       expect(response.scores.tone).toBeDefined();
+      expect(response.scores.terminology).toBeDefined();
 
       if (response.issues && response.issues.length > 0) {
         const issue = response.issues[0];
@@ -328,6 +333,7 @@ describe('Style API Integration Tests', () => {
       expect(response.scores.grammar).toBeDefined();
       expect(response.scores.style_guide).toBeDefined();
       expect(response.scores.tone).toBeDefined();
+      expect(response.scores.terminology).toBeDefined();
 
       // Test rewrite and rewrite_scores
       expect(response.rewrite).toBeDefined();
@@ -339,6 +345,7 @@ describe('Style API Integration Tests', () => {
       expect(response.rewrite_scores.grammar).toBeDefined();
       expect(response.rewrite_scores.style_guide).toBeDefined();
       expect(response.rewrite_scores.tone).toBeDefined();
+      expect(response.rewrite_scores.terminology).toBeDefined();
 
       if (response.issues && response.issues.length > 0) {
         const issue = response.issues[0];

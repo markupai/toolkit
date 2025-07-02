@@ -186,6 +186,20 @@ describe('Style API Unit Tests', () => {
       expect(result.issues).toBeDefined();
       expect(result.rewrite).toBeDefined();
     });
+
+    it('should include terminology scores in rewrite results', async () => {
+      server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
+
+      const result = await styleRewrite(mockStyleAnalysisRequest, mockConfig);
+      expect(result.scores.terminology).toBeDefined();
+      expect(typeof result.scores.terminology.score).toBe('number');
+      expect(typeof result.scores.terminology.issues).toBe('number');
+      expect(result.rewrite_scores.terminology).toBeDefined();
+      expect(typeof result.rewrite_scores.terminology.score).toBe('number');
+      expect(typeof result.rewrite_scores.terminology.issues).toBe('number');
+      expect(result.rewrite_scores.terminology.score).toBe(90);
+      expect(result.rewrite_scores.terminology.issues).toBe(0);
+    });
   });
 
   describe('Style Check Results', () => {
@@ -197,6 +211,17 @@ describe('Style API Unit Tests', () => {
       expect(result.style_guide_id).toBe(mockStyleGuideId);
       expect(result.scores).toBeDefined();
       expect(result.issues).toBeDefined();
+    });
+
+    it('should include terminology scores in style check results', async () => {
+      server.use(apiHandlers.style.checks.poll);
+
+      const result = await getStyleCheck(mockWorkflowId, mockConfig);
+      expect(result.scores.terminology).toBeDefined();
+      expect(typeof result.scores.terminology.score).toBe('number');
+      expect(typeof result.scores.terminology.issues).toBe('number');
+      expect(result.scores.terminology.score).toBe(85);
+      expect(result.scores.terminology.issues).toBe(0);
     });
   });
 

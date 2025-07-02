@@ -308,6 +308,10 @@ const styleHandlers = {
             informality: 30,
             liveliness: 60,
           },
+          terminology: {
+            score: 85,
+            issues: 0,
+          },
         },
         issues: [
           {
@@ -367,6 +371,10 @@ const styleHandlers = {
             score: 70,
             informality: 30,
             liveliness: 60,
+          },
+          terminology: {
+            score: 85,
+            issues: 0,
           },
         },
         issues: [
@@ -429,6 +437,10 @@ const styleHandlers = {
             informality: 30,
             liveliness: 60,
           },
+          terminology: {
+            score: 85,
+            issues: 0,
+          },
         },
         issues: [
           {
@@ -472,6 +484,10 @@ const styleHandlers = {
             score: 75,
             informality: 25,
             liveliness: 65,
+          },
+          terminology: {
+            score: 90,
+            issues: 0,
           },
         },
       });
