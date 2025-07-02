@@ -16,3 +16,6 @@ export * from './api/internal/internal.api.types';
 export * from './utils/errors';
 export * from './utils/api';
 export * from './utils/api.types';
+
+// Export all issues utility functions and types
+export * from './utils/issues';
