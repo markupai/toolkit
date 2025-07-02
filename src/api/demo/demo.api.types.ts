@@ -82,7 +82,7 @@ export interface TokenUsage {
 
 // Activity Outputs
 export interface AcrolinxScorerActivityOutput {
-  issues: Issue[];
+  issues: AnalysisIssue[];
   score: number;
   error: string | null;
   duration: number;
@@ -95,7 +95,7 @@ export interface AcrolinxScorerActivityOutput {
   repair_log?: RepairLog[];
 }
 
-export interface Issue {
+export interface AnalysisIssue {
   description: string;
   originalText: string;
   position: number;
