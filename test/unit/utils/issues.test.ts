@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { 
-  categorizeIssues, 
-  getIssueCounts, 
-  getIssuesByCategory, 
+import {
+  categorizeIssues,
+  getIssueCounts,
+  getIssuesByCategory,
   hasSuggestion,
   getIssuesWithSuggestions,
   getIssuesWithoutSuggestions,
-  type CategorizedIssues
+  type CategorizedIssues,
 } from '../../../src/utils/issues';
 import { IssueCategory, type Issue, type IssueWithSuggestion } from '../../../src/api/style/style.api.types';
 
@@ -105,10 +105,10 @@ describe('Issues Utils', () => {
       ];
 
       const result = categorizeIssues(issuesWithSuggestions);
-      
+
       // TypeScript should know that suggestion exists
       expect(result.grammar[0].suggestion).toBe('grammar correction');
-      
+
       // Verify the return type is correctly typed
       const _test: CategorizedIssues<IssueWithSuggestion> = result;
       expect(_test.grammar[0].suggestion).toBeDefined();
@@ -178,7 +178,7 @@ describe('Issues Utils', () => {
       ];
 
       const grammarIssues = getIssuesByCategory(issuesWithSuggestions, IssueCategory.Grammar);
-      
+
       // TypeScript should know that suggestion exists
       expect(grammarIssues[0].suggestion).toBe('correction');
     });
@@ -268,4 +268,4 @@ describe('Issues Utils', () => {
       expect(grammarIssues[0].suggestion).toBe('test suggestion');
     });
   });
-}); 
+});

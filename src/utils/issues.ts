@@ -15,27 +15,27 @@ export interface CategorizedIssues<T extends Issue = Issue> {
 
 /**
  * Categorizes issues by their category using generics for type safety
- * 
+ *
  * @param issues - Array of issues to categorize
  * @returns Object with issues grouped by category
- * 
+ *
  * @example
  * ```typescript
  * const issues: Issue[] = [
  *   { original: "text", char_index: 0, subcategory: "spelling", category: IssueCategory.Grammar },
  *   { original: "word", char_index: 5, subcategory: "complex", category: IssueCategory.SimpleVocab }
  * ];
- * 
+ *
  * const categorized = categorizeIssues(issues);
  * console.log(categorized.grammar); // Issue[]
  * ```
- * 
+ *
  * @example
  * ```typescript
  * const issuesWithSuggestions: IssueWithSuggestion[] = [
  *   { original: "text", char_index: 0, subcategory: "spelling", category: IssueCategory.Grammar, suggestion: "correction" }
  * ];
- * 
+ *
  * const categorized = categorizeIssues(issuesWithSuggestions);
  * console.log(categorized.grammar[0].suggestion); // TypeScript knows this exists
  * ```
@@ -88,7 +88,7 @@ export function categorizeIssues<T extends Issue>(issues: T[]): CategorizedIssue
 
 /**
  * Gets the count of issues for each category
- * 
+ *
  * @param issues - Array of issues to count
  * @returns Object with issue counts by category
  */
@@ -112,18 +112,18 @@ export function getIssueCounts<T extends Issue>(issues: T[]): Record<IssueCatego
 
 /**
  * Gets issues for a specific category with full type safety
- * 
+ *
  * @param issues - Array of issues to filter
  * @param category - Category to filter by
  * @returns Array of issues for the specified category
  */
 export function getIssuesByCategory<T extends Issue>(issues: T[], category: IssueCategory): T[] {
-  return issues.filter(issue => issue.category === category);
+  return issues.filter((issue) => issue.category === category);
 }
 
 /**
  * Type guard to check if an issue has a suggestion
- * 
+ *
  * @param issue - Issue to check
  * @returns True if the issue has a suggestion
  */
@@ -133,7 +133,7 @@ export function hasSuggestion(issue: Issue): issue is IssueWithSuggestion {
 
 /**
  * Gets only issues that have suggestions
- * 
+ *
  * @param issues - Array of issues to filter
  * @returns Array of issues with suggestions
  */
@@ -143,10 +143,10 @@ export function getIssuesWithSuggestions(issues: Issue[]): IssueWithSuggestion[]
 
 /**
  * Gets only issues without suggestions
- * 
+ *
  * @param issues - Array of issues to filter
  * @returns Array of issues without suggestions
  */
 export function getIssuesWithoutSuggestions(issues: Issue[]): Issue[] {
-  return issues.filter(issue => !hasSuggestion(issue));
-} 
+  return issues.filter((issue) => !hasSuggestion(issue));
+}
