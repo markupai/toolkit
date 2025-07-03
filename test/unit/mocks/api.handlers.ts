@@ -282,6 +282,7 @@ const styleHandlers = {
     poll: http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style/checks/:workflowId`, () => {
       return HttpResponse.json({
         status: Status.Completed,
+        workflow_id: 'test-workflow-id',
         style_guide_id: 'test-style-guide-id',
         scores: {
           quality: {
@@ -346,6 +347,7 @@ const styleHandlers = {
     poll: http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style/suggestions/:workflowId`, () => {
       return HttpResponse.json({
         status: Status.Completed,
+        workflow_id: 'test-workflow-id',
         style_guide_id: 'test-style-guide-id',
         scores: {
           quality: {

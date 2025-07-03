@@ -1,4 +1,4 @@
-import type { ResponseBase, Status } from '../../utils/api.types';
+import type { ResponseBase } from '../../utils/api.types';
 
 // Enums
 export interface StyleAnalysisSubmitResp extends ResponseBase {
@@ -62,8 +62,7 @@ export interface StyleScores {
     issues: number;
   };
 }
-export interface StyleAnalysisSuccessResp {
-  status: Status;
+export interface StyleAnalysisSuccessResp extends ResponseBase {
   style_guide_id: string;
   scores: StyleScores;
   issues: Issue[];

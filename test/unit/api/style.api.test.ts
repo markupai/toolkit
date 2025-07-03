@@ -188,6 +188,7 @@ describe('Style API Unit Tests', () => {
 
       const result = await styleCheck(mockStyleAnalysisRequest, mockConfig);
       expect(result.status).toBe(Status.Completed);
+      expect(result.workflow_id).toBe(mockWorkflowId);
       expect(result.style_guide_id).toBe(mockStyleGuideId);
       expect(result.scores).toBeDefined();
       expect(result.issues).toBeDefined();
@@ -198,6 +199,7 @@ describe('Style API Unit Tests', () => {
 
       const result = await styleSuggestions(mockStyleAnalysisRequest, mockConfig);
       expect(result.status).toBe(Status.Completed);
+      expect(result.workflow_id).toBe(mockWorkflowId);
       expect(result.style_guide_id).toBe(mockStyleGuideId);
       expect(result.scores).toBeDefined();
       expect(result.issues).toBeDefined();
@@ -208,6 +210,7 @@ describe('Style API Unit Tests', () => {
 
       const result = await styleRewrite(mockStyleAnalysisRequest, mockConfig);
       expect(result.status).toBe(Status.Completed);
+      expect(result.workflow_id).toBe(mockWorkflowId);
       expect(result.style_guide_id).toBe(mockStyleGuideId);
       expect(result.scores).toBeDefined();
       expect(result.issues).toBeDefined();
@@ -238,6 +241,7 @@ describe('Style API Unit Tests', () => {
 
       const result = await styleCheck(requestWithDocumentName, mockConfig);
       expect(result.status).toBe(Status.Completed);
+      expect(result.workflow_id).toBe(mockWorkflowId);
       expect(result.style_guide_id).toBe(mockStyleGuideId);
       expect(result.scores).toBeDefined();
       expect(result.issues).toBeDefined();
@@ -253,6 +257,7 @@ describe('Style API Unit Tests', () => {
 
       const result = await styleSuggestions(requestWithDocumentName, mockConfig);
       expect(result.status).toBe(Status.Completed);
+      expect(result.workflow_id).toBe(mockWorkflowId);
       expect(result.style_guide_id).toBe(mockStyleGuideId);
       expect(result.scores).toBeDefined();
       expect(result.issues).toBeDefined();
@@ -268,6 +273,7 @@ describe('Style API Unit Tests', () => {
 
       const result = await styleRewrite(requestWithDocumentName, mockConfig);
       expect(result.status).toBe(Status.Completed);
+      expect(result.workflow_id).toBe(mockWorkflowId);
       expect(result.style_guide_id).toBe(mockStyleGuideId);
       expect(result.scores).toBeDefined();
       expect(result.issues).toBeDefined();
@@ -281,6 +287,7 @@ describe('Style API Unit Tests', () => {
 
       const result = await getStyleCheck(mockWorkflowId, mockConfig);
       expect(result.status).toBe(Status.Completed);
+      expect(result.workflow_id).toBe(mockWorkflowId);
       expect(result.style_guide_id).toBe(mockStyleGuideId);
       expect(result.scores).toBeDefined();
       expect(result.issues).toBeDefined();

@@ -157,15 +157,21 @@ export async function pollWorkflowForResult<T>(workflowId: string, config: ApiCo
 
       const data = (await response.json()) as ResponseBase;
 
+      // Add workflow_id to the response for consistency
+      const dataWithWorkflowId = {
+        ...data,
+        workflow_id: workflowId,
+      };
+
       // Normalize status to match enum values
-      const normalizedStatus = data.status.toLowerCase() as Status;
+      const normalizedStatus = dataWithWorkflowId.status.toLowerCase() as Status;
 
       if (normalizedStatus === Status.Failed) {
         throw new AcrolinxError(`Workflow failed with status: ${Status.Failed}`);
       }
 
       if (normalizedStatus === Status.Completed) {
-        return data as T;
+        return dataWithWorkflowId as T;
       }
 
       if (normalizedStatus === Status.Running || normalizedStatus === Status.Queued) {
@@ -174,7 +180,7 @@ export async function pollWorkflowForResult<T>(workflowId: string, config: ApiCo
         return poll();
       }
 
-      throw new AcrolinxError(`Unexpected workflow status: ${data.status}`);
+      throw new AcrolinxError(`Unexpected workflow status: ${dataWithWorkflowId.status}`);
     } catch (error) {
       if (error instanceof AcrolinxError) {
         console.error(`Polling error (attempt ${attempts + 1}/${maxAttempts}):`, error.message);

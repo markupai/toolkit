@@ -284,6 +284,8 @@ describe('Style API Integration Tests', () => {
       );
 
       expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+      expect(typeof response.workflow_id).toBe('string');
       expect(response.check_options).toBeDefined();
       expect(response.check_options.style_guide).toBeDefined();
       expect(response.check_options.style_guide.style_guide_type).toBeDefined();
@@ -348,6 +350,8 @@ describe('Style API Integration Tests', () => {
       );
 
       expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+      expect(typeof response.workflow_id).toBe('string');
       expect(response.check_options).toBeDefined();
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
@@ -371,6 +375,8 @@ describe('Style API Integration Tests', () => {
       );
 
       expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+      expect(typeof response.workflow_id).toBe('string');
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
       expect(response.scores.clarity).toBeDefined();
@@ -399,6 +405,8 @@ describe('Style API Integration Tests', () => {
       );
 
       expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+      expect(typeof response.workflow_id).toBe('string');
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
       expect(response.scores.clarity).toBeDefined();
@@ -426,6 +434,8 @@ describe('Style API Integration Tests', () => {
       );
 
       expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+      expect(typeof response.workflow_id).toBe('string');
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
       expect(response.scores.clarity).toBeDefined();
@@ -466,6 +476,8 @@ describe('Style API Integration Tests', () => {
       );
 
       expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+      expect(typeof response.workflow_id).toBe('string');
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
       expect(response.scores.clarity).toBeDefined();
