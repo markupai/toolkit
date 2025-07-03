@@ -194,6 +194,22 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
+    it('should submit a style check with custom document name', async () => {
+      const response = await submitStyleCheck(
+        {
+          content: testContent,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'integration-test-document.txt',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+    });
+
     it('should submit a style suggestion', async () => {
       const response = await submitStyleSuggestion(
         {
@@ -209,6 +225,22 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
+    it('should submit a style suggestion with custom document name', async () => {
+      const response = await submitStyleSuggestion(
+        {
+          content: testContent,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'suggestions-test-document.txt',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+    });
+
     it('should submit a style rewrite', async () => {
       const response = await submitStyleRewrite(
         {
@@ -216,6 +248,22 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+    });
+
+    it('should submit a style rewrite with custom document name', async () => {
+      const response = await submitStyleRewrite(
+        {
+          content: testContent,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'rewrite-test-document.txt',
         },
         config,
       );
@@ -287,6 +335,29 @@ describe('Style API Integration Tests', () => {
       }
     });
 
+    it('should submit a style check with custom document name and get result', async () => {
+      const response = await styleCheck(
+        {
+          content: testContent,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'custom-check-document.txt',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.check_options).toBeDefined();
+      expect(response.scores).toBeDefined();
+      expect(response.scores.quality).toBeDefined();
+      expect(response.scores.clarity).toBeDefined();
+      expect(response.scores.grammar).toBeDefined();
+      expect(response.scores.style_guide).toBeDefined();
+      expect(response.scores.tone).toBeDefined();
+      expect(response.scores.terminology).toBeDefined();
+    });
+
     // The style suggestions endpoint is currently throwing errors
     it('should submit a style suggestion and get result', async () => {
       const response = await styleSuggestions(
@@ -315,6 +386,34 @@ describe('Style API Integration Tests', () => {
       }
     });
 
+    it('should submit a style suggestion with custom document name and get result', async () => {
+      const response = await styleSuggestions(
+        {
+          content: testContent,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'custom-suggestions-document.txt',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.scores).toBeDefined();
+      expect(response.scores.quality).toBeDefined();
+      expect(response.scores.clarity).toBeDefined();
+      expect(response.scores.grammar).toBeDefined();
+      expect(response.scores.style_guide).toBeDefined();
+      expect(response.scores.tone).toBeDefined();
+      expect(response.scores.terminology).toBeDefined();
+
+      if (response.issues && response.issues.length > 0) {
+        const issue = response.issues[0];
+        expect(issue.suggestion).toBeDefined();
+        expect(typeof issue.suggestion).toBe('string');
+      }
+    });
+
     it('should submit a style rewrite and get result', async () => {
       const response = await styleRewrite(
         {
@@ -322,6 +421,46 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.scores).toBeDefined();
+      expect(response.scores.quality).toBeDefined();
+      expect(response.scores.clarity).toBeDefined();
+      expect(response.scores.grammar).toBeDefined();
+      expect(response.scores.style_guide).toBeDefined();
+      expect(response.scores.tone).toBeDefined();
+      expect(response.scores.terminology).toBeDefined();
+
+      // Test rewrite and rewrite_scores
+      expect(response.rewrite).toBeDefined();
+      expect(typeof response.rewrite).toBe('string');
+
+      expect(response.rewrite_scores).toBeDefined();
+      expect(response.rewrite_scores.quality).toBeDefined();
+      expect(response.rewrite_scores.clarity).toBeDefined();
+      expect(response.rewrite_scores.grammar).toBeDefined();
+      expect(response.rewrite_scores.style_guide).toBeDefined();
+      expect(response.rewrite_scores.tone).toBeDefined();
+      expect(response.rewrite_scores.terminology).toBeDefined();
+
+      if (response.issues && response.issues.length > 0) {
+        const issue = response.issues[0];
+        expect(issue.suggestion).toBeDefined();
+        expect(typeof issue.suggestion).toBe('string');
+      }
+    });
+
+    it('should submit a style rewrite with custom document name and get result', async () => {
+      const response = await styleRewrite(
+        {
+          content: testContent,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'custom-rewrite-document.txt',
         },
         config,
       );

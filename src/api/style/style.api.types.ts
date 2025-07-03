@@ -95,6 +95,7 @@ export interface StyleAnalysisReq {
   style_guide: string; // Can be style guide ID or name (e.g. 'ap', 'chicago', 'microsoft')
   dialect: string;
   tone: string;
+  documentName?: string; // Optional document name for the file upload
 }
 
 export interface StyleGuide {

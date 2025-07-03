@@ -28,7 +28,8 @@ export const API_ENDPOINTS = {
 // Helper function to create form data from style analysis request
 function createStyleFormData(request: StyleAnalysisReq): FormData {
   const formData = new FormData();
-  formData.append('file_upload', new Blob([request.content], { type: 'text/plain' }));
+  const filename = request.documentName || 'unknown.txt';
+  formData.append('file_upload', new Blob([request.content], { type: 'text/plain' }), filename);
   formData.append('style_guide', request.style_guide || '');
   formData.append('dialect', (request.dialect || 'american_english').toString());
   formData.append('tone', (request.tone || 'formal').toString());

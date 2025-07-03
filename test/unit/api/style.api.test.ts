@@ -153,6 +153,33 @@ describe('Style API Unit Tests', () => {
         'Could not validate credentials',
       );
     });
+
+    it('should submit style check with custom document name', async () => {
+      server.use(apiHandlers.style.checks.success);
+
+      const requestWithDocumentName = {
+        ...mockStyleAnalysisRequest,
+        documentName: 'custom-document.txt',
+      };
+
+      const result = await submitStyleCheck(requestWithDocumentName, mockConfig);
+      expect(result).toEqual({
+        status: Status.Running,
+        workflow_id: mockWorkflowId,
+        message: 'Style check workflow started successfully.',
+      });
+    });
+
+    it('should submit style check without document name (uses default)', async () => {
+      server.use(apiHandlers.style.checks.success);
+
+      const result = await submitStyleCheck(mockStyleAnalysisRequest, mockConfig);
+      expect(result).toEqual({
+        status: Status.Running,
+        workflow_id: mockWorkflowId,
+        message: 'Style check workflow started successfully.',
+      });
+    });
   });
 
   describe('Style Analysis with Polling', () => {
@@ -199,6 +226,52 @@ describe('Style API Unit Tests', () => {
       expect(typeof result.rewrite_scores.terminology.issues).toBe('number');
       expect(result.rewrite_scores.terminology.score).toBe(90);
       expect(result.rewrite_scores.terminology.issues).toBe(0);
+    });
+
+    it('should perform style check with polling and custom document name', async () => {
+      server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
+
+      const requestWithDocumentName = {
+        ...mockStyleAnalysisRequest,
+        documentName: 'test-document.txt',
+      };
+
+      const result = await styleCheck(requestWithDocumentName, mockConfig);
+      expect(result.status).toBe(Status.Completed);
+      expect(result.style_guide_id).toBe(mockStyleGuideId);
+      expect(result.scores).toBeDefined();
+      expect(result.issues).toBeDefined();
+    });
+
+    it('should perform style suggestions with polling and custom document name', async () => {
+      server.use(apiHandlers.style.suggestions.success, apiHandlers.style.suggestions.poll);
+
+      const requestWithDocumentName = {
+        ...mockStyleAnalysisRequest,
+        documentName: 'suggestions-document.txt',
+      };
+
+      const result = await styleSuggestions(requestWithDocumentName, mockConfig);
+      expect(result.status).toBe(Status.Completed);
+      expect(result.style_guide_id).toBe(mockStyleGuideId);
+      expect(result.scores).toBeDefined();
+      expect(result.issues).toBeDefined();
+    });
+
+    it('should perform style rewrite with polling and custom document name', async () => {
+      server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
+
+      const requestWithDocumentName = {
+        ...mockStyleAnalysisRequest,
+        documentName: 'rewrite-document.txt',
+      };
+
+      const result = await styleRewrite(requestWithDocumentName, mockConfig);
+      expect(result.status).toBe(Status.Completed);
+      expect(result.style_guide_id).toBe(mockStyleGuideId);
+      expect(result.scores).toBeDefined();
+      expect(result.issues).toBeDefined();
+      expect(result.rewrite).toBeDefined();
     });
   });
 
