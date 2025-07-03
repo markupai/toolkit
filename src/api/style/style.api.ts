@@ -31,7 +31,7 @@ function createStyleFormData(request: StyleAnalysisReq): FormData {
   formData.append('file_upload', new Blob([request.content], { type: 'text/plain' }));
   formData.append('style_guide', request.style_guide || '');
   formData.append('dialect', (request.dialect || 'american_english').toString());
-  formData.append('tone', (request.tone || 'neutral').toString());
+  formData.append('tone', (request.tone || 'formal').toString());
   return formData;
 }
 
