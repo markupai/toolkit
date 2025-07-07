@@ -8,12 +8,42 @@ export const DEFAULT_PLATFORM_URL_DEV = 'https://app.dev.acrolinx-cloud.net';
 
 function getCommonHeaders(apiKey: string): HeadersInit {
   return {
-    Authorization: `${apiKey}`,
+    Authorization: `Bearer ${apiKey}`,
   };
 }
 
 function getPlatformUrl(config: Config): string {
   return config.platformUrl || DEFAULT_PLATFORM_URL_DEV;
+}
+
+// Helper function to get the current platform URL for debugging
+export function getCurrentPlatformUrl(config: Config): string {
+  return getPlatformUrl(config);
+}
+
+// Helper function to verify platform URL is reachable
+export async function verifyPlatformUrl(config: Config): Promise<{ success: boolean; url: string; error?: string }> {
+  const platformUrl = getPlatformUrl(config);
+  try {
+    // Fix double slash issue when combining URLs
+    const baseUrl = platformUrl.endsWith('/') ? platformUrl.slice(0, -1) : platformUrl;
+    const fullUrl = `${baseUrl}/v1/version`;
+    const response = await fetch(fullUrl, {
+      method: 'GET',
+      headers: getCommonHeaders(config.apiKey),
+    });
+    return {
+      success: response.ok,
+      url: platformUrl,
+      error: response.ok ? undefined : `HTTP ${response.status}: ${response.statusText}`,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      url: platformUrl,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
 }
 
 export async function getData<T>(config: ApiConfig): Promise<T> {
@@ -23,9 +53,23 @@ export async function getData<T>(config: ApiConfig): Promise<T> {
       headers: getCommonHeaders(config.apiKey),
     };
     const platformUrl = getPlatformUrl(config);
-    const response = await fetch(`${platformUrl}${config.endpoint}`, fetchOptions);
+    // Fix double slash issue when combining URLs
+    const baseUrl = platformUrl.endsWith('/') ? platformUrl.slice(0, -1) : platformUrl;
+    const endpoint = config.endpoint.startsWith('/') ? config.endpoint : `/${config.endpoint}`;
+    const fullUrl = `${baseUrl}${endpoint}`;
+    
+    // Debug: Log the request details (can be removed in production)
+    // console.error('=== SDK Request Debug ===');
+    // console.error('Platform URL:', platformUrl);
+    // console.error('Endpoint:', config.endpoint);
+    // console.error('Full URL:', fullUrl);
+    // console.error('Headers:', JSON.stringify(fetchOptions.headers, null, 2));
+    // console.error('========================');
+    
+    const response = await fetch(fullUrl, fetchOptions);
 
     if (!response.ok) {
+      // console.error('Request failed with status:', response.status, response.statusText);
       const errorData = await response.json().catch(() => ({}));
       throw AcrolinxError.fromResponse(response, errorData);
     }
@@ -50,7 +94,11 @@ export async function postData<T>(config: ApiConfig, body: BodyInit): Promise<T>
       body: body,
     };
     const platformUrl = getPlatformUrl(config);
-    const response = await fetch(`${platformUrl}${config.endpoint}`, fetchOptions);
+    // Fix double slash issue when combining URLs
+    const baseUrl = platformUrl.endsWith('/') ? platformUrl.slice(0, -1) : platformUrl;
+    const endpoint = config.endpoint.startsWith('/') ? config.endpoint : `/${config.endpoint}`;
+    const fullUrl = `${baseUrl}${endpoint}`;
+    const response = await fetch(fullUrl, fetchOptions);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -77,7 +125,11 @@ export async function putData<T>(config: ApiConfig, body: BodyInit): Promise<T> 
       body: body,
     };
     const platformUrl = getPlatformUrl(config);
-    const response = await fetch(`${platformUrl}${config.endpoint}`, fetchOptions);
+    // Fix double slash issue when combining URLs
+    const baseUrl = platformUrl.endsWith('/') ? platformUrl.slice(0, -1) : platformUrl;
+    const endpoint = config.endpoint.startsWith('/') ? config.endpoint : `/${config.endpoint}`;
+    const fullUrl = `${baseUrl}${endpoint}`;
+    const response = await fetch(fullUrl, fetchOptions);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -103,7 +155,11 @@ export async function deleteData<T>(config: ApiConfig): Promise<T> {
       headers: getCommonHeaders(config.apiKey),
     };
     const platformUrl = getPlatformUrl(config);
-    const response = await fetch(`${platformUrl}${config.endpoint}`, fetchOptions);
+    // Fix double slash issue when combining URLs
+    const baseUrl = platformUrl.endsWith('/') ? platformUrl.slice(0, -1) : platformUrl;
+    const endpoint = config.endpoint.startsWith('/') ? config.endpoint : `/${config.endpoint}`;
+    const fullUrl = `${baseUrl}${endpoint}`;
+    const response = await fetch(fullUrl, fetchOptions);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -140,9 +196,13 @@ export async function pollWorkflowForResult<T>(workflowId: string, config: ApiCo
 
     try {
       const platformUrl = getPlatformUrl(config);
+      // Fix double slash issue when combining URLs
+      const baseUrl = platformUrl.endsWith('/') ? platformUrl.slice(0, -1) : platformUrl;
+      const endpoint = config.endpoint.startsWith('/') ? config.endpoint : `/${config.endpoint}`;
       // Ensure there's exactly one slash between endpoint and workflowId
-      const normalizedEndpoint = config.endpoint.endsWith('/') ? config.endpoint : `${config.endpoint}/`;
-      const response = await fetch(`${platformUrl}${normalizedEndpoint}${workflowId}`, {
+      const normalizedEndpoint = endpoint.endsWith('/') ? endpoint : `${endpoint}/`;
+      const fullUrl = `${baseUrl}${normalizedEndpoint}${workflowId}`;
+      const response = await fetch(fullUrl, {
         method: 'GET',
         headers: {
           ...getCommonHeaders(config.apiKey),
