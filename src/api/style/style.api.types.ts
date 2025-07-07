@@ -90,7 +90,7 @@ export interface StyleAnalysisErrorResp extends ResponseBase {
 }
 
 export interface StyleAnalysisReq {
-  content: string;
+  content: string | File;
   style_guide: string; // Can be style guide ID or name (e.g. 'ap', 'chicago', 'microsoft')
   dialect: string;
   tone: string;

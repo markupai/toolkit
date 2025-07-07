@@ -506,6 +506,213 @@ describe('Style API Integration Tests', () => {
     });
   });
 
+  describe('Style Operations with File Content', () => {
+    const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft;
+
+    // Helper function to create a File object from the batteries.pdf
+    async function createTestFile(): Promise<File> {
+      const pdfPath = join(__dirname, '../test-data/batteries.pdf');
+      const pdfBuffer = readFileSync(pdfPath);
+      return new File([pdfBuffer], 'batteries.pdf', { type: 'application/pdf' });
+    }
+
+    it('should submit a style check with File content', async () => {
+      const testFile = await createTestFile();
+
+      const response = await submitStyleCheck(
+        {
+          content: testFile,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'batteries-integration-test.pdf',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+    });
+
+    it('should submit a style suggestion with File content', async () => {
+      const testFile = await createTestFile();
+
+      const response = await submitStyleSuggestion(
+        {
+          content: testFile,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'batteries-suggestions-test.pdf',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+    });
+
+    it('should submit a style rewrite with File content', async () => {
+      const testFile = await createTestFile();
+
+      const response = await submitStyleRewrite(
+        {
+          content: testFile,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'batteries-rewrite-test.pdf',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+    });
+
+    it('should submit a style check with File content and get result', async () => {
+      const testFile = await createTestFile();
+
+      const response = await styleCheck(
+        {
+          content: testFile,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'batteries-check-result-test.pdf',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+      expect(typeof response.workflow_id).toBe('string');
+      expect(response.check_options).toBeDefined();
+      expect(response.check_options.style_guide).toBeDefined();
+      expect(response.check_options.style_guide.style_guide_type).toBeDefined();
+      expect(response.check_options.style_guide.style_guide_id).toBeDefined();
+      expect(typeof response.check_options.style_guide.style_guide_type).toBe('string');
+      expect(typeof response.check_options.style_guide.style_guide_id).toBe('string');
+      expect(response.check_options.style_guide.style_guide_id).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      );
+      expect(response.check_options.dialect).toBe(STYLE_DEFAULTS.dialects.americanEnglish);
+      expect(response.check_options.tone).toBe(STYLE_DEFAULTS.tones.formal);
+
+      // Test scores structure
+      expect(response.scores).toBeDefined();
+      expect(response.scores.quality).toBeDefined();
+      expect(typeof response.scores.quality.score).toBe('number');
+      expect(response.scores.clarity).toBeDefined();
+      expect(response.scores.grammar).toBeDefined();
+      expect(response.scores.style_guide).toBeDefined();
+      expect(response.scores.tone).toBeDefined();
+      expect(response.scores.terminology).toBeDefined();
+    });
+
+    it('should submit a style suggestion with File content and get result', async () => {
+      const testFile = await createTestFile();
+
+      const response = await styleSuggestions(
+        {
+          content: testFile,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'batteries-suggestions-result-test.pdf',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+      expect(typeof response.workflow_id).toBe('string');
+      expect(response.scores).toBeDefined();
+      expect(response.scores.quality).toBeDefined();
+      expect(response.scores.clarity).toBeDefined();
+      expect(response.scores.grammar).toBeDefined();
+      expect(response.scores.style_guide).toBeDefined();
+      expect(response.scores.tone).toBeDefined();
+      expect(response.scores.terminology).toBeDefined();
+
+      if (response.issues && response.issues.length > 0) {
+        const issue = response.issues[0];
+        expect(issue.suggestion).toBeDefined();
+        expect(typeof issue.suggestion).toBe('string');
+      }
+    });
+
+    it('should submit a style rewrite with File content and get result', async () => {
+      const testFile = await createTestFile();
+
+      const response = await styleRewrite(
+        {
+          content: testFile,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'batteries-rewrite-result-test.pdf',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+      expect(typeof response.workflow_id).toBe('string');
+      expect(response.scores).toBeDefined();
+      expect(response.scores.quality).toBeDefined();
+      expect(response.scores.clarity).toBeDefined();
+      expect(response.scores.grammar).toBeDefined();
+      expect(response.scores.style_guide).toBeDefined();
+      expect(response.scores.tone).toBeDefined();
+      expect(response.scores.terminology).toBeDefined();
+
+      // Test rewrite and rewrite_scores
+      expect(response.rewrite).toBeDefined();
+      expect(typeof response.rewrite).toBe('string');
+
+      expect(response.rewrite_scores).toBeDefined();
+      expect(response.rewrite_scores.quality).toBeDefined();
+      expect(response.rewrite_scores.clarity).toBeDefined();
+      expect(response.rewrite_scores.grammar).toBeDefined();
+      expect(response.rewrite_scores.style_guide).toBeDefined();
+      expect(response.rewrite_scores.tone).toBeDefined();
+      expect(response.rewrite_scores.terminology).toBeDefined();
+
+      if (response.issues && response.issues.length > 0) {
+        const issue = response.issues[0];
+        expect(issue.suggestion).toBeDefined();
+        expect(typeof issue.suggestion).toBe('string');
+      }
+    });
+
+    it('should handle File content without custom document name', async () => {
+      const testFile = await createTestFile();
+
+      const response = await styleCheck(
+        {
+          content: testFile,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          // No documentName - should use default
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+      expect(typeof response.workflow_id).toBe('string');
+      expect(response.scores).toBeDefined();
+      expect(response.scores.quality).toBeDefined();
+      expect(response.scores.clarity).toBeDefined();
+      expect(response.scores.grammar).toBeDefined();
+      expect(response.scores.style_guide).toBeDefined();
+      expect(response.scores.tone).toBeDefined();
+      expect(response.scores.terminology).toBeDefined();
+    });
+  });
+
   describe('Style Guide Cleanup', () => {
     it('should delete all integration test style guides', async () => {
       // List all style guides

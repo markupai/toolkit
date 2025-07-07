@@ -180,6 +180,26 @@ describe('Style API Unit Tests', () => {
         message: 'Style check workflow started successfully.',
       });
     });
+
+    it('should submit style check with File content successfully', async () => {
+      server.use(apiHandlers.style.checks.success);
+
+      const file = new File(['test file content'], 'test.txt', { type: 'text/plain' });
+      const requestWithFile = {
+        content: file,
+        style_guide: 'ap',
+        dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+        tone: STYLE_DEFAULTS.tones.formal,
+        documentName: 'custom-file.txt',
+      };
+
+      const result = await submitStyleCheck(requestWithFile, mockConfig);
+      expect(result).toEqual({
+        status: Status.Running,
+        workflow_id: mockWorkflowId,
+        message: 'Style check workflow started successfully.',
+      });
+    });
   });
 
   describe('Style Analysis with Polling', () => {
@@ -278,6 +298,25 @@ describe('Style API Unit Tests', () => {
       expect(result.scores).toBeDefined();
       expect(result.issues).toBeDefined();
       expect(result.rewrite).toBeDefined();
+    });
+
+    it('should perform style check with polling using File content', async () => {
+      server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
+
+      const file = new File(['test file content for polling'], 'polling-test.txt', { type: 'text/plain' });
+      const requestWithFile = {
+        content: file,
+        style_guide: 'ap',
+        dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+        tone: STYLE_DEFAULTS.tones.formal,
+      };
+
+      const result = await styleCheck(requestWithFile, mockConfig);
+      expect(result.status).toBe(Status.Completed);
+      expect(result.workflow_id).toBe(mockWorkflowId);
+      expect(result.style_guide_id).toBe(mockStyleGuideId);
+      expect(result.scores).toBeDefined();
+      expect(result.issues).toBeDefined();
     });
   });
 
