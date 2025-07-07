@@ -148,6 +148,40 @@ export async function putData<T>(config: ApiConfig, body: BodyInit): Promise<T> 
   }
 }
 
+export async function patchData<T>(config: ApiConfig, body: BodyInit): Promise<T> {
+  try {
+    const fetchOptions: RequestInit = {
+      method: 'PATCH',
+      headers: {
+        ...getCommonHeaders(config.apiKey),
+        'Content-Type': 'application/json',
+      },
+      body: body,
+    };
+    const platformUrl = getPlatformUrl(config);
+    // Fix double slash issue when combining URLs
+    const baseUrl = platformUrl.endsWith('/') ? platformUrl.slice(0, -1) : platformUrl;
+    const endpoint = config.endpoint.startsWith('/') ? config.endpoint : `/${config.endpoint}`;
+    const fullUrl = `${baseUrl}${endpoint}`;
+    const response = await fetch(fullUrl, fetchOptions);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw AcrolinxError.fromResponse(response, errorData);
+    }
+
+    const data = await response.json();
+    console.log('Response data:', JSON.stringify(data, null, 2));
+    return data;
+  } catch (error) {
+    if (error instanceof AcrolinxError) {
+      throw error;
+    }
+    console.error('Unknown HTTP error:', error);
+    throw new AcrolinxError(error instanceof Error ? error.message : 'Unknown error occurred');
+  }
+}
+
 export async function deleteData<T>(config: ApiConfig): Promise<T> {
   try {
     const fetchOptions: RequestInit = {

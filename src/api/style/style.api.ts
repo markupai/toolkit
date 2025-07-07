@@ -1,4 +1,4 @@
-import { getData, postData, putData, deleteData } from '../../utils/api';
+import { getData, postData, patchData, deleteData } from '../../utils/api';
 import type {
   StyleGuides,
   StyleGuide,
@@ -196,7 +196,7 @@ export async function updateStyleGuide(
     ...config,
     endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`,
   };
-  return putData<StyleGuide>(apiConfig, JSON.stringify(updates));
+  return patchData<StyleGuide>(apiConfig, JSON.stringify(updates));
 }
 
 // Delete a style guide by ID
