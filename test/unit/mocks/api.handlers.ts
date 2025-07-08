@@ -237,7 +237,7 @@ const styleHandlers = {
     createError: http.post(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
       return HttpResponse.json({ message: 'Failed to create style guide' }, { status: 400 });
     }),
-    updateSuccess: http.put(
+    updateSuccess: http.patch(
       `${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides/:styleGuideId`,
       async ({ request, params }) => {
         // Verify that the request contains JSON with name
@@ -258,7 +258,7 @@ const styleHandlers = {
         });
       },
     ),
-    updateError: http.put(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides/:styleGuideId`, () => {
+    updateError: http.patch(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides/:styleGuideId`, () => {
       return HttpResponse.json({ message: 'Failed to update style guide' }, { status: 400 });
     }),
     deleteSuccess: http.delete(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides/:styleGuideId`, () => {
