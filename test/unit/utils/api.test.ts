@@ -5,10 +5,12 @@ import {
   putData,
   deleteData,
   pollWorkflowForResult,
+  verifyPlatformUrl,
+  getCurrentPlatformUrl,
   DEFAULT_PLATFORM_URL_DEV,
 } from '../../../src/utils/api';
 import { ResponseBase, Status } from '../../../src/utils/api.types';
-import type { ApiConfig } from '../../../src/utils/api.types';
+import type { ApiConfig, Config } from '../../../src/utils/api.types';
 import { server, handlers } from '../setup';
 import { http } from 'msw';
 import { HttpResponse } from 'msw';
@@ -18,6 +20,10 @@ const mockEndpoint = '/test-endpoint';
 const mockWorkflowId = 'test-workflow-id';
 const mockConfig: ApiConfig = {
   endpoint: mockEndpoint,
+  apiKey: mockApiKey,
+};
+
+const mockBaseConfig: Config = {
   apiKey: mockApiKey,
 };
 
@@ -108,6 +114,216 @@ describe('API Utilities Unit Tests', () => {
 
       const result = await getData(customConfig);
       expect(result).toEqual({ data: 'custom data' });
+    });
+  });
+
+  describe('Platform URL Utilities', () => {
+    describe('getCurrentPlatformUrl', () => {
+      it('should return default platform URL when no custom URL is provided', () => {
+        const result = getCurrentPlatformUrl(mockBaseConfig);
+        expect(result).toBe(DEFAULT_PLATFORM_URL_DEV);
+      });
+
+      it('should return custom platform URL when provided', () => {
+        const customConfig: Config = {
+          ...mockBaseConfig,
+          platformUrl: 'https://custom.example.com',
+        };
+        const result = getCurrentPlatformUrl(customConfig);
+        expect(result).toBe('https://custom.example.com');
+      });
+    });
+
+    describe('verifyPlatformUrl', () => {
+      it('should return success when platform URL is reachable', async () => {
+        server.use(
+          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+            return HttpResponse.json({ version: '1.0.0' }, { status: 200 });
+          }),
+        );
+
+        const result = await verifyPlatformUrl(mockBaseConfig);
+        expect(result).toEqual({
+          success: true,
+          url: DEFAULT_PLATFORM_URL_DEV,
+          error: undefined,
+        });
+      });
+
+      it('should return success when custom platform URL is reachable', async () => {
+        const customUrl = 'https://custom.example.com';
+        const customConfig: Config = {
+          ...mockBaseConfig,
+          platformUrl: customUrl,
+        };
+
+        server.use(
+          http.get(`${customUrl}/v1/style-guides`, () => {
+            return HttpResponse.json({ version: '1.0.0' }, { status: 200 });
+          }),
+        );
+
+        const result = await verifyPlatformUrl(customConfig);
+        expect(result).toEqual({
+          success: true,
+          url: customUrl,
+          error: undefined,
+        });
+      });
+
+      it('should handle platform URL with trailing slash', async () => {
+        const urlWithSlash = 'https://example.com/';
+        const customConfig: Config = {
+          ...mockBaseConfig,
+          platformUrl: urlWithSlash,
+        };
+
+        server.use(
+          http.get('https://example.com/v1/style-guides', () => {
+            return HttpResponse.json({ version: '1.0.0' }, { status: 200 });
+          }),
+        );
+
+        const result = await verifyPlatformUrl(customConfig);
+        expect(result).toEqual({
+          success: true,
+          url: urlWithSlash,
+          error: undefined,
+        });
+      });
+
+      it('should return error when platform URL returns non-200 status', async () => {
+        server.use(
+          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+            return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 });
+          }),
+        );
+
+        const result = await verifyPlatformUrl(mockBaseConfig);
+        expect(result).toEqual({
+          success: false,
+          url: DEFAULT_PLATFORM_URL_DEV,
+          error: 'HTTP 401: Unauthorized',
+        });
+      });
+
+      it('should return error when platform URL returns 404', async () => {
+        server.use(
+          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+            return HttpResponse.json({ error: 'Not Found' }, { status: 404 });
+          }),
+        );
+
+        const result = await verifyPlatformUrl(mockBaseConfig);
+        expect(result).toEqual({
+          success: false,
+          url: DEFAULT_PLATFORM_URL_DEV,
+          error: 'HTTP 404: Not Found',
+        });
+      });
+
+      it('should return error when platform URL returns 500', async () => {
+        server.use(
+          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+            return HttpResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+          }),
+        );
+
+        const result = await verifyPlatformUrl(mockBaseConfig);
+        expect(result).toEqual({
+          success: false,
+          url: DEFAULT_PLATFORM_URL_DEV,
+          error: 'HTTP 500: Internal Server Error',
+        });
+      });
+
+      it('should handle network errors gracefully', async () => {
+        server.use(
+          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+            return HttpResponse.error();
+          }),
+        );
+
+        const result = await verifyPlatformUrl(mockBaseConfig);
+        expect(result).toEqual({
+          success: false,
+          url: DEFAULT_PLATFORM_URL_DEV,
+          error: 'Failed to fetch',
+        });
+      });
+
+      it('should handle timeout errors', async () => {
+        server.use(
+          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+            return HttpResponse.error();
+          }),
+        );
+
+        const result = await verifyPlatformUrl(mockBaseConfig);
+        expect(result.success).toBe(false);
+        expect(result.url).toBe(DEFAULT_PLATFORM_URL_DEV);
+        expect(result.error).toBeDefined();
+      });
+
+      it('should handle DNS resolution errors', async () => {
+        const invalidUrl = 'https://invalid-domain-that-does-not-exist-12345.com';
+        const invalidConfig: Config = {
+          ...mockBaseConfig,
+          platformUrl: invalidUrl,
+        };
+
+        const result = await verifyPlatformUrl(invalidConfig);
+        expect(result.success).toBe(false);
+        expect(result.url).toBe(invalidUrl);
+        expect(result.error).toBeDefined();
+        // The exact error message may vary depending on the environment
+        expect(['Failed to fetch', 'fetch failed']).toContain(result.error);
+      });
+
+      it('should handle malformed URLs gracefully', async () => {
+        const malformedUrl = 'not-a-valid-url';
+        const malformedConfig: Config = {
+          ...mockBaseConfig,
+          platformUrl: malformedUrl,
+        };
+
+        const result = await verifyPlatformUrl(malformedConfig);
+        expect(result.success).toBe(false);
+        expect(result.url).toBe(malformedUrl);
+        expect(result.error).toBeDefined();
+        // The exact error message may vary depending on the environment
+        expect(['Failed to fetch', 'Failed to parse URL from not-a-valid-url/v1/style-guides']).toContain(result.error);
+      });
+
+      it('should handle empty response body gracefully', async () => {
+        server.use(
+          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+            return new HttpResponse(null, { status: 200 });
+          }),
+        );
+
+        const result = await verifyPlatformUrl(mockBaseConfig);
+        expect(result).toEqual({
+          success: true,
+          url: DEFAULT_PLATFORM_URL_DEV,
+          error: undefined,
+        });
+      });
+
+      it('should handle JSON parsing errors gracefully', async () => {
+        server.use(
+          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+            return new HttpResponse('Invalid JSON', { status: 200 });
+          }),
+        );
+
+        const result = await verifyPlatformUrl(mockBaseConfig);
+        expect(result).toEqual({
+          success: true,
+          url: DEFAULT_PLATFORM_URL_DEV,
+          error: undefined,
+        });
+      });
     });
   });
 

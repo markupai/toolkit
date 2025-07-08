@@ -69,7 +69,9 @@ function createFetchOptions(
 export async function verifyPlatformUrl(config: Config): Promise<{ success: boolean; url: string; error?: string }> {
   const platformUrl = getPlatformUrl(config);
   try {
-    const fullUrl = buildFullUrl(platformUrl, '/v1/version');
+    // TODO: This is a temporary fix to verify the platform URL is reachable.
+    // We should use a health check endpoint instead.
+    const fullUrl = buildFullUrl(platformUrl, '/v1/style-guides');
     const response = await fetch(fullUrl, {
       method: 'GET',
       headers: getCommonHeaders(config.apiKey),
