@@ -13,14 +13,10 @@ function getCommonHeaders(apiKey: string): HeadersInit {
 }
 
 function getPlatformUrl(config: Config): string {
-  // If platform is provided, handle it based on type
   if (config.platform) {
-    if (typeof config.platform === 'string') {
-      // If it's a string, return it directly (custom URL)
-      return config.platform;
-    } else {
-      // If it's an Environment enum, map to the appropriate URL
-      switch (config.platform) {
+    if (config.platform.type === 'environment') {
+      // Handle environment enum
+      switch (config.platform.value) {
         case Environment.Stage:
           return DEFAULT_PLATFORM_URL_STAGE;
         case Environment.Dev:
@@ -30,6 +26,9 @@ function getPlatformUrl(config: Config): string {
         default:
           return DEFAULT_PLATFORM_URL_PROD; // Default to prod
       }
+    } else {
+      // Handle custom URL
+      return config.platform.value;
     }
   }
 

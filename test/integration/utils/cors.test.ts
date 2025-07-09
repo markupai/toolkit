@@ -10,7 +10,7 @@ describe('CORS Integration Tests', () => {
     const apiKey = '';
     config = {
       apiKey,
-      platform: DEFAULT_PLATFORM_URL_DEV,
+      platform: { type: 'url', value: DEFAULT_PLATFORM_URL_DEV },
     };
   });
 

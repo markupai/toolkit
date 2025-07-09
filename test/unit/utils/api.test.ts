@@ -103,7 +103,7 @@ describe('API Utilities Unit Tests', () => {
       const customPlatformUrl = 'https://custom.example.com';
       const customConfig: ApiConfig = {
         ...mockConfig,
-        platform: customPlatformUrl,
+        platform: { type: 'url', value: customPlatformUrl },
       };
 
       server.use(
@@ -127,7 +127,7 @@ describe('API Utilities Unit Tests', () => {
       it('should return custom platform URL when provided', () => {
         const customConfig: Config = {
           ...mockBaseConfig,
-          platform: 'https://custom.example.com',
+          platform: { type: 'url', value: 'https://custom.example.com' },
         };
         const result = getCurrentPlatformUrl(customConfig);
         expect(result).toBe('https://custom.example.com');
@@ -154,7 +154,7 @@ describe('API Utilities Unit Tests', () => {
         const customUrl = 'https://custom.example.com';
         const customConfig: Config = {
           ...mockBaseConfig,
-          platform: customUrl,
+          platform: { type: 'url', value: customUrl },
         };
 
         server.use(
@@ -175,7 +175,7 @@ describe('API Utilities Unit Tests', () => {
         const urlWithSlash = 'https://example.com/';
         const customConfig: Config = {
           ...mockBaseConfig,
-          platform: urlWithSlash,
+          platform: { type: 'url', value: urlWithSlash },
         };
 
         server.use(
@@ -269,7 +269,7 @@ describe('API Utilities Unit Tests', () => {
         const invalidUrl = 'https://invalid-domain-that-does-not-exist-12345.com';
         const invalidConfig: Config = {
           ...mockBaseConfig,
-          platform: invalidUrl,
+          platform: { type: 'url', value: invalidUrl },
         };
 
         const result = await verifyPlatformUrl(invalidConfig);
@@ -284,7 +284,7 @@ describe('API Utilities Unit Tests', () => {
         const malformedUrl = 'not-a-valid-url';
         const malformedConfig: Config = {
           ...mockBaseConfig,
-          platform: malformedUrl,
+          platform: { type: 'url', value: malformedUrl },
         };
 
         const result = await verifyPlatformUrl(malformedConfig);

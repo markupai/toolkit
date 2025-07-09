@@ -25,7 +25,7 @@ describe('API Utilities Integration Tests', () => {
     }
     config = {
       apiKey,
-      platform: DEFAULT_PLATFORM_URL_DEV,
+      platform: { type: 'url', value: DEFAULT_PLATFORM_URL_DEV },
     };
   });
 
@@ -359,7 +359,7 @@ describe('API Utilities Integration Tests', () => {
       const invalidConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_GUIDES,
         apiKey: config.apiKey,
-        platform: 'https://invalid-domain-that-does-not-exist.com',
+        platform: { type: 'url', value: 'https://invalid-domain-that-does-not-exist.com' },
       };
 
       await expect(getData(invalidConfig)).rejects.toThrow();
@@ -369,7 +369,7 @@ describe('API Utilities Integration Tests', () => {
       const invalidConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_GUIDES,
         apiKey: config.apiKey,
-        platform: 'not-a-valid-url',
+        platform: { type: 'url', value: 'not-a-valid-url' },
       };
 
       await expect(getData(invalidConfig)).rejects.toThrow();
@@ -501,7 +501,7 @@ describe('API Utilities Integration Tests', () => {
       it('should return custom platform URL when configured', () => {
         const customConfig: Config = {
           ...config,
-          platform: 'https://custom.example.com',
+          platform: { type: 'url', value: 'https://custom.example.com' },
         };
         const result = getCurrentPlatformUrl(customConfig);
         expect(result).toBe('https://custom.example.com');
@@ -529,7 +529,7 @@ describe('API Utilities Integration Tests', () => {
       it('should handle platform URL with trailing slash', async () => {
         const configWithSlash: Config = {
           ...config,
-          platform: `${DEFAULT_PLATFORM_URL_DEV}/`,
+          platform: { type: 'url', value: `${DEFAULT_PLATFORM_URL_DEV}/` },
         };
         const result = await verifyPlatformUrl(configWithSlash);
         expect(result).toEqual({
@@ -542,7 +542,7 @@ describe('API Utilities Integration Tests', () => {
       it('should handle unauthorized access gracefully', async () => {
         const invalidConfig: Config = {
           apiKey: 'invalid-api-key',
-          platform: DEFAULT_PLATFORM_URL_DEV,
+          platform: { type: 'url', value: DEFAULT_PLATFORM_URL_DEV },
         };
         const result = await verifyPlatformUrl(invalidConfig);
         expect(result.success).toBe(false);
@@ -553,7 +553,7 @@ describe('API Utilities Integration Tests', () => {
       it('should handle network connectivity issues', async () => {
         const invalidConfig: Config = {
           ...config,
-          platform: 'https://invalid-domain-that-does-not-exist-12345.com',
+          platform: { type: 'url', value: 'https://invalid-domain-that-does-not-exist-12345.com' },
         };
         const result = await verifyPlatformUrl(invalidConfig);
         expect(result.success).toBe(false);
@@ -564,7 +564,7 @@ describe('API Utilities Integration Tests', () => {
       it('should handle malformed URLs gracefully', async () => {
         const malformedConfig: Config = {
           ...config,
-          platform: 'not-a-valid-url',
+          platform: { type: 'url', value: 'not-a-valid-url' },
         };
         const result = await verifyPlatformUrl(malformedConfig);
         expect(result.success).toBe(false);
@@ -576,7 +576,7 @@ describe('API Utilities Integration Tests', () => {
         // Test with demo URL which might return different status codes
         const demoConfig: Config = {
           ...config,
-          platform: 'https://app.acrolinx.cloud',
+          platform: { type: 'url', value: 'https://app.acrolinx.cloud' },
         };
         const result = await verifyPlatformUrl(demoConfig);
 
@@ -596,7 +596,7 @@ describe('API Utilities Integration Tests', () => {
         // This test verifies that the function doesn't hang indefinitely
         const timeoutConfig: Config = {
           ...config,
-          platform: 'https://httpbin.org/delay/10', // This would timeout in real scenarios
+          platform: { type: 'url', value: 'https://httpbin.org/delay/10' }, // This would timeout in real scenarios
         };
 
         // Set a timeout for this test

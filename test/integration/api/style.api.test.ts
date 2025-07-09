@@ -28,7 +28,7 @@ describe('Style API Integration Tests', () => {
     }
     config = {
       apiKey,
-      platform: DEFAULT_PLATFORM_URL_DEV,
+      platform: { type: 'url', value: DEFAULT_PLATFORM_URL_DEV },
     };
   });
 
