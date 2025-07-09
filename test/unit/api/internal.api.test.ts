@@ -12,7 +12,10 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('Internal API Unit Tests', () => {
-  const mockConfig: Config = { apiKey: 'test-api-key', platform: { type: PlatformType.Environment, value: Environment.Dev } };
+  const mockConfig: Config = {
+    apiKey: 'test-api-key',
+    platform: { type: PlatformType.Environment, value: Environment.Dev },
+  };
 
   describe('getAdminConstants', () => {
     it('should fetch admin constants successfully', async () => {

@@ -26,7 +26,10 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('Style API Unit Tests', () => {
-  const mockConfig: Config = { apiKey: 'test-api-key', platform: { type: PlatformType.Environment, value: Environment.Dev } };
+  const mockConfig: Config = {
+    apiKey: 'test-api-key',
+    platform: { type: PlatformType.Environment, value: Environment.Dev },
+  };
   const mockStyleGuideId = 'test-style-guide-id';
   const mockWorkflowId = 'test-workflow-id';
   const mockStyleAnalysisRequest = {

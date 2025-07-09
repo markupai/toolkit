@@ -423,8 +423,6 @@ describe('API Utilities Unit Tests', () => {
       });
 
       describe('No platform configuration', () => {
-
-
         it('should return prod URL when platform is explicitly set to production', () => {
           const config: Config = {
             apiKey: mockApiKey,
