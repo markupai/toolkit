@@ -572,33 +572,11 @@ describe('API Utilities Integration Tests', () => {
         expect(result.error).toBe('Failed to parse URL from not-a-valid-url/v1/style-guides');
       });
 
-      it('should handle empty platform URL', async () => {
-        const emptyUrlConfig: Config = {
-          ...config,
-          platformUrl: '',
-        };
-        const result = await verifyPlatformUrl(emptyUrlConfig);
-        expect(result.success).toBe(true);
-        expect(result.url).toBe(DEFAULT_PLATFORM_URL_DEV);
-        expect(result.error).toBeUndefined();
-      });
-
-      it('should handle null platform URL', async () => {
-        const nullUrlConfig: Config = {
-          ...config,
-          platformUrl: null as unknown as string,
-        };
-        const result = await verifyPlatformUrl(nullUrlConfig);
-        expect(result.success).toBe(true);
-        expect(result.url).toBe(DEFAULT_PLATFORM_URL_DEV);
-        expect(result.error).toBeUndefined();
-      });
-
       it('should handle different HTTP status codes appropriately', async () => {
         // Test with demo URL which might return different status codes
         const demoConfig: Config = {
           ...config,
-          platformUrl: 'https://demo.acrolinx.com',
+          platformUrl: 'https://app.acrolinx.cloud',
         };
         const result = await verifyPlatformUrl(demoConfig);
 

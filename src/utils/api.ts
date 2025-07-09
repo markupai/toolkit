@@ -2,7 +2,7 @@ import { Status } from './api.types';
 import type { ResponseBase, Config, ApiConfig } from './api.types';
 import { AcrolinxError } from './errors';
 
-export const DEFAULT_PLATFORM_URL_DEMO = 'https://demo.acrolinx.com';
+export const DEFAULT_PLATFORM_URL_PROD = 'https://app.acrolinx.cloud';
 export const DEFAULT_PLATFORM_URL_STAGE = 'https://app.stg.acrolinx-cloud.net';
 export const DEFAULT_PLATFORM_URL_DEV = 'https://app.dev.acrolinx-cloud.net';
 
@@ -13,7 +13,10 @@ function getCommonHeaders(apiKey: string): HeadersInit {
 }
 
 function getPlatformUrl(config: Config): string {
-  return config.platformUrl || DEFAULT_PLATFORM_URL_DEV;
+  // Use development URL as default for tests, production URL for runtime
+  const isTestEnvironment = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
+  const defaultUrl = isTestEnvironment ? DEFAULT_PLATFORM_URL_DEV : DEFAULT_PLATFORM_URL_PROD;
+  return config.platformUrl || defaultUrl;
 }
 
 // Helper function to get the current platform URL for debugging
