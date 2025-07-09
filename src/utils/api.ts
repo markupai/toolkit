@@ -12,7 +12,7 @@ function getCommonHeaders(apiKey: string): HeadersInit {
   };
 }
 
-function getPlatformUrl(config: Config): string {
+export function getPlatformUrl(config: Config): string {
   if (config.platform) {
     if (config.platform.type === PlatformType.Environment) {
       // Handle environment enum
@@ -33,7 +33,8 @@ function getPlatformUrl(config: Config): string {
   }
 
   // Default behavior: use development URL for tests, production URL for runtime
-  const isTestEnvironment = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
+  const isTestEnvironment =
+    typeof process !== 'undefined' && (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development');
   const defaultUrl = isTestEnvironment ? DEFAULT_PLATFORM_URL_DEV : DEFAULT_PLATFORM_URL_PROD;
   return defaultUrl;
 }

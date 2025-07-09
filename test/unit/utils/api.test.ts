@@ -7,9 +7,12 @@ import {
   pollWorkflowForResult,
   verifyPlatformUrl,
   getCurrentPlatformUrl,
+  getPlatformUrl,
   DEFAULT_PLATFORM_URL_DEV,
+  DEFAULT_PLATFORM_URL_PROD,
+  DEFAULT_PLATFORM_URL_STAGE,
 } from '../../../src/utils/api';
-import { PlatformType, ResponseBase, Status } from '../../../src/utils/api.types';
+import { PlatformType, Environment, ResponseBase, Status } from '../../../src/utils/api.types';
 import type { ApiConfig, Config } from '../../../src/utils/api.types';
 import { server, handlers } from '../setup';
 import { http } from 'msw';
@@ -322,6 +325,319 @@ describe('API Utilities Unit Tests', () => {
           success: true,
           url: DEFAULT_PLATFORM_URL_DEV,
           error: undefined,
+        });
+      });
+    });
+
+    describe('getPlatformUrl', () => {
+      describe('Environment-based platform configuration', () => {
+        it('should return stage URL when platform type is Environment.Stage', () => {
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Environment, value: Environment.Stage },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(DEFAULT_PLATFORM_URL_STAGE);
+        });
+
+        it('should return dev URL when platform type is Environment.Dev', () => {
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Environment, value: Environment.Dev },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(DEFAULT_PLATFORM_URL_DEV);
+        });
+
+        it('should return prod URL when platform type is Environment.Prod', () => {
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Environment, value: Environment.Prod },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(DEFAULT_PLATFORM_URL_PROD);
+        });
+
+        it('should default to prod URL for unknown environment values', () => {
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Environment, value: 'unknown' as Environment },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(DEFAULT_PLATFORM_URL_PROD);
+        });
+      });
+
+      describe('URL-based platform configuration', () => {
+        it('should return custom URL when platform type is PlatformType.Url', () => {
+          const customUrl = 'https://custom.example.com';
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Url, value: customUrl },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(customUrl);
+        });
+
+        it('should return URL with trailing slash when provided', () => {
+          const customUrl = 'https://custom.example.com/';
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Url, value: customUrl },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(customUrl);
+        });
+
+        it('should return URL without protocol when provided', () => {
+          const customUrl = 'custom.example.com';
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Url, value: customUrl },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(customUrl);
+        });
+
+        it('should return localhost URL when provided', () => {
+          const customUrl = 'http://localhost:3000';
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Url, value: customUrl },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(customUrl);
+        });
+
+        it('should return IP address URL when provided', () => {
+          const customUrl = 'http://192.168.1.100:8080';
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Url, value: customUrl },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(customUrl);
+        });
+      });
+
+      describe('No platform configuration', () => {
+        it('should return dev URL in test environment when no platform is configured', () => {
+          // Mock NODE_ENV to be 'test'
+          const originalEnv = process.env.NODE_ENV;
+          process.env.NODE_ENV = 'development';
+
+          const config: Config = {
+            ...mockBaseConfig,
+            // No platform configuration
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(DEFAULT_PLATFORM_URL_DEV);
+
+          // Restore original environment
+          process.env.NODE_ENV = originalEnv;
+        });
+
+        it('should return prod URL in non-test environment when no platform is configured', () => {
+          // Mock NODE_ENV to be 'production'
+          const originalEnv = process.env.NODE_ENV;
+          process.env.NODE_ENV = 'production';
+
+          const config: Config = {
+            ...mockBaseConfig,
+            // No platform configuration
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(DEFAULT_PLATFORM_URL_PROD);
+
+          // Restore original environment
+          process.env.NODE_ENV = originalEnv;
+        });
+
+        it('should return prod URL when NODE_ENV is undefined and no platform is configured', () => {
+          // Mock NODE_ENV to be undefined
+          const originalEnv = process.env.NODE_ENV;
+          delete process.env.NODE_ENV;
+
+          const config: Config = {
+            ...mockBaseConfig,
+            // No platform configuration
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(DEFAULT_PLATFORM_URL_PROD);
+
+          // Restore original environment
+          process.env.NODE_ENV = originalEnv;
+        });
+
+        it('should return dev URL when NODE_ENV is development and no platform is configured', () => {
+          // Mock NODE_ENV to be 'development'
+          const originalEnv = process.env.NODE_ENV;
+          process.env.NODE_ENV = 'development';
+
+          const config: Config = {
+            ...mockBaseConfig,
+            // No platform configuration
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(DEFAULT_PLATFORM_URL_DEV);
+
+          // Restore original environment
+          process.env.NODE_ENV = originalEnv;
+        });
+
+        it('should return prod URL when platform is explicitly undefined and no NODE_ENV is present', () => {
+          // Mock NODE_ENV to be undefined
+          const originalEnv = process.env.NODE_ENV;
+          delete process.env.NODE_ENV;
+
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: undefined,
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(DEFAULT_PLATFORM_URL_PROD);
+
+          // Restore original environment
+          process.env.NODE_ENV = originalEnv;
+        });
+
+        it('should return prod URL when platform is explicitly null and no NODE_ENV is present', () => {
+          // Mock NODE_ENV to be undefined
+          const originalEnv = process.env.NODE_ENV;
+          delete process.env.NODE_ENV;
+
+          const config = {
+            ...mockBaseConfig,
+            platform: null,
+          } as unknown as Config;
+          const result = getPlatformUrl(config);
+          expect(result).toBe(DEFAULT_PLATFORM_URL_PROD);
+
+          // Restore original environment
+          process.env.NODE_ENV = originalEnv;
+        });
+      });
+
+      describe('Edge cases and error handling', () => {
+        it('should handle empty string URL', () => {
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Url, value: '' },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe('');
+        });
+
+        it('should handle whitespace-only URL', () => {
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Url, value: '   ' },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe('   ');
+        });
+
+        it('should handle very long URLs', () => {
+          const longUrl = 'https://' + 'a'.repeat(1000) + '.example.com';
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Url, value: longUrl },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(longUrl);
+        });
+
+        it('should handle URLs with special characters', () => {
+          const specialUrl = 'https://example.com/path with spaces/and-special-chars!@#$%^&*()';
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Url, value: specialUrl },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(specialUrl);
+        });
+
+        it('should handle URLs with query parameters', () => {
+          const queryUrl = 'https://example.com/api?param1=value1&param2=value2';
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Url, value: queryUrl },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(queryUrl);
+        });
+
+        it('should handle URLs with fragments', () => {
+          const fragmentUrl = 'https://example.com/api#section1';
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Url, value: fragmentUrl },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(fragmentUrl);
+        });
+
+        it('should handle URLs with ports', () => {
+          const portUrl = 'https://example.com:8080/api';
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Url, value: portUrl },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(portUrl);
+        });
+
+        it('should handle URLs with authentication', () => {
+          const authUrl = 'https://user:password@example.com/api';
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Url, value: authUrl },
+          };
+          const result = getPlatformUrl(config);
+          expect(result).toBe(authUrl);
+        });
+      });
+
+      describe('Integration with getCurrentPlatformUrl', () => {
+        it('should return same result as getCurrentPlatformUrl for environment config', () => {
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Environment, value: Environment.Stage },
+          };
+          const getPlatformUrlResult = getPlatformUrl(config);
+          const getCurrentPlatformUrlResult = getCurrentPlatformUrl(config);
+          expect(getPlatformUrlResult).toBe(getCurrentPlatformUrlResult);
+          expect(getPlatformUrlResult).toBe(DEFAULT_PLATFORM_URL_STAGE);
+        });
+
+        it('should return same result as getCurrentPlatformUrl for URL config', () => {
+          const customUrl = 'https://custom.example.com';
+          const config: Config = {
+            ...mockBaseConfig,
+            platform: { type: PlatformType.Url, value: customUrl },
+          };
+          const getPlatformUrlResult = getPlatformUrl(config);
+          const getCurrentPlatformUrlResult = getCurrentPlatformUrl(config);
+          expect(getPlatformUrlResult).toBe(getCurrentPlatformUrlResult);
+          expect(getPlatformUrlResult).toBe(customUrl);
+        });
+
+        it('should return same result as getCurrentPlatformUrl for no config', () => {
+          // Mock NODE_ENV to be 'test' for consistent behavior
+          const originalEnv = process.env.NODE_ENV;
+          process.env.NODE_ENV = 'development';
+
+          const config: Config = {
+            ...mockBaseConfig,
+            // No platform configuration
+          };
+          const getPlatformUrlResult = getPlatformUrl(config);
+          const getCurrentPlatformUrlResult = getCurrentPlatformUrl(config);
+          expect(getPlatformUrlResult).toBe(getCurrentPlatformUrlResult);
+          expect(getPlatformUrlResult).toBe(DEFAULT_PLATFORM_URL_DEV);
+
+          // Restore original environment
+          process.env.NODE_ENV = originalEnv;
         });
       });
     });

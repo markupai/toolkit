@@ -22,7 +22,9 @@ export enum PlatformType {
 }
 
 // Discriminated union for platform configuration
-export type PlatformConfig = { type: PlatformType.Environment; value: Environment } | { type: PlatformType.Url; value: string };
+export type PlatformConfig =
+  | { type: PlatformType.Environment; value: Environment }
+  | { type: PlatformType.Url; value: string };
 
 export interface Config {
   platform?: PlatformConfig;
