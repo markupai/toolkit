@@ -13,7 +13,7 @@ describe('Demo API Integration Tests', () => {
     }
     config = {
       apiKey,
-      platformUrl: DEFAULT_PLATFORM_URL_DEV,
+      platform: DEFAULT_PLATFORM_URL_DEV,
     };
   });
 
@@ -68,7 +68,7 @@ describe('Demo API Integration Tests', () => {
     it('should handle invalid API key', async () => {
       const invalidConfig: Config = {
         apiKey: 'invalid-api-key',
-        platformUrl: DEFAULT_PLATFORM_URL_DEV,
+        platform: DEFAULT_PLATFORM_URL_DEV,
       };
       await expect(
         submitRewrite(
@@ -117,7 +117,7 @@ describe('Demo API Integration Tests', () => {
       try {
         const emptyConfig: Config = {
           apiKey: '',
-          platformUrl: DEFAULT_PLATFORM_URL_DEV,
+          platform: DEFAULT_PLATFORM_URL_DEV,
         };
         await expect(
           submitRewrite(

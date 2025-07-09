@@ -1,4 +1,4 @@
-import { Status } from './api.types';
+import { Status, Environment } from './api.types';
 import type { ResponseBase, Config, ApiConfig } from './api.types';
 import { AcrolinxError } from './errors';
 
@@ -13,10 +13,30 @@ function getCommonHeaders(apiKey: string): HeadersInit {
 }
 
 function getPlatformUrl(config: Config): string {
-  // Use development URL as default for tests, production URL for runtime
+  // If platform is provided, handle it based on type
+  if (config.platform) {
+    if (typeof config.platform === 'string') {
+      // If it's a string, return it directly (custom URL)
+      return config.platform;
+    } else {
+      // If it's an Environment enum, map to the appropriate URL
+      switch (config.platform) {
+        case Environment.Stage:
+          return DEFAULT_PLATFORM_URL_STAGE;
+        case Environment.Dev:
+          return DEFAULT_PLATFORM_URL_DEV;
+        case Environment.Prod:
+          return DEFAULT_PLATFORM_URL_PROD;
+        default:
+          return DEFAULT_PLATFORM_URL_PROD; // Default to prod
+      }
+    }
+  }
+
+  // Default behavior: use development URL for tests, production URL for runtime
   const isTestEnvironment = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
   const defaultUrl = isTestEnvironment ? DEFAULT_PLATFORM_URL_DEV : DEFAULT_PLATFORM_URL_PROD;
-  return config.platformUrl || defaultUrl;
+  return defaultUrl;
 }
 
 // Helper function to get the current platform URL for debugging

@@ -14,7 +14,7 @@ describe.skip('Internal API Integration Tests', () => {
     }
     config = {
       apiKey,
-      platformUrl: DEFAULT_PLATFORM_URL_DEV,
+      platform: DEFAULT_PLATFORM_URL_DEV,
     };
   });
 
@@ -49,7 +49,7 @@ describe.skip('Internal API Integration Tests', () => {
     it('should handle invalid API key', async () => {
       const invalidConfig: Config = {
         apiKey: 'invalid-api-key',
-        platformUrl: DEFAULT_PLATFORM_URL_DEV,
+        platform: DEFAULT_PLATFORM_URL_DEV,
       };
       await expect(getAdminConstants(invalidConfig)).rejects.toThrow();
     });
@@ -72,7 +72,7 @@ describe.skip('Internal API Integration Tests', () => {
       try {
         const emptyConfig: Config = {
           apiKey: '',
-          platformUrl: DEFAULT_PLATFORM_URL_DEV,
+          platform: DEFAULT_PLATFORM_URL_DEV,
         };
         await expect(getAdminConstants(emptyConfig)).rejects.toThrow();
       } finally {

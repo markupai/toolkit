@@ -10,8 +10,14 @@ export enum Status {
   Failed = 'failed',
 }
 
+export enum Environment {
+  Stage = 'stage',
+  Dev = 'dev',
+  Prod = 'prod',
+}
+
 export interface Config {
-  platformUrl?: string;
+  platform?: string | Environment;
   apiKey: string;
 }
 

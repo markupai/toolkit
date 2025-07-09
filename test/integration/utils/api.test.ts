@@ -25,7 +25,7 @@ describe('API Utilities Integration Tests', () => {
     }
     config = {
       apiKey,
-      platformUrl: DEFAULT_PLATFORM_URL_DEV,
+      platform: DEFAULT_PLATFORM_URL_DEV,
     };
   });
 
@@ -39,7 +39,7 @@ describe('API Utilities Integration Tests', () => {
         const testConfig: ApiConfig = {
           endpoint: API_ENDPOINTS.STYLE_GUIDES,
           apiKey: config.apiKey,
-          platformUrl: config.platformUrl,
+          platform: config.platform,
         };
 
         const result = await getData<StyleGuides>(testConfig);
@@ -64,7 +64,7 @@ describe('API Utilities Integration Tests', () => {
         const listConfig: ApiConfig = {
           endpoint: API_ENDPOINTS.STYLE_GUIDES,
           apiKey: config.apiKey,
-          platformUrl: config.platformUrl,
+          platform: config.platform,
         };
 
         const styleGuides = await getData<StyleGuides>(listConfig);
@@ -74,7 +74,7 @@ describe('API Utilities Integration Tests', () => {
           const testConfig: ApiConfig = {
             endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`,
             apiKey: config.apiKey,
-            platformUrl: config.platformUrl,
+            platform: config.platform,
           };
 
           try {
@@ -98,7 +98,7 @@ describe('API Utilities Integration Tests', () => {
         const testConfig: ApiConfig = {
           endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/non-existent-id`,
           apiKey: config.apiKey,
-          platformUrl: config.platformUrl,
+          platform: config.platform,
         };
 
         await expect(getData(testConfig)).rejects.toThrow();
@@ -108,7 +108,7 @@ describe('API Utilities Integration Tests', () => {
         const invalidConfig: ApiConfig = {
           endpoint: API_ENDPOINTS.STYLE_GUIDES,
           apiKey: 'invalid-api-key',
-          platformUrl: config.platformUrl,
+          platform: config.platform,
         };
 
         await expect(getData(invalidConfig)).rejects.toThrow();
@@ -120,7 +120,7 @@ describe('API Utilities Integration Tests', () => {
         const testConfig: ApiConfig = {
           endpoint: API_ENDPOINTS.STYLE_CHECKS,
           apiKey: config.apiKey,
-          platformUrl: config.platformUrl,
+          platform: config.platform,
         };
 
         // Create FormData as expected by the style API
@@ -142,7 +142,7 @@ describe('API Utilities Integration Tests', () => {
         const testConfig: ApiConfig = {
           endpoint: API_ENDPOINTS.STYLE_SUGGESTIONS,
           apiKey: config.apiKey,
-          platformUrl: config.platformUrl,
+          platform: config.platform,
         };
 
         const formData = new FormData();
@@ -163,7 +163,7 @@ describe('API Utilities Integration Tests', () => {
         const testConfig: ApiConfig = {
           endpoint: API_ENDPOINTS.STYLE_REWRITES,
           apiKey: config.apiKey,
-          platformUrl: config.platformUrl,
+          platform: config.platform,
         };
 
         const formData = new FormData();
@@ -184,7 +184,7 @@ describe('API Utilities Integration Tests', () => {
         const testConfig: ApiConfig = {
           endpoint: API_ENDPOINTS.STYLE_CHECKS,
           apiKey: config.apiKey,
-          platformUrl: config.platformUrl,
+          platform: config.platform,
         };
 
         const formData = new FormData();
@@ -203,7 +203,7 @@ describe('API Utilities Integration Tests', () => {
         const listConfig: ApiConfig = {
           endpoint: API_ENDPOINTS.STYLE_GUIDES,
           apiKey: config.apiKey,
-          platformUrl: config.platformUrl,
+          platform: config.platform,
         };
 
         const styleGuides = await getData<StyleGuides>(listConfig);
@@ -213,7 +213,7 @@ describe('API Utilities Integration Tests', () => {
           const testConfig: ApiConfig = {
             endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`,
             apiKey: config.apiKey,
-            platformUrl: config.platformUrl,
+            platform: config.platform,
           };
 
           const updateData = {
@@ -237,7 +237,7 @@ describe('API Utilities Integration Tests', () => {
         const testConfig: ApiConfig = {
           endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/invalid-id`,
           apiKey: config.apiKey,
-          platformUrl: config.platformUrl,
+          platform: config.platform,
         };
 
         const updateData = {
@@ -254,7 +254,7 @@ describe('API Utilities Integration Tests', () => {
         const createConfig: ApiConfig = {
           endpoint: API_ENDPOINTS.STYLE_GUIDES,
           apiKey: config.apiKey,
-          platformUrl: config.platformUrl,
+          platform: config.platform,
         };
 
         // Create a simple text file for testing
@@ -273,7 +273,7 @@ describe('API Utilities Integration Tests', () => {
           const deleteConfig: ApiConfig = {
             endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/${createdStyleGuide.id}`,
             apiKey: config.apiKey,
-            platformUrl: config.platformUrl,
+            platform: config.platform,
           };
 
           const result = await deleteData(deleteConfig);
@@ -288,7 +288,7 @@ describe('API Utilities Integration Tests', () => {
         const testConfig: ApiConfig = {
           endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/invalid-id`,
           apiKey: config.apiKey,
-          platformUrl: config.platformUrl,
+          platform: config.platform,
         };
 
         await expect(deleteData(testConfig)).rejects.toThrow();
@@ -301,7 +301,7 @@ describe('API Utilities Integration Tests', () => {
       const testConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_CHECKS,
         apiKey: config.apiKey,
-        platformUrl: config.platformUrl,
+        platform: config.platform,
       };
 
       // First submit a style check
@@ -333,7 +333,7 @@ describe('API Utilities Integration Tests', () => {
       const testConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_CHECKS,
         apiKey: config.apiKey,
-        platformUrl: config.platformUrl,
+        platform: config.platform,
       };
 
       const nonExistentWorkflowId = 'non-existent-workflow-id';
@@ -345,7 +345,7 @@ describe('API Utilities Integration Tests', () => {
       const invalidConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_CHECKS,
         apiKey: 'invalid-api-key',
-        platformUrl: config.platformUrl,
+        platform: config.platform,
       };
 
       const workflowId = 'test-workflow-id';
@@ -359,7 +359,7 @@ describe('API Utilities Integration Tests', () => {
       const invalidConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_GUIDES,
         apiKey: config.apiKey,
-        platformUrl: 'https://invalid-domain-that-does-not-exist.com',
+        platform: 'https://invalid-domain-that-does-not-exist.com',
       };
 
       await expect(getData(invalidConfig)).rejects.toThrow();
@@ -369,7 +369,7 @@ describe('API Utilities Integration Tests', () => {
       const invalidConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_GUIDES,
         apiKey: config.apiKey,
-        platformUrl: 'not-a-valid-url',
+        platform: 'not-a-valid-url',
       };
 
       await expect(getData(invalidConfig)).rejects.toThrow();
@@ -379,7 +379,7 @@ describe('API Utilities Integration Tests', () => {
       const invalidConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_GUIDES,
         apiKey: '',
-        platformUrl: config.platformUrl,
+        platform: config.platform,
       };
 
       await expect(getData(invalidConfig)).rejects.toThrow();
@@ -389,7 +389,7 @@ describe('API Utilities Integration Tests', () => {
       const invalidConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_GUIDES,
         apiKey: null as unknown as string,
-        platformUrl: config.platformUrl,
+        platform: config.platform,
       };
 
       await expect(getData(invalidConfig)).rejects.toThrow();
@@ -401,7 +401,7 @@ describe('API Utilities Integration Tests', () => {
       const testConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_GUIDES,
         apiKey: config.apiKey,
-        platformUrl: config.platformUrl,
+        platform: config.platform,
       };
 
       const result = await getData<StyleGuides>(testConfig);
@@ -422,7 +422,7 @@ describe('API Utilities Integration Tests', () => {
       const testConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_CHECKS,
         apiKey: config.apiKey,
-        platformUrl: config.platformUrl,
+        platform: config.platform,
       };
 
       const formData = new FormData();
@@ -446,7 +446,7 @@ describe('API Utilities Integration Tests', () => {
       const testConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_GUIDES,
         apiKey: config.apiKey,
-        platformUrl: config.platformUrl,
+        platform: config.platform,
       };
 
       const promises = [
@@ -467,13 +467,13 @@ describe('API Utilities Integration Tests', () => {
       const getConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_GUIDES,
         apiKey: config.apiKey,
-        platformUrl: config.platformUrl,
+        platform: config.platform,
       };
 
       const postConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_CHECKS,
         apiKey: config.apiKey,
-        platformUrl: config.platformUrl,
+        platform: config.platform,
       };
 
       const formData = new FormData();
@@ -501,7 +501,7 @@ describe('API Utilities Integration Tests', () => {
       it('should return custom platform URL when configured', () => {
         const customConfig: Config = {
           ...config,
-          platformUrl: 'https://custom.example.com',
+          platform: 'https://custom.example.com',
         };
         const result = getCurrentPlatformUrl(customConfig);
         expect(result).toBe('https://custom.example.com');
@@ -529,7 +529,7 @@ describe('API Utilities Integration Tests', () => {
       it('should handle platform URL with trailing slash', async () => {
         const configWithSlash: Config = {
           ...config,
-          platformUrl: `${DEFAULT_PLATFORM_URL_DEV}/`,
+          platform: `${DEFAULT_PLATFORM_URL_DEV}/`,
         };
         const result = await verifyPlatformUrl(configWithSlash);
         expect(result).toEqual({
@@ -542,7 +542,7 @@ describe('API Utilities Integration Tests', () => {
       it('should handle unauthorized access gracefully', async () => {
         const invalidConfig: Config = {
           apiKey: 'invalid-api-key',
-          platformUrl: DEFAULT_PLATFORM_URL_DEV,
+          platform: DEFAULT_PLATFORM_URL_DEV,
         };
         const result = await verifyPlatformUrl(invalidConfig);
         expect(result.success).toBe(false);
@@ -553,7 +553,7 @@ describe('API Utilities Integration Tests', () => {
       it('should handle network connectivity issues', async () => {
         const invalidConfig: Config = {
           ...config,
-          platformUrl: 'https://invalid-domain-that-does-not-exist-12345.com',
+          platform: 'https://invalid-domain-that-does-not-exist-12345.com',
         };
         const result = await verifyPlatformUrl(invalidConfig);
         expect(result.success).toBe(false);
@@ -564,7 +564,7 @@ describe('API Utilities Integration Tests', () => {
       it('should handle malformed URLs gracefully', async () => {
         const malformedConfig: Config = {
           ...config,
-          platformUrl: 'not-a-valid-url',
+          platform: 'not-a-valid-url',
         };
         const result = await verifyPlatformUrl(malformedConfig);
         expect(result.success).toBe(false);
@@ -576,7 +576,7 @@ describe('API Utilities Integration Tests', () => {
         // Test with demo URL which might return different status codes
         const demoConfig: Config = {
           ...config,
-          platformUrl: 'https://app.acrolinx.cloud',
+          platform: 'https://app.acrolinx.cloud',
         };
         const result = await verifyPlatformUrl(demoConfig);
 
@@ -596,7 +596,7 @@ describe('API Utilities Integration Tests', () => {
         // This test verifies that the function doesn't hang indefinitely
         const timeoutConfig: Config = {
           ...config,
-          platformUrl: 'https://httpbin.org/delay/10', // This would timeout in real scenarios
+          platform: 'https://httpbin.org/delay/10', // This would timeout in real scenarios
         };
 
         // Set a timeout for this test

@@ -10,7 +10,7 @@ describe('CORS Integration Tests', () => {
     const apiKey = '';
     config = {
       apiKey,
-      platformUrl: DEFAULT_PLATFORM_URL_DEV,
+      platform: DEFAULT_PLATFORM_URL_DEV,
     };
   });
 
@@ -19,7 +19,7 @@ describe('CORS Integration Tests', () => {
   // Helper function to make OPTIONS request and check CORS headers
   async function testCorsHeaders(endpoint: string, description: string) {
     it(`should return proper CORS headers for ${description}`, async () => {
-      const url = `${config.platformUrl}${endpoint}`;
+      const url = `${config.platform}${endpoint}`;
 
       const response = await fetch(url, {
         method: 'OPTIONS',
@@ -75,7 +75,7 @@ describe('CORS Integration Tests', () => {
     it('should return proper CORS headers for individual style guide endpoint', async () => {
       const styleGuideId = 'test-style-guide-id';
       const endpoint = `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`;
-      const url = `${config.platformUrl}${endpoint}`;
+      const url = `${config.platform}${endpoint}`;
 
       const response = await fetch(url, {
         method: 'OPTIONS',
@@ -111,7 +111,7 @@ describe('CORS Integration Tests', () => {
     it('should return proper CORS headers for individual style check endpoint', async () => {
       const workflowId = 'test-workflow-id';
       const endpoint = `${API_ENDPOINTS.STYLE_CHECKS}/${workflowId}`;
-      const url = `${config.platformUrl}${endpoint}`;
+      const url = `${config.platform}${endpoint}`;
 
       const response = await fetch(url, {
         method: 'OPTIONS',
@@ -146,7 +146,7 @@ describe('CORS Integration Tests', () => {
       const origins = ['https://foo.com', 'https://bar.com', 'http://localhost:3000', 'https://example.com'];
 
       for (const origin of origins) {
-        const url = `${config.platformUrl}${API_ENDPOINTS.STYLE_GUIDES}`;
+        const url = `${config.platform}${API_ENDPOINTS.STYLE_GUIDES}`;
 
         const response = await fetch(url, {
           method: 'OPTIONS',
@@ -171,7 +171,7 @@ describe('CORS Integration Tests', () => {
   describe('CORS Headers with Different Request Methods', () => {
     it('should handle different request methods correctly', async () => {
       const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
-      const url = `${config.platformUrl}${API_ENDPOINTS.STYLE_GUIDES}`;
+      const url = `${config.platform}${API_ENDPOINTS.STYLE_GUIDES}`;
 
       for (const method of methods) {
         const response = await fetch(url, {
@@ -205,7 +205,7 @@ describe('CORS Integration Tests', () => {
         'authorization,content-type,accept,user-agent',
       ];
 
-      const url = `${config.platformUrl}${API_ENDPOINTS.STYLE_GUIDES}`;
+      const url = `${config.platform}${API_ENDPOINTS.STYLE_GUIDES}`;
 
       for (const headers of headerCombinations) {
         const response = await fetch(url, {
@@ -239,7 +239,7 @@ describe('CORS Integration Tests', () => {
 
   describe('CORS Error Handling', () => {
     it('should handle malformed OPTIONS requests gracefully', async () => {
-      const url = `${config.platformUrl}${API_ENDPOINTS.STYLE_GUIDES}`;
+      const url = `${config.platform}${API_ENDPOINTS.STYLE_GUIDES}`;
 
       // Test without Origin header
       const response1 = await fetch(url, {
@@ -266,7 +266,7 @@ describe('CORS Integration Tests', () => {
     });
 
     it('should handle invalid endpoints gracefully', async () => {
-      const url = `${config.platformUrl}/invalid-endpoint`;
+      const url = `${config.platform}/invalid-endpoint`;
 
       const response = await fetch(url, {
         method: 'OPTIONS',

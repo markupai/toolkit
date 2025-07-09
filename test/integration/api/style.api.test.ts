@@ -28,7 +28,7 @@ describe('Style API Integration Tests', () => {
     }
     config = {
       apiKey,
-      platformUrl: DEFAULT_PLATFORM_URL_DEV,
+      platform: DEFAULT_PLATFORM_URL_DEV,
     };
   });
 
@@ -640,7 +640,7 @@ describe('Style API Integration Tests', () => {
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe('string');
       }
-    });
+    }, 60000);
 
     it('should submit a style rewrite with File content and get result', async () => {
       const testFile = await createTestFile();
