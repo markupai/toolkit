@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { getAdminConstants, submitFeedback } from '../../../src/api/internal/internal.api';
 import { FeedbackRequest } from '../../../src/api/internal/internal.api.types';
 import { DEFAULT_PLATFORM_URL_DEV } from '../../../src/utils/api';
+import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
 
 // TODO: Skipped until we have a way to test the internal API
@@ -14,7 +15,7 @@ describe.skip('Internal API Integration Tests', () => {
     }
     config = {
       apiKey,
-      platform: { type: 'url', value: DEFAULT_PLATFORM_URL_DEV },
+      platform: { type: PlatformType.Url, value: DEFAULT_PLATFORM_URL_DEV },
     };
   });
 
@@ -49,7 +50,7 @@ describe.skip('Internal API Integration Tests', () => {
     it('should handle invalid API key', async () => {
       const invalidConfig: Config = {
         apiKey: 'invalid-api-key',
-        platform: { type: 'url', value: DEFAULT_PLATFORM_URL_DEV },
+        platform: { type: PlatformType.Url, value: DEFAULT_PLATFORM_URL_DEV },
       };
       await expect(getAdminConstants(invalidConfig)).rejects.toThrow();
     });
@@ -72,7 +73,7 @@ describe.skip('Internal API Integration Tests', () => {
       try {
         const emptyConfig: Config = {
           apiKey: '',
-          platform: { type: 'url', value: DEFAULT_PLATFORM_URL_DEV },
+          platform: { type: PlatformType.Url, value: DEFAULT_PLATFORM_URL_DEV },
         };
         await expect(getAdminConstants(emptyConfig)).rejects.toThrow();
       } finally {

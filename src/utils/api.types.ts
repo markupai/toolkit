@@ -16,8 +16,13 @@ export enum Environment {
   Prod = 'prod',
 }
 
+export enum PlatformType {
+  Environment = 'environment',
+  Url = 'url',
+}
+
 // Discriminated union for platform configuration
-export type PlatformConfig = { type: 'environment'; value: Environment } | { type: 'url'; value: string };
+export type PlatformConfig = { type: PlatformType.Environment; value: Environment } | { type: PlatformType.Url; value: string };
 
 export interface Config {
   platform?: PlatformConfig;

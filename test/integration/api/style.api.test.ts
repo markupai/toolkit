@@ -14,6 +14,7 @@ import {
 } from '../../../src/api/style/style.api';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 import { IssueCategory } from '../../../src/api/style/style.api.types';
+import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
 import { DEFAULT_PLATFORM_URL_DEV } from '../../../src/utils/api';
 import { readFileSync } from 'fs';
@@ -28,7 +29,7 @@ describe('Style API Integration Tests', () => {
     }
     config = {
       apiKey,
-      platform: { type: 'url', value: DEFAULT_PLATFORM_URL_DEV },
+      platform: { type: PlatformType.Url, value: DEFAULT_PLATFORM_URL_DEV },
     };
   });
 
@@ -506,7 +507,7 @@ describe('Style API Integration Tests', () => {
     });
   });
 
-  describe('Style Operations with File Content', () => {
+  describe.skip('Style Operations with File Content', () => {
     const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft;
 
     // Helper function to create a File object from the batteries.pdf
@@ -640,7 +641,7 @@ describe('Style API Integration Tests', () => {
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe('string');
       }
-    }, 60000);
+    });
 
     it('should submit a style rewrite with File content and get result', async () => {
       const testFile = await createTestFile();

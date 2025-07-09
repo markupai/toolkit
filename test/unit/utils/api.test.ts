@@ -9,7 +9,7 @@ import {
   getCurrentPlatformUrl,
   DEFAULT_PLATFORM_URL_DEV,
 } from '../../../src/utils/api';
-import { ResponseBase, Status } from '../../../src/utils/api.types';
+import { PlatformType, ResponseBase, Status } from '../../../src/utils/api.types';
 import type { ApiConfig, Config } from '../../../src/utils/api.types';
 import { server, handlers } from '../setup';
 import { http } from 'msw';
@@ -103,7 +103,7 @@ describe('API Utilities Unit Tests', () => {
       const customPlatformUrl = 'https://custom.example.com';
       const customConfig: ApiConfig = {
         ...mockConfig,
-        platform: { type: 'url', value: customPlatformUrl },
+        platform: { type: PlatformType.Url, value: customPlatformUrl },
       };
 
       server.use(
@@ -127,7 +127,7 @@ describe('API Utilities Unit Tests', () => {
       it('should return custom platform URL when provided', () => {
         const customConfig: Config = {
           ...mockBaseConfig,
-          platform: { type: 'url', value: 'https://custom.example.com' },
+          platform: { type: PlatformType.Url, value: 'https://custom.example.com' },
         };
         const result = getCurrentPlatformUrl(customConfig);
         expect(result).toBe('https://custom.example.com');
@@ -154,7 +154,7 @@ describe('API Utilities Unit Tests', () => {
         const customUrl = 'https://custom.example.com';
         const customConfig: Config = {
           ...mockBaseConfig,
-          platform: { type: 'url', value: customUrl },
+          platform: { type: PlatformType.Url, value: customUrl },
         };
 
         server.use(
@@ -175,7 +175,7 @@ describe('API Utilities Unit Tests', () => {
         const urlWithSlash = 'https://example.com/';
         const customConfig: Config = {
           ...mockBaseConfig,
-          platform: { type: 'url', value: urlWithSlash },
+          platform: { type: PlatformType.Url, value: urlWithSlash },
         };
 
         server.use(
@@ -269,7 +269,7 @@ describe('API Utilities Unit Tests', () => {
         const invalidUrl = 'https://invalid-domain-that-does-not-exist-12345.com';
         const invalidConfig: Config = {
           ...mockBaseConfig,
-          platform: { type: 'url', value: invalidUrl },
+          platform: { type: PlatformType.Url, value: invalidUrl },
         };
 
         const result = await verifyPlatformUrl(invalidConfig);
@@ -284,7 +284,7 @@ describe('API Utilities Unit Tests', () => {
         const malformedUrl = 'not-a-valid-url';
         const malformedConfig: Config = {
           ...mockBaseConfig,
-          platform: { type: 'url', value: malformedUrl },
+          platform: { type: PlatformType.Url, value: malformedUrl },
         };
 
         const result = await verifyPlatformUrl(malformedConfig);

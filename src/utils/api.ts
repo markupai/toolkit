@@ -1,4 +1,4 @@
-import { Status, Environment } from './api.types';
+import { Status, Environment, PlatformType } from './api.types';
 import type { ResponseBase, Config, ApiConfig } from './api.types';
 import { AcrolinxError } from './errors';
 
@@ -14,7 +14,7 @@ function getCommonHeaders(apiKey: string): HeadersInit {
 
 function getPlatformUrl(config: Config): string {
   if (config.platform) {
-    if (config.platform.type === 'environment') {
+    if (config.platform.type === PlatformType.Environment) {
       // Handle environment enum
       switch (config.platform.value) {
         case Environment.Stage:

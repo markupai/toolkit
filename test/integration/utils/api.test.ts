@@ -9,7 +9,7 @@ import {
   getCurrentPlatformUrl,
   DEFAULT_PLATFORM_URL_DEV,
 } from '../../../src/utils/api';
-import { Status } from '../../../src/utils/api.types';
+import { PlatformType, Status } from '../../../src/utils/api.types';
 import type { ApiConfig, Config } from '../../../src/utils/api.types';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 import { API_ENDPOINTS } from '../../../src/api/style/style.api';
@@ -25,7 +25,7 @@ describe('API Utilities Integration Tests', () => {
     }
     config = {
       apiKey,
-      platform: { type: 'url', value: DEFAULT_PLATFORM_URL_DEV },
+      platform: { type: PlatformType.Url, value: DEFAULT_PLATFORM_URL_DEV },
     };
   });
 
@@ -359,7 +359,7 @@ describe('API Utilities Integration Tests', () => {
       const invalidConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_GUIDES,
         apiKey: config.apiKey,
-        platform: { type: 'url', value: 'https://invalid-domain-that-does-not-exist.com' },
+        platform: { type: PlatformType.Url, value: 'https://invalid-domain-that-does-not-exist.com' },
       };
 
       await expect(getData(invalidConfig)).rejects.toThrow();
@@ -369,7 +369,7 @@ describe('API Utilities Integration Tests', () => {
       const invalidConfig: ApiConfig = {
         endpoint: API_ENDPOINTS.STYLE_GUIDES,
         apiKey: config.apiKey,
-        platform: { type: 'url', value: 'not-a-valid-url' },
+        platform: { type: PlatformType.Url, value: 'not-a-valid-url' },
       };
 
       await expect(getData(invalidConfig)).rejects.toThrow();
@@ -501,7 +501,7 @@ describe('API Utilities Integration Tests', () => {
       it('should return custom platform URL when configured', () => {
         const customConfig: Config = {
           ...config,
-          platform: { type: 'url', value: 'https://custom.example.com' },
+          platform: { type: PlatformType.Url, value: 'https://custom.example.com' },
         };
         const result = getCurrentPlatformUrl(customConfig);
         expect(result).toBe('https://custom.example.com');
@@ -529,7 +529,7 @@ describe('API Utilities Integration Tests', () => {
       it('should handle platform URL with trailing slash', async () => {
         const configWithSlash: Config = {
           ...config,
-          platform: { type: 'url', value: `${DEFAULT_PLATFORM_URL_DEV}/` },
+          platform: { type: PlatformType.Url, value: `${DEFAULT_PLATFORM_URL_DEV}/` },
         };
         const result = await verifyPlatformUrl(configWithSlash);
         expect(result).toEqual({
@@ -542,7 +542,7 @@ describe('API Utilities Integration Tests', () => {
       it('should handle unauthorized access gracefully', async () => {
         const invalidConfig: Config = {
           apiKey: 'invalid-api-key',
-          platform: { type: 'url', value: DEFAULT_PLATFORM_URL_DEV },
+          platform: { type: PlatformType.Url, value: DEFAULT_PLATFORM_URL_DEV },
         };
         const result = await verifyPlatformUrl(invalidConfig);
         expect(result.success).toBe(false);
@@ -553,7 +553,7 @@ describe('API Utilities Integration Tests', () => {
       it('should handle network connectivity issues', async () => {
         const invalidConfig: Config = {
           ...config,
-          platform: { type: 'url', value: 'https://invalid-domain-that-does-not-exist-12345.com' },
+          platform: { type: PlatformType.Url, value: 'https://invalid-domain-that-does-not-exist-12345.com' },
         };
         const result = await verifyPlatformUrl(invalidConfig);
         expect(result.success).toBe(false);
@@ -564,7 +564,7 @@ describe('API Utilities Integration Tests', () => {
       it('should handle malformed URLs gracefully', async () => {
         const malformedConfig: Config = {
           ...config,
-          platform: { type: 'url', value: 'not-a-valid-url' },
+          platform: { type: PlatformType.Url, value: 'not-a-valid-url' },
         };
         const result = await verifyPlatformUrl(malformedConfig);
         expect(result.success).toBe(false);
@@ -576,7 +576,7 @@ describe('API Utilities Integration Tests', () => {
         // Test with demo URL which might return different status codes
         const demoConfig: Config = {
           ...config,
-          platform: { type: 'url', value: 'https://app.acrolinx.cloud' },
+          platform: { type: PlatformType.Url, value: 'https://app.acrolinx.cloud' },
         };
         const result = await verifyPlatformUrl(demoConfig);
 
@@ -596,7 +596,7 @@ describe('API Utilities Integration Tests', () => {
         // This test verifies that the function doesn't hang indefinitely
         const timeoutConfig: Config = {
           ...config,
-          platform: { type: 'url', value: 'https://httpbin.org/delay/10' }, // This would timeout in real scenarios
+          platform: { type: PlatformType.Url, value: 'https://httpbin.org/delay/10' }, // This would timeout in real scenarios
         };
 
         // Set a timeout for this test
