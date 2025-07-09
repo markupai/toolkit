@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { getAdminConstants, submitFeedback } from '../../../src/api/internal/internal.api';
 import type { FeedbackRequest } from '../../../src/api/internal/internal.api.types';
 import type { Config } from '../../../src/utils/api.types';
+import { PlatformType, Environment } from '../../../src/utils/api.types';
 import { server } from '../setup';
 import { apiHandlers } from '../mocks/api.handlers';
 
@@ -11,7 +12,7 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('Internal API Unit Tests', () => {
-  const mockConfig: Config = { apiKey: 'test-api-key' };
+  const mockConfig: Config = { apiKey: 'test-api-key', platform: { type: PlatformType.Environment, value: Environment.Dev } };
 
   describe('getAdminConstants', () => {
     it('should fetch admin constants successfully', async () => {

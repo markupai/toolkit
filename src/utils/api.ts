@@ -32,11 +32,7 @@ export function getPlatformUrl(config: Config): string {
     }
   }
 
-  // Default behavior: use development URL for tests, production URL for runtime
-  const isTestEnvironment =
-    typeof process !== 'undefined' && (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development');
-  const defaultUrl = isTestEnvironment ? DEFAULT_PLATFORM_URL_DEV : DEFAULT_PLATFORM_URL_PROD;
-  return defaultUrl;
+  return DEFAULT_PLATFORM_URL_PROD;
 }
 
 // Helper function to get the current platform URL for debugging

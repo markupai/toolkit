@@ -8,6 +8,7 @@ import {
   verifyPlatformUrl,
   getCurrentPlatformUrl,
   DEFAULT_PLATFORM_URL_DEV,
+  DEFAULT_PLATFORM_URL_PROD,
 } from '../../../src/utils/api';
 import { PlatformType, Status } from '../../../src/utils/api.types';
 import type { ApiConfig, Config } from '../../../src/utils/api.types';
@@ -512,7 +513,7 @@ describe('API Utilities Integration Tests', () => {
           apiKey: config.apiKey,
         };
         const result = getCurrentPlatformUrl(configWithoutUrl);
-        expect(result).toBe(DEFAULT_PLATFORM_URL_DEV);
+        expect(result).toBe(DEFAULT_PLATFORM_URL_PROD);
       });
     });
 

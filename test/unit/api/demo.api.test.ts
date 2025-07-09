@@ -3,6 +3,7 @@ import { submitRewrite, rewrite } from '../../../src/api/demo/demo.api';
 import { DEMO_DEFAULTS } from '../../../src/api/demo/demo.api.defaults';
 import { Status } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
+import { PlatformType, Environment } from '../../../src/utils/api.types';
 import { server } from '../setup';
 import { apiHandlers } from '../mocks/api.handlers';
 
@@ -12,7 +13,7 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('Demo API Unit Tests', () => {
-  const mockConfig: Config = { apiKey: 'test-api-key' };
+  const mockConfig: Config = { apiKey: 'test-api-key', platform: { type: PlatformType.Environment, value: Environment.Dev } };
   const mockWorkflowId = 'test-workflow-id';
   const mockRequest = {
     content: 'test content',

@@ -24,10 +24,12 @@ const mockWorkflowId = 'test-workflow-id';
 const mockConfig: ApiConfig = {
   endpoint: mockEndpoint,
   apiKey: mockApiKey,
+  platform: { type: PlatformType.Environment, value: Environment.Dev },
 };
 
 const mockBaseConfig: Config = {
   apiKey: mockApiKey,
+  platform: { type: PlatformType.Environment, value: Environment.Dev },
 };
 
 beforeAll(() => server.listen());
@@ -421,100 +423,51 @@ describe('API Utilities Unit Tests', () => {
       });
 
       describe('No platform configuration', () => {
-        it('should return dev URL in test environment when no platform is configured', () => {
-          // Mock NODE_ENV to be 'test'
-          const originalEnv = process.env.NODE_ENV;
-          process.env.NODE_ENV = 'development';
 
+
+        it('should return prod URL when platform is explicitly set to production', () => {
           const config: Config = {
-            ...mockBaseConfig,
-            // No platform configuration
+            apiKey: mockApiKey,
+            platform: { type: PlatformType.Environment, value: Environment.Prod },
           };
           const result = getPlatformUrl(config);
-          expect(result).toBe(DEFAULT_PLATFORM_URL_DEV);
-
-          // Restore original environment
-          process.env.NODE_ENV = originalEnv;
+          expect(result).toBe(DEFAULT_PLATFORM_URL_PROD);
         });
 
-        it('should return prod URL in non-test environment when no platform is configured', () => {
-          // Mock NODE_ENV to be 'production'
-          const originalEnv = process.env.NODE_ENV;
-          process.env.NODE_ENV = 'production';
-
+        it('should return prod URL when no platform is configured', () => {
           const config: Config = {
-            ...mockBaseConfig,
+            apiKey: mockApiKey,
             // No platform configuration
           };
           const result = getPlatformUrl(config);
           expect(result).toBe(DEFAULT_PLATFORM_URL_PROD);
-
-          // Restore original environment
-          process.env.NODE_ENV = originalEnv;
         });
 
-        it('should return prod URL when NODE_ENV is undefined and no platform is configured', () => {
-          // Mock NODE_ENV to be undefined
-          const originalEnv = process.env.NODE_ENV;
-          delete process.env.NODE_ENV;
-
+        it('should return dev URL when platform is explicitly set to dev', () => {
           const config: Config = {
-            ...mockBaseConfig,
-            // No platform configuration
-          };
-          const result = getPlatformUrl(config);
-          expect(result).toBe(DEFAULT_PLATFORM_URL_PROD);
-
-          // Restore original environment
-          process.env.NODE_ENV = originalEnv;
-        });
-
-        it('should return dev URL when NODE_ENV is development and no platform is configured', () => {
-          // Mock NODE_ENV to be 'development'
-          const originalEnv = process.env.NODE_ENV;
-          process.env.NODE_ENV = 'development';
-
-          const config: Config = {
-            ...mockBaseConfig,
-            // No platform configuration
+            apiKey: mockApiKey,
+            platform: { type: PlatformType.Environment, value: Environment.Dev },
           };
           const result = getPlatformUrl(config);
           expect(result).toBe(DEFAULT_PLATFORM_URL_DEV);
-
-          // Restore original environment
-          process.env.NODE_ENV = originalEnv;
         });
 
-        it('should return prod URL when platform is explicitly undefined and no NODE_ENV is present', () => {
-          // Mock NODE_ENV to be undefined
-          const originalEnv = process.env.NODE_ENV;
-          delete process.env.NODE_ENV;
-
+        it('should return prod URL when platform is explicitly undefined', () => {
           const config: Config = {
-            ...mockBaseConfig,
+            apiKey: mockApiKey,
             platform: undefined,
           };
           const result = getPlatformUrl(config);
           expect(result).toBe(DEFAULT_PLATFORM_URL_PROD);
-
-          // Restore original environment
-          process.env.NODE_ENV = originalEnv;
         });
 
-        it('should return prod URL when platform is explicitly null and no NODE_ENV is present', () => {
-          // Mock NODE_ENV to be undefined
-          const originalEnv = process.env.NODE_ENV;
-          delete process.env.NODE_ENV;
-
+        it('should return prod URL when platform is explicitly null', () => {
           const config = {
-            ...mockBaseConfig,
+            apiKey: mockApiKey,
             platform: null,
           } as unknown as Config;
           const result = getPlatformUrl(config);
           expect(result).toBe(DEFAULT_PLATFORM_URL_PROD);
-
-          // Restore original environment
-          process.env.NODE_ENV = originalEnv;
         });
       });
 
@@ -623,21 +576,14 @@ describe('API Utilities Unit Tests', () => {
         });
 
         it('should return same result as getCurrentPlatformUrl for no config', () => {
-          // Mock NODE_ENV to be 'test' for consistent behavior
-          const originalEnv = process.env.NODE_ENV;
-          process.env.NODE_ENV = 'development';
-
           const config: Config = {
-            ...mockBaseConfig,
+            apiKey: mockApiKey,
             // No platform configuration
           };
           const getPlatformUrlResult = getPlatformUrl(config);
           const getCurrentPlatformUrlResult = getCurrentPlatformUrl(config);
           expect(getPlatformUrlResult).toBe(getCurrentPlatformUrlResult);
-          expect(getPlatformUrlResult).toBe(DEFAULT_PLATFORM_URL_DEV);
-
-          // Restore original environment
-          process.env.NODE_ENV = originalEnv;
+          expect(getPlatformUrlResult).toBe(DEFAULT_PLATFORM_URL_PROD);
         });
       });
     });
