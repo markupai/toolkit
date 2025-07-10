@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { API_ENDPOINTS } from '../../../src/api/style/style.api';
-import { DEFAULT_PLATFORM_URL_DEV } from '../../../src/utils/api';
 import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
 
@@ -11,7 +10,7 @@ describe('CORS Integration Tests', () => {
     const apiKey = '';
     config = {
       apiKey,
-      platform: { type: PlatformType.Url, value: DEFAULT_PLATFORM_URL_DEV },
+      platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
     };
   });
 

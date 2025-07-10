@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { beforeAll } from 'vitest';
 import path from 'path';
 import fs from 'fs';
+import { DEFAULT_PLATFORM_URL_DEV } from '../../src/utils/api';
 
 // Load environment variables before running integration tests
 beforeAll(() => {
@@ -23,11 +24,8 @@ beforeAll(() => {
     );
   }
 
+  // Set TEST_PLATFORM_URL if not provided, defaulting to DEFAULT_PLATFORM_URL_DEV
   if (!process.env.TEST_PLATFORM_URL) {
-    throw new Error(
-      'TEST_PLATFORM_URL environment variable is required for integration tests. Please set it in your environment or add it to your .env file.',
-    );
+    process.env.TEST_PLATFORM_URL = DEFAULT_PLATFORM_URL_DEV;
   }
-
-  // Set the platform URL for testing
 });

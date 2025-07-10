@@ -1,5 +1,4 @@
 import { http, HttpResponse, HttpHandler } from 'msw';
-import { DEFAULT_PLATFORM_URL_DEV } from '../../../src/utils/api';
 import { Status } from '../../../src/utils/api.types';
 
 // Common response structures
@@ -104,46 +103,46 @@ type ApiHandlers = {
 // Demo API handlers
 const demoHandlers = {
   rewrite: {
-    submit: http.post(`${DEFAULT_PLATFORM_URL_DEV}/v1/rewrites/`, () => {
+    submit: http.post('*/v1/rewrites/', () => {
       return HttpResponse.json({
         status: Status.Running,
         workflow_id: 'test-workflow-id',
         message: 'Rewrite workflow started successfully.',
       });
     }),
-    poll: http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/rewrites/:workflowId`, () => {
+    poll: http.get('*/v1/rewrites/:workflowId', () => {
       return HttpResponse.json(commonResponses.workflow.completed);
     }),
-    failed: http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/rewrites/:workflowId`, () => {
+    failed: http.get('*/v1/rewrites/:workflowId', () => {
       return HttpResponse.json({
         status: Status.Failed,
         workflow_id: 'test-workflow-id',
         message: 'Rewrite failed with status: failed',
       });
     }),
-    emptyWorkflowId: http.post(`${DEFAULT_PLATFORM_URL_DEV}/v1/rewrites/`, () => {
+    emptyWorkflowId: http.post('*/v1/rewrites/', () => {
       return HttpResponse.json({ status: Status.Running });
     }),
   },
   check: {
-    submit: http.post(`${DEFAULT_PLATFORM_URL_DEV}/v1/checks/`, () => {
+    submit: http.post('*/v1/checks/', () => {
       return HttpResponse.json({
         status: Status.Running,
         workflow_id: 'test-workflow-id',
         message: 'Check workflow started successfully.',
       });
     }),
-    poll: http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/checks/:workflowId`, () => {
+    poll: http.get('*/v1/checks/:workflowId', () => {
       return HttpResponse.json(commonResponses.workflow.completed);
     }),
-    failed: http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/checks/:workflowId`, () => {
+    failed: http.get('*/v1/checks/:workflowId', () => {
       return HttpResponse.json({
         status: Status.Failed,
         workflow_id: 'test-workflow-id',
         message: 'Check failed with status: failed',
       });
     }),
-    emptyWorkflowId: http.post(`${DEFAULT_PLATFORM_URL_DEV}/v1/checks/`, () => {
+    emptyWorkflowId: http.post('*/v1/checks/', () => {
       return HttpResponse.json({ status: Status.Running });
     }),
   },
@@ -152,7 +151,7 @@ const demoHandlers = {
 // Internal API handlers
 const internalHandlers = {
   constants: {
-    success: http.get(`${DEFAULT_PLATFORM_URL_DEV}/internal/v1/constants`, () => {
+    success: http.get('*/internal/v1/constants', () => {
       return HttpResponse.json({
         dialects: ['american_english', 'british_english'],
         tones: ['formal', 'casual'],
@@ -167,15 +166,15 @@ const internalHandlers = {
         },
       });
     }),
-    error: http.get(`${DEFAULT_PLATFORM_URL_DEV}/internal/v1/constants`, () => {
+    error: http.get('*/internal/v1/constants', () => {
       return HttpResponse.json({ message: 'Failed to get admin constants' }, { status: 500 });
     }),
   },
   feedback: {
-    success: http.post(`${DEFAULT_PLATFORM_URL_DEV}/internal/v1/demo-feedback`, () => {
+    success: http.post('*/internal/v1/demo-feedback', () => {
       return HttpResponse.json({ success: true });
     }),
-    error: http.post(`${DEFAULT_PLATFORM_URL_DEV}/internal/v1/demo-feedback`, () => {
+    error: http.post('*/internal/v1/demo-feedback', () => {
       return HttpResponse.json({ message: 'Failed to submit feedback' }, { status: 500 });
     }),
   },
@@ -184,7 +183,7 @@ const internalHandlers = {
 // Style API handlers
 const styleHandlers = {
   guides: {
-    success: http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+    success: http.get('*/v1/style-guides', () => {
       return HttpResponse.json([
         {
           id: 'test-style-guide-id',
@@ -197,10 +196,10 @@ const styleHandlers = {
         },
       ]);
     }),
-    error: http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+    error: http.get('*/v1/style-guides', () => {
       return HttpResponse.json({ message: 'Failed to list style guides' }, { status: 500 });
     }),
-    getSuccess: http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides/:styleGuideId`, () => {
+    getSuccess: http.get('*/v1/style-guides/:styleGuideId', () => {
       return HttpResponse.json({
         id: 'test-style-guide-id',
         name: 'Test Style Guide',
@@ -211,10 +210,10 @@ const styleHandlers = {
         updated_by: 'test-user',
       });
     }),
-    getError: http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides/:styleGuideId`, () => {
+    getError: http.get('*/v1/style-guides/:styleGuideId', () => {
       return HttpResponse.json({ message: 'Style guide not found' }, { status: 404 });
     }),
-    createSuccess: http.post(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, async ({ request }) => {
+    createSuccess: http.post('*/v1/style-guides', async ({ request }) => {
       // Verify that the request contains FormData with file_upload and name
       const formData = await request.formData();
       const file = formData.get('file_upload') as File;
@@ -234,52 +233,49 @@ const styleHandlers = {
         updated_by: 'test-user',
       });
     }),
-    createError: http.post(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+    createError: http.post('*/v1/style-guides', () => {
       return HttpResponse.json({ message: 'Failed to create style guide' }, { status: 400 });
     }),
-    updateSuccess: http.patch(
-      `${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides/:styleGuideId`,
-      async ({ request, params }) => {
-        // Verify that the request contains JSON with name
-        const body = (await request.json()) as { name?: string };
+    updateSuccess: http.patch('*/v1/style-guides/:styleGuideId', async ({ request, params }) => {
+      // Verify that the request contains JSON with name
+      const body = (await request.json()) as { name?: string };
 
-        if (!body?.name) {
-          return HttpResponse.json({ message: 'Missing required field: name' }, { status: 400 });
-        }
+      if (!body?.name) {
+        return HttpResponse.json({ message: 'Missing required field: name' }, { status: 400 });
+      }
 
-        return HttpResponse.json({
-          id: params.styleGuideId,
-          name: body.name,
-          created_at: '2025-06-20T11:46:30.537Z',
-          created_by: 'test-user',
-          status: 'running',
-          updated_at: '2025-06-20T12:00:00.000Z',
-          updated_by: 'test-user',
-        });
-      },
-    ),
-    updateError: http.patch(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides/:styleGuideId`, () => {
+      return HttpResponse.json({
+        id: params.styleGuideId,
+        name: body.name,
+        created_at: '2025-06-20T11:46:30.537Z',
+        created_by: 'test-user',
+        status: 'running',
+        updated_at: '2025-06-20T12:00:00.000Z',
+        updated_by: 'test-user',
+      });
+    }),
+    updateError: http.patch('*/v1/style-guides/:styleGuideId', () => {
       return HttpResponse.json({ message: 'Failed to update style guide' }, { status: 400 });
     }),
-    deleteSuccess: http.delete(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides/:styleGuideId`, () => {
+    deleteSuccess: http.delete('*/v1/style-guides/:styleGuideId', () => {
       return new HttpResponse(null, { status: 204 });
     }),
-    deleteError: http.delete(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides/:styleGuideId`, () => {
+    deleteError: http.delete('*/v1/style-guides/:styleGuideId', () => {
       return HttpResponse.json({ message: 'Failed to delete style guide' }, { status: 404 });
     }),
   },
   checks: {
-    success: http.post(`${DEFAULT_PLATFORM_URL_DEV}/v1/style/checks`, () => {
+    success: http.post('*/v1/style/checks', () => {
       return HttpResponse.json({
         status: Status.Running,
         workflow_id: 'test-workflow-id',
         message: 'Style check workflow started successfully.',
       });
     }),
-    error: http.post(`${DEFAULT_PLATFORM_URL_DEV}/v1/style/checks`, () => {
+    error: http.post('*/v1/style/checks', () => {
       return HttpResponse.json({ message: 'Could not validate credentials' }, { status: 401 });
     }),
-    poll: http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style/checks/:workflowId`, () => {
+    poll: http.get('*/v1/style/checks/:workflowId', () => {
       return HttpResponse.json({
         status: Status.Completed,
         workflow_id: 'test-workflow-id',
@@ -334,17 +330,17 @@ const styleHandlers = {
     }),
   },
   suggestions: {
-    success: http.post(`${DEFAULT_PLATFORM_URL_DEV}/v1/style/suggestions`, () => {
+    success: http.post('*/v1/style/suggestions', () => {
       return HttpResponse.json({
         status: Status.Running,
         workflow_id: 'test-workflow-id',
         message: 'Style suggestions workflow started successfully.',
       });
     }),
-    error: http.post(`${DEFAULT_PLATFORM_URL_DEV}/v1/style/suggestions`, () => {
+    error: http.post('*/v1/style/suggestions', () => {
       return HttpResponse.json({ message: 'Could not validate credentials' }, { status: 401 });
     }),
-    poll: http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style/suggestions/:workflowId`, () => {
+    poll: http.get('*/v1/style/suggestions/:workflowId', () => {
       return HttpResponse.json({
         status: Status.Completed,
         workflow_id: 'test-workflow-id',
@@ -400,17 +396,17 @@ const styleHandlers = {
     }),
   },
   rewrites: {
-    success: http.post(`${DEFAULT_PLATFORM_URL_DEV}/v1/style/rewrites`, () => {
+    success: http.post('*/v1/style/rewrites', () => {
       return HttpResponse.json({
         status: Status.Running,
         workflow_id: 'test-workflow-id',
         message: 'Style rewrite workflow started successfully.',
       });
     }),
-    error: http.post(`${DEFAULT_PLATFORM_URL_DEV}/v1/style/rewrites`, () => {
+    error: http.post('*/v1/style/rewrites', () => {
       return HttpResponse.json({ message: 'Could not validate credentials' }, { status: 401 });
     }),
-    poll: http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style/rewrites/:workflowId`, () => {
+    poll: http.get('*/v1/style/rewrites/:workflowId', () => {
       return HttpResponse.json({
         status: Status.Completed,
         style_guide_id: 'test-style-guide-id',

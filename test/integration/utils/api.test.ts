@@ -7,7 +7,6 @@ import {
   pollWorkflowForResult,
   verifyPlatformUrl,
   getCurrentPlatformUrl,
-  DEFAULT_PLATFORM_URL_DEV,
   DEFAULT_PLATFORM_URL_PROD,
 } from '../../../src/utils/api';
 import { PlatformType, Status } from '../../../src/utils/api.types';
@@ -26,7 +25,7 @@ describe('API Utilities Integration Tests', () => {
     }
     config = {
       apiKey,
-      platform: { type: PlatformType.Url, value: DEFAULT_PLATFORM_URL_DEV },
+      platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
     };
   });
 
@@ -496,7 +495,7 @@ describe('API Utilities Integration Tests', () => {
     describe('getCurrentPlatformUrl', () => {
       it('should return the configured platform URL', () => {
         const result = getCurrentPlatformUrl(config);
-        expect(result).toBe(DEFAULT_PLATFORM_URL_DEV);
+        expect(result).toBe(process.env.TEST_PLATFORM_URL);
       });
 
       it('should return custom platform URL when configured', () => {
@@ -522,7 +521,7 @@ describe('API Utilities Integration Tests', () => {
         const result = await verifyPlatformUrl(config);
         expect(result).toEqual({
           success: true,
-          url: DEFAULT_PLATFORM_URL_DEV,
+          url: process.env.TEST_PLATFORM_URL,
           error: undefined,
         });
       });
@@ -530,12 +529,12 @@ describe('API Utilities Integration Tests', () => {
       it('should handle platform URL with trailing slash', async () => {
         const configWithSlash: Config = {
           ...config,
-          platform: { type: PlatformType.Url, value: `${DEFAULT_PLATFORM_URL_DEV}/` },
+          platform: { type: PlatformType.Url, value: `${process.env.TEST_PLATFORM_URL}/` },
         };
         const result = await verifyPlatformUrl(configWithSlash);
         expect(result).toEqual({
           success: true,
-          url: `${DEFAULT_PLATFORM_URL_DEV}/`,
+          url: `${process.env.TEST_PLATFORM_URL}/`,
           error: undefined,
         });
       });
@@ -543,11 +542,11 @@ describe('API Utilities Integration Tests', () => {
       it('should handle unauthorized access gracefully', async () => {
         const invalidConfig: Config = {
           apiKey: 'invalid-api-key',
-          platform: { type: PlatformType.Url, value: DEFAULT_PLATFORM_URL_DEV },
+          platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL },
         };
         const result = await verifyPlatformUrl(invalidConfig);
         expect(result.success).toBe(false);
-        expect(result.url).toBe(DEFAULT_PLATFORM_URL_DEV);
+        expect(result.url).toBe(process.env.TEST_PLATFORM_URL);
         expect(result.error).toContain('HTTP 401');
       });
 
@@ -629,7 +628,7 @@ describe('API Utilities Integration Tests', () => {
           expect(result).toHaveProperty('success');
           expect(result).toHaveProperty('url');
           expect(result).toHaveProperty('error');
-          expect(result.url).toBe(DEFAULT_PLATFORM_URL_DEV);
+          expect(result.url).toBe(process.env.TEST_PLATFORM_URL);
         });
       });
     });

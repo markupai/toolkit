@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { submitRewrite, rewrite } from '../../../src/api/demo/demo.api';
 import { DEMO_DEFAULTS } from '../../../src/api/demo/demo.api.defaults';
-import { DEFAULT_PLATFORM_URL_DEV } from '../../../src/utils/api';
 import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
 
@@ -14,7 +13,7 @@ describe('Demo API Integration Tests', () => {
     }
     config = {
       apiKey,
-      platform: { type: PlatformType.Url, value: DEFAULT_PLATFORM_URL_DEV },
+      platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
     };
   });
 
@@ -69,7 +68,7 @@ describe('Demo API Integration Tests', () => {
     it('should handle invalid API key', async () => {
       const invalidConfig: Config = {
         apiKey: 'invalid-api-key',
-        platform: { type: PlatformType.Url, value: DEFAULT_PLATFORM_URL_DEV },
+        platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
       };
       await expect(
         submitRewrite(
@@ -118,7 +117,7 @@ describe('Demo API Integration Tests', () => {
       try {
         const emptyConfig: Config = {
           apiKey: '',
-          platform: { type: PlatformType.Url, value: DEFAULT_PLATFORM_URL_DEV },
+          platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
         };
         await expect(
           submitRewrite(

@@ -8,7 +8,6 @@ import {
   verifyPlatformUrl,
   getCurrentPlatformUrl,
   getPlatformUrl,
-  DEFAULT_PLATFORM_URL_DEV,
   DEFAULT_PLATFORM_URL_PROD,
   DEFAULT_PLATFORM_URL_STAGE,
 } from '../../../src/utils/api';
@@ -70,7 +69,7 @@ describe('API Utilities Unit Tests', () => {
 
     it('should handle API errors with detail', async () => {
       server.use(
-        http.get(`${DEFAULT_PLATFORM_URL_DEV}${mockEndpoint}`, () => {
+        http.get('*/test-endpoint', () => {
           return HttpResponse.json({ detail: 'API Error' }, { status: 400 });
         }),
       );
@@ -79,7 +78,7 @@ describe('API Utilities Unit Tests', () => {
 
     it('should handle API errors with message', async () => {
       server.use(
-        http.get(`${DEFAULT_PLATFORM_URL_DEV}${mockEndpoint}`, () => {
+        http.get('*/test-endpoint', () => {
           return HttpResponse.json({ message: 'API Error' }, { status: 400 });
         }),
       );
@@ -88,7 +87,7 @@ describe('API Utilities Unit Tests', () => {
 
     it('should handle API errors without message', async () => {
       server.use(
-        http.get(`${DEFAULT_PLATFORM_URL_DEV}${mockEndpoint}`, () => {
+        http.get('*/test-endpoint', () => {
           return HttpResponse.json({}, { status: 400 });
         }),
       );
@@ -97,7 +96,7 @@ describe('API Utilities Unit Tests', () => {
 
     it('should handle network errors', async () => {
       server.use(
-        http.get(`${DEFAULT_PLATFORM_URL_DEV}${mockEndpoint}`, () => {
+        http.get('*/test-endpoint', () => {
           return HttpResponse.error();
         }),
       );
@@ -126,7 +125,7 @@ describe('API Utilities Unit Tests', () => {
     describe('getCurrentPlatformUrl', () => {
       it('should return default platform URL when no custom URL is provided', () => {
         const result = getCurrentPlatformUrl(mockBaseConfig);
-        expect(result).toBe(DEFAULT_PLATFORM_URL_DEV);
+        expect(result).toBe(process.env.TEST_PLATFORM_URL);
       });
 
       it('should return custom platform URL when provided', () => {
@@ -142,7 +141,7 @@ describe('API Utilities Unit Tests', () => {
     describe('verifyPlatformUrl', () => {
       it('should return success when platform URL is reachable', async () => {
         server.use(
-          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+          http.get('*/v1/style-guides', () => {
             return HttpResponse.json({ version: '1.0.0' }, { status: 200 });
           }),
         );
@@ -150,7 +149,7 @@ describe('API Utilities Unit Tests', () => {
         const result = await verifyPlatformUrl(mockBaseConfig);
         expect(result).toEqual({
           success: true,
-          url: DEFAULT_PLATFORM_URL_DEV,
+          url: process.env.TEST_PLATFORM_URL,
           error: undefined,
         });
       });
@@ -199,7 +198,7 @@ describe('API Utilities Unit Tests', () => {
 
       it('should return error when platform URL returns non-200 status', async () => {
         server.use(
-          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+          http.get('*/v1/style-guides', () => {
             return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 });
           }),
         );
@@ -207,14 +206,14 @@ describe('API Utilities Unit Tests', () => {
         const result = await verifyPlatformUrl(mockBaseConfig);
         expect(result).toEqual({
           success: false,
-          url: DEFAULT_PLATFORM_URL_DEV,
+          url: process.env.TEST_PLATFORM_URL,
           error: 'HTTP 401: Unauthorized',
         });
       });
 
       it('should return error when platform URL returns 404', async () => {
         server.use(
-          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+          http.get('*/v1/style-guides', () => {
             return HttpResponse.json({ error: 'Not Found' }, { status: 404 });
           }),
         );
@@ -222,14 +221,14 @@ describe('API Utilities Unit Tests', () => {
         const result = await verifyPlatformUrl(mockBaseConfig);
         expect(result).toEqual({
           success: false,
-          url: DEFAULT_PLATFORM_URL_DEV,
+          url: process.env.TEST_PLATFORM_URL,
           error: 'HTTP 404: Not Found',
         });
       });
 
       it('should return error when platform URL returns 500', async () => {
         server.use(
-          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+          http.get('*/v1/style-guides', () => {
             return HttpResponse.json({ error: 'Internal Server Error' }, { status: 500 });
           }),
         );
@@ -237,14 +236,14 @@ describe('API Utilities Unit Tests', () => {
         const result = await verifyPlatformUrl(mockBaseConfig);
         expect(result).toEqual({
           success: false,
-          url: DEFAULT_PLATFORM_URL_DEV,
+          url: process.env.TEST_PLATFORM_URL,
           error: 'HTTP 500: Internal Server Error',
         });
       });
 
       it('should handle network errors gracefully', async () => {
         server.use(
-          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+          http.get('*/v1/style-guides', () => {
             return HttpResponse.error();
           }),
         );
@@ -252,21 +251,21 @@ describe('API Utilities Unit Tests', () => {
         const result = await verifyPlatformUrl(mockBaseConfig);
         expect(result).toEqual({
           success: false,
-          url: DEFAULT_PLATFORM_URL_DEV,
+          url: process.env.TEST_PLATFORM_URL,
           error: 'Failed to fetch',
         });
       });
 
       it('should handle timeout errors', async () => {
         server.use(
-          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+          http.get('*/v1/style-guides', () => {
             return HttpResponse.error();
           }),
         );
 
         const result = await verifyPlatformUrl(mockBaseConfig);
         expect(result.success).toBe(false);
-        expect(result.url).toBe(DEFAULT_PLATFORM_URL_DEV);
+        expect(result.url).toBe(process.env.TEST_PLATFORM_URL);
         expect(result.error).toBeDefined();
       });
 
@@ -302,7 +301,7 @@ describe('API Utilities Unit Tests', () => {
 
       it('should handle empty response body gracefully', async () => {
         server.use(
-          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+          http.get('*/v1/style-guides', () => {
             return new HttpResponse(null, { status: 200 });
           }),
         );
@@ -310,14 +309,14 @@ describe('API Utilities Unit Tests', () => {
         const result = await verifyPlatformUrl(mockBaseConfig);
         expect(result).toEqual({
           success: true,
-          url: DEFAULT_PLATFORM_URL_DEV,
+          url: process.env.TEST_PLATFORM_URL,
           error: undefined,
         });
       });
 
       it('should handle JSON parsing errors gracefully', async () => {
         server.use(
-          http.get(`${DEFAULT_PLATFORM_URL_DEV}/v1/style-guides`, () => {
+          http.get('*/v1/style-guides', () => {
             return new HttpResponse('Invalid JSON', { status: 200 });
           }),
         );
@@ -325,7 +324,7 @@ describe('API Utilities Unit Tests', () => {
         const result = await verifyPlatformUrl(mockBaseConfig);
         expect(result).toEqual({
           success: true,
-          url: DEFAULT_PLATFORM_URL_DEV,
+          url: process.env.TEST_PLATFORM_URL,
           error: undefined,
         });
       });
@@ -348,7 +347,7 @@ describe('API Utilities Unit Tests', () => {
             platform: { type: PlatformType.Environment, value: Environment.Dev },
           };
           const result = getPlatformUrl(config);
-          expect(result).toBe(DEFAULT_PLATFORM_URL_DEV);
+          expect(result).toBe(process.env.TEST_PLATFORM_URL);
         });
 
         it('should return prod URL when platform type is Environment.Prod', () => {
@@ -447,7 +446,7 @@ describe('API Utilities Unit Tests', () => {
             platform: { type: PlatformType.Environment, value: Environment.Dev },
           };
           const result = getPlatformUrl(config);
-          expect(result).toBe(DEFAULT_PLATFORM_URL_DEV);
+          expect(result).toBe(process.env.TEST_PLATFORM_URL);
         });
 
         it('should return prod URL when platform is explicitly undefined', () => {
@@ -615,7 +614,7 @@ describe('API Utilities Unit Tests', () => {
     it('should retry when workflow is in progress', async () => {
       let callCount = 0;
       server.use(
-        http.get(`${DEFAULT_PLATFORM_URL_DEV}${mockEndpoint}/${mockWorkflowId}`, () => {
+        http.get('*/test-endpoint/test-workflow-id', () => {
           callCount++;
           if (callCount === 1) {
             return HttpResponse.json({ status: 'running', workflow_id: mockWorkflowId });
