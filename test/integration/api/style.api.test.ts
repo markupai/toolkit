@@ -507,7 +507,7 @@ describe('Style API Integration Tests', () => {
     });
   });
 
-  describe.skip('Style Operations with File Content', () => {
+  describe('Style Operations with File Content', () => {
     const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft;
 
     // Helper function to create a File object from the batteries.pdf
