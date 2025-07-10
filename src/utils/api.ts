@@ -1,6 +1,6 @@
 import { Status, Environment, PlatformType } from './api.types';
 import type { ResponseBase, Config, ApiConfig } from './api.types';
-import { AcrolinxError } from './errors';
+import { AcrolinxError, ErrorType } from './errors';
 
 export const DEFAULT_PLATFORM_URL_PROD = 'https://app.acrolinx.cloud';
 export const DEFAULT_PLATFORM_URL_STAGE = 'https://app.stg.acrolinx-cloud.net';
@@ -136,7 +136,10 @@ async function makeRequest<T>(
       throw error;
     }
     console.error('Unknown HTTP error:', error);
-    throw new AcrolinxError(error instanceof Error ? error.message : 'Unknown error occurred');
+    throw AcrolinxError.fromError(
+      error instanceof Error ? error : new Error('Unknown error occurred'),
+      ErrorType.NETWORK_ERROR,
+    );
   }
 }
 
@@ -167,7 +170,7 @@ export async function pollWorkflowForResult<T>(workflowId: string, config: ApiCo
 
   const poll = async (): Promise<T> => {
     if (attempts >= maxAttempts) {
-      throw new AcrolinxError(`Workflow timed out after ${maxAttempts} attempts`);
+      throw new AcrolinxError(`Workflow timed out after ${maxAttempts} attempts`, ErrorType.TIMEOUT_ERROR);
     }
 
     try {
@@ -203,7 +206,7 @@ export async function pollWorkflowForResult<T>(workflowId: string, config: ApiCo
       const normalizedStatus = dataWithWorkflowId.status.toLowerCase() as Status;
 
       if (normalizedStatus === Status.Failed) {
-        throw new AcrolinxError(`Workflow failed with status: ${Status.Failed}`);
+        throw new AcrolinxError(`Workflow failed with status: ${Status.Failed}`, ErrorType.WORKFLOW_FAILED);
       }
 
       if (normalizedStatus === Status.Completed) {
@@ -216,18 +219,19 @@ export async function pollWorkflowForResult<T>(workflowId: string, config: ApiCo
         return poll();
       }
 
-      throw new AcrolinxError(`Unexpected workflow status: ${dataWithWorkflowId.status}`);
+      throw new AcrolinxError(`Unexpected workflow status: ${dataWithWorkflowId.status}`, ErrorType.UNEXPECTED_STATUS);
     } catch (error) {
       if (error instanceof AcrolinxError) {
         console.error(`Polling error (attempt ${attempts + 1}/${maxAttempts}):`, error.message);
         throw error;
       }
       console.error(`Unknown polling error (attempt ${attempts + 1}/${maxAttempts}):`, error);
-      throw new AcrolinxError(error instanceof Error ? error.message : 'Unknown error occurred');
+      throw AcrolinxError.fromError(
+        error instanceof Error ? error : new Error('Unknown error occurred'),
+        ErrorType.POLLING_ERROR,
+      );
     }
   };
 
   return poll();
 }
-
-export { AcrolinxError };

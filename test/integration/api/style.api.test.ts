@@ -18,6 +18,7 @@ import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { AcrolinxError } from '../../../src/utils/errors';
 
 describe('Style API Integration Tests', () => {
   let config: Config;
@@ -208,6 +209,39 @@ describe('Style API Integration Tests', () => {
 
       expect(response).toBeDefined();
       expect(response.workflow_id).toBeDefined();
+    });
+
+    it('should submit a style check with incorrect options', async () => {
+      expect(
+        async () =>
+          await submitStyleCheck(
+            {
+              content: 'This is a test content for style operations.',
+              style_guide: 'invalid-style-guide-id',
+              dialect: 'invalid-dialect',
+              tone: 'invalid-tone',
+            },
+            config,
+          ),
+      ).rejects.toThrow(AcrolinxError);
+    });
+
+    it('should submit a style check with invalid api key', async () => {
+      expect(
+        async () =>
+          await submitStyleCheck(
+            {
+              content: testContent,
+              style_guide: styleGuideId,
+              dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+              tone: STYLE_DEFAULTS.tones.formal,
+              documentName: 'integration-test-document.txt',
+            },
+            {
+              apiKey: 'invalid-api-key',
+            },
+          ),
+      ).rejects.toThrow(AcrolinxError);
     });
 
     it('should submit a style suggestion', async () => {
