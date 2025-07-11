@@ -974,6 +974,71 @@ describe('Style API Integration Tests', () => {
       expect(response).toBeDefined();
       expect(response.workflow_id).toBeDefined();
     });
+
+    it.skip('should download text file from URL and perform style check with Buffer', async () => {
+      // URL for the text file
+      const textFileUrl =
+        'https://zapier-dev-files.s3.amazonaws.com/cli-platform/20280/2P4LX4UFUwS9SwPN3kdCsLI0HZIS6fjgkF-dej4QtK5RQ_o8brwHHGhdNR_EB7dBSUke2Z30XLu42BJmS4MVAq2tN8d6R3xx_4dBhfNDhfWf8paGIJguziMkWu-cBsf-_PWgFvjS95FXgxtlqAO67cROPp8oTIV46TOfgJbWlfo';
+
+      // Download the file
+      const response = await fetch(textFileUrl);
+      expect(response.ok).toBe(true);
+      expect(response.status).toBe(200);
+
+      // Get the file as an ArrayBuffer
+      const arrayBuffer = await response.arrayBuffer();
+      expect(arrayBuffer).toBeDefined();
+      expect(arrayBuffer.byteLength).toBeGreaterThan(0);
+
+      // Create a Buffer from the downloaded file content
+      const fileBuffer = Buffer.from(arrayBuffer);
+      expect(fileBuffer).toBeInstanceOf(Buffer);
+      expect(fileBuffer.length).toBeGreaterThan(0);
+
+      // Perform style check with the downloaded content
+      const styleCheckResponse = await styleRewrite(
+        {
+          content: fileBuffer,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'downloaded-file.txt',
+        },
+        config,
+      );
+
+      // Validate the style check response
+      expect(styleCheckResponse).toBeDefined();
+      expect(styleCheckResponse.workflow_id).toBeDefined();
+      expect(typeof styleCheckResponse.workflow_id).toBe('string');
+      expect(styleCheckResponse.check_options).toBeDefined();
+      expect(styleCheckResponse.check_options.style_guide).toBeDefined();
+      expect(styleCheckResponse.check_options.style_guide.style_guide_type).toBeDefined();
+      expect(styleCheckResponse.check_options.style_guide.style_guide_id).toBeDefined();
+      expect(typeof styleCheckResponse.check_options.style_guide.style_guide_type).toBe('string');
+      expect(typeof styleCheckResponse.check_options.style_guide.style_guide_id).toBe('string');
+      expect(styleCheckResponse.check_options.style_guide.style_guide_id).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      );
+      expect(styleCheckResponse.check_options.dialect).toBe(STYLE_DEFAULTS.dialects.americanEnglish);
+      expect(styleCheckResponse.check_options.tone).toBe(STYLE_DEFAULTS.tones.formal);
+
+      // Test scores structure
+      expect(styleCheckResponse.scores).toBeDefined();
+      expect(styleCheckResponse.scores.quality).toBeDefined();
+      expect(typeof styleCheckResponse.scores.quality.score).toBe('number');
+      expect(styleCheckResponse.scores.clarity).toBeDefined();
+      expect(styleCheckResponse.scores.grammar).toBeDefined();
+      expect(styleCheckResponse.scores.style_guide).toBeDefined();
+      expect(styleCheckResponse.scores.tone).toBeDefined();
+      expect(styleCheckResponse.scores.terminology).toBeDefined();
+
+      // Log some information about the downloaded content for debugging
+      console.log(`Downloaded file size: ${arrayBuffer.byteLength} bytes`);
+      console.log(`Buffer size: ${fileBuffer.length} bytes`);
+      console.log(`Style check workflow ID: ${styleCheckResponse.workflow_id}`);
+      console.log(`Quality score: ${styleCheckResponse.scores.quality.score}`);
+    });
   });
 
   describe('Style Guide Cleanup', () => {

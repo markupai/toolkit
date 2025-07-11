@@ -42,8 +42,8 @@ async function createStyleFormData(request: StyleAnalysisReq): Promise<FormData>
   // Handle string, File, and Buffer types for content
   if (typeof request.content === 'string') {
     formData.append('file_upload', new Blob([request.content], { type: 'text/plain' }), filename);
-  } else if (request.content instanceof File) {
-    // If content is a File, use it directly
+  } else if (typeof File !== 'undefined' && request.content instanceof File) {
+    // If content is a File, use it directly (only if File is available)
     formData.append('file_upload', request.content, filename);
   } else if (isBuffer(request.content)) {
     // If content is a Buffer, convert it to a Blob
