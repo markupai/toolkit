@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
-import { getAdminConstants, submitFeedback } from '../../../src/api/internal/internal.api';
+import { http, HttpResponse } from 'msw';
+import { getAdminConstants, submitFeedback, validateToken } from '../../../src/api/internal/internal.api';
 import type { FeedbackRequest } from '../../../src/api/internal/internal.api.types';
 import type { Config } from '../../../src/utils/api.types';
 import { PlatformType, Environment } from '../../../src/utils/api.types';
@@ -68,6 +69,51 @@ describe('Internal API Unit Tests', () => {
       };
 
       await expect(submitFeedback(feedbackRequest, mockConfig)).rejects.toThrow('Failed to submit feedback');
+    });
+  });
+
+  describe('validateToken', () => {
+    it('should return true when token is valid', async () => {
+      server.use(apiHandlers.style.guides.success);
+
+      const result = await validateToken(mockConfig);
+      expect(result).toBe(true);
+    });
+
+    it('should return false when token is invalid (401 error)', async () => {
+      server.use(apiHandlers.style.guides.error);
+
+      const result = await validateToken(mockConfig);
+      expect(result).toBe(false);
+    });
+
+    it('should return false when network error occurs', async () => {
+      server.use(apiHandlers.api.error.network);
+
+      const result = await validateToken(mockConfig);
+      expect(result).toBe(false);
+    });
+
+    it('should return false when API returns 403 Forbidden', async () => {
+      server.use(
+        http.get('*/v1/style-guides', () => {
+          return HttpResponse.json({ message: 'Forbidden' }, { status: 403 });
+        }),
+      );
+
+      const result = await validateToken(mockConfig);
+      expect(result).toBe(false);
+    });
+
+    it('should return false when API returns 500 Internal Server Error', async () => {
+      server.use(
+        http.get('*/v1/style-guides', () => {
+          return HttpResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+        }),
+      );
+
+      const result = await validateToken(mockConfig);
+      expect(result).toBe(false);
     });
   });
 });

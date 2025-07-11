@@ -1,10 +1,9 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { getAdminConstants, submitFeedback } from '../../../src/api/internal/internal.api';
+import { getAdminConstants, submitFeedback, validateToken } from '../../../src/api/internal/internal.api';
 import { FeedbackRequest } from '../../../src/api/internal/internal.api.types';
 import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
 
-// TODO: Skipped until we have a way to test the internal API
 describe.skip('Internal API Integration Tests', () => {
   let config: Config;
   beforeAll(() => {
@@ -42,6 +41,43 @@ describe.skip('Internal API Integration Tests', () => {
         expect(color.min_score).toBeDefined();
         expect(typeof color.min_score).toBe('number');
       });
+    });
+  });
+
+  describe('validateToken', () => {
+    it('should return true for valid API key', async () => {
+      const result = await validateToken(config);
+      expect(result).toBe(true);
+    });
+
+    it('should return false for invalid API key', async () => {
+      const invalidConfig: Config = {
+        apiKey: 'invalid-api-key',
+        platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
+      };
+
+      const result = await validateToken(invalidConfig);
+      expect(result).toBe(false);
+    });
+
+    it('should return false for empty API key', async () => {
+      const emptyConfig: Config = {
+        apiKey: '',
+        platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
+      };
+
+      const result = await validateToken(emptyConfig);
+      expect(result).toBe(false);
+    });
+
+    it('should return false for invalid platform URL', async () => {
+      const invalidUrlConfig: Config = {
+        apiKey: process.env.API_KEY || '',
+        platform: { type: PlatformType.Url, value: 'https://invalid-url-that-does-not-exist.com' },
+      };
+
+      const result = await validateToken(invalidUrlConfig);
+      expect(result).toBe(false);
     });
   });
 
