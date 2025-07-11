@@ -30,12 +30,17 @@ function createStyleFormData(request: StyleAnalysisReq): FormData {
   const formData = new FormData();
   const filename = request.documentName || 'unknown.txt';
 
-  // Handle both string and File types for content
+  // Handle string, File, and Blob types for content
   if (typeof request.content === 'string') {
     formData.append('file_upload', new Blob([request.content], { type: 'text/plain' }), filename);
-  } else {
+  } else if (request.content instanceof File) {
     // If content is a File, use it directly
     formData.append('file_upload', request.content, filename);
+  } else if (request.content instanceof Blob) {
+    // If content is a Blob, use it directly
+    formData.append('file_upload', request.content, filename);
+  } else {
+    throw new Error('Invalid content type. Expected string, File, or Blob.');
   }
 
   formData.append('style_guide', request.style_guide || '');
