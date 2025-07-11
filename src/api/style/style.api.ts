@@ -25,22 +25,33 @@ export const API_ENDPOINTS = {
   STYLE_REWRITES: '/v1/style/rewrites',
 } as const;
 
+// Helper function to check if an object is a Buffer
+function isBuffer(obj: unknown): obj is Buffer {
+  // Check if Buffer is available (Node.js environment)
+  if (typeof Buffer !== 'undefined') {
+    return Buffer.isBuffer(obj);
+  }
+  return false;
+}
+
 // Helper function to create form data from style analysis request
-function createStyleFormData(request: StyleAnalysisReq): FormData {
+async function createStyleFormData(request: StyleAnalysisReq): Promise<FormData> {
   const formData = new FormData();
   const filename = request.documentName || 'unknown.txt';
 
-  // Handle string, File, and Blob types for content
+  // Handle string, File, and Buffer types for content
   if (typeof request.content === 'string') {
     formData.append('file_upload', new Blob([request.content], { type: 'text/plain' }), filename);
   } else if (request.content instanceof File) {
     // If content is a File, use it directly
     formData.append('file_upload', request.content, filename);
-  } else if (request.content instanceof Blob) {
-    // If content is a Blob, use it directly
-    formData.append('file_upload', request.content, filename);
+  } else if (isBuffer(request.content)) {
+    // If content is a Buffer, convert it to a Blob
+    // This handles Node.js Buffer objects in environments that support them
+    const blob = new Blob([request.content], { type: 'application/octet-stream' });
+    formData.append('file_upload', blob, filename);
   } else {
-    throw new Error('Invalid content type. Expected string, File, or Blob.');
+    throw new Error('Invalid content type. Expected string, File, or Buffer.');
   }
 
   formData.append('style_guide', request.style_guide || '');
@@ -60,7 +71,7 @@ async function submitAndPollStyleAnalysis<T extends { status: Status }>(
     endpoint,
   };
 
-  const formData = createStyleFormData(request);
+  const formData = await createStyleFormData(request);
   const initialResponse = await postData<StyleAnalysisSubmitResp>(apiConfig, formData);
 
   if (!initialResponse.workflow_id) {
@@ -102,7 +113,7 @@ export async function submitStyleCheck(
     ...config,
     endpoint: API_ENDPOINTS.STYLE_CHECKS,
   };
-  const formData = createStyleFormData(styleAnalysisRequest);
+  const formData = await createStyleFormData(styleAnalysisRequest);
   return postData<StyleAnalysisSubmitResp>(apiConfig, formData);
 }
 
@@ -114,7 +125,7 @@ export async function submitStyleSuggestion(
     ...config,
     endpoint: API_ENDPOINTS.STYLE_SUGGESTIONS,
   };
-  const formData = createStyleFormData(styleAnalysisRequest);
+  const formData = await createStyleFormData(styleAnalysisRequest);
   return postData<StyleAnalysisSubmitResp>(apiConfig, formData);
 }
 
@@ -126,7 +137,7 @@ export async function submitStyleRewrite(
     ...config,
     endpoint: API_ENDPOINTS.STYLE_REWRITES,
   };
-  const formData = createStyleFormData(styleAnalysisRequest);
+  const formData = await createStyleFormData(styleAnalysisRequest);
   return postData<StyleAnalysisSubmitResp>(apiConfig, formData);
 }
 

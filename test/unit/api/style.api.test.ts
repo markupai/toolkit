@@ -204,6 +204,26 @@ describe('Style API Unit Tests', () => {
         message: 'Style check workflow started successfully.',
       });
     });
+
+    it('should submit style check with Buffer content successfully', async () => {
+      server.use(apiHandlers.style.checks.success);
+
+      const buffer = Buffer.from('test buffer content', 'utf8');
+      const requestWithBuffer = {
+        content: buffer,
+        style_guide: 'ap',
+        dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+        tone: STYLE_DEFAULTS.tones.formal,
+        documentName: 'custom-buffer.txt',
+      };
+
+      const result = await submitStyleCheck(requestWithBuffer, mockConfig);
+      expect(result).toEqual({
+        status: Status.Running,
+        workflow_id: mockWorkflowId,
+        message: 'Style check workflow started successfully.',
+      });
+    });
   });
 
   describe('Style Analysis with Polling', () => {
@@ -316,6 +336,25 @@ describe('Style API Unit Tests', () => {
       };
 
       const result = await styleCheck(requestWithFile, mockConfig);
+      expect(result.status).toBe(Status.Completed);
+      expect(result.workflow_id).toBe(mockWorkflowId);
+      expect(result.style_guide_id).toBe(mockStyleGuideId);
+      expect(result.scores).toBeDefined();
+      expect(result.issues).toBeDefined();
+    });
+
+    it('should perform style check with polling using Buffer content', async () => {
+      server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
+
+      const buffer = Buffer.from('test buffer content for polling', 'utf8');
+      const requestWithBuffer = {
+        content: buffer,
+        style_guide: 'ap',
+        dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+        tone: STYLE_DEFAULTS.tones.formal,
+      };
+
+      const result = await styleCheck(requestWithBuffer, mockConfig);
       expect(result.status).toBe(Status.Completed);
       expect(result.workflow_id).toBe(mockWorkflowId);
       expect(result.style_guide_id).toBe(mockStyleGuideId);

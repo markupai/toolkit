@@ -747,6 +747,235 @@ describe('Style API Integration Tests', () => {
     });
   });
 
+  describe('Style Operations with Buffer Content', () => {
+    const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft;
+
+    // Helper function to create a Buffer object from text content
+    function createTestBuffer(content: string): Buffer {
+      return Buffer.from(content, 'utf8');
+    }
+
+    // Helper function to create a Buffer object from the batteries.pdf
+    async function createTestPdfBuffer(): Promise<Buffer> {
+      const pdfPath = join(__dirname, '../test-data/batteries.pdf');
+      return readFileSync(pdfPath);
+    }
+
+    it('should submit a style check with Buffer content', async () => {
+      const testBuffer = createTestBuffer('This is a test content for Buffer style operations.');
+
+      const response = await submitStyleCheck(
+        {
+          content: testBuffer,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'buffer-integration-test.txt',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+    });
+
+    it('should submit a style suggestion with Buffer content', async () => {
+      const testBuffer = createTestBuffer('This is a test content for Buffer style suggestions.');
+
+      const response = await submitStyleSuggestion(
+        {
+          content: testBuffer,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'buffer-suggestions-test.txt',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+    });
+
+    it('should submit a style rewrite with Buffer content', async () => {
+      const testBuffer = createTestBuffer('This is a test content for Buffer style rewrites.');
+
+      const response = await submitStyleRewrite(
+        {
+          content: testBuffer,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'buffer-rewrite-test.txt',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+    });
+
+    it('should submit a style check with Buffer content and get result', async () => {
+      const testBuffer = createTestBuffer('This is a test content for Buffer style check with results.');
+
+      const response = await styleCheck(
+        {
+          content: testBuffer,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'buffer-check-result-test.txt',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+      expect(typeof response.workflow_id).toBe('string');
+      expect(response.check_options).toBeDefined();
+      expect(response.check_options.style_guide).toBeDefined();
+      expect(response.check_options.style_guide.style_guide_type).toBeDefined();
+      expect(response.check_options.style_guide.style_guide_id).toBeDefined();
+      expect(typeof response.check_options.style_guide.style_guide_type).toBe('string');
+      expect(typeof response.check_options.style_guide.style_guide_id).toBe('string');
+      expect(response.check_options.style_guide.style_guide_id).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      );
+      expect(response.check_options.dialect).toBe(STYLE_DEFAULTS.dialects.americanEnglish);
+      expect(response.check_options.tone).toBe(STYLE_DEFAULTS.tones.formal);
+
+      // Test scores structure
+      expect(response.scores).toBeDefined();
+      expect(response.scores.quality).toBeDefined();
+      expect(typeof response.scores.quality.score).toBe('number');
+      expect(response.scores.clarity).toBeDefined();
+      expect(response.scores.grammar).toBeDefined();
+      expect(response.scores.style_guide).toBeDefined();
+      expect(response.scores.tone).toBeDefined();
+      expect(response.scores.terminology).toBeDefined();
+    });
+
+    it('should submit a style suggestion with Buffer content and get result', async () => {
+      const testBuffer = createTestBuffer('This is a test content for Buffer style suggestions with results.');
+
+      const response = await styleSuggestions(
+        {
+          content: testBuffer,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'buffer-suggestions-result-test.txt',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+      expect(typeof response.workflow_id).toBe('string');
+      expect(response.scores).toBeDefined();
+      expect(response.scores.quality).toBeDefined();
+      expect(response.scores.clarity).toBeDefined();
+      expect(response.scores.grammar).toBeDefined();
+      expect(response.scores.style_guide).toBeDefined();
+      expect(response.scores.tone).toBeDefined();
+      expect(response.scores.terminology).toBeDefined();
+
+      if (response.issues && response.issues.length > 0) {
+        const issue = response.issues[0];
+        expect(issue.suggestion).toBeDefined();
+        expect(typeof issue.suggestion).toBe('string');
+      }
+    });
+
+    it('should submit a style rewrite with Buffer content and get result', async () => {
+      const testBuffer = createTestBuffer('This is a test content for Buffer style rewrites with results.');
+
+      const response = await styleRewrite(
+        {
+          content: testBuffer,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'buffer-rewrite-result-test.txt',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+      expect(typeof response.workflow_id).toBe('string');
+      expect(response.scores).toBeDefined();
+      expect(response.scores.quality).toBeDefined();
+      expect(response.scores.clarity).toBeDefined();
+      expect(response.scores.grammar).toBeDefined();
+      expect(response.scores.style_guide).toBeDefined();
+      expect(response.scores.tone).toBeDefined();
+      expect(response.scores.terminology).toBeDefined();
+
+      // Test rewrite and rewrite_scores
+      expect(response.rewrite).toBeDefined();
+      expect(typeof response.rewrite).toBe('string');
+
+      expect(response.rewrite_scores).toBeDefined();
+      expect(response.rewrite_scores.quality).toBeDefined();
+      expect(response.rewrite_scores.clarity).toBeDefined();
+      expect(response.rewrite_scores.grammar).toBeDefined();
+      expect(response.rewrite_scores.style_guide).toBeDefined();
+      expect(response.rewrite_scores.tone).toBeDefined();
+      expect(response.rewrite_scores.terminology).toBeDefined();
+
+      if (response.issues && response.issues.length > 0) {
+        const issue = response.issues[0];
+        expect(issue.suggestion).toBeDefined();
+        expect(typeof issue.suggestion).toBe('string');
+      }
+    });
+
+    it('should handle Buffer content without custom document name', async () => {
+      const testBuffer = createTestBuffer('This is a test content for Buffer without custom document name.');
+
+      const response = await styleCheck(
+        {
+          content: testBuffer,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          // No documentName - should use default
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+      expect(typeof response.workflow_id).toBe('string');
+      expect(response.scores).toBeDefined();
+      expect(response.scores.quality).toBeDefined();
+      expect(response.scores.clarity).toBeDefined();
+      expect(response.scores.grammar).toBeDefined();
+      expect(response.scores.style_guide).toBeDefined();
+      expect(response.scores.tone).toBeDefined();
+      expect(response.scores.terminology).toBeDefined();
+    });
+
+    it('should handle PDF Buffer content', async () => {
+      const testPdfBuffer = await createTestPdfBuffer();
+
+      const response = await submitStyleCheck(
+        {
+          content: testPdfBuffer,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+          documentName: 'buffer-pdf-test.pdf',
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+    });
+  });
+
   describe('Style Guide Cleanup', () => {
     it('should delete all integration test style guides', async () => {
       // List all style guides

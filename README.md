@@ -12,7 +12,7 @@ npm install @acrolinx/typescript-sdk
 
 ### Style Analysis
 
-The SDK supports both string content and File objects for style analysis:
+The SDK supports string content, File objects, and Buffer objects for style analysis:
 
 ```typescript
 import { styleCheck, styleSuggestions, styleRewrite } from '@acrolinx/typescript-sdk';
@@ -25,7 +25,7 @@ const stringRequest = {
   tone: 'formal',
 };
 
-// Using File object
+// Using File object (browser environments)
 const file = new File(['This is content from a file.'], 'document.txt', { type: 'text/plain' });
 const fileRequest = {
   content: file,
@@ -35,18 +35,35 @@ const fileRequest = {
   documentName: 'my-document.txt', // Optional custom filename
 };
 
+// Using Buffer object (Node.js environments)
+const buffer = Buffer.from('This is content from a buffer.', 'utf8');
+const bufferRequest = {
+  content: buffer,
+  style_guide: 'microsoft',
+  dialect: 'american_english',
+  tone: 'business',
+  documentName: 'buffer-document.txt', // Optional custom filename
+};
+
 // Perform style analysis
 const result = await styleCheck(stringRequest, config);
 const fileResult = await styleCheck(fileRequest, config);
+const bufferResult = await styleCheck(bufferRequest, config);
 ```
 
-### File Content Support
+### Content Support
 
-The SDK now supports both string and File objects for content. When using File objects:
+The SDK supports multiple content types:
 
-- The file is sent directly to the API without conversion
+- **String**: Plain text content
+- **File**: File objects (browser environments)
+- **Buffer**: Buffer objects (Node.js environments)
+
+When using File or Buffer objects:
+
+- The content is sent directly to the API without conversion
 - You can optionally specify a custom `documentName`
-- All style analysis operations (check, suggestions, rewrite) support File content
+- All style analysis operations (check, suggestions, rewrite) support all content types
 - Integration tests demonstrate usage with PDF files
 
 ## Development
