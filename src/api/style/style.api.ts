@@ -25,6 +25,28 @@ export const API_ENDPOINTS = {
   STYLE_REWRITES: '/v1/style/rewrites',
 } as const;
 
+// Helper function to get MIME type from filename
+function getMimeTypeFromFilename(filename: string): string {
+  const extension = filename.split('.').pop()?.toLowerCase();
+  
+  switch (extension) {
+    case 'pdf':
+      return 'application/pdf';
+    case 'txt':
+      return 'text/plain';
+    case 'md':
+      return 'text/markdown';
+    case 'html':
+      return 'text/html';
+    case 'docx':
+      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    case 'doc':
+      return 'application/msword';
+    default:
+      return 'application/octet-stream';
+  }
+}
+
 // Helper function to check if an object is a Buffer
 function isBuffer(obj: unknown): obj is Buffer {
   // Check if Buffer is available (Node.js environment)
@@ -46,9 +68,10 @@ async function createStyleFormData(request: StyleAnalysisReq): Promise<FormData>
     // If content is a File, use it directly (only if File is available)
     formData.append('file_upload', request.content, filename);
   } else if (isBuffer(request.content)) {
-    // If content is a Buffer, convert it to a Blob
+    // If content is a Buffer, convert it to a Blob with proper MIME type
     // This handles Node.js Buffer objects in environments that support them
-    const blob = new Blob([request.content], { type: 'application/octet-stream' });
+    const mimeType = getMimeTypeFromFilename(filename);
+    const blob = new Blob([request.content], { type: mimeType });
     formData.append('file_upload', blob, filename);
   } else {
     throw new Error('Invalid content type. Expected string, File, or Buffer.');
