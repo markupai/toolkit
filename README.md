@@ -54,7 +54,7 @@ const pdfResult = await styleCheck(bufferRequest, config); // Works with PDFs!
 
 ### Binary File Support
 
-**✅ Enhanced MIME Type Detection**: The SDK now automatically detects and sets proper MIME types based on file extensions:
+**Enhanced MIME Type Detection**: The SDK now automatically detects and sets proper MIME types based on file extensions:
 
 - **PDF Files**: `.pdf` → `application/pdf`
 - **Word Documents**: `.docx` → `application/vnd.openxmlformats-officedocument.wordprocessingml.document`
@@ -64,7 +64,7 @@ const pdfResult = await styleCheck(bufferRequest, config); // Works with PDFs!
 - **HTML**: `.html` → `text/html`
 - **Other**: `.xyz` → `application/octet-stream`
 
-**✅ Automatic Processing**: When using Buffer objects with binary files:
+**Automatic Processing**: When using Buffer objects with binary files:
 1. SDK reads the `documentName` parameter
 2. Extracts file extension (e.g., `.pdf`)
 3. Automatically sets correct MIME type (`application/pdf`)
