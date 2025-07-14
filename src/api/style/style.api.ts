@@ -73,7 +73,8 @@ async function createStyleFormData(request: StyleAnalysisReq): Promise<FormData>
   } else if ('buffer' in request.content && isBuffer(request.content.buffer)) {
     // If content is a BufferDescriptor, convert it to a Blob with the specified mime type
     const bufferDescriptor = request.content as BufferDescriptor;
-    const blob = new Blob([bufferDescriptor.buffer], { type: bufferDescriptor.mimeType });
+    const mimeType = bufferDescriptor.mimeType || getMimeTypeFromFilename(filename);
+    const blob = new Blob([bufferDescriptor.buffer], { type: mimeType });
     formData.append('file_upload', blob, filename);
   } else {
     throw new Error('Invalid content type. Expected string, FileDescriptor, or BufferDescriptor.');
