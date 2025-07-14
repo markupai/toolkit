@@ -65,6 +65,7 @@ const pdfResult = await styleCheck(bufferRequest, config); // Works with PDFs!
 - **Other**: `.xyz` → `application/octet-stream`
 
 **Automatic Processing**: When using Buffer objects with binary files:
+
 1. SDK reads the `documentName` parameter
 2. Extracts file extension (e.g., `.pdf`)
 3. Automatically sets correct MIME type (`application/pdf`)
@@ -76,10 +77,11 @@ const pdfResult = await styleCheck(bufferRequest, config); // Works with PDFs!
 The SDK supports multiple content types:
 
 - **String**: Plain text content
-- **File**: File objects (browser environments)  
+- **File**: File objects (browser environments)
 - **Buffer**: Buffer objects (Node.js environments) - **Full binary file support**
 
 **Binary File Processing**:
+
 - **Before**: Binary files failed with "Workflow execution failed"
 - **After**: Binary files process successfully with proper MIME types
 - **PDF Example**: 674KB PDF processes in ~15 seconds with full analysis results
@@ -87,6 +89,7 @@ The SDK supports multiple content types:
 - **All Operations**: Style checks, suggestions, and rewrites support binary files
 
 **Usage Notes**:
+
 - Set `documentName` parameter with correct file extension for binary files
 - The SDK handles MIME type detection automatically
 - All style analysis operations (check, suggestions, rewrite) support all content types

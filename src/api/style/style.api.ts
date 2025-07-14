@@ -30,7 +30,7 @@ export const API_ENDPOINTS = {
 // Helper function to get MIME type from filename
 function getMimeTypeFromFilename(filename: string): string {
   const extension = filename.split('.').pop()?.toLowerCase();
-  
+
   switch (extension) {
     case 'pdf':
       return 'application/pdf';
