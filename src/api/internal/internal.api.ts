@@ -1,11 +1,10 @@
 import { getData, postData } from '../../utils/api';
 import type { Constants, FeedbackRequest } from './internal.api.types';
 import type { Config, ApiConfig } from '../../utils/api.types';
-import { listStyleGuides } from '../style/style.api';
 
 const API_ENDPOINTS = {
-  CONSTANTS: '/internal/v1/constants',
-  DEMO_FEEDBACK: '/internal/v1/demo-feedback', // TODO: Not implemented yet
+  CONSTANTS: '/v1/internal/constants',
+  DEMO_FEEDBACK: '/v1/internal/demo-feedback',
 } as const;
 
 export async function getAdminConstants(config: Config): Promise<Constants> {
@@ -32,7 +31,7 @@ export async function submitFeedback(feedbackRequest: FeedbackRequest, config: C
  */
 export async function validateToken(config: Config): Promise<boolean> {
   try {
-    await listStyleGuides(config);
+    await getAdminConstants(config);
     return true;
   } catch (error) {
     console.error('Token validation failed:', error);

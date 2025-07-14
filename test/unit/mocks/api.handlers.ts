@@ -151,7 +151,7 @@ const demoHandlers = {
 // Internal API handlers
 const internalHandlers = {
   constants: {
-    success: http.get('*/internal/v1/constants', () => {
+    success: http.get('*/v1/internal/constants', () => {
       return HttpResponse.json({
         dialects: ['american_english', 'british_english'],
         tones: ['formal', 'casual'],
@@ -166,15 +166,15 @@ const internalHandlers = {
         },
       });
     }),
-    error: http.get('*/internal/v1/constants', () => {
+    error: http.get('*/v1/internal/constants', () => {
       return HttpResponse.json({ message: 'Failed to get admin constants' }, { status: 500 });
     }),
   },
   feedback: {
-    success: http.post('*/internal/v1/demo-feedback', () => {
+    success: http.post('*/v1/internal/demo-feedback', () => {
       return HttpResponse.json({ success: true });
     }),
-    error: http.post('*/internal/v1/demo-feedback', () => {
+    error: http.post('*/v1/internal/demo-feedback', () => {
       return HttpResponse.json({ message: 'Failed to submit feedback' }, { status: 500 });
     }),
   },

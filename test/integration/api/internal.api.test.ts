@@ -4,7 +4,7 @@ import { FeedbackRequest } from '../../../src/api/internal/internal.api.types';
 import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
 
-describe.skip('Internal API Integration Tests', () => {
+describe('Internal API Integration Tests', () => {
   let config: Config;
   beforeAll(() => {
     const apiKey = process.env.API_KEY || '';

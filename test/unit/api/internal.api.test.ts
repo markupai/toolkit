@@ -82,7 +82,7 @@ describe('Internal API Unit Tests', () => {
 
   describe('validateToken', () => {
     it('should return true when token is valid', async () => {
-      server.use(apiHandlers.style.guides.success);
+      server.use(apiHandlers.internal.constants.success);
 
       const result = await validateToken(mockConfig);
       expect(result).toBe(true);
