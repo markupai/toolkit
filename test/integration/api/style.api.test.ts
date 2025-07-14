@@ -19,6 +19,14 @@ import type { Config } from '../../../src/utils/api.types';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { AcrolinxError } from '../../../src/utils/errors';
+import { BufferDescriptor } from '../../../src/api/style/style.api.types';
+
+// Helper function to create a BufferDescriptor from the batteries.pdf
+async function createTestPdfBuffer(): Promise<BufferDescriptor> {
+  const pdfPath = join(__dirname, '../test-data/batteries.pdf');
+  const buffer = readFileSync(pdfPath);
+  return { buffer, mimeType: 'application/pdf' };
+}
 
 describe('Style API Integration Tests', () => {
   let config: Config;
@@ -120,18 +128,16 @@ describe('Style API Integration Tests', () => {
 
     it('should create style guide using utility function from file path', async () => {
       // Use the utility function to create request from file path
-      const pdfPath = join(__dirname, '../test-data/sample-style-guide.pdf');
-
+      const pdfPath = join(__dirname, '../test-data/batteries.pdf');
       // Generate a unique name with random number
       const randomNumber = Math.floor(Math.random() * 10000);
       const styleGuideName = `Utility Test Style Guide ${randomNumber}`;
-
       const request = await createStyleGuideReqFromPath(pdfPath, styleGuideName);
 
       // Verify the request was created correctly
       expect(request).toBeDefined();
       expect(request.file).toBeInstanceOf(File);
-      expect(request.file.name).toBe('sample-style-guide.pdf');
+      expect(request.file.name).toBe('batteries.pdf');
       expect(request.file.type).toBe('application/pdf');
       expect(request.name).toBe(styleGuideName);
 
@@ -151,23 +157,22 @@ describe('Style API Integration Tests', () => {
 
     it('should create style guide using utility function without custom name', async () => {
       // Use the utility function to create request from file path without custom name
-      const pdfPath = join(__dirname, '../test-data/sample-style-guide.pdf');
-
-      const request = await createStyleGuideReqFromPath(pdfPath);
+      const pdfPath2 = join(__dirname, '../test-data/batteries.pdf');
+      const request2 = await createStyleGuideReqFromPath(pdfPath2);
 
       // Verify the request was created correctly
-      expect(request).toBeDefined();
-      expect(request.file).toBeInstanceOf(File);
-      expect(request.file.name).toBe('sample-style-guide.pdf');
-      expect(request.file.type).toBe('application/pdf');
-      expect(request.name).toBe('sample-style-guide'); // Should use filename without extension
+      expect(request2).toBeDefined();
+      expect(request2.file).toBeInstanceOf(File);
+      expect(request2.file.name).toBe('batteries.pdf');
+      expect(request2.file.type).toBe('application/pdf');
+      expect(request2.name).toBe('batteries'); // Should use filename without extension
 
       // Create the style guide using the request
-      const response = await createStyleGuide(request, config);
+      const response = await createStyleGuide(request2, config);
 
       expect(response).toBeDefined();
       expect(response.id).toBeDefined();
-      expect(response.name).toBe('sample-style-guide');
+      expect(response.name).toBe('batteries');
       expect(response.created_at).toBeDefined();
       expect(response.created_by).toBeDefined();
       expect(response.status).toBeDefined();
@@ -552,10 +557,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style check with File content', async () => {
       const testFile = await createTestFile();
+      const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
 
       const response = await submitStyleCheck(
         {
-          content: testFile,
+          content: fileDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -570,10 +576,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style suggestion with File content', async () => {
       const testFile = await createTestFile();
+      const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
 
       const response = await submitStyleSuggestion(
         {
-          content: testFile,
+          content: fileDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -588,10 +595,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style rewrite with File content', async () => {
       const testFile = await createTestFile();
+      const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
 
       const response = await submitStyleRewrite(
         {
-          content: testFile,
+          content: fileDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -606,10 +614,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style check with File content and get result', async () => {
       const testFile = await createTestFile();
+      const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
 
       const response = await styleCheck(
         {
-          content: testFile,
+          content: fileDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -646,10 +655,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style suggestion with File content and get result', async () => {
       const testFile = await createTestFile();
+      const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
 
       const response = await styleSuggestions(
         {
-          content: testFile,
+          content: fileDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -678,10 +688,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style rewrite with File content and get result', async () => {
       const testFile = await createTestFile();
+      const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
 
       const response = await styleRewrite(
         {
-          content: testFile,
+          content: fileDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -722,10 +733,11 @@ describe('Style API Integration Tests', () => {
 
     it('should handle File content without custom document name', async () => {
       const testFile = await createTestFile();
+      const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
 
       const response = await styleCheck(
         {
-          content: testFile,
+          content: fileDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -755,18 +767,13 @@ describe('Style API Integration Tests', () => {
       return Buffer.from(content, 'utf8');
     }
 
-    // Helper function to create a Buffer object from the batteries.pdf
-    async function createTestPdfBuffer(): Promise<Buffer> {
-      const pdfPath = join(__dirname, '../test-data/batteries.pdf');
-      return readFileSync(pdfPath);
-    }
-
     it('should submit a style check with Buffer content', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer style operations.');
+      const bufferDescriptor = { buffer: testBuffer, mimeType: 'text/plain' };
 
       const response = await submitStyleCheck(
         {
-          content: testBuffer,
+          content: bufferDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -781,10 +788,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style suggestion with Buffer content', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer style suggestions.');
+      const bufferDescriptor = { buffer: testBuffer, mimeType: 'text/plain' };
 
       const response = await submitStyleSuggestion(
         {
-          content: testBuffer,
+          content: bufferDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -799,10 +807,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style rewrite with Buffer content', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer style rewrites.');
+      const bufferDescriptor = { buffer: testBuffer, mimeType: 'text/plain' };
 
       const response = await submitStyleRewrite(
         {
-          content: testBuffer,
+          content: bufferDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -817,10 +826,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style check with Buffer content and get result', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer style check with results.');
+      const bufferDescriptor = { buffer: testBuffer, mimeType: 'text/plain' };
 
       const response = await styleCheck(
         {
-          content: testBuffer,
+          content: bufferDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -857,10 +867,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style suggestion with Buffer content and get result', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer style suggestions with results.');
+      const bufferDescriptor = { buffer: testBuffer, mimeType: 'text/plain' };
 
       const response = await styleSuggestions(
         {
-          content: testBuffer,
+          content: bufferDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -889,10 +900,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style rewrite with Buffer content and get result', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer style rewrites with results.');
+      const bufferDescriptor = { buffer: testBuffer, mimeType: 'text/plain' };
 
       const response = await styleRewrite(
         {
-          content: testBuffer,
+          content: bufferDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -933,10 +945,11 @@ describe('Style API Integration Tests', () => {
 
     it('should handle Buffer content without custom document name', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer without custom document name.');
+      const bufferDescriptor = { buffer: testBuffer, mimeType: 'text/plain' };
 
       const response = await styleCheck(
         {
-          content: testBuffer,
+          content: bufferDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
@@ -998,7 +1011,7 @@ describe('Style API Integration Tests', () => {
       // Perform style check with the downloaded content
       const styleCheckResponse = await styleRewrite(
         {
-          content: fileBuffer,
+          content: { buffer: fileBuffer, mimeType: 'text/plain' },
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,

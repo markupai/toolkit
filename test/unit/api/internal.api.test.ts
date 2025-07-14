@@ -50,8 +50,12 @@ describe('Internal API Unit Tests', () => {
       server.use(apiHandlers.internal.feedback.success);
 
       const feedbackRequest: FeedbackRequest = {
-        rating: 5,
-        comment: 'Great service!',
+        workflow_id: '123',
+        run_id: '456',
+        helpful: true,
+        feedback: 'Great service!',
+        original: 'Original text',
+        suggestion: 'Suggested text',
         category: 'general',
       };
 
@@ -63,8 +67,12 @@ describe('Internal API Unit Tests', () => {
       server.use(apiHandlers.internal.feedback.error);
 
       const feedbackRequest: FeedbackRequest = {
-        rating: 5,
-        comment: 'Great service!',
+        workflow_id: '123',
+        run_id: '456',
+        helpful: true,
+        feedback: 'Great service!',
+        original: 'Original text',
+        suggestion: 'Suggested text',
         category: 'general',
       };
 

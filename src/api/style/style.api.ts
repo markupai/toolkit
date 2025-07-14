@@ -9,6 +9,8 @@ import type {
   StyleAnalysisRewriteResp,
   CreateStyleGuideReq,
   StyleGuideUpdateReq,
+  FileDescriptor,
+  BufferDescriptor,
 } from './style.api.types';
 import { Status } from '../../utils/api.types';
 import type { Config, ApiConfig } from '../../utils/api.types';
@@ -61,20 +63,20 @@ async function createStyleFormData(request: StyleAnalysisReq): Promise<FormData>
   const formData = new FormData();
   const filename = request.documentName || 'unknown.txt';
 
-  // Handle string, File, and Buffer types for content
+  // Handle string, FileDescriptor, and BufferDescriptor types for content
   if (typeof request.content === 'string') {
     formData.append('file_upload', new Blob([request.content], { type: 'text/plain' }), filename);
-  } else if (typeof File !== 'undefined' && request.content instanceof File) {
-    // If content is a File, use it directly (only if File is available)
-    formData.append('file_upload', request.content, filename);
-  } else if (isBuffer(request.content)) {
-    // If content is a Buffer, convert it to a Blob with proper MIME type
-    // This handles Node.js Buffer objects in environments that support them
-    const mimeType = getMimeTypeFromFilename(filename);
-    const blob = new Blob([request.content], { type: mimeType });
+  } else if (typeof File !== 'undefined' && 'file' in request.content && request.content.file instanceof File) {
+    // If content is a FileDescriptor, use the file with the specified mime type
+    const fileDescriptor = request.content as FileDescriptor;
+    formData.append('file_upload', fileDescriptor.file, filename);
+  } else if ('buffer' in request.content && isBuffer(request.content.buffer)) {
+    // If content is a BufferDescriptor, convert it to a Blob with the specified mime type
+    const bufferDescriptor = request.content as BufferDescriptor;
+    const blob = new Blob([bufferDescriptor.buffer], { type: bufferDescriptor.mimeType });
     formData.append('file_upload', blob, filename);
   } else {
-    throw new Error('Invalid content type. Expected string, File, or Buffer.');
+    throw new Error('Invalid content type. Expected string, FileDescriptor, or BufferDescriptor.');
   }
 
   formData.append('style_guide', request.style_guide || '');

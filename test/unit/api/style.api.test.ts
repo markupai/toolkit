@@ -189,8 +189,9 @@ describe('Style API Unit Tests', () => {
       server.use(apiHandlers.style.checks.success);
 
       const file = new File(['test file content'], 'test.txt', { type: 'text/plain' });
+      const fileDescriptor = { file, mimeType: 'text/plain' };
       const requestWithFile = {
-        content: file,
+        content: fileDescriptor,
         style_guide: 'ap',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.formal,
@@ -209,8 +210,9 @@ describe('Style API Unit Tests', () => {
       server.use(apiHandlers.style.checks.success);
 
       const buffer = Buffer.from('test buffer content', 'utf8');
+      const bufferDescriptor = { buffer, mimeType: 'text/plain' };
       const requestWithBuffer = {
-        content: buffer,
+        content: bufferDescriptor,
         style_guide: 'ap',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.formal,
@@ -328,8 +330,9 @@ describe('Style API Unit Tests', () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
       const file = new File(['test file content for polling'], 'polling-test.txt', { type: 'text/plain' });
+      const fileDescriptor = { file, mimeType: 'text/plain' };
       const requestWithFile = {
-        content: file,
+        content: fileDescriptor,
         style_guide: 'ap',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.formal,
@@ -347,8 +350,9 @@ describe('Style API Unit Tests', () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
       const buffer = Buffer.from('test buffer content for polling', 'utf8');
+      const bufferDescriptor = { buffer, mimeType: 'text/plain' };
       const requestWithBuffer = {
-        content: buffer,
+        content: bufferDescriptor,
         style_guide: 'ap',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.formal,

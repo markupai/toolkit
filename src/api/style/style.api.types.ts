@@ -16,6 +16,22 @@ export enum IssueCategory {
 }
 
 /**
+ * File descriptor interface for style analysis
+ */
+export interface FileDescriptor {
+  file: File;
+  mimeType?: string;
+}
+
+/**
+ * Buffer descriptor interface for style analysis
+ */
+export interface BufferDescriptor {
+  buffer: Buffer;
+  mimeType?: string;
+}
+
+/**
  * Base issue type for style analysis
  */
 export interface Issue {
@@ -90,7 +106,7 @@ export interface StyleAnalysisErrorResp extends ResponseBase {
 }
 
 export interface StyleAnalysisReq {
-  content: string | File | Buffer;
+  content: string | FileDescriptor | BufferDescriptor;
   style_guide: string; // Can be style guide ID or name (e.g. 'ap', 'chicago', 'microsoft')
   dialect: string;
   tone: string;
