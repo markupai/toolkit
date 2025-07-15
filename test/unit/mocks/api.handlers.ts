@@ -307,6 +307,10 @@ const styleHandlers = {
             score: 70,
             informality: 30,
             liveliness: 60,
+            target_informality: 25.0,
+            target_liveliness: 40.0,
+            informality_tolerance: 15.0,
+            liveliness_tolerance: 20.0,
           },
           terminology: {
             score: 85,
@@ -375,6 +379,10 @@ const styleHandlers = {
             score: 70,
             informality: 30,
             liveliness: 60,
+            target_informality: 25.0,
+            target_liveliness: 40.0,
+            informality_tolerance: 15.0,
+            liveliness_tolerance: 20.0,
           },
           terminology: {
             score: 85,
@@ -443,6 +451,10 @@ const styleHandlers = {
             score: 70,
             informality: 30,
             liveliness: 60,
+            target_informality: 25.0,
+            target_liveliness: 40.0,
+            informality_tolerance: 15.0,
+            liveliness_tolerance: 20.0,
           },
           terminology: {
             score: 85,
@@ -494,6 +506,10 @@ const styleHandlers = {
             score: 75,
             informality: 25,
             liveliness: 65,
+            target_informality: 25.0,
+            target_liveliness: 40.0,
+            informality_tolerance: 15.0,
+            liveliness_tolerance: 20.0,
           },
           terminology: {
             score: 90,
