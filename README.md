@@ -95,6 +95,30 @@ The SDK supports multiple content types:
 - All style analysis operations (check, suggestions, rewrite) support all content types
 - Integration tests validate PDF, DOCX, and other binary file processing
 
+### Retrieve Style Suggestion and Rewrite Results
+
+After submitting content for style suggestions or rewrites, you can retrieve the results using the workflow ID returned from the submission methods:
+
+```typescript
+import { getStyleSuggestion, getStyleRewrite } from '@acrolinx/typescript-sdk';
+
+// Retrieve style suggestion results
+const suggestionResult = await getStyleSuggestion('workflow-id', config);
+// suggestionResult.issues contains IssueWithSuggestion[]
+// suggestionResult.scores contains StyleScores
+
+// Retrieve style rewrite results
+const rewriteResult = await getStyleRewrite('workflow-id', config);
+// rewriteResult.rewrite contains the rewritten content
+// rewriteResult.issues contains IssueWithSuggestion[]
+// rewriteResult.rewrite_scores contains StyleScores
+```
+
+- `getStyleSuggestion(workflowId, config)` returns detailed suggestions and scores for the submitted content.
+- `getStyleRewrite(workflowId, config)` returns the rewritten content, suggestions, and scores for the submitted content.
+
+Both methods require the `workflowId` returned from the corresponding submission method and the same `config` object used for authentication.
+
 ## Development
 
 ### Prerequisites

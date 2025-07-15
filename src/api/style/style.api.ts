@@ -228,6 +228,35 @@ export async function getStyleCheck(workflowId: string, config: Config): Promise
   return getData<StyleAnalysisSuccessResp>(apiConfig);
 }
 
+// Get style suggestion results by workflow ID
+/**
+ * Retrieve style suggestion results for a submitted workflow.
+ * @param workflowId - The workflow ID returned from submitStyleSuggestion
+ * @param config - API configuration (platformUrl, apiKey)
+ * @returns StyleAnalysisSuggestionResp containing suggestions and scores
+ */
+export async function getStyleSuggestion(workflowId: string, config: Config): Promise<StyleAnalysisSuggestionResp> {
+  const apiConfig: ApiConfig = {
+    ...config,
+    endpoint: `${API_ENDPOINTS.STYLE_SUGGESTIONS}/${workflowId}`,
+  };
+  return getData<StyleAnalysisSuggestionResp>(apiConfig);
+}
+
+/**
+ * Retrieve style rewrite results for a submitted workflow.
+ * @param workflowId - The workflow ID returned from submitStyleRewrite
+ * @param config - API configuration (platformUrl, apiKey)
+ * @returns StyleAnalysisRewriteResp containing rewritten content, suggestions, and scores
+ */
+export async function getStyleRewrite(workflowId: string, config: Config): Promise<StyleAnalysisRewriteResp> {
+  const apiConfig: ApiConfig = {
+    ...config,
+    endpoint: `${API_ENDPOINTS.STYLE_REWRITES}/${workflowId}`,
+  };
+  return getData<StyleAnalysisRewriteResp>(apiConfig);
+}
+
 // Update a style guide by ID
 export async function updateStyleGuide(
   styleGuideId: string,
