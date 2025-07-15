@@ -59,6 +59,9 @@ export interface StyleScores {
     average_sentence_length: number;
     flesch_reading_ease: number;
     vocabulary_complexity: number;
+    flesch_kincaid_grade: number;
+    lexical_diversity: number;
+    sentence_complexity: number;
   };
   grammar: {
     score: number;

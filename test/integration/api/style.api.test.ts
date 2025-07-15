@@ -349,6 +349,9 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.scores.clarity.average_sentence_length).toBe('number');
       expect(typeof response.scores.clarity.flesch_reading_ease).toBe('number');
       expect(typeof response.scores.clarity.vocabulary_complexity).toBe('number');
+      expect(typeof response.scores.clarity.flesch_kincaid_grade).toBe('number');
+      expect(typeof response.scores.clarity.lexical_diversity).toBe('number');
+      expect(typeof response.scores.clarity.sentence_complexity).toBe('number');
 
       expect(response.scores.grammar).toBeDefined();
       expect(typeof response.scores.grammar.score).toBe('number');
