@@ -170,7 +170,7 @@ npm test
 
 ## Changelog
 
-All notable changes to this SDK are documented in [CHANGELOG.md](./CHANGELOG.md).
+All notable changes to this SDK are documented in [CHANGELOG.md](https://github.com/acrolinx/typescript-sdk/blob/main/CHANGELOG.md).
 
 ## Support
 

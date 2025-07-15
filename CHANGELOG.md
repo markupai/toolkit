@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.57] - 2024-07-15
+
+### Fixed
+- Fixed CHANGELOG.md link in README to use full GitHub repository URL for proper navigation on GitHub Packages page.
+
 ## [0.0.56] - 2024-07-15
 
 ### Added
