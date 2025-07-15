@@ -168,6 +168,10 @@ To run all tests:
 npm test
 ```
 
+## Changelog
+
+All notable changes to this SDK are documented in [CHANGELOG.md](./CHANGELOG.md).
+
 ## Support
 
 For support, please open an issue in the GitHub repository or contact Acrolinx support.
