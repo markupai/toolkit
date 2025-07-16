@@ -221,10 +221,6 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.scores.tone.score).toBe('number');
       expect(typeof response.scores.tone.informality).toBe('number');
       expect(typeof response.scores.tone.liveliness).toBe('number');
-      expect(typeof response.scores.tone.target_informality).toBe('number');
-      expect(typeof response.scores.tone.target_liveliness).toBe('number');
-      expect(typeof response.scores.tone.informality_tolerance).toBe('number');
-      expect(typeof response.scores.tone.liveliness_tolerance).toBe('number');
 
       expect(response.scores.terminology).toBeDefined();
       expect(typeof response.scores.terminology.score).toBe('number');

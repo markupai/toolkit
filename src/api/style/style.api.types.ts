@@ -75,10 +75,6 @@ export interface StyleScores {
     score: number;
     informality: number;
     liveliness: number;
-    target_informality: number;
-    target_liveliness: number;
-    informality_tolerance: number;
-    liveliness_tolerance: number;
   };
   terminology: {
     score: number;
