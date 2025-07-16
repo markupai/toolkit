@@ -4,6 +4,7 @@ import { pollWorkflowForResult } from '../../utils/api';
 import { Status } from '../../utils/api.types';
 import type { Config, ApiConfig, Status as StatusType } from '../../utils/api.types';
 import type { StyleAnalysisSubmitResp } from './style.api.types';
+import type { ResponseBase } from '../../utils/api.types';
 
 /**
  * Detects if the current environment is Node.js
@@ -177,4 +178,9 @@ export async function submitAndPollStyleAnalysis<T extends { status: StatusType 
     return polledResponse;
   }
   throw new Error(`${endpoint} failed with status: ${polledResponse.status}`);
+}
+
+// Generic type guard for completed responses
+export function isCompletedResponse<T extends ResponseBase>(resp: T): resp is T & { status: Status.Completed } {
+  return resp.status === Status.Completed;
 }

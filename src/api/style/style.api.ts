@@ -6,7 +6,7 @@ import type {
   StyleAnalysisSuggestionResp,
   StyleAnalysisRewriteResp,
 } from './style.api.types';
-import type { Config, ApiConfig } from '../../utils/api.types';
+import type { Config, ApiConfig, StyleAnalysisPollResp } from '../../utils/api.types';
 
 import { createStyleFormData } from './style.api.utils';
 import { submitAndPollStyleAnalysis } from './style.api.utils';
@@ -92,12 +92,15 @@ export async function styleRewrite(
 }
 
 // Get style check results by workflow ID
-export async function getStyleCheck(workflowId: string, config: Config): Promise<StyleAnalysisSuccessResp> {
+export async function getStyleCheck(
+  workflowId: string,
+  config: Config,
+): Promise<StyleAnalysisSuccessResp | StyleAnalysisPollResp> {
   const apiConfig: ApiConfig = {
     ...config,
     endpoint: `${STYLE_API_ENDPOINTS.STYLE_CHECKS}/${workflowId}`,
   };
-  return getData<StyleAnalysisSuccessResp>(apiConfig);
+  return getData<StyleAnalysisSuccessResp | StyleAnalysisPollResp>(apiConfig);
 }
 
 // Get style suggestion results by workflow ID
@@ -107,12 +110,15 @@ export async function getStyleCheck(workflowId: string, config: Config): Promise
  * @param config - API configuration (platformUrl, apiKey)
  * @returns StyleAnalysisSuggestionResp containing suggestions and scores
  */
-export async function getStyleSuggestion(workflowId: string, config: Config): Promise<StyleAnalysisSuggestionResp> {
+export async function getStyleSuggestion(
+  workflowId: string,
+  config: Config,
+): Promise<StyleAnalysisSuggestionResp | StyleAnalysisPollResp> {
   const apiConfig: ApiConfig = {
     ...config,
     endpoint: `${STYLE_API_ENDPOINTS.STYLE_SUGGESTIONS}/${workflowId}`,
   };
-  return getData<StyleAnalysisSuggestionResp>(apiConfig);
+  return getData<StyleAnalysisSuggestionResp | StyleAnalysisPollResp>(apiConfig);
 }
 
 /**
@@ -121,10 +127,13 @@ export async function getStyleSuggestion(workflowId: string, config: Config): Pr
  * @param config - API configuration (platformUrl, apiKey)
  * @returns StyleAnalysisRewriteResp containing rewritten content, suggestions, and scores
  */
-export async function getStyleRewrite(workflowId: string, config: Config): Promise<StyleAnalysisRewriteResp> {
+export async function getStyleRewrite(
+  workflowId: string,
+  config: Config,
+): Promise<StyleAnalysisRewriteResp | StyleAnalysisPollResp> {
   const apiConfig: ApiConfig = {
     ...config,
     endpoint: `${STYLE_API_ENDPOINTS.STYLE_REWRITES}/${workflowId}`,
   };
-  return getData<StyleAnalysisRewriteResp>(apiConfig);
+  return getData<StyleAnalysisRewriteResp | StyleAnalysisPollResp>(apiConfig);
 }

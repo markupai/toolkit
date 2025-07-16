@@ -3,6 +3,8 @@ import { createStyleGuideReqFromUrl, createStyleGuideReqFromPath } from '../../.
 import { readFileSync } from 'fs';
 import { basename } from 'path';
 import { fileURLToPath } from 'url';
+import { isCompletedResponse } from '../../../src/api/style/style.api.utils';
+import { Status } from '../../../src/utils/api.types';
 
 // Mock Node.js modules
 vi.mock('fs');
@@ -12,6 +14,56 @@ vi.mock('url');
 const mockReadFileSync = vi.mocked(readFileSync);
 const mockBasename = vi.mocked(basename);
 const mockFileURLToPath = vi.mocked(fileURLToPath);
+
+// Mock response types
+const completedSuccessResp = {
+  workflow_id: 'abc',
+  status: Status.Completed,
+  style_guide_id: 'sg1',
+  scores: {},
+  issues: [],
+  check_options: {
+    style_guide: { style_guide_type: 'custom', style_guide_id: 'sg1' },
+    dialect: 'american_english',
+    tone: 'formal',
+  },
+};
+
+const runningSuccessResp = {
+  workflow_id: 'abc',
+  status: Status.Running,
+  style_guide_id: 'sg1',
+  scores: {},
+  issues: [],
+  check_options: {
+    style_guide: { style_guide_type: 'custom', style_guide_id: 'sg1' },
+    dialect: 'american_english',
+    tone: 'formal',
+  },
+};
+
+const completedSuggestionResp = {
+  workflow_id: 'def',
+  status: Status.Completed,
+  style_guide_id: 'sg2',
+  scores: {},
+  issues: [{ original: 'foo', char_index: 0, subcategory: 'bar', category: 'baz', suggestion: 'baz' }],
+  check_options: {
+    style_guide: { style_guide_type: 'custom', style_guide_id: 'sg2' },
+    dialect: 'british_english',
+    tone: 'casual',
+  },
+};
+
+const pollResp = {
+  workflow_id: 'ghi',
+  status: Status.Running,
+};
+
+const failedResp = {
+  workflow_id: 'jkl',
+  status: Status.Failed,
+};
 
 describe('Style API Utils', () => {
   beforeEach(() => {
@@ -169,5 +221,38 @@ describe('Style API Utils', () => {
       // Restore original process
       global.process = originalProcess;
     });
+  });
+});
+
+describe('isCompletedResponse', () => {
+  it('returns true for completed success response', () => {
+    expect(isCompletedResponse(completedSuccessResp)).toBe(true);
+  });
+
+  it('returns false for running success response', () => {
+    expect(isCompletedResponse(runningSuccessResp)).toBe(false);
+  });
+
+  it('returns true for completed suggestion response', () => {
+    expect(isCompletedResponse(completedSuggestionResp)).toBe(true);
+  });
+
+  it('returns false for polling response', () => {
+    expect(isCompletedResponse(pollResp)).toBe(false);
+  });
+
+  it('returns false for failed response', () => {
+    expect(isCompletedResponse(failedResp)).toBe(false);
+  });
+
+  it('narrows type for completed response', () => {
+    const resp = completedSuccessResp as typeof completedSuccessResp | typeof pollResp;
+    if (isCompletedResponse(resp)) {
+      // TypeScript should know resp.status === Status.Completed
+      expect(resp.status).toBe(Status.Completed);
+      expect('scores' in resp).toBe(true);
+    } else {
+      expect(resp.status).not.toBe(Status.Completed);
+    }
   });
 });

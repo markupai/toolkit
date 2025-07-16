@@ -3,6 +3,8 @@ export interface ResponseBase {
   status: Status;
 }
 
+export type StyleAnalysisPollResp = ResponseBase;
+
 export enum Status {
   Queued = 'queued',
   Running = 'running',
