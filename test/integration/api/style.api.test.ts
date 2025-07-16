@@ -11,6 +11,8 @@ import {
   createStyleGuideReqFromPath,
   deleteStyleGuide,
   getStyleGuide,
+  getStyleSuggestion,
+  getStyleRewrite,
 } from '../../../src/api/style/style.api';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 import { IssueCategory } from '../../../src/api/style/style.api.types';
@@ -1101,6 +1103,48 @@ describe('Style API Integration Tests', () => {
       }
 
       console.log(`Cleanup summary: ${deletedCount} deleted, ${skippedCount} skipped`);
+    });
+  });
+
+  describe('Style Operations Get Results', () => {
+    const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft;
+
+    it('should get style suggestion results by workflow ID', async () => {
+      // Submit a style suggestion to get a workflow ID
+      const suggestionResp = await submitStyleSuggestion(
+        {
+          content: 'Integration test for getStyleSuggestion',
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+        },
+        config,
+      );
+      expect(suggestionResp.workflow_id).toBeDefined();
+      const workflowId = suggestionResp.workflow_id;
+
+      // Fetch the suggestion results
+      const result = await getStyleSuggestion(workflowId, config);
+      expect(result).toBeDefined();
+    });
+
+    it('should get style rewrite results by workflow ID', async () => {
+      // Submit a style rewrite to get a workflow ID
+      const rewriteResp = await submitStyleRewrite(
+        {
+          content: 'Integration test for getStyleRewrite',
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.formal,
+        },
+        config,
+      );
+      expect(rewriteResp.workflow_id).toBeDefined();
+      const workflowId = rewriteResp.workflow_id;
+
+      // Fetch the rewrite results
+      const result = await getStyleRewrite(workflowId, config);
+      expect(result).toBeDefined();
     });
   });
 });

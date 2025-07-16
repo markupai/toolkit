@@ -12,6 +12,8 @@ import {
   styleSuggestions,
   styleRewrite,
   getStyleCheck,
+  getStyleSuggestion,
+  getStyleRewrite,
 } from '../../../src/api/style/style.api';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 import { Status } from '../../../src/utils/api.types';
@@ -388,6 +390,50 @@ describe('Style API Unit Tests', () => {
       expect(typeof result.scores.terminology.issues).toBe('number');
       expect(result.scores.terminology.score).toBe(85);
       expect(result.scores.terminology.issues).toBe(0);
+    });
+  });
+
+  describe('Style Suggestion and Rewrite Results', () => {
+    it('should get style suggestion results by workflow ID', async () => {
+      server.use(apiHandlers.style.suggestions.poll);
+
+      const result = await getStyleSuggestion(mockWorkflowId, mockConfig);
+      expect(result.status).toBe(Status.Completed);
+      expect(result.workflow_id).toBe(mockWorkflowId);
+      expect(result.style_guide_id).toBe(mockStyleGuideId);
+      expect(result.scores).toBeDefined();
+      expect(result.issues).toBeDefined();
+      // Check for suggestion in issues
+      if (result.issues && result.issues.length > 0) {
+        const issue = result.issues[0];
+        expect(issue.suggestion).toBeDefined();
+        expect(typeof issue.suggestion).toBe('string');
+      }
+    });
+
+    it('should get style rewrite results by workflow ID', async () => {
+      server.use(apiHandlers.style.rewrites.poll);
+
+      const result = await getStyleRewrite(mockWorkflowId, mockConfig);
+      expect(result.status).toBe(Status.Completed);
+      expect(result.style_guide_id).toBe(mockStyleGuideId);
+      expect(result.scores).toBeDefined();
+      expect(result.issues).toBeDefined();
+      expect(result.rewrite).toBeDefined();
+      expect(typeof result.rewrite).toBe('string');
+      expect(result.rewrite_scores).toBeDefined();
+      expect(result.rewrite_scores.quality).toBeDefined();
+      expect(result.rewrite_scores.clarity).toBeDefined();
+      expect(result.rewrite_scores.grammar).toBeDefined();
+      expect(result.rewrite_scores.style_guide).toBeDefined();
+      expect(result.rewrite_scores.tone).toBeDefined();
+      expect(result.rewrite_scores.terminology).toBeDefined();
+      // Check for suggestion in issues
+      if (result.issues && result.issues.length > 0) {
+        const issue = result.issues[0];
+        expect(issue.suggestion).toBeDefined();
+        expect(typeof issue.suggestion).toBe('string');
+      }
     });
   });
 
