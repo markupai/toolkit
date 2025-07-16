@@ -4,7 +4,7 @@ import { postData, pollWorkflowForResult } from '../../utils/api';
 import { Status } from '../../utils/api.types';
 import type { Config } from '../../utils/api.types';
 
-const API_ENDPOINTS = {
+const DEMO_API_ENDPOINTS = {
   REWRITES: '/v1/rewrites/',
 } as const;
 
@@ -22,7 +22,7 @@ export async function submitRewrite(
 
   const apiConfig = {
     ...config,
-    endpoint: API_ENDPOINTS.REWRITES,
+    endpoint: DEMO_API_ENDPOINTS.REWRITES,
   };
 
   return postData<AnalysisSubmissionResponse>(apiConfig, formData);
@@ -32,7 +32,7 @@ export async function rewrite(rewriteRequest: AnalysisRequest, config: Config): 
   try {
     const apiConfig = {
       ...config,
-      endpoint: API_ENDPOINTS.REWRITES,
+      endpoint: DEMO_API_ENDPOINTS.REWRITES,
     };
 
     const initialResponse = await submitRewrite(rewriteRequest, config);

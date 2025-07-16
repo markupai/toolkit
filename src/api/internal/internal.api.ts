@@ -2,7 +2,7 @@ import { getData, postData } from '../../utils/api';
 import type { Constants, FeedbackRequest } from './internal.api.types';
 import type { Config, ApiConfig } from '../../utils/api.types';
 
-const API_ENDPOINTS = {
+const INTERNAL_API_ENDPOINTS = {
   CONSTANTS: '/v1/internal/constants',
   DEMO_FEEDBACK: '/v1/internal/demo-feedback',
 } as const;
@@ -10,7 +10,7 @@ const API_ENDPOINTS = {
 export async function getAdminConstants(config: Config): Promise<Constants> {
   const apiConfig: ApiConfig = {
     ...config,
-    endpoint: API_ENDPOINTS.CONSTANTS,
+    endpoint: INTERNAL_API_ENDPOINTS.CONSTANTS,
   };
   return getData<Constants>(apiConfig);
 }
@@ -18,7 +18,7 @@ export async function getAdminConstants(config: Config): Promise<Constants> {
 export async function submitFeedback(feedbackRequest: FeedbackRequest, config: Config): Promise<void> {
   const apiConfig: ApiConfig = {
     ...config,
-    endpoint: API_ENDPOINTS.DEMO_FEEDBACK,
+    endpoint: INTERNAL_API_ENDPOINTS.DEMO_FEEDBACK,
   };
   return postData(apiConfig, JSON.stringify(feedbackRequest));
 }

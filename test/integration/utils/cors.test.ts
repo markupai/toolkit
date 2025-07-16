@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { API_ENDPOINTS } from '../../../src/api/style/style.api';
+import { STYLE_API_ENDPOINTS } from '../../../src/api/style/style.api';
 import { STYLE_GUIDES_ENDPOINT } from '../../../src/api/style/style-guides.api';
 import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
@@ -67,9 +67,9 @@ describe('CORS Integration Tests', () => {
   describe('Style API CORS Headers', () => {
     // Test all style API endpoints
     testCorsHeaders(STYLE_GUIDES_ENDPOINT, 'style guides endpoint');
-    testCorsHeaders(API_ENDPOINTS.STYLE_CHECKS, 'style checks endpoint');
-    testCorsHeaders(API_ENDPOINTS.STYLE_SUGGESTIONS, 'style suggestions endpoint');
-    testCorsHeaders(API_ENDPOINTS.STYLE_REWRITES, 'style rewrites endpoint');
+    testCorsHeaders(STYLE_API_ENDPOINTS.STYLE_CHECKS, 'style checks endpoint');
+    testCorsHeaders(STYLE_API_ENDPOINTS.STYLE_SUGGESTIONS, 'style suggestions endpoint');
+    testCorsHeaders(STYLE_API_ENDPOINTS.STYLE_REWRITES, 'style rewrites endpoint');
   });
 
   describe('Individual Style Guide CORS Headers', () => {
@@ -111,7 +111,7 @@ describe('CORS Integration Tests', () => {
   describe('Individual Style Check CORS Headers', () => {
     it('should return proper CORS headers for individual style check endpoint', async () => {
       const workflowId = 'test-workflow-id';
-      const endpoint = `${API_ENDPOINTS.STYLE_CHECKS}/${workflowId}`;
+      const endpoint = `${STYLE_API_ENDPOINTS.STYLE_CHECKS}/${workflowId}`;
       const url = `${config.platform!.value}${endpoint}`;
 
       const response = await fetch(url, {

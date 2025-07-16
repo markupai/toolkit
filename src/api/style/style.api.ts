@@ -62,7 +62,11 @@ export async function styleCheck(
   styleAnalysisRequest: StyleAnalysisReq,
   config: Config,
 ): Promise<StyleAnalysisSuccessResp> {
-  return submitAndPollStyleAnalysis<StyleAnalysisSuccessResp>(STYLE_API_ENDPOINTS.STYLE_CHECKS, styleAnalysisRequest, config);
+  return submitAndPollStyleAnalysis<StyleAnalysisSuccessResp>(
+    STYLE_API_ENDPOINTS.STYLE_CHECKS,
+    styleAnalysisRequest,
+    config,
+  );
 }
 
 export async function styleSuggestions(
