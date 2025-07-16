@@ -12,7 +12,7 @@ import {
 import { PlatformType, Status } from '../../../src/utils/api.types';
 import type { ApiConfig, Config } from '../../../src/utils/api.types';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
-import { API_ENDPOINTS } from '../../../src/api/style/style.api';
+import { STYLE_API_ENDPOINTS } from '../../../src/api/style/style.api';
 import { STYLE_GUIDES_ENDPOINT } from '../../../src/api/style/style-guides.api';
 import type { StyleGuide, StyleGuides, StyleAnalysisSubmitResp } from '../../../src/api/style/style.api.types';
 
@@ -119,7 +119,7 @@ describe('API Utilities Integration Tests', () => {
     describe('POST Requests', () => {
       it('should make successful POST request for style check submission', async () => {
         const testConfig: ApiConfig = {
-          endpoint: API_ENDPOINTS.STYLE_CHECKS,
+          endpoint: STYLE_API_ENDPOINTS.STYLE_CHECKS,
           apiKey: config.apiKey,
           platform: config.platform,
         };
@@ -141,7 +141,7 @@ describe('API Utilities Integration Tests', () => {
 
       it('should make successful POST request for style suggestions submission', async () => {
         const testConfig: ApiConfig = {
-          endpoint: API_ENDPOINTS.STYLE_SUGGESTIONS,
+          endpoint: STYLE_API_ENDPOINTS.STYLE_SUGGESTIONS,
           apiKey: config.apiKey,
           platform: config.platform,
         };
@@ -162,7 +162,7 @@ describe('API Utilities Integration Tests', () => {
 
       it('should make successful POST request for style rewrite submission', async () => {
         const testConfig: ApiConfig = {
-          endpoint: API_ENDPOINTS.STYLE_REWRITES,
+          endpoint: STYLE_API_ENDPOINTS.STYLE_REWRITES,
           apiKey: config.apiKey,
           platform: config.platform,
         };
@@ -183,7 +183,7 @@ describe('API Utilities Integration Tests', () => {
 
       it('should handle POST request with invalid style guide', async () => {
         const testConfig: ApiConfig = {
-          endpoint: API_ENDPOINTS.STYLE_CHECKS,
+          endpoint: STYLE_API_ENDPOINTS.STYLE_CHECKS,
           apiKey: config.apiKey,
           platform: config.platform,
         };
@@ -300,7 +300,7 @@ describe('API Utilities Integration Tests', () => {
   describe('Workflow Polling with Style API', () => {
     it('should handle polling for style check workflow', async () => {
       const testConfig: ApiConfig = {
-        endpoint: API_ENDPOINTS.STYLE_CHECKS,
+        endpoint: STYLE_API_ENDPOINTS.STYLE_CHECKS,
         apiKey: config.apiKey,
         platform: config.platform,
       };
@@ -332,7 +332,7 @@ describe('API Utilities Integration Tests', () => {
 
     it('should handle polling with non-existent workflow ID', async () => {
       const testConfig: ApiConfig = {
-        endpoint: API_ENDPOINTS.STYLE_CHECKS,
+        endpoint: STYLE_API_ENDPOINTS.STYLE_CHECKS,
         apiKey: config.apiKey,
         platform: config.platform,
       };
@@ -344,7 +344,7 @@ describe('API Utilities Integration Tests', () => {
 
     it('should handle polling with unauthorized access', async () => {
       const invalidConfig: ApiConfig = {
-        endpoint: API_ENDPOINTS.STYLE_CHECKS,
+        endpoint: STYLE_API_ENDPOINTS.STYLE_CHECKS,
         apiKey: 'invalid-api-key',
         platform: config.platform,
       };
@@ -421,7 +421,7 @@ describe('API Utilities Integration Tests', () => {
 
     it('should handle style check response structure correctly', async () => {
       const testConfig: ApiConfig = {
-        endpoint: API_ENDPOINTS.STYLE_CHECKS,
+        endpoint: STYLE_API_ENDPOINTS.STYLE_CHECKS,
         apiKey: config.apiKey,
         platform: config.platform,
       };
@@ -472,7 +472,7 @@ describe('API Utilities Integration Tests', () => {
       };
 
       const postConfig: ApiConfig = {
-        endpoint: API_ENDPOINTS.STYLE_CHECKS,
+        endpoint: STYLE_API_ENDPOINTS.STYLE_CHECKS,
         apiKey: config.apiKey,
         platform: config.platform,
       };
