@@ -1,16 +1,11 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import {
-  listStyleGuides,
   submitStyleCheck,
   submitStyleSuggestion,
   submitStyleRewrite,
   styleCheck,
   styleSuggestions,
   styleRewrite,
-  createStyleGuide,
-  createStyleGuideReqFromPath,
-  deleteStyleGuide,
-  getStyleGuide,
   getStyleSuggestion,
   getStyleRewrite,
 } from '../../../src/api/style/style.api';
@@ -41,147 +36,6 @@ describe('Style API Integration Tests', () => {
       apiKey,
       platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
     };
-  });
-
-  describe('Style Guide Listing', () => {
-    it('should list style guides', async () => {
-      const response = await listStyleGuides(config);
-      expect(response).toBeDefined();
-      expect(Array.isArray(response)).toBe(true);
-      expect(response.length).toBeGreaterThan(0);
-
-      // Validate the structure of the first style guide
-      const firstStyleGuide = response[0];
-      expect(firstStyleGuide).toHaveProperty('id');
-      expect(firstStyleGuide).toHaveProperty('name');
-      expect(firstStyleGuide).toHaveProperty('created_at');
-      expect(firstStyleGuide).toHaveProperty('created_by');
-      expect(firstStyleGuide).toHaveProperty('status');
-      expect(firstStyleGuide).toHaveProperty('updated_at');
-      expect(firstStyleGuide).toHaveProperty('updated_by');
-    });
-  });
-
-  describe('Style Guide Creation', () => {
-    it('should create a new style guide from PDF file', async () => {
-      // Read the sample PDF file
-      const pdfPath = join(__dirname, '../test-data/sample-style-guide.pdf');
-      const pdfBuffer = readFileSync(pdfPath);
-
-      // Create a File object from the buffer
-      const pdfFile = new File([pdfBuffer], 'sample-style-guide.pdf', {
-        type: 'application/pdf',
-      });
-
-      // Generate a unique name with random number
-      const randomNumber = Math.floor(Math.random() * 10000);
-      const styleGuideName = `Integration Test Style Guide ${randomNumber}`;
-
-      const response = await createStyleGuide({ file: pdfFile, name: styleGuideName }, config);
-
-      expect(response).toBeDefined();
-      expect(response.id).toBeDefined();
-      expect(response.name).toBe(styleGuideName);
-      expect(response.created_at).toBeDefined();
-      expect(response.created_by).toBeDefined();
-      expect(response.status).toBeDefined();
-      expect(response.updated_at).toBeDefined();
-      expect(response.updated_by).toBeDefined();
-
-      // Validate the response structure matches StyleGuideCreateResp
-      expect(typeof response.id).toBe('string');
-      expect(typeof response.name).toBe('string');
-      expect(typeof response.created_at).toBe('string');
-      expect(typeof response.created_by).toBe('string');
-      expect(typeof response.status).toBe('string');
-      // updated_at and updated_by can be null when first created
-      expect(typeof response.updated_at === 'string' || response.updated_at === null).toBe(true);
-      expect(typeof response.updated_by === 'string' || response.updated_by === null).toBe(true);
-
-      // Validate that the ID is a UUID format
-      expect(response.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
-    });
-
-    it('should create multiple style guides with unique names', async () => {
-      // Read the sample PDF file
-      const pdfPath = join(__dirname, '../test-data/sample-style-guide.pdf');
-      const pdfBuffer = readFileSync(pdfPath);
-
-      // Create a File object from the buffer
-      const pdfFile = new File([pdfBuffer], 'sample-style-guide.pdf', {
-        type: 'application/pdf',
-      });
-
-      // Create two style guides with different names
-      const randomNumber1 = Math.floor(Math.random() * 10000);
-      const randomNumber2 = Math.floor(Math.random() * 10000);
-      const styleGuideName1 = `Integration Test Style Guide A ${randomNumber1}`;
-      const styleGuideName2 = `Integration Test Style Guide B ${randomNumber2}`;
-
-      const response1 = await createStyleGuide({ file: pdfFile, name: styleGuideName1 }, config);
-
-      const response2 = await createStyleGuide({ file: pdfFile, name: styleGuideName2 }, config);
-
-      // Verify both were created successfully
-      expect(response1.name).toBe(styleGuideName1);
-      expect(response2.name).toBe(styleGuideName2);
-      expect(response1.id).not.toBe(response2.id); // IDs should be different
-    });
-
-    it('should create style guide using utility function from file path', async () => {
-      // Use the utility function to create request from file path
-      const pdfPath = join(__dirname, '../test-data/batteries.pdf');
-      // Generate a unique name with random number
-      const randomNumber = Math.floor(Math.random() * 10000);
-      const styleGuideName = `Utility Test Style Guide ${randomNumber}`;
-      const request = await createStyleGuideReqFromPath(pdfPath, styleGuideName);
-
-      // Verify the request was created correctly
-      expect(request).toBeDefined();
-      expect(request.file).toBeInstanceOf(File);
-      expect(request.file.name).toBe('batteries.pdf');
-      expect(request.file.type).toBe('application/pdf');
-      expect(request.name).toBe(styleGuideName);
-
-      // Create the style guide using the request
-      const response = await createStyleGuide(request, config);
-
-      expect(response).toBeDefined();
-      expect(response.id).toBeDefined();
-      expect(response.name).toBe(styleGuideName);
-      expect(response.created_at).toBeDefined();
-      expect(response.created_by).toBeDefined();
-      expect(response.status).toBeDefined();
-
-      // Validate that the ID is a UUID format
-      expect(response.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
-    });
-
-    it('should create style guide using utility function without custom name', async () => {
-      // Use the utility function to create request from file path without custom name
-      const pdfPath2 = join(__dirname, '../test-data/batteries.pdf');
-      const request2 = await createStyleGuideReqFromPath(pdfPath2);
-
-      // Verify the request was created correctly
-      expect(request2).toBeDefined();
-      expect(request2.file).toBeInstanceOf(File);
-      expect(request2.file.name).toBe('batteries.pdf');
-      expect(request2.file.type).toBe('application/pdf');
-      expect(request2.name).toBe('batteries'); // Should use filename without extension
-
-      // Create the style guide using the request
-      const response = await createStyleGuide(request2, config);
-
-      expect(response).toBeDefined();
-      expect(response.id).toBeDefined();
-      expect(response.name).toBe('batteries');
-      expect(response.created_at).toBeDefined();
-      expect(response.created_by).toBeDefined();
-      expect(response.status).toBeDefined();
-
-      // Validate that the ID is a UUID format
-      expect(response.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
-    });
   });
 
   describe('Style Operations', () => {
@@ -1060,49 +914,6 @@ describe('Style API Integration Tests', () => {
       console.log(`Buffer size: ${fileBuffer.length} bytes`);
       console.log(`Style check workflow ID: ${styleCheckResponse.workflow_id}`);
       console.log(`Quality score: ${styleCheckResponse.scores.quality.score}`);
-    });
-  });
-
-  describe('Style Guide Cleanup', () => {
-    it('should delete all integration test style guides', async () => {
-      // List all style guides
-      const styleGuides = await listStyleGuides(config);
-
-      // Filter style guides that start with "Integration Test Style Guide"
-      const integrationTestGuides = styleGuides.filter((guide) =>
-        guide.name.startsWith('Integration Test Style Guide'),
-      );
-
-      console.log(`Found ${integrationTestGuides.length} integration test style guides to process`);
-
-      let deletedCount = 0;
-      let skippedCount = 0;
-
-      // Delete each integration test style guide, skipping those with "running" status
-      for (const guide of integrationTestGuides) {
-        try {
-          // Check the status of the style guide before attempting to delete
-          const styleGuideDetails = await getStyleGuide(guide.id, config);
-
-          if (styleGuideDetails.status === 'running') {
-            console.log(
-              `Skipping style guide: ${guide.name} (${guide.id}) - Status: ${styleGuideDetails.status} (still running)`,
-            );
-            skippedCount++;
-          } else {
-            await deleteStyleGuide(guide.id, config);
-            console.log(
-              `Successfully deleted style guide: ${guide.name} (${guide.id}) - Status: ${styleGuideDetails.status}`,
-            );
-            deletedCount++;
-          }
-        } catch (error) {
-          console.error(`Failed to process style guide: ${guide.name} (${guide.id})`, error);
-          // Continue with other deletions even if one fails
-        }
-      }
-
-      console.log(`Cleanup summary: ${deletedCount} deleted, ${skippedCount} skipped`);
     });
   });
 

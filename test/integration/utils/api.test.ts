@@ -13,6 +13,7 @@ import { PlatformType, Status } from '../../../src/utils/api.types';
 import type { ApiConfig, Config } from '../../../src/utils/api.types';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 import { API_ENDPOINTS } from '../../../src/api/style/style.api';
+import { STYLE_GUIDES_ENDPOINT } from '../../../src/api/style/style-guides.api';
 import type { StyleGuide, StyleGuides, StyleAnalysisSubmitResp } from '../../../src/api/style/style.api.types';
 
 describe('API Utilities Integration Tests', () => {
@@ -37,7 +38,7 @@ describe('API Utilities Integration Tests', () => {
     describe('GET Requests', () => {
       it('should make successful GET request to list style guides', async () => {
         const testConfig: ApiConfig = {
-          endpoint: API_ENDPOINTS.STYLE_GUIDES,
+          endpoint: STYLE_GUIDES_ENDPOINT,
           apiKey: config.apiKey,
           platform: config.platform,
         };
@@ -62,7 +63,7 @@ describe('API Utilities Integration Tests', () => {
       it('should make successful GET request to get specific style guide', async () => {
         // First get the list to find a valid style guide ID
         const listConfig: ApiConfig = {
-          endpoint: API_ENDPOINTS.STYLE_GUIDES,
+          endpoint: STYLE_GUIDES_ENDPOINT,
           apiKey: config.apiKey,
           platform: config.platform,
         };
@@ -72,7 +73,7 @@ describe('API Utilities Integration Tests', () => {
         if (styleGuides.length > 0) {
           const styleGuideId = styleGuides[0].id;
           const testConfig: ApiConfig = {
-            endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`,
+            endpoint: `${STYLE_GUIDES_ENDPOINT}/${styleGuideId}`,
             apiKey: config.apiKey,
             platform: config.platform,
           };
@@ -96,7 +97,7 @@ describe('API Utilities Integration Tests', () => {
 
       it('should handle 404 errors for non-existent style guide', async () => {
         const testConfig: ApiConfig = {
-          endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/non-existent-id`,
+          endpoint: `${STYLE_GUIDES_ENDPOINT}/non-existent-id`,
           apiKey: config.apiKey,
           platform: config.platform,
         };
@@ -106,7 +107,7 @@ describe('API Utilities Integration Tests', () => {
 
       it('should handle unauthorized access', async () => {
         const invalidConfig: ApiConfig = {
-          endpoint: API_ENDPOINTS.STYLE_GUIDES,
+          endpoint: STYLE_GUIDES_ENDPOINT,
           apiKey: 'invalid-api-key',
           platform: config.platform,
         };
@@ -201,7 +202,7 @@ describe('API Utilities Integration Tests', () => {
       it('should make successful PUT request to update style guide', async () => {
         // First get the list to find a valid style guide ID
         const listConfig: ApiConfig = {
-          endpoint: API_ENDPOINTS.STYLE_GUIDES,
+          endpoint: STYLE_GUIDES_ENDPOINT,
           apiKey: config.apiKey,
           platform: config.platform,
         };
@@ -211,7 +212,7 @@ describe('API Utilities Integration Tests', () => {
         if (styleGuides.length > 0) {
           const styleGuideId = styleGuides[0].id;
           const testConfig: ApiConfig = {
-            endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`,
+            endpoint: `${STYLE_GUIDES_ENDPOINT}/${styleGuideId}`,
             apiKey: config.apiKey,
             platform: config.platform,
           };
@@ -235,7 +236,7 @@ describe('API Utilities Integration Tests', () => {
 
       it('should handle PUT request with invalid style guide ID', async () => {
         const testConfig: ApiConfig = {
-          endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/invalid-id`,
+          endpoint: `${STYLE_GUIDES_ENDPOINT}/invalid-id`,
           apiKey: config.apiKey,
           platform: config.platform,
         };
@@ -252,7 +253,7 @@ describe('API Utilities Integration Tests', () => {
       it('should make successful DELETE request for style guide', async () => {
         // First create a style guide to delete
         const createConfig: ApiConfig = {
-          endpoint: API_ENDPOINTS.STYLE_GUIDES,
+          endpoint: STYLE_GUIDES_ENDPOINT,
           apiKey: config.apiKey,
           platform: config.platform,
         };
@@ -271,7 +272,7 @@ describe('API Utilities Integration Tests', () => {
 
           // Now delete it
           const deleteConfig: ApiConfig = {
-            endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/${createdStyleGuide.id}`,
+            endpoint: `${STYLE_GUIDES_ENDPOINT}/${createdStyleGuide.id}`,
             apiKey: config.apiKey,
             platform: config.platform,
           };
@@ -286,7 +287,7 @@ describe('API Utilities Integration Tests', () => {
 
       it('should handle DELETE request with invalid style guide ID', async () => {
         const testConfig: ApiConfig = {
-          endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/invalid-id`,
+          endpoint: `${STYLE_GUIDES_ENDPOINT}/invalid-id`,
           apiKey: config.apiKey,
           platform: config.platform,
         };
@@ -357,7 +358,7 @@ describe('API Utilities Integration Tests', () => {
   describe('Error Handling', () => {
     it('should handle network connectivity issues', async () => {
       const invalidConfig: ApiConfig = {
-        endpoint: API_ENDPOINTS.STYLE_GUIDES,
+        endpoint: STYLE_GUIDES_ENDPOINT,
         apiKey: config.apiKey,
         platform: { type: PlatformType.Url, value: 'https://invalid-domain-that-does-not-exist.com' },
       };
@@ -367,7 +368,7 @@ describe('API Utilities Integration Tests', () => {
 
     it('should handle malformed URLs', async () => {
       const invalidConfig: ApiConfig = {
-        endpoint: API_ENDPOINTS.STYLE_GUIDES,
+        endpoint: STYLE_GUIDES_ENDPOINT,
         apiKey: config.apiKey,
         platform: { type: PlatformType.Url, value: 'not-a-valid-url' },
       };
@@ -377,7 +378,7 @@ describe('API Utilities Integration Tests', () => {
 
     it('should handle empty API key', async () => {
       const invalidConfig: ApiConfig = {
-        endpoint: API_ENDPOINTS.STYLE_GUIDES,
+        endpoint: STYLE_GUIDES_ENDPOINT,
         apiKey: '',
         platform: config.platform,
       };
@@ -387,7 +388,7 @@ describe('API Utilities Integration Tests', () => {
 
     it('should handle null/undefined API key', async () => {
       const invalidConfig: ApiConfig = {
-        endpoint: API_ENDPOINTS.STYLE_GUIDES,
+        endpoint: STYLE_GUIDES_ENDPOINT,
         apiKey: null as unknown as string,
         platform: config.platform,
       };
@@ -399,7 +400,7 @@ describe('API Utilities Integration Tests', () => {
   describe('Response Processing', () => {
     it('should handle JSON responses correctly from style guides endpoint', async () => {
       const testConfig: ApiConfig = {
-        endpoint: API_ENDPOINTS.STYLE_GUIDES,
+        endpoint: STYLE_GUIDES_ENDPOINT,
         apiKey: config.apiKey,
         platform: config.platform,
       };
@@ -444,7 +445,7 @@ describe('API Utilities Integration Tests', () => {
   describe('Concurrent Requests', () => {
     it('should handle multiple concurrent GET requests to style guides', async () => {
       const testConfig: ApiConfig = {
-        endpoint: API_ENDPOINTS.STYLE_GUIDES,
+        endpoint: STYLE_GUIDES_ENDPOINT,
         apiKey: config.apiKey,
         platform: config.platform,
       };
@@ -465,7 +466,7 @@ describe('API Utilities Integration Tests', () => {
 
     it('should handle mixed HTTP method requests concurrently', async () => {
       const getConfig: ApiConfig = {
-        endpoint: API_ENDPOINTS.STYLE_GUIDES,
+        endpoint: STYLE_GUIDES_ENDPOINT,
         apiKey: config.apiKey,
         platform: config.platform,
       };
@@ -542,7 +543,7 @@ describe('API Utilities Integration Tests', () => {
       it('should handle unauthorized access gracefully', async () => {
         const invalidConfig: Config = {
           apiKey: 'invalid-api-key',
-          platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL },
+          platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
         };
         const result = await verifyPlatformUrl(invalidConfig);
         expect(result.success).toBe(false);

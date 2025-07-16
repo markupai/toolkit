@@ -1,14 +1,10 @@
-import { getData, postData, patchData, deleteData } from '../../utils/api';
+import { getData, postData } from '../../utils/api';
 import type {
-  StyleGuides,
-  StyleGuide,
   StyleAnalysisReq,
   StyleAnalysisSubmitResp,
   StyleAnalysisSuccessResp,
   StyleAnalysisSuggestionResp,
   StyleAnalysisRewriteResp,
-  CreateStyleGuideReq,
-  StyleGuideUpdateReq,
   FileDescriptor,
   BufferDescriptor,
 } from './style.api.types';
@@ -21,7 +17,6 @@ import { pollWorkflowForResult } from '../../utils/api';
 export { createStyleGuideReqFromUrl, createStyleGuideReqFromPath } from './style.api.utils';
 
 export const API_ENDPOINTS = {
-  STYLE_GUIDES: '/v1/style-guides',
   STYLE_CHECKS: '/v1/style/checks',
   STYLE_SUGGESTIONS: '/v1/style/suggestions',
   STYLE_REWRITES: '/v1/style/rewrites',
@@ -112,24 +107,6 @@ async function submitAndPollStyleAnalysis<T extends { status: Status }>(
   throw new Error(`${endpoint} failed with status: ${polledResponse.status}`);
 }
 
-// Style Guide Operations
-export async function listStyleGuides(config: Config): Promise<StyleGuides> {
-  const apiConfig: ApiConfig = {
-    ...config,
-    endpoint: API_ENDPOINTS.STYLE_GUIDES,
-  };
-  return getData<StyleGuides>(apiConfig);
-}
-
-// Fetch a single style guide by ID
-export async function getStyleGuide(styleGuideId: string, config: Config): Promise<StyleGuide> {
-  const apiConfig: ApiConfig = {
-    ...config,
-    endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`,
-  };
-  return getData<StyleGuide>(apiConfig);
-}
-
 // Style Check Operations
 export async function submitStyleCheck(
   styleAnalysisRequest: StyleAnalysisReq,
@@ -197,28 +174,6 @@ export async function styleRewrite(
   );
 }
 
-// Create a new style guide from a File object
-export async function createStyleGuide(request: CreateStyleGuideReq, config: Config): Promise<StyleGuide> {
-  const { file, name } = request;
-
-  // Validate file type - only PDF files are supported
-  const fileExtension = file.name.split('.').pop()?.toLowerCase();
-  if (!fileExtension || fileExtension !== 'pdf') {
-    throw new Error(`Unsupported file type: ${fileExtension}. Only .pdf files are supported.`);
-  }
-
-  const apiConfig: ApiConfig = {
-    ...config,
-    endpoint: API_ENDPOINTS.STYLE_GUIDES,
-  };
-
-  const formData = new FormData();
-  formData.append('file_upload', file);
-  formData.append('name', name);
-
-  return postData<StyleGuide>(apiConfig, formData);
-}
-
 // Get style check results by workflow ID
 export async function getStyleCheck(workflowId: string, config: Config): Promise<StyleAnalysisSuccessResp> {
   const apiConfig: ApiConfig = {
@@ -255,26 +210,4 @@ export async function getStyleRewrite(workflowId: string, config: Config): Promi
     endpoint: `${API_ENDPOINTS.STYLE_REWRITES}/${workflowId}`,
   };
   return getData<StyleAnalysisRewriteResp>(apiConfig);
-}
-
-// Update a style guide by ID
-export async function updateStyleGuide(
-  styleGuideId: string,
-  updates: StyleGuideUpdateReq,
-  config: Config,
-): Promise<StyleGuide> {
-  const apiConfig = {
-    ...config,
-    endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`,
-  };
-  return patchData<StyleGuide>(apiConfig, JSON.stringify(updates));
-}
-
-// Delete a style guide by ID
-export async function deleteStyleGuide(styleGuideId: string, config: Config): Promise<void> {
-  const apiConfig = {
-    ...config,
-    endpoint: `${API_ENDPOINTS.STYLE_GUIDES}/${styleGuideId}`,
-  };
-  await deleteData<void>(apiConfig);
 }
