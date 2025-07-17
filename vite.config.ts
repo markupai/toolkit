@@ -19,7 +19,7 @@ export default defineConfig({
   },
   plugins: [
     dts({
-      include: ['src/**/*.ts'],
+      include: ['src/**/*.ts', 'src/**/*.json'],
       outDir: 'dist/types',
       rollupTypes: true,
       copyDtsFiles: true,

@@ -28,5 +28,5 @@
     "declarationMap": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["src"]
+  "include": ["src", "src/**/*.json"]
 }

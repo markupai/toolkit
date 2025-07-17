@@ -43,5 +43,8 @@
     "typescript-eslint": "^8.37.0",
     "vite": "^7.0.4",
     "vite-plugin-dts": "^4.5.4"
+  },
+  "dependencies": {
+    "i18next": "^25.3.2"
   }
 }
