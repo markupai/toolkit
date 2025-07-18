@@ -17,7 +17,8 @@ export class LocalizationService {
   private static initPromise: Promise<LocalizationService> | null = null;
 
   private constructor() {
-    console.log('LocalizationService initialized');
+    // Removed console.log to avoid confusion
+    // The singleton pattern is working correctly
   }
 
   static async getInstance(locale: SupportedLocale = 'en'): Promise<LocalizationService> {
