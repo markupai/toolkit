@@ -11,44 +11,29 @@ const resources: Resource = {
 };
 
 export class LocalizationService {
-  private i18n: i18n;
-  private initialized = false;
+  private static localizationService: LocalizationService;
+  private static i18n: i18n;
 
-  constructor() {
+  private constructor() {
     console.log('LocalizationService initialized');
-    this.i18n = i18next.createInstance();
   }
 
-  async init(locale: SupportedLocale = 'en') {
-    if (!this.initialized) {
-      await this.i18n.init({
+  static async getInstance(locale: SupportedLocale = 'en'): Promise<LocalizationService> {
+    if (!LocalizationService.localizationService) {
+      LocalizationService.localizationService = new LocalizationService();
+      LocalizationService.i18n = i18next.createInstance();
+      await LocalizationService.i18n.init({
         lng: locale,
         fallbackLng: 'en',
         resources,
         interpolation: { escapeValue: false },
       });
-      this.initialized = true;
-    } else {
-      await this.i18n.changeLanguage(locale);
     }
+    await LocalizationService.i18n.changeLanguage(locale);
+    return LocalizationService.localizationService;
   }
 
-  t(key: TranslationKey): string {
-    return this.i18n.t(key);
+  static t(key: TranslationKey): string {
+    return LocalizationService.i18n.t(key);
   }
 }
-
-// Singleton instance for app-wide use
-export const localizationService = new LocalizationService();
-
-/**
- * Example usage:
- *
- * import { localizationService } from './utils/localization';
- *
- * async function greet() {
- *   await localizationService.init('de');
- *   const clarity = await localizationService.t('clarity');
- *   console.log(clarity); // "Klarheit"
- * }
- */
