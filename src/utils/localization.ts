@@ -15,6 +15,7 @@ export class LocalizationService {
   private initialized = false;
 
   constructor() {
+    console.log('LocalizationService initialized');
     this.i18n = i18next.createInstance();
   }
 
@@ -32,10 +33,7 @@ export class LocalizationService {
     }
   }
 
-  async t(key: TranslationKey, locale?: SupportedLocale): Promise<string> {
-    if (locale) {
-      await this.init(locale);
-    }
+  t(key: TranslationKey): string {
     return this.i18n.t(key);
   }
 }

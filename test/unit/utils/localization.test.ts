@@ -38,15 +38,6 @@ describe('LocalizationService', () => {
     expect(await localizationService.t('clarity')).toBe('Klarheit');
   });
 
-  it('translates with explicit locale argument', async () => {
-    // Should switch to German for this call
-    const result = await localizationService.t('clarity', 'de');
-    expect(result).toBe('Klarheit');
-    // Should switch back to English for this call
-    const result2 = await localizationService.t('clarity', 'en');
-    expect(result2).toBe('Clarity');
-  });
-
   it('returns the correct translation for all keys in both languages', async () => {
     const keys = Object.keys(await import('../../../src/locales/en.json')) as TranslationKey[];
     for (const key of keys) {
@@ -59,5 +50,13 @@ describe('LocalizationService', () => {
       expect(enResult).not.toBe('');
       expect(deResult).not.toBe('');
     }
+  });
+
+  it('returns the key itself when translation key does not exist', async () => {
+    // TypeScript will prevent this at compile time, but we can test runtime behavior
+    // by using type assertion to bypass the type system
+    const nonExistentKey = 'non_existent_key' as TranslationKey;
+    const result = await localizationService.t(nonExistentKey);
+    expect(result).toBe('non_existent_key');
   });
 });
