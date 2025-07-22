@@ -199,7 +199,6 @@ type StyleFunction<T> = (request: StyleAnalysisReq, config: Config) => Promise<T
 
 // Queue management for batch processing
 class BatchQueue<T extends StyleAnalysisResponseType> {
-  private queue: Array<{ index: number; request: StyleAnalysisReq }> = [];
   private inProgress = new Set<number>();
   public results: Array<BatchResult<T>> = [];
   private cancelled = false;

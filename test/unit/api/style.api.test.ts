@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
-import { http } from 'msw';
 import {
   submitStyleCheck,
   submitStyleSuggestion,
@@ -17,7 +16,7 @@ import {
 } from '../../../src/api/style/style.api';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 import { Status } from '../../../src/utils/api.types';
-import type { Config } from '../../../src/utils/api.types';
+import type { Config, ResponseBase } from '../../../src/utils/api.types';
 import { PlatformType, Environment } from '../../../src/utils/api.types';
 import { server } from '../setup';
 import { apiHandlers } from '../mocks/api.handlers';
@@ -26,8 +25,31 @@ import {
   StyleAnalysisSuccessResp,
   StyleAnalysisSuggestionResp,
   StyleAnalysisRewriteResp,
-  IssueCategory,
 } from '../../../src/api/style/style.api.types';
+
+// Custom type guards for better type narrowing
+function isStyleAnalysisSuccessResp(
+  response: StyleAnalysisSuccessResp | ResponseBase,
+): response is StyleAnalysisSuccessResp {
+  return response.status === Status.Completed && 'style_guide_id' in response && 'scores' in response;
+}
+
+function isStyleAnalysisSuggestionResp(
+  response: StyleAnalysisSuggestionResp | ResponseBase,
+): response is StyleAnalysisSuggestionResp {
+  return response.status === Status.Completed && 'style_guide_id' in response && 'scores' in response;
+}
+
+function isStyleAnalysisRewriteResp(
+  response: StyleAnalysisRewriteResp | ResponseBase,
+): response is StyleAnalysisRewriteResp {
+  return (
+    response.status === Status.Completed &&
+    'style_guide_id' in response &&
+    'scores' in response &&
+    'rewrite' in response
+  );
+}
 
 // Set up MSW server lifecycle hooks
 beforeAll(() => server.listen());
@@ -306,20 +328,25 @@ describe('Style API Unit Tests', () => {
       const result = await getStyleCheck(mockWorkflowId, mockConfig);
       expect(result.status).toBe(Status.Completed);
       expect(result.workflow_id).toBe(mockWorkflowId);
-      expect(result.style_guide_id).toBe(mockStyleGuideId);
-      expect(result.scores).toBeDefined();
-      expect(result.issues).toBeDefined();
+
+      const typedResult = isStyleAnalysisSuccessResp(result) ? result : null;
+      expect(typedResult).not.toBeNull();
+      expect(typedResult!.style_guide_id).toBe(mockStyleGuideId);
+      expect(typedResult!.scores).toBeDefined();
+      expect(typedResult!.issues).toBeDefined();
     });
 
     it('should include terminology scores in style check results', async () => {
       server.use(apiHandlers.style.checks.poll);
 
       const result = await getStyleCheck(mockWorkflowId, mockConfig);
-      expect(result.scores.terminology).toBeDefined();
-      expect(typeof result.scores.terminology.score).toBe('number');
-      expect(typeof result.scores.terminology.issues).toBe('number');
-      expect(result.scores.terminology.score).toBe(85);
-      expect(result.scores.terminology.issues).toBe(0);
+      const typedResult = isStyleAnalysisSuccessResp(result) ? result : null;
+      expect(typedResult).not.toBeNull();
+      expect(typedResult!.scores.terminology).toBeDefined();
+      expect(typeof typedResult!.scores.terminology.score).toBe('number');
+      expect(typeof typedResult!.scores.terminology.issues).toBe('number');
+      expect(typedResult!.scores.terminology.score).toBe(85);
+      expect(typedResult!.scores.terminology.issues).toBe(0);
     });
   });
 
@@ -330,12 +357,15 @@ describe('Style API Unit Tests', () => {
       const result = await getStyleSuggestion(mockWorkflowId, mockConfig);
       expect(result.status).toBe(Status.Completed);
       expect(result.workflow_id).toBe(mockWorkflowId);
-      expect(result.style_guide_id).toBe(mockStyleGuideId);
-      expect(result.scores).toBeDefined();
-      expect(result.issues).toBeDefined();
+
+      const typedResult = isStyleAnalysisSuggestionResp(result) ? result : null;
+      expect(typedResult).not.toBeNull();
+      expect(typedResult!.style_guide_id).toBe(mockStyleGuideId);
+      expect(typedResult!.scores).toBeDefined();
+      expect(typedResult!.issues).toBeDefined();
       // Check for suggestion in issues
-      if (result.issues && result.issues.length > 0) {
-        const issue = result.issues[0];
+      if (typedResult!.issues && typedResult!.issues.length > 0) {
+        const issue = typedResult!.issues[0];
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe('string');
       }
@@ -346,21 +376,24 @@ describe('Style API Unit Tests', () => {
 
       const result = await getStyleRewrite(mockWorkflowId, mockConfig);
       expect(result.status).toBe(Status.Completed);
-      expect(result.style_guide_id).toBe(mockStyleGuideId);
-      expect(result.scores).toBeDefined();
-      expect(result.issues).toBeDefined();
-      expect(result.rewrite).toBeDefined();
-      expect(typeof result.rewrite).toBe('string');
-      expect(result.rewrite_scores).toBeDefined();
-      expect(result.rewrite_scores.quality).toBeDefined();
-      expect(result.rewrite_scores.clarity).toBeDefined();
-      expect(result.rewrite_scores.grammar).toBeDefined();
-      expect(result.rewrite_scores.style_guide).toBeDefined();
-      expect(result.rewrite_scores.tone).toBeDefined();
-      expect(result.rewrite_scores.terminology).toBeDefined();
+
+      const typedResult = isStyleAnalysisRewriteResp(result) ? result : null;
+      expect(typedResult).not.toBeNull();
+      expect(typedResult!.style_guide_id).toBe(mockStyleGuideId);
+      expect(typedResult!.scores).toBeDefined();
+      expect(typedResult!.issues).toBeDefined();
+      expect(typedResult!.rewrite).toBeDefined();
+      expect(typeof typedResult!.rewrite).toBe('string');
+      expect(typedResult!.rewrite_scores).toBeDefined();
+      expect(typedResult!.rewrite_scores.quality).toBeDefined();
+      expect(typedResult!.rewrite_scores.clarity).toBeDefined();
+      expect(typedResult!.rewrite_scores.grammar).toBeDefined();
+      expect(typedResult!.rewrite_scores.style_guide).toBeDefined();
+      expect(typedResult!.rewrite_scores.tone).toBeDefined();
+      expect(typedResult!.rewrite_scores.terminology).toBeDefined();
       // Check for suggestion in issues
-      if (result.issues && result.issues.length > 0) {
-        const issue = result.issues[0];
+      if (typedResult!.issues && typedResult!.issues.length > 0) {
+        const issue = typedResult!.issues[0];
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe('string');
       }
@@ -382,55 +415,6 @@ describe('Style API Unit Tests', () => {
         tone: STYLE_DEFAULTS.tones.informal,
       },
     ];
-
-    const mockStyleCheckResponse: StyleAnalysisSuccessResp = {
-      workflow_id: 'test-workflow-id',
-      status: Status.Completed,
-      style_guide_id: 'test-style-guide-id',
-      scores: {
-        quality: { score: 85 },
-        clarity: {
-          score: 80,
-          word_count: 100,
-          sentence_count: 5,
-          average_sentence_length: 20,
-          flesch_reading_ease: 70,
-          vocabulary_complexity: 0.6,
-          flesch_kincaid_grade: 8,
-          lexical_diversity: 0.7,
-          sentence_complexity: 0.5,
-        },
-        grammar: { score: 90, issues: 2 },
-        style_guide: { score: 85, issues: 1 },
-        tone: { score: 88, informality: 0.2, liveliness: 0.3 },
-        terminology: { score: 92, issues: 0 },
-      },
-      issues: [],
-      check_options: {
-        style_guide: { style_guide_type: 'ap', style_guide_id: 'ap' },
-        dialect: 'american_english',
-        tone: 'formal',
-      },
-    };
-
-    const mockSuggestionResponse: StyleAnalysisSuggestionResp = {
-      ...mockStyleCheckResponse,
-      issues: [
-        {
-          original: 'test',
-          char_index: 0,
-          subcategory: 'grammar',
-          category: IssueCategory.Grammar,
-          suggestion: 'suggested text',
-        },
-      ],
-    };
-
-    const mockRewriteResponse: StyleAnalysisRewriteResp = {
-      ...mockSuggestionResponse,
-      rewrite: 'rewritten content',
-      rewrite_scores: mockStyleCheckResponse.scores,
-    };
 
     describe('styleBatchCheckRequests', () => {
       it('should create batch check response', () => {
@@ -570,9 +554,9 @@ describe('Style API Unit Tests', () => {
       });
 
       it('should throw error for invalid operation type', () => {
-        expect(() => styleBatchOperation(mockBatchRequests, mockConfig, {}, 'invalid' as any)).toThrow(
-          'Invalid operation type: invalid',
-        );
+        expect(() =>
+          styleBatchOperation(mockBatchRequests, mockConfig, {}, 'invalid' as 'check' | 'suggestions' | 'rewrite'),
+        ).toThrow('Invalid operation type: invalid');
       });
     });
 
