@@ -8,7 +8,11 @@ import {
   styleRewrite,
   getStyleSuggestion,
   getStyleRewrite,
+  styleBatchCheckRequests,
+  styleBatchSuggestions,
+  styleBatchRewrites,
 } from '../../../src/api/style/style.api';
+import type { StyleAnalysisReq, StyleAnalysisSuccessResp, BatchProgress } from '../../../src/api/style/style.api.types';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 import { IssueCategory } from '../../../src/api/style/style.api.types';
 import { PlatformType } from '../../../src/utils/api.types';
@@ -952,6 +956,363 @@ describe('Style API Integration Tests', () => {
       // Fetch the rewrite results
       const result = await getStyleRewrite(workflowId, config);
       expect(result).toBeDefined();
+    });
+  });
+
+  describe('Batch Processing Integration', () => {
+    const mockBatchRequests: StyleAnalysisReq[] = [
+      {
+        content: 'This is a test document for style checking. It contains multiple sentences to analyze.',
+        style_guide: 'ap',
+        dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+        tone: STYLE_DEFAULTS.tones.formal,
+        documentName: 'test-document-1.txt',
+      },
+      {
+        content: 'Another test document with different content. This should be processed separately.',
+        style_guide: 'chicago',
+        dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+        tone: STYLE_DEFAULTS.tones.informal,
+        documentName: 'test-document-2.txt',
+      },
+      {
+        content: 'A third document for comprehensive testing of the batch processing system.',
+        style_guide: 'microsoft',
+        dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+        tone: STYLE_DEFAULTS.tones.formal,
+        documentName: 'test-document-3.txt',
+      },
+    ];
+
+    describe('styleBatchCheckRequests Integration', () => {
+      it('should process multiple style check requests in parallel', async () => {
+        const batchResponse = styleBatchCheckRequests(mockBatchRequests, config);
+
+        // Verify initial state
+        expect(batchResponse.progress.total).toBe(3);
+        expect(batchResponse.progress.pending).toBe(0);
+        expect(batchResponse.progress.completed).toBe(0);
+        expect(batchResponse.progress.failed).toBe(0);
+
+        // Wait for completion
+        const result = await batchResponse.promise;
+
+        // Verify final state
+        expect(result.completed).toBe(3);
+        expect(result.failed).toBe(0);
+        expect(result.inProgress).toBe(0);
+        expect(result.pending).toBe(0);
+
+        // Verify individual results
+        result.results.forEach((batchResult, index) => {
+          expect(batchResult.status).toBe('completed');
+          expect(batchResult.result).toBeDefined();
+          expect(batchResult.result!.workflow_id).toBeDefined();
+          expect(batchResult.result!.status).toBe('completed');
+          expect(batchResult.result!.scores).toBeDefined();
+          expect(batchResult.index).toBe(index);
+          expect(batchResult.request).toEqual(mockBatchRequests[index]);
+        });
+      }, 30000);
+
+      it('should respect maxConcurrent limit', async () => {
+        const batchResponse = styleBatchCheckRequests(mockBatchRequests, config, {
+          maxConcurrent: 1,
+        });
+
+        // Check initial state - only one should be in progress
+        expect(batchResponse.progress.inProgress).toBe(1);
+        expect(batchResponse.progress.pending).toBe(2);
+
+        const result = await batchResponse.promise;
+
+        expect(result.completed).toBe(3);
+        expect(result.failed).toBe(0);
+      }, 30000);
+
+      it('should handle mixed success and failure scenarios', async () => {
+        const mixedRequests = [
+          mockBatchRequests[0], // Should succeed
+          {
+            content: '', // Empty content should fail
+            style_guide: 'ap',
+            dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+            tone: STYLE_DEFAULTS.tones.formal,
+          },
+          mockBatchRequests[2], // Should succeed
+        ];
+
+        const batchResponse = styleBatchCheckRequests(mixedRequests, config);
+        const result = await batchResponse.promise;
+
+        expect(result.completed).toBe(2);
+        expect(result.failed).toBe(1);
+        expect(result.results[0].status).toBe('completed');
+        expect(result.results[1].status).toBe('failed');
+        expect(result.results[2].status).toBe('completed');
+      }, 30000);
+    });
+
+    describe('styleBatchSuggestions Integration', () => {
+      it('should process multiple style suggestion requests', async () => {
+        const batchResponse = styleBatchSuggestions(mockBatchRequests, config);
+
+        const result = await batchResponse.promise;
+
+        expect(result.completed).toBe(3);
+        expect(result.failed).toBe(0);
+
+        result.results.forEach((batchResult) => {
+          expect(batchResult.status).toBe('completed');
+          expect(batchResult.result).toBeDefined();
+          expect(batchResult.result!.workflow_id).toBeDefined();
+          expect(batchResult.result!.status).toBe('completed');
+          expect(batchResult.result!.scores).toBeDefined();
+          // Suggestions should have issues with suggestions
+          expect(Array.isArray(batchResult.result!.issues)).toBe(true);
+        });
+      }, 30000);
+    });
+
+    describe('styleBatchRewrites Integration', () => {
+      it('should process multiple style rewrite requests', async () => {
+        const batchResponse = styleBatchRewrites(mockBatchRequests, config);
+
+        const result = await batchResponse.promise;
+
+        expect(result.completed).toBe(3);
+        expect(result.failed).toBe(0);
+
+        result.results.forEach((batchResult) => {
+          expect(batchResult.status).toBe('completed');
+          expect(batchResult.result).toBeDefined();
+          expect(batchResult.result!.workflow_id).toBeDefined();
+          expect(batchResult.result!.status).toBe('completed');
+          expect(batchResult.result!.scores).toBeDefined();
+          expect(batchResult.result!.rewrite).toBeDefined();
+          expect(batchResult.result!.rewrite_scores).toBeDefined();
+        });
+      }, 30000);
+    });
+
+    describe('Batch Progress Tracking', () => {
+      it('should provide accurate progress updates', async () => {
+        const progressUpdates: BatchProgress<StyleAnalysisSuccessResp>[] = [];
+
+        const batchResponse = styleBatchCheckRequests(mockBatchRequests, config, {
+          maxConcurrent: 1, // Force sequential processing for easier testing
+        });
+
+        // Monitor progress updates during processing
+        const progressInterval = setInterval(() => {
+          const currentProgress = batchResponse.progress;
+          progressUpdates.push({ ...currentProgress });
+        }, 100);
+
+        // Wait for completion
+        const result = await batchResponse.promise;
+
+        // Clear the interval
+        clearInterval(progressInterval);
+
+        // Verify we captured progress updates
+        expect(progressUpdates.length).toBeGreaterThan(0);
+
+        // Verify progress progression
+        let lastCompleted = 0;
+
+        for (const progress of progressUpdates) {
+          // Progress should be monotonic (completed should only increase)
+          expect(progress.completed).toBeGreaterThanOrEqual(lastCompleted);
+          expect(progress.total).toBe(3);
+          expect(progress.completed + progress.failed + progress.inProgress + progress.pending).toBe(3);
+
+          // Update our tracking
+          lastCompleted = progress.completed;
+        }
+
+        // Verify final state
+        expect(result.total).toBe(3);
+        expect(result.completed).toBe(3);
+        expect(result.failed).toBe(0);
+        expect(result.inProgress).toBe(0);
+        expect(result.pending).toBe(0);
+        expect(result.startTime).toBeGreaterThan(0);
+        expect(result.results).toHaveLength(3);
+      }, 30000);
+    });
+
+    describe('Batch Cancellation Integration', () => {
+      it('should support cancellation during processing', async () => {
+        const batchResponse = styleBatchCheckRequests(mockBatchRequests, config);
+
+        // Cancel immediately
+        batchResponse.cancel();
+
+        await expect(batchResponse.promise).rejects.toThrow('Batch operation cancelled');
+      });
+
+      it('should allow cancellation after some progress', async () => {
+        const batchResponse = styleBatchCheckRequests(mockBatchRequests, config, {
+          maxConcurrent: 1, // Force sequential processing
+        });
+
+        // Wait a bit for some progress
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Cancel
+        batchResponse.cancel();
+
+        await expect(batchResponse.promise).rejects.toThrow('Batch operation cancelled');
+      });
+    });
+
+    describe('Batch Error Recovery', () => {
+      it('should continue processing after individual failures', async () => {
+        const requestsWithErrors = [
+          mockBatchRequests[0], // Should succeed
+          {
+            content: 'Invalid content that might cause issues',
+            style_guide: 'invalid_style_guide', // Invalid style guide
+            dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+            tone: STYLE_DEFAULTS.tones.formal,
+          },
+          mockBatchRequests[2], // Should succeed
+        ];
+
+        const batchResponse = styleBatchCheckRequests(requestsWithErrors, config);
+        const result = await batchResponse.promise;
+
+        // Should have some successes and some failures
+        expect(result.completed + result.failed).toBe(3);
+        expect(result.results.some((r) => r.status === 'completed')).toBe(true);
+        expect(result.results.some((r) => r.status === 'failed')).toBe(true);
+      }, 30000);
+    });
+
+    describe('Large Batch Processing', () => {
+      it('should handle larger batches efficiently', async () => {
+        // Create a larger batch (but not too large for testing)
+        const largeBatch = Array(10)
+          .fill(null)
+          .map((_, index) => ({
+            content: `Test document ${index + 1} for large batch processing.`,
+            style_guide: 'ap',
+            dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+            tone: STYLE_DEFAULTS.tones.formal,
+            documentName: `test-document-${index + 1}.txt`,
+          }));
+
+        const batchResponse = styleBatchCheckRequests(largeBatch, config, {
+          maxConcurrent: 5, // Limit concurrency for testing
+        });
+
+        const result = await batchResponse.promise;
+
+        expect(result.total).toBe(10);
+        expect(result.completed + result.failed).toBe(10);
+        expect(result.results).toHaveLength(10);
+      }, 60000); // Longer timeout for larger batch
+    });
+
+    describe('Reactive Progress Updates', () => {
+      it('should provide real-time progress updates with 25 requests', async () => {
+        // Create 25 test requests
+        const largeBatch = Array(25)
+          .fill(null)
+          .map((_, index) => ({
+            content: `Test document ${index + 1} for reactive progress testing. This document contains multiple sentences to ensure proper processing time. Document ${index + 1} has unique content for comprehensive testing.`,
+            style_guide: 'ap',
+            dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+            tone: STYLE_DEFAULTS.tones.formal,
+            documentName: `test-document-${index + 1}.txt`,
+          }));
+
+        const batchResponse = styleBatchCheckRequests(largeBatch, config, {
+          maxConcurrent: 10, // Allow some concurrency to see progress
+        });
+
+        // Verify initial state
+        expect(batchResponse.progress.total).toBe(25);
+        expect(batchResponse.progress.completed).toBe(0);
+        expect(batchResponse.progress.pending).toBe(15);
+        expect(batchResponse.progress.inProgress).toBe(10); // maxConcurrent
+
+        // Monitor progress updates during processing
+        const progressSnapshots: BatchProgress<StyleAnalysisSuccessResp>[] = [];
+        let maxCompleted = 0;
+        let progressUpdatesCount = 0;
+
+        const progressInterval = setInterval(() => {
+          const currentProgress = batchResponse.progress;
+          progressSnapshots.push({ ...currentProgress });
+
+          // Track the maximum completed count we've seen
+          if (currentProgress.completed > maxCompleted) {
+            maxCompleted = currentProgress.completed;
+            progressUpdatesCount++;
+          }
+        }, 500); // Check every 500ms
+
+        // Wait for completion
+        const result = await batchResponse.promise;
+
+        // Clear the interval
+        clearInterval(progressInterval);
+
+        // Verify we captured progress updates
+        expect(progressSnapshots.length).toBeGreaterThan(0);
+        expect(progressUpdatesCount).toBeGreaterThan(0);
+
+        // Verify that we saw more than 1 request complete during processing
+        expect(maxCompleted).toBeGreaterThan(1);
+        expect(maxCompleted).toBeLessThanOrEqual(25);
+
+        // Verify progress progression is monotonic
+        let lastCompleted = 0;
+        let lastFailed = 0;
+
+        for (const progress of progressSnapshots) {
+          // Progress should be monotonic (completed and failed should only increase)
+          expect(progress.completed).toBeGreaterThanOrEqual(lastCompleted);
+          expect(progress.failed).toBeGreaterThanOrEqual(lastFailed);
+          expect(progress.total).toBe(25);
+
+          // Sum of all statuses should equal total
+          expect(progress.completed + progress.failed + progress.inProgress + progress.pending).toBe(25);
+
+          // Update our tracking
+          lastCompleted = progress.completed;
+          lastFailed = progress.failed;
+        }
+
+        // Verify final state
+        expect(result.total).toBe(25);
+        expect(result.completed + result.failed).toBe(25);
+        expect(result.inProgress).toBe(0);
+        expect(result.pending).toBe(0);
+        expect(result.startTime).toBeGreaterThan(0);
+        expect(result.results).toHaveLength(25);
+
+        // Verify that at least some requests succeeded
+        expect(result.completed).toBeGreaterThan(0);
+
+        // Verify individual results for completed requests
+        result.results.forEach((batchResult, index) => {
+          if (batchResult.status === 'completed') {
+            expect(batchResult.result).toBeDefined();
+            expect(batchResult.result!.workflow_id).toBeDefined();
+            expect(batchResult.result!.status).toBe('completed');
+            expect(batchResult.result!.scores).toBeDefined();
+            expect(batchResult.index).toBe(index);
+            expect(batchResult.request).toEqual(largeBatch[index]);
+          }
+        });
+
+        console.log(
+          `Progress test completed: ${result.completed} successful, ${result.failed} failed, max completed during processing: ${maxCompleted}`,
+        );
+      }, 120000); // 2 minutes timeout for 25 requests
     });
   });
 });

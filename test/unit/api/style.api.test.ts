@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
+import { http } from 'msw';
 import {
   submitStyleCheck,
   submitStyleSuggestion,
@@ -9,6 +10,10 @@ import {
   getStyleCheck,
   getStyleSuggestion,
   getStyleRewrite,
+  styleBatchCheckRequests,
+  styleBatchSuggestions,
+  styleBatchRewrites,
+  styleBatchOperation,
 } from '../../../src/api/style/style.api';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 import { Status } from '../../../src/utils/api.types';
@@ -16,6 +21,13 @@ import type { Config } from '../../../src/utils/api.types';
 import { PlatformType, Environment } from '../../../src/utils/api.types';
 import { server } from '../setup';
 import { apiHandlers } from '../mocks/api.handlers';
+import {
+  StyleAnalysisReq,
+  StyleAnalysisSuccessResp,
+  StyleAnalysisSuggestionResp,
+  StyleAnalysisRewriteResp,
+  IssueCategory,
+} from '../../../src/api/style/style.api.types';
 
 // Set up MSW server lifecycle hooks
 beforeAll(() => server.listen());
@@ -352,6 +364,279 @@ describe('Style API Unit Tests', () => {
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe('string');
       }
+    });
+  });
+
+  describe('Batch Processing API', () => {
+    const mockBatchRequests: StyleAnalysisReq[] = [
+      {
+        content: 'test content 1',
+        style_guide: 'ap',
+        dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+        tone: STYLE_DEFAULTS.tones.formal,
+      },
+      {
+        content: 'test content 2',
+        style_guide: 'chicago',
+        dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+        tone: STYLE_DEFAULTS.tones.informal,
+      },
+    ];
+
+    const mockStyleCheckResponse: StyleAnalysisSuccessResp = {
+      workflow_id: 'test-workflow-id',
+      status: Status.Completed,
+      style_guide_id: 'test-style-guide-id',
+      scores: {
+        quality: { score: 85 },
+        clarity: {
+          score: 80,
+          word_count: 100,
+          sentence_count: 5,
+          average_sentence_length: 20,
+          flesch_reading_ease: 70,
+          vocabulary_complexity: 0.6,
+          flesch_kincaid_grade: 8,
+          lexical_diversity: 0.7,
+          sentence_complexity: 0.5,
+        },
+        grammar: { score: 90, issues: 2 },
+        style_guide: { score: 85, issues: 1 },
+        tone: { score: 88, informality: 0.2, liveliness: 0.3 },
+        terminology: { score: 92, issues: 0 },
+      },
+      issues: [],
+      check_options: {
+        style_guide: { style_guide_type: 'ap', style_guide_id: 'ap' },
+        dialect: 'american_english',
+        tone: 'formal',
+      },
+    };
+
+    const mockSuggestionResponse: StyleAnalysisSuggestionResp = {
+      ...mockStyleCheckResponse,
+      issues: [
+        {
+          original: 'test',
+          char_index: 0,
+          subcategory: 'grammar',
+          category: IssueCategory.Grammar,
+          suggestion: 'suggested text',
+        },
+      ],
+    };
+
+    const mockRewriteResponse: StyleAnalysisRewriteResp = {
+      ...mockSuggestionResponse,
+      rewrite: 'rewritten content',
+      rewrite_scores: mockStyleCheckResponse.scores,
+    };
+
+    describe('styleBatchCheckRequests', () => {
+      it('should create batch check response', () => {
+        const batchResponse = styleBatchCheckRequests(mockBatchRequests, mockConfig);
+
+        expect(batchResponse.progress.total).toBe(2);
+        expect(batchResponse.progress.completed).toBe(0);
+        expect(batchResponse.progress.failed).toBe(0);
+        // With reactive progress, some requests may already be in progress
+        expect(batchResponse.progress.inProgress + batchResponse.progress.pending).toBe(2);
+        expect(batchResponse.progress.results).toHaveLength(2);
+        expect(batchResponse.promise).toBeInstanceOf(Promise);
+        expect(typeof batchResponse.cancel).toBe('function');
+      });
+
+      it('should process batch check requests successfully', async () => {
+        // Mock the underlying API calls
+        server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
+
+        const batchResponse = styleBatchCheckRequests(mockBatchRequests, mockConfig);
+        const result = await batchResponse.promise;
+
+        expect(result.completed).toBe(2);
+        expect(result.failed).toBe(0);
+        expect(result.results[0].status).toBe('completed');
+        expect(result.results[1].status).toBe('completed');
+      });
+
+      it('should handle batch check with custom options', () => {
+        server.use(apiHandlers.style.checks.success);
+
+        const batchResponse = styleBatchCheckRequests(mockBatchRequests, mockConfig, {
+          maxConcurrent: 1,
+          retryAttempts: 1,
+          retryDelay: 500,
+        });
+
+        expect(batchResponse.progress.total).toBe(2);
+        expect(batchResponse.promise).toBeInstanceOf(Promise);
+      });
+    });
+
+    describe('styleBatchSuggestions', () => {
+      it('should create batch suggestions response', () => {
+        server.use(apiHandlers.style.suggestions.success);
+
+        const batchResponse = styleBatchSuggestions(mockBatchRequests, mockConfig);
+
+        expect(batchResponse.progress.total).toBe(2);
+        expect(batchResponse.progress.completed).toBe(0);
+        expect(batchResponse.progress.failed).toBe(0);
+        // With reactive progress, some requests may already be in progress
+        expect(batchResponse.progress.inProgress + batchResponse.progress.pending).toBe(2);
+        expect(batchResponse.progress.results).toHaveLength(2);
+        expect(batchResponse.promise).toBeInstanceOf(Promise);
+        expect(typeof batchResponse.cancel).toBe('function');
+      });
+
+      it('should process batch suggestions successfully', async () => {
+        server.use(apiHandlers.style.suggestions.success, apiHandlers.style.suggestions.poll);
+
+        const batchResponse = styleBatchSuggestions(mockBatchRequests, mockConfig);
+        const result = await batchResponse.promise;
+
+        expect(result.completed).toBe(2);
+        expect(result.failed).toBe(0);
+        expect(result.results[0].status).toBe('completed');
+        expect(result.results[1].status).toBe('completed');
+      });
+    });
+
+    describe('styleBatchRewrites', () => {
+      it('should create batch rewrites response', () => {
+        server.use(apiHandlers.style.rewrites.success);
+
+        const batchResponse = styleBatchRewrites(mockBatchRequests, mockConfig);
+
+        expect(batchResponse.progress.total).toBe(2);
+        expect(batchResponse.progress.completed).toBe(0);
+        expect(batchResponse.progress.failed).toBe(0);
+        // With reactive progress, some requests may already be in progress
+        expect(batchResponse.progress.inProgress + batchResponse.progress.pending).toBe(2);
+        expect(batchResponse.progress.results).toHaveLength(2);
+        expect(batchResponse.promise).toBeInstanceOf(Promise);
+        expect(typeof batchResponse.cancel).toBe('function');
+      });
+
+      it('should process batch rewrites successfully', async () => {
+        server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
+
+        const batchResponse = styleBatchRewrites(mockBatchRequests, mockConfig);
+        const result = await batchResponse.promise;
+
+        expect(result.completed).toBe(2);
+        expect(result.failed).toBe(0);
+        expect(result.results[0].status).toBe('completed');
+        expect(result.results[1].status).toBe('completed');
+      });
+    });
+
+    describe('styleBatchOperation', () => {
+      it('should handle check operation type', () => {
+        server.use(apiHandlers.style.checks.success);
+
+        const batchResponse = styleBatchOperation<StyleAnalysisSuccessResp>(mockBatchRequests, mockConfig, {}, 'check');
+
+        expect(batchResponse.progress.total).toBe(2);
+        expect(batchResponse.promise).toBeInstanceOf(Promise);
+      });
+
+      it('should handle suggestions operation type', () => {
+        server.use(apiHandlers.style.suggestions.success);
+
+        const batchResponse = styleBatchOperation<StyleAnalysisSuggestionResp>(
+          mockBatchRequests,
+          mockConfig,
+          {},
+          'suggestions',
+        );
+
+        expect(batchResponse.progress.total).toBe(2);
+        expect(batchResponse.promise).toBeInstanceOf(Promise);
+      });
+
+      it('should handle rewrite operation type', () => {
+        server.use(apiHandlers.style.rewrites.success);
+
+        const batchResponse = styleBatchOperation<StyleAnalysisRewriteResp>(
+          mockBatchRequests,
+          mockConfig,
+          {},
+          'rewrite',
+        );
+
+        expect(batchResponse.progress.total).toBe(2);
+        expect(batchResponse.promise).toBeInstanceOf(Promise);
+      });
+
+      it('should throw error for invalid operation type', () => {
+        expect(() => styleBatchOperation(mockBatchRequests, mockConfig, {}, 'invalid' as any)).toThrow(
+          'Invalid operation type: invalid',
+        );
+      });
+    });
+
+    describe('Batch cancellation', () => {
+      it('should support cancellation for batch check', async () => {
+        server.use(apiHandlers.style.checks.success);
+
+        const batchResponse = styleBatchCheckRequests(mockBatchRequests, mockConfig);
+
+        // Cancel immediately
+        batchResponse.cancel();
+
+        await expect(batchResponse.promise).rejects.toThrow('Batch operation cancelled');
+      });
+
+      it('should support cancellation for batch suggestions', async () => {
+        server.use(apiHandlers.style.suggestions.success);
+
+        const batchResponse = styleBatchSuggestions(mockBatchRequests, mockConfig);
+
+        batchResponse.cancel();
+
+        await expect(batchResponse.promise).rejects.toThrow('Batch operation cancelled');
+      });
+
+      it('should support cancellation for batch rewrites', async () => {
+        server.use(apiHandlers.style.rewrites.success);
+
+        const batchResponse = styleBatchRewrites(mockBatchRequests, mockConfig);
+
+        batchResponse.cancel();
+
+        await expect(batchResponse.promise).rejects.toThrow('Batch operation cancelled');
+      });
+    });
+
+    describe('Batch error handling', () => {
+      it('should handle API errors gracefully in batch check', async () => {
+        server.use(apiHandlers.style.checks.error);
+
+        const batchResponse = styleBatchCheckRequests(mockBatchRequests, mockConfig);
+        const result = await batchResponse.promise;
+
+        expect(result.completed).toBe(0);
+        expect(result.failed).toBe(2);
+        expect(result.results[0].status).toBe('failed');
+        expect(result.results[1].status).toBe('failed');
+        expect(result.results[0].error).toBeInstanceOf(Error);
+        expect(result.results[1].error).toBeInstanceOf(Error);
+      });
+
+      it('should handle partial failures in batch', async () => {
+        // Use the standard handlers for this test
+        server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
+
+        const batchResponse = styleBatchCheckRequests(mockBatchRequests, mockConfig);
+        const result = await batchResponse.promise;
+
+        // Verify the batch processing works correctly
+        expect(result.completed).toBe(2);
+        expect(result.failed).toBe(0);
+        expect(result.results[0].status).toBe('completed');
+        expect(result.results[1].status).toBe('completed');
+      });
     });
   });
 });

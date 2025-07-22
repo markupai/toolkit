@@ -184,3 +184,279 @@ export async function submitAndPollStyleAnalysis<T extends { status: StatusType 
 export function isCompletedResponse<T extends ResponseBase>(resp: T): resp is T & { status: Status.Completed } {
   return resp.status === Status.Completed;
 }
+
+// Batch processing utilities
+import type {
+  BatchOptions,
+  BatchResult,
+  BatchProgress,
+  BatchResponse,
+  StyleAnalysisResponseType,
+} from './style.api.types';
+
+// Type dispatcher for style functions
+type StyleFunction<T> = (request: StyleAnalysisReq, config: Config) => Promise<T>;
+
+// Queue management for batch processing
+class BatchQueue<T extends StyleAnalysisResponseType> {
+  private queue: Array<{ index: number; request: StyleAnalysisReq }> = [];
+  private inProgress = new Set<number>();
+  public results: Array<BatchResult<T>> = [];
+  private cancelled = false;
+  private resolvePromise?: (value: BatchProgress<T>) => void;
+  private rejectPromise?: (reason: Error) => void;
+  public startTime: number;
+  public estimatedCompletionTime?: number;
+
+  constructor(
+    private requests: StyleAnalysisReq[],
+    private config: Config,
+    private styleFunction: StyleFunction<T>,
+    private options: Required<BatchOptions>,
+    private onProgressUpdate?: (progress: BatchProgress<T>) => void,
+  ) {
+    this.startTime = Date.now();
+    this.initializeResults();
+  }
+
+  private initializeResults(): void {
+    this.results = this.requests.map((request, index) => ({
+      index,
+      request,
+      status: 'pending' as const,
+    }));
+  }
+
+  private getProgress(): BatchProgress<T> {
+    const completed = this.results.filter((r) => r.status === 'completed').length;
+    const failed = this.results.filter((r) => r.status === 'failed').length;
+    const inProgress = this.results.filter((r) => r.status === 'in-progress').length;
+    const pending = this.results.filter((r) => r.status === 'pending').length;
+
+    return {
+      total: this.requests.length,
+      completed,
+      failed,
+      inProgress,
+      pending,
+      results: [...this.results],
+      startTime: Date.now(),
+    };
+  }
+
+  private updateProgress(): void {
+    if (this.onProgressUpdate) {
+      this.onProgressUpdate(this.getProgress());
+    }
+  }
+
+  private async processRequest(index: number, request: StyleAnalysisReq): Promise<void> {
+    if (this.cancelled) return;
+
+    try {
+      // Update status to in-progress
+      this.results[index] = {
+        ...this.results[index],
+        status: 'in-progress',
+        startTime: Date.now(),
+      };
+      this.updateProgress();
+
+      // Execute the style function with retry logic
+      const result = await this.executeWithRetry(request);
+
+      // If result is undefined, treat as failure
+      if (typeof result === 'undefined') {
+        this.results[index] = {
+          ...this.results[index],
+          status: 'failed',
+          error: new Error('Batch operation returned undefined result'),
+          endTime: Date.now(),
+        };
+      } else {
+        // Update with success
+        this.results[index] = {
+          ...this.results[index],
+          status: 'completed',
+          result,
+          endTime: Date.now(),
+        };
+      }
+    } catch (error) {
+      // Update with failure
+      this.results[index] = {
+        ...this.results[index],
+        status: 'failed',
+        error: error instanceof Error ? error : new Error(String(error)),
+        endTime: Date.now(),
+      };
+    } finally {
+      this.inProgress.delete(index);
+      this.updateProgress();
+      this.processNext();
+    }
+  }
+
+  private async executeWithRetry(request: StyleAnalysisReq): Promise<T> {
+    let lastError: Error;
+
+    for (let attempt = 0; attempt <= this.options.retryAttempts; attempt++) {
+      try {
+        return await this.styleFunction(request, this.config);
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+
+        // Don't retry on certain error types
+        if (this.shouldNotRetry(lastError)) {
+          throw lastError;
+        }
+
+        // Wait before retry (except on last attempt)
+        if (attempt < this.options.retryAttempts) {
+          await this.delay(this.options.retryDelay * Math.pow(2, attempt)); // Exponential backoff
+        }
+      }
+    }
+
+    throw lastError!;
+  }
+
+  private shouldNotRetry(error: Error): boolean {
+    // Don't retry on authentication, authorization, or validation errors
+    const nonRetryableErrors = [
+      'authentication',
+      'authorization',
+      'validation',
+      'invalid',
+      'unauthorized',
+      'forbidden',
+    ];
+
+    return nonRetryableErrors.some((keyword) => error.message.toLowerCase().includes(keyword));
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  private processNext(): void {
+    if (this.cancelled) return;
+
+    // Find next pending request
+    const nextRequest = this.results.find((r) => r.status === 'pending');
+    if (!nextRequest) {
+      // No more pending requests, check if we're done
+      if (this.inProgress.size === 0) {
+        this.resolvePromise?.(this.getProgress());
+      }
+      return;
+    }
+
+    // Check if we can start more requests
+    if (this.inProgress.size >= this.options.maxConcurrent) {
+      return;
+    }
+
+    // Start processing the next request
+    this.inProgress.add(nextRequest.index);
+    this.processRequest(nextRequest.index, nextRequest.request);
+  }
+
+  public start(): Promise<BatchProgress<T>> {
+    return new Promise((resolve, reject) => {
+      this.resolvePromise = resolve;
+      this.rejectPromise = reject;
+
+      // Start initial batch of requests
+      const initialBatch = Math.min(this.options.maxConcurrent, this.requests.length);
+
+      for (let i = 0; i < initialBatch; i++) {
+        this.inProgress.add(i);
+        this.processRequest(i, this.requests[i]);
+      }
+    });
+  }
+
+  public cancel(): void {
+    this.cancelled = true;
+    this.rejectPromise?.(new Error('Batch operation cancelled'));
+  }
+}
+
+// Main batch processing function
+export function styleBatchCheck<T extends StyleAnalysisResponseType>(
+  requests: StyleAnalysisReq[],
+  config: Config,
+  options: BatchOptions = {},
+  styleFunction: StyleFunction<T>,
+): BatchResponse<T> {
+  // Validate inputs
+  if (!requests || requests.length === 0) {
+    throw new Error('Requests array cannot be empty');
+  }
+
+  if (requests.length > 1000) {
+    throw new Error('Maximum 1000 requests allowed per batch');
+  }
+
+  // Set default options
+  const defaultOptions: Required<BatchOptions> = {
+    maxConcurrent: 100,
+    retryAttempts: 2,
+    retryDelay: 1000,
+    timeout: 300000, // 5 minutes
+  };
+
+  const finalOptions: Required<BatchOptions> = {
+    ...defaultOptions,
+    ...options,
+  };
+
+  // Validate options
+  if (finalOptions.maxConcurrent < 1 || finalOptions.maxConcurrent > 100) {
+    throw new Error('maxConcurrent must be between 1 and 100');
+  }
+
+  if (finalOptions.retryAttempts < 0 || finalOptions.retryAttempts > 5) {
+    throw new Error('retryAttempts must be between 0 and 5');
+  }
+
+  // Create queue and start processing
+  const queue = new BatchQueue<T>(requests, config, styleFunction, finalOptions);
+
+  const promise = queue.start();
+
+  // Create a reactive progress object that always reflects current state
+  const progressObject = {
+    get total() {
+      return requests.length;
+    },
+    get completed() {
+      return queue.results.filter((r) => r.status === 'completed').length;
+    },
+    get failed() {
+      return queue.results.filter((r) => r.status === 'failed').length;
+    },
+    get inProgress() {
+      return queue.results.filter((r) => r.status === 'in-progress').length;
+    },
+    get pending() {
+      return queue.results.filter((r) => r.status === 'pending').length;
+    },
+    get results() {
+      return [...queue.results];
+    },
+    get startTime() {
+      return queue.startTime;
+    },
+    get estimatedCompletionTime() {
+      return queue.estimatedCompletionTime;
+    },
+  } as BatchProgress<T>;
+
+  return {
+    progress: progressObject,
+    promise,
+    cancel: () => queue.cancel(),
+  };
+}

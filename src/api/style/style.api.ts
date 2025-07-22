@@ -5,11 +5,14 @@ import type {
   StyleAnalysisSuccessResp,
   StyleAnalysisSuggestionResp,
   StyleAnalysisRewriteResp,
+  BatchOptions,
+  BatchResponse,
+  StyleAnalysisResponseType,
 } from './style.api.types';
 import type { Config, ApiConfig, StyleAnalysisPollResp } from '../../utils/api.types';
 
 import { createStyleFormData } from './style.api.utils';
-import { submitAndPollStyleAnalysis } from './style.api.utils';
+import { submitAndPollStyleAnalysis, styleBatchCheck } from './style.api.utils';
 
 // Export utility functions for Node.js environments
 export { createStyleGuideReqFromUrl, createStyleGuideReqFromPath } from './style.api.utils';
@@ -136,4 +139,84 @@ export async function getStyleRewrite(
     endpoint: `${STYLE_API_ENDPOINTS.STYLE_REWRITES}/${workflowId}`,
   };
   return getData<StyleAnalysisRewriteResp | StyleAnalysisPollResp>(apiConfig);
+}
+
+// Batch processing functions
+/**
+ * Batch style check operation for multiple requests.
+ * Processes requests in parallel with configurable concurrency limits.
+ *
+ * @param requests - Array of style analysis requests
+ * @param config - API configuration
+ * @param options - Batch processing options (maxConcurrent, retryAttempts, etc.)
+ * @returns BatchResponse with progress tracking and promise
+ */
+export function styleBatchCheckRequests(
+  requests: StyleAnalysisReq[],
+  config: Config,
+  options: BatchOptions = {},
+): BatchResponse<StyleAnalysisSuccessResp> {
+  return styleBatchCheck<StyleAnalysisSuccessResp>(requests, config, options, styleCheck);
+}
+
+/**
+ * Batch style suggestions operation for multiple requests.
+ * Processes requests in parallel with configurable concurrency limits.
+ *
+ * @param requests - Array of style analysis requests
+ * @param config - API configuration
+ * @param options - Batch processing options (maxConcurrent, retryAttempts, etc.)
+ * @returns BatchResponse with progress tracking and promise
+ */
+export function styleBatchSuggestions(
+  requests: StyleAnalysisReq[],
+  config: Config,
+  options: BatchOptions = {},
+): BatchResponse<StyleAnalysisSuggestionResp> {
+  return styleBatchCheck<StyleAnalysisSuggestionResp>(requests, config, options, styleSuggestions);
+}
+
+/**
+ * Batch style rewrite operation for multiple requests.
+ * Processes requests in parallel with configurable concurrency limits.
+ *
+ * @param requests - Array of style analysis requests
+ * @param config - API configuration
+ * @param options - Batch processing options (maxConcurrent, retryAttempts, etc.)
+ * @returns BatchResponse with progress tracking and promise
+ */
+export function styleBatchRewrites(
+  requests: StyleAnalysisReq[],
+  config: Config,
+  options: BatchOptions = {},
+): BatchResponse<StyleAnalysisRewriteResp> {
+  return styleBatchCheck<StyleAnalysisRewriteResp>(requests, config, options, styleRewrite);
+}
+
+/**
+ * Generic batch style operation that automatically determines the response type.
+ * Use this when you want to let TypeScript infer the return type.
+ *
+ * @param requests - Array of style analysis requests
+ * @param config - API configuration
+ * @param options - Batch processing options
+ * @param operationType - Type of operation ('check', 'suggestions', 'rewrite')
+ * @returns BatchResponse with appropriate response type
+ */
+export function styleBatchOperation<T extends StyleAnalysisResponseType>(
+  requests: StyleAnalysisReq[],
+  config: Config,
+  options: BatchOptions = {},
+  operationType: 'check' | 'suggestions' | 'rewrite',
+): BatchResponse<T> {
+  switch (operationType) {
+    case 'check':
+      return styleBatchCheckRequests(requests, config, options) as BatchResponse<T>;
+    case 'suggestions':
+      return styleBatchSuggestions(requests, config, options) as BatchResponse<T>;
+    case 'rewrite':
+      return styleBatchRewrites(requests, config, options) as BatchResponse<T>;
+    default:
+      throw new Error(`Invalid operation type: ${operationType}`);
+  }
 }

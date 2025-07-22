@@ -136,3 +136,53 @@ export interface CreateStyleGuideReq {
 export interface StyleGuideUpdateReq {
   name: string;
 }
+
+// Batch processing types
+export interface BatchOptions {
+  maxConcurrent?: number;
+  retryAttempts?: number;
+  retryDelay?: number;
+  timeout?: number;
+}
+
+export interface BatchResult<T = StyleAnalysisResponseType> {
+  index: number;
+  request: StyleAnalysisReq;
+  status: 'pending' | 'in-progress' | 'completed' | 'failed';
+  result?: T;
+  error?: Error;
+  workflowId?: string;
+  startTime?: number;
+  endTime?: number;
+}
+
+export interface BatchProgress<T = StyleAnalysisResponseType> {
+  total: number;
+  completed: number;
+  failed: number;
+  inProgress: number;
+  pending: number;
+  results: Array<BatchResult<T>>;
+  startTime: number;
+  estimatedCompletionTime?: number;
+}
+
+export interface BatchResponse<T> {
+  progress: BatchProgress<T>;
+  promise: Promise<BatchProgress<T>>;
+  cancel: () => void;
+}
+
+// Type guards for response types
+export type StyleAnalysisResponseType =
+  | StyleAnalysisSuccessResp
+  | StyleAnalysisSuggestionResp
+  | StyleAnalysisRewriteResp;
+
+export type BatchResponseType<T> = T extends StyleAnalysisSuccessResp
+  ? StyleAnalysisSuccessResp
+  : T extends StyleAnalysisSuggestionResp
+    ? StyleAnalysisSuggestionResp
+    : T extends StyleAnalysisRewriteResp
+      ? StyleAnalysisRewriteResp
+      : StyleAnalysisResponseType;
