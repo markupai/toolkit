@@ -107,9 +107,7 @@ describe('Style API Unit Tests', () => {
     it('should handle style analysis errors', async () => {
       server.use(apiHandlers.style.checks.error);
 
-      await expect(submitStyleCheck(mockStyleAnalysisRequest, mockConfig)).rejects.toThrow(
-        'Could not validate credentials',
-      );
+      await expect(submitStyleCheck(mockStyleAnalysisRequest, mockConfig)).rejects.toThrow('Unauthorized (401)');
     });
 
     it('should submit style check with custom document name', async () => {

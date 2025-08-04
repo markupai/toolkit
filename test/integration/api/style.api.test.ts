@@ -328,7 +328,7 @@ describe('Style API Integration Tests', () => {
       const response = await styleRewrite(
         {
           content: testContent,
-          style_guide: styleGuideId,
+          style_guide: '01971e03-dd27-75ee-9044-b48e654848cf',
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.formal,
         },

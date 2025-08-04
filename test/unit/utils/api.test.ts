@@ -91,7 +91,7 @@ describe('API Utilities Unit Tests', () => {
           return HttpResponse.json({}, { status: 400 });
         }),
       );
-      await expect(getData(mockConfig)).rejects.toThrow('HTTP error! status: 400');
+      await expect(getData(mockConfig)).rejects.toThrow('Bad Request (400)');
     });
 
     it('should handle network errors', async () => {

@@ -1,8 +1,71 @@
 import { describe, it, expect } from 'vitest';
-import { AcrolinxError, ApiErrorResponse, ValidationErrorResponse, ErrorType } from '../../../src/utils/errors';
+import {
+  AcrolinxError,
+  ApiErrorResponse,
+  ValidationErrorResponse,
+  ErrorType,
+  ValidationErrorResponse422,
+  PayloadTooLargeErrorResponse,
+} from '../../../src/utils/errors';
 
 describe('AcrolinxError', () => {
   describe('fromResponse', () => {
+    it('should handle 400 Bad Request errors', () => {
+      const mockResponse = new Response('Bad Request', { status: 400 });
+      const errorData = {
+        detail: 'Workflow not found',
+        status: 400,
+        request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
+      };
+
+      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+
+      expect(error).toBeInstanceOf(AcrolinxError);
+      expect(error.statusCode).toBe(400);
+      expect(error.type).toBe(ErrorType.UNKNOWN_ERROR);
+      expect(error.message).toBe('Workflow not found');
+      expect(error.isApiError).toBe(true);
+    });
+
+    it('should handle 401 Unauthorized errors with API format', () => {
+      const mockResponse = new Response('Unauthorized', { status: 401 });
+      const errorData = {
+        code: 'auth',
+        message: 'Invalid API key',
+        description:
+          'API key is not valid, maybe it expired or has been revoked. Log into the API key management app to create a new one.',
+      };
+
+      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+
+      expect(error).toBeInstanceOf(AcrolinxError);
+      expect(error.statusCode).toBe(401);
+      expect(error.type).toBe(ErrorType.UNAUTHORIZED_ERROR);
+      expect(error.message).toBe(
+        'API key is not valid, maybe it expired or has been revoked. Log into the API key management app to create a new one.',
+      );
+      expect(error.isUnauthorizedError).toBe(true);
+      expect(error.isApiError).toBe(true);
+    });
+
+    it('should handle 401 Unauthorized errors with standard format', () => {
+      const mockResponse = new Response('Unauthorized', { status: 401 });
+      const errorData = {
+        detail: 'Invalid API key',
+        status: 401,
+        request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
+      };
+
+      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+
+      expect(error).toBeInstanceOf(AcrolinxError);
+      expect(error.statusCode).toBe(401);
+      expect(error.type).toBe(ErrorType.UNAUTHORIZED_ERROR);
+      expect(error.message).toBe('Invalid API key');
+      expect(error.isUnauthorizedError).toBe(true);
+      expect(error.isApiError).toBe(true);
+    });
+
     it('should handle 404 API error format', () => {
       const mockResponse = new Response('Not Found', { status: 404 });
       const errorData: ApiErrorResponse = {
@@ -24,7 +87,108 @@ describe('AcrolinxError', () => {
       expect(error.isApiError).toBe(true);
     });
 
-    it('should handle 422 validation error format', () => {
+    it('should handle 404 standard error format', () => {
+      const mockResponse = new Response('Not Found', { status: 404 });
+      const errorData = {
+        detail: 'Workflow not found',
+        status: 404,
+        request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
+      };
+
+      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+
+      expect(error).toBeInstanceOf(AcrolinxError);
+      expect(error.statusCode).toBe(404);
+      expect(error.type).toBe(ErrorType.WORKFLOW_NOT_FOUND);
+      expect(error.message).toBe('Workflow not found');
+      expect(error.isNotFoundError).toBe(true);
+      expect(error.isApiError).toBe(true);
+    });
+
+    it('should handle 413 Payload Too Large errors', () => {
+      const mockResponse = new Response('Payload Too Large', { status: 413 });
+      const errorData: PayloadTooLargeErrorResponse = {
+        summary: 'Uploaded file is too large.',
+        value: {
+          detail: 'Maximum allowed file size is 1.5 MB',
+          status: 413,
+          request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
+        },
+      };
+
+      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+
+      expect(error).toBeInstanceOf(AcrolinxError);
+      expect(error.statusCode).toBe(413);
+      expect(error.type).toBe(ErrorType.PAYLOAD_TOO_LARGE_ERROR);
+      expect(error.message).toBe('Uploaded file is too large.');
+      expect(error.isPayloadTooLargeError).toBe(true);
+      expect(error.isApiError).toBe(true);
+    });
+
+    it('should handle 413 Payload Too Large errors with fallback', () => {
+      const mockResponse = new Response('Payload Too Large', { status: 413 });
+      const errorData = {
+        detail: 'File size exceeds limit',
+        status: 413,
+        request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
+      };
+
+      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+
+      expect(error).toBeInstanceOf(AcrolinxError);
+      expect(error.statusCode).toBe(413);
+      expect(error.type).toBe(ErrorType.PAYLOAD_TOO_LARGE_ERROR);
+      expect(error.message).toBe('File size exceeds limit');
+      expect(error.isPayloadTooLargeError).toBe(true);
+      expect(error.isApiError).toBe(true);
+    });
+
+    it('should handle 422 validation error format (new format)', () => {
+      const mockResponse = new Response('Unprocessable Entity', { status: 422 });
+      const errorData: ValidationErrorResponse422 = {
+        detail: 'Invalid request',
+        status: 422,
+        request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
+        errors: [
+          {
+            type: 'value_error',
+            loc: ['body', 'file_upload'],
+            msg: 'Value error, File must be one of the following content types: application/pdf, text/plain',
+            input: {
+              filename: 'not_text.png',
+              size: 21286,
+            },
+            ctx: {
+              error: {},
+            },
+          },
+          {
+            type: 'enum',
+            loc: ['body', 'dialect'],
+            msg: "Input should be 'american_english', 'british_oxford' or 'canadian_english'",
+            input: 'spanish',
+            ctx: {
+              expected: "'american_english', 'british_oxford' or 'canadian_english'",
+            },
+          },
+        ],
+      };
+
+      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+
+      expect(error).toBeInstanceOf(AcrolinxError);
+      expect(error.statusCode).toBe(422);
+      expect(error.type).toBe(ErrorType.VALIDATION_ERROR);
+      expect(error.message).toBe(
+        "Validation failed: Value error, File must be one of the following content types: application/pdf, text/plain; Input should be 'american_english', 'british_oxford' or 'canadian_english'",
+      );
+      expect(error.isNotFoundError).toBe(false);
+      expect(error.isValidationError).toBe(true);
+      expect(error.isApiError).toBe(true);
+    });
+
+    it('should handle 422 validation error format (legacy)', () => {
       const mockResponse = new Response('Unprocessable Entity', { status: 422 });
       const errorData: ValidationErrorResponse = {
         detail: [
@@ -52,6 +216,27 @@ describe('AcrolinxError', () => {
       expect(error.isApiError).toBe(true);
     });
 
+    it('should handle 500 Internal Server errors', () => {
+      const mockResponse = new Response('Internal Server Error', { status: 500 });
+      const errorData = {
+        detail:
+          'An internal server error occurred. Please try again or contact support with the request ID if the issue persists.',
+        status: 500,
+        request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
+      };
+
+      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+
+      expect(error).toBeInstanceOf(AcrolinxError);
+      expect(error.statusCode).toBe(500);
+      expect(error.type).toBe(ErrorType.INTERNAL_SERVER_ERROR);
+      expect(error.message).toBe(
+        'An internal server error occurred. Please try again or contact support with the request ID if the issue persists.',
+      );
+      expect(error.isInternalServerError).toBe(true);
+      expect(error.isApiError).toBe(true);
+    });
+
     it('should handle unknown error format', () => {
       const mockResponse = new Response('Internal Server Error', { status: 500 });
       const errorData = {
@@ -63,7 +248,7 @@ describe('AcrolinxError', () => {
 
       expect(error).toBeInstanceOf(AcrolinxError);
       expect(error.statusCode).toBe(500);
-      expect(error.type).toBe(ErrorType.UNKNOWN_ERROR);
+      expect(error.type).toBe(ErrorType.INTERNAL_SERVER_ERROR);
       expect(error.message).toBe('Something went wrong');
       expect(error.isNotFoundError).toBe(false);
       expect(error.isValidationError).toBe(false);
@@ -79,7 +264,7 @@ describe('AcrolinxError', () => {
       expect(error).toBeInstanceOf(AcrolinxError);
       expect(error.statusCode).toBe(400);
       expect(error.type).toBe(ErrorType.UNKNOWN_ERROR);
-      expect(error.message).toBe('HTTP error! status: 400');
+      expect(error.message).toBe('Bad Request (400)');
       expect(error.isApiError).toBe(true);
     });
 
@@ -140,7 +325,44 @@ describe('AcrolinxError', () => {
   });
 
   describe('getValidationErrors', () => {
-    it('should return structured validation errors', () => {
+    it('should return structured validation errors for new 422 format', () => {
+      const mockResponse = new Response('Unprocessable Entity', { status: 422 });
+      const errorData: ValidationErrorResponse422 = {
+        detail: 'Invalid request',
+        status: 422,
+        request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
+        errors: [
+          {
+            loc: ['body', 'file_upload'],
+            msg: 'Value error, File must be one of the following content types: application/pdf, text/plain',
+            type: 'value_error',
+          },
+          {
+            loc: ['body', 'file_upload'],
+            msg: 'File size too large',
+            type: 'value_error',
+          },
+          {
+            loc: ['body', 'dialect'],
+            msg: "Input should be 'american_english', 'british_oxford' or 'canadian_english'",
+            type: 'enum',
+          },
+        ],
+      };
+
+      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const validationErrors = error.getValidationErrors();
+
+      expect(validationErrors).toEqual({
+        'body.file_upload': [
+          'Value error, File must be one of the following content types: application/pdf, text/plain',
+          'File size too large',
+        ],
+        'body.dialect': ["Input should be 'american_english', 'british_oxford' or 'canadian_english'"],
+      });
+    });
+
+    it('should return structured validation errors for legacy format', () => {
       const mockResponse = new Response('Unprocessable Entity', { status: 422 });
       const errorData: ValidationErrorResponse = {
         detail: [
@@ -255,6 +477,30 @@ describe('AcrolinxError', () => {
 
       const error = AcrolinxError.fromResponse(mockResponse, errorData);
       expect(error.isValidationError).toBe(true);
+    });
+
+    it('should correctly identify unauthorized errors', () => {
+      const mockResponse = new Response('Unauthorized', { status: 401 });
+      const errorData = { detail: 'Invalid API key' };
+
+      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      expect(error.isUnauthorizedError).toBe(true);
+    });
+
+    it('should correctly identify payload too large errors', () => {
+      const mockResponse = new Response('Payload Too Large', { status: 413 });
+      const errorData = { detail: 'File too large' };
+
+      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      expect(error.isPayloadTooLargeError).toBe(true);
+    });
+
+    it('should correctly identify internal server errors', () => {
+      const mockResponse = new Response('Internal Server Error', { status: 500 });
+      const errorData = { detail: 'Server error' };
+
+      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      expect(error.isInternalServerError).toBe(true);
     });
 
     it('should correctly identify workflow failed errors', () => {
