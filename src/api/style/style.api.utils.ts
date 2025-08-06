@@ -142,7 +142,12 @@ export async function createStyleFormData(request: StyleAnalysisReq): Promise<Fo
   } else if ('buffer' in request.content && isBuffer(request.content.buffer)) {
     const bufferDescriptor = request.content as BufferDescriptor;
     const mimeType = bufferDescriptor.mimeType || getMimeTypeFromFilename(filename);
-    const blob = new Blob([bufferDescriptor.buffer], { type: mimeType });
+    // Convert Buffer to ArrayBuffer to satisfy TypeScript 5.9.2 strict typing
+    const arrayBuffer = bufferDescriptor.buffer.buffer.slice(
+      bufferDescriptor.buffer.byteOffset,
+      bufferDescriptor.buffer.byteOffset + bufferDescriptor.buffer.byteLength,
+    ) as ArrayBuffer;
+    const blob = new Blob([arrayBuffer], { type: mimeType });
     formData.append('file_upload', blob, filename);
   } else {
     throw new Error('Invalid content type. Expected string, FileDescriptor, or BufferDescriptor.');
