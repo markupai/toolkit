@@ -114,6 +114,7 @@ export interface StyleAnalysisReq {
   dialect: string;
   tone: string;
   documentName?: string; // Optional document name for the file upload
+  webhook_url?: string; // Optional webhook URL for async processing
 }
 
 export interface StyleGuide {

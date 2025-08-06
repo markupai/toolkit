@@ -151,6 +151,12 @@ export async function createStyleFormData(request: StyleAnalysisReq): Promise<Fo
   formData.append('style_guide', request.style_guide || '');
   formData.append('dialect', (request.dialect || 'american_english').toString());
   formData.append('tone', (request.tone || 'formal').toString());
+
+  // Add webhook_url to form data if provided
+  if (request.webhook_url) {
+    formData.append('webhook_url', request.webhook_url);
+  }
+
   return formData;
 }
 
