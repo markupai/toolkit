@@ -22,7 +22,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: 'https://npm.pkg.github.com'
 
       - name: Build And Test
         run: |
@@ -31,12 +30,11 @@ jobs:
           npm run test:unit
           npm run build
 
-      - name: Publish to GitHub Package Registry
+      - name: Publish to NPM
         id: publish
         uses: JS-DevTools/npm-publish@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          registry: https://npm.pkg.github.com
+          token: ${{ secrets.NPM_ACCESS_TOKEN }}
 
       - name: Push Tag
         uses: anothrNick/github-tag-action@v1
