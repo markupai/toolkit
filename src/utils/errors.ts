@@ -85,7 +85,6 @@ export class AcrolinxError extends Error {
    * Uses status code-based error type detection for better maintainability
    */
   static fromResponse(statusCode: number, errorData: Record<string, unknown>): AcrolinxError {
-
     // Handle different status codes with appropriate error types
     switch (statusCode) {
       case 400:

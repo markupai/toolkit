@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { listStyleGuides, createStyleGuide } from '../../../src/api/style/style-guides.api';
+import { listStyleGuides, createStyleGuide, validateToken } from '../../../src/api/style/style-guides.api';
 import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
 import { readFileSync } from 'fs';
@@ -113,6 +113,43 @@ describe('Style Guide Integration Tests', () => {
       expect(response.created_by).toBeDefined();
       expect(response.status).toBeDefined();
       expect(response.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    });
+  });
+
+  describe('validateToken', () => {
+    it('should return true for valid API key', async () => {
+      const result = await validateToken(config);
+      expect(result).toBe(true);
+    });
+
+    it('should return false for invalid API key', async () => {
+      const invalidConfig: Config = {
+        apiKey: 'invalid-api-key',
+        platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
+      };
+
+      const result = await validateToken(invalidConfig);
+      expect(result).toBe(false);
+    });
+
+    it('should return false for empty API key', async () => {
+      const emptyConfig: Config = {
+        apiKey: '',
+        platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
+      };
+
+      const result = await validateToken(emptyConfig);
+      expect(result).toBe(false);
+    });
+
+    it('should return false for invalid platform URL', async () => {
+      const invalidUrlConfig: Config = {
+        apiKey: process.env.API_KEY || '',
+        platform: { type: PlatformType.Url, value: 'https://invalid-url-that-does-not-exist.com' },
+      };
+
+      const result = await validateToken(invalidUrlConfig);
+      expect(result).toBe(false);
     });
   });
 });

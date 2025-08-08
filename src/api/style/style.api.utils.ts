@@ -168,7 +168,7 @@ export async function createStyleFormData(request: StyleAnalysisReq): Promise<Fo
 
 export async function createBlob(request: StyleAnalysisReq): Promise<import('buffer').Blob> {
   const filename = request.documentName || 'unknown.txt';
-  
+
   // Dynamic import to avoid browser bundling issues
   const { Blob } = await import('buffer');
 
@@ -231,35 +231,34 @@ export async function submitAndPollStyleAnalysis<T extends { status: StatusType 
   request: StyleAnalysisReq,
   config: Config,
 ): Promise<T> {
-
   const client = initEndpoint(config);
   const contentObject = await createContentObject(request);
 
   let initialResponse: StyleAnalysisSubmitResp;
   try {
-  switch (operationType) {
-    case StyleOperationType.Check:
-      initialResponse = await client.styleChecks.createStyleCheck(contentObject, {
-        dialect: request.dialect as Dialects,
-        tone: request.tone as Tones,
-        style_guide: request.style_guide,
-      }) as StyleAnalysisSubmitResp;
-      break;
-    case StyleOperationType.Suggestions:
-      initialResponse = await client.styleSuggestions.createStyleSuggestion(contentObject, {
-        dialect: request.dialect as Dialects,
-        tone: request.tone as Tones,
-        style_guide: request.style_guide,
-      }) as StyleAnalysisSubmitResp;
-      break;
-    case StyleOperationType.Rewrite:
-      initialResponse = await client.styleRewrites.createStyleRewrite(contentObject, {
-        dialect: request.dialect as Dialects,
-        tone: request.tone as Tones,
-        style_guide: request.style_guide,
-      }) as StyleAnalysisSubmitResp;
-      break;
-    default:
+    switch (operationType) {
+      case StyleOperationType.Check:
+        initialResponse = (await client.styleChecks.createStyleCheck(contentObject, {
+          dialect: request.dialect as Dialects,
+          tone: request.tone as Tones,
+          style_guide: request.style_guide,
+        })) as StyleAnalysisSubmitResp;
+        break;
+      case StyleOperationType.Suggestions:
+        initialResponse = (await client.styleSuggestions.createStyleSuggestion(contentObject, {
+          dialect: request.dialect as Dialects,
+          tone: request.tone as Tones,
+          style_guide: request.style_guide,
+        })) as StyleAnalysisSubmitResp;
+        break;
+      case StyleOperationType.Rewrite:
+        initialResponse = (await client.styleRewrites.createStyleRewrite(contentObject, {
+          dialect: request.dialect as Dialects,
+          tone: request.tone as Tones,
+          style_guide: request.style_guide,
+        })) as StyleAnalysisSubmitResp;
+        break;
+      default:
         throw new Error(`Invalid operation type: ${operationType}`);
     }
   } catch (error) {

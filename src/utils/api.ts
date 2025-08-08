@@ -1,8 +1,13 @@
 import { acrolinxError } from 'acrolinx-nextgen-api';
-import { StyleOperationType, type StyleAnalysisRewriteResp, type StyleAnalysisSuccessResp, type StyleAnalysisSuggestionResp } from '../api/style/style.api.types';
+import {
+  StyleOperationType,
+  type StyleAnalysisRewriteResp,
+  type StyleAnalysisSuccessResp,
+  type StyleAnalysisSuggestionResp,
+} from '../api/style/style.api.types';
 import { initEndpoint } from '../api/style/style.api.utils';
 import { Status, Environment, PlatformType } from './api.types';
-import type { Config, ApiConfig } from './api.types';
+import type { Config } from './api.types';
 import { AcrolinxError, ErrorType } from './errors';
 
 export const DEFAULT_PLATFORM_URL_PROD = 'https://app.acrolinx.cloud';
@@ -50,7 +55,6 @@ function buildFullUrl(platformUrl: string, endpoint: string): string {
   return `${baseUrl}${normalizedEndpoint}`;
 }
 
-
 // Helper function to verify platform URL is reachable
 export async function verifyPlatformUrl(config: Config): Promise<{ success: boolean; url: string; error?: string }> {
   const platformUrl = getPlatformUrl(config);
@@ -76,29 +80,11 @@ export async function verifyPlatformUrl(config: Config): Promise<{ success: bool
   }
 }
 
-
-
-export async function getData<T>(config: ApiConfig): Promise<T> {
-  return makeRequest<T>(config, 'GET');
-}
-
-export async function postData<T>(config: ApiConfig, body: BodyInit): Promise<T> {
-  return makeRequest<T>(config, 'POST', body);
-}
-
-export async function putData<T>(config: ApiConfig, body: BodyInit): Promise<T> {
-  return makeRequest<T>(config, 'PUT', body);
-}
-
-export async function patchData<T>(config: ApiConfig, body: BodyInit): Promise<T> {
-  return makeRequest<T>(config, 'PATCH', body, { 'Content-Type': 'application/json' });
-}
-
-export async function deleteData<T>(config: ApiConfig): Promise<T> {
-  return makeRequest<T>(config, 'DELETE');
-}
-
-export async function pollWorkflowForResult<T>(workflowId: string, config: Config, styleOperation: StyleOperationType): Promise<T> {
+export async function pollWorkflowForResult<T>(
+  workflowId: string,
+  config: Config,
+  styleOperation: StyleOperationType,
+): Promise<T> {
   let attempts = 0;
   const maxAttempts = 30;
   const pollInterval = 2000;
@@ -114,13 +100,13 @@ export async function pollWorkflowForResult<T>(workflowId: string, config: Confi
 
       switch (styleOperation) {
         case StyleOperationType.Check:
-          response = await client.styleChecks.getStyleCheck(workflowId) as StyleAnalysisSuccessResp;
+          response = (await client.styleChecks.getStyleCheck(workflowId)) as StyleAnalysisSuccessResp;
           break;
         case StyleOperationType.Suggestions:
-          response = await client.styleSuggestions.getStyleSuggestion(workflowId) as StyleAnalysisSuggestionResp;
+          response = (await client.styleSuggestions.getStyleSuggestion(workflowId)) as StyleAnalysisSuggestionResp;
           break;
         case StyleOperationType.Rewrite:
-          response = await client.styleRewrites.getStyleRewrite(workflowId) as StyleAnalysisRewriteResp;
+          response = (await client.styleRewrites.getStyleRewrite(workflowId)) as StyleAnalysisRewriteResp;
           break;
       }
 

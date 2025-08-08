@@ -5,11 +5,13 @@ import {
   createStyleGuide,
   updateStyleGuide,
   deleteStyleGuide,
+  validateToken,
 } from '../../../src/api/style/style-guides.api';
 import { PlatformType, Environment } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
 import { server } from '../setup';
 import { apiHandlers } from '../mocks/api.handlers';
+import { http, HttpResponse } from 'msw';
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
@@ -90,6 +92,51 @@ describe('Style Guide Unit Tests', () => {
     it('should handle style guide errors', async () => {
       server.use(apiHandlers.style.guides.error);
       await expect(listStyleGuides(mockConfig)).rejects.toThrow('Failed to list style guides');
+    });
+  });
+
+  describe('validateToken', () => {
+    it('should return true when token is valid', async () => {
+      server.use(apiHandlers.internal.constants.success);
+
+      const result = await validateToken(mockConfig);
+      expect(result).toBe(true);
+    });
+
+    it('should return false when token is invalid (401 error)', async () => {
+      server.use(apiHandlers.style.guides.error);
+
+      const result = await validateToken(mockConfig);
+      expect(result).toBe(false);
+    });
+
+    it('should return false when network error occurs', async () => {
+      server.use(apiHandlers.api.error.network);
+
+      const result = await validateToken(mockConfig);
+      expect(result).toBe(false);
+    });
+
+    it('should return false when API returns 403 Forbidden', async () => {
+      server.use(
+        http.get('*/v1/style-guides', () => {
+          return HttpResponse.json({ message: 'Forbidden' }, { status: 403 });
+        }),
+      );
+
+      const result = await validateToken(mockConfig);
+      expect(result).toBe(false);
+    });
+
+    it('should return false when API returns 500 Internal Server Error', async () => {
+      server.use(
+        http.get('*/v1/style-guides', () => {
+          return HttpResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+        }),
+      );
+
+      const result = await validateToken(mockConfig);
+      expect(result).toBe(false);
     });
   });
 });

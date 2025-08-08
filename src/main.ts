@@ -6,8 +6,8 @@ export * from './api/style/style.api.defaults';
 export * from './api/style/style.api.types';
 
 // Export all Internal API functions and types
-export * from './api/internal/internal.api';
-export * from './api/internal/internal.api.types';
+export * from './constants/internal/constants';
+export * from './constants/internal/constants.types';
 
 // Export all utility functions and types
 export * from './utils/errors';

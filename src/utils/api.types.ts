@@ -32,7 +32,3 @@ export interface Config {
   platform?: PlatformConfig;
   apiKey: string;
 }
-
-export interface ApiConfig extends Config {
-  endpoint: string;
-}
