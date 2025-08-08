@@ -1,6 +1,6 @@
 import type { StyleGuides, StyleGuide, CreateStyleGuideReq, StyleGuideUpdateReq } from './style.api.types';
 import type { Config } from '../../utils/api.types';
-import { initEndpoint } from './style.api.utils';
+import { initEndpoint } from '../../utils/api';
 import { acrolinxError } from 'acrolinx-nextgen-api';
 import { AcrolinxError } from '../../utils/errors';
 

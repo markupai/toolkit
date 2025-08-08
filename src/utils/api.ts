@@ -1,4 +1,4 @@
-import { acrolinxError } from 'acrolinx-nextgen-api';
+import { acrolinxClient, acrolinxError } from 'acrolinx-nextgen-api';
 import {
   StyleOperationType,
   type StyleAnalysisRewriteResp,
@@ -80,71 +80,7 @@ export async function verifyPlatformUrl(config: Config): Promise<{ success: bool
   }
 }
 
-export async function pollWorkflowForResult<T>(
-  workflowId: string,
-  config: Config,
-  styleOperation: StyleOperationType,
-): Promise<T> {
-  let attempts = 0;
-  const maxAttempts = 30;
-  const pollInterval = 2000;
-
-  const poll = async (): Promise<T> => {
-    if (attempts >= maxAttempts) {
-      throw new AcrolinxError(`Workflow timed out after ${maxAttempts} attempts`, ErrorType.TIMEOUT_ERROR);
-    }
-
-    try {
-      const client = initEndpoint(config);
-      let response: StyleAnalysisSuccessResp | StyleAnalysisSuggestionResp | StyleAnalysisRewriteResp;
-
-      switch (styleOperation) {
-        case StyleOperationType.Check:
-          response = (await client.styleChecks.getStyleCheck(workflowId)) as StyleAnalysisSuccessResp;
-          break;
-        case StyleOperationType.Suggestions:
-          response = (await client.styleSuggestions.getStyleSuggestion(workflowId)) as StyleAnalysisSuggestionResp;
-          break;
-        case StyleOperationType.Rewrite:
-          response = (await client.styleRewrites.getStyleRewrite(workflowId)) as StyleAnalysisRewriteResp;
-          break;
-      }
-
-      // Add workflow_id to the response for consistency
-      const dataWithWorkflowId = {
-        ...response,
-        workflow_id: workflowId,
-      };
-
-      // Normalize status to match enum values
-      const normalizedStatus = dataWithWorkflowId.status.toLowerCase() as Status;
-
-      if (normalizedStatus === Status.Failed) {
-        throw new AcrolinxError(`Workflow failed with status: ${Status.Failed}`, ErrorType.WORKFLOW_FAILED);
-      }
-
-      if (normalizedStatus === Status.Completed) {
-        return dataWithWorkflowId as T;
-      }
-
-      if (normalizedStatus === Status.Running || normalizedStatus === Status.Queued) {
-        attempts++;
-        await new Promise((resolve) => setTimeout(resolve, pollInterval));
-        return poll();
-      }
-
-      throw new AcrolinxError(`Unexpected workflow status: ${dataWithWorkflowId.status}`, ErrorType.UNEXPECTED_STATUS);
-    } catch (error) {
-      if (error instanceof acrolinxError) {
-        throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
-      }
-      console.error(`Unknown polling error (attempt ${attempts + 1}/${maxAttempts}):`, error);
-      throw AcrolinxError.fromError(
-        error instanceof Error ? error : new Error('Unknown error occurred'),
-        ErrorType.POLLING_ERROR,
-      );
-    }
-  };
-
-  return poll();
+export function initEndpoint(config: Config): acrolinxClient {
+  const platformUrl = getPlatformUrl(config);
+  return new acrolinxClient({ token: config.apiKey, baseUrl: platformUrl });
 }

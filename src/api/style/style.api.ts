@@ -11,11 +11,12 @@ import {
 } from './style.api.types';
 import type { Config, StyleAnalysisPollResp } from '../../utils/api.types';
 
-import { createContentObject, initEndpoint } from './style.api.utils';
+import { createContentObject } from './style.api.utils';
 import { submitAndPollStyleAnalysis, styleBatchCheck } from './style.api.utils';
 import type { Dialects, Tones } from 'acrolinx-nextgen-api/api';
 import { acrolinxError } from 'acrolinx-nextgen-api';
 import { AcrolinxError } from '../../utils/errors';
+import { initEndpoint } from '../../utils/api';
 
 // Export utility functions for Node.js environments
 export { createStyleGuideReqFromUrl, createStyleGuideReqFromPath } from './style.api.utils';
@@ -33,6 +34,7 @@ export async function submitStyleCheck(
       dialect: styleAnalysisRequest.dialect as Dialects,
       tone: styleAnalysisRequest.tone as Tones,
       style_guide: styleAnalysisRequest.style_guide,
+      webhook_url: styleAnalysisRequest.webhook_url,
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof acrolinxError) {
@@ -55,6 +57,7 @@ export async function submitStyleSuggestion(
       dialect: styleAnalysisRequest.dialect as Dialects,
       tone: styleAnalysisRequest.tone as Tones,
       style_guide: styleAnalysisRequest.style_guide,
+      webhook_url: styleAnalysisRequest.webhook_url,
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof acrolinxError) {
@@ -77,6 +80,7 @@ export async function submitStyleRewrite(
       dialect: styleAnalysisRequest.dialect as Dialects,
       tone: styleAnalysisRequest.tone as Tones,
       style_guide: styleAnalysisRequest.style_guide,
+      webhook_url: styleAnalysisRequest.webhook_url,
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof acrolinxError) {
