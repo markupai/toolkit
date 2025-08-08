@@ -1,6 +1,6 @@
 # Acrolinx NextGen Toolkit
 
-A TypeScript SDK for integrating with the Acrolinx NextGen API. This SDK provides a type-safe way to interact with Acrolinx services including style analysis, style guide management, and batch operations.
+A TypeScript toolkit for integrating with the Acrolinx NextGen API. This toolkit provides a type-safe way to interact with Acrolinx services including style analysis, style guide management, and batch operations.
 
 ## Installation
 
@@ -10,7 +10,7 @@ npm install @acrolinx/nextgen-toolkit
 
 ## Configuration
 
-The SDK requires a configuration object with your API key and platform settings:
+The toolkit requires a configuration object with your API key and platform settings:
 
 ```typescript
 import { Config, Environment, PlatformType } from '@acrolinx/nextgen-toolkit';
@@ -38,7 +38,7 @@ const configWithUrl: Config = {
 
 ### Style Analysis
 
-The SDK supports string content, File objects, and Buffer objects for style analysis with automatic MIME type detection for binary files:
+The toolkit supports string content, File objects, and Buffer objects for style analysis with automatic MIME type detection for binary files:
 
 ```typescript
 import {
@@ -93,7 +93,7 @@ const rewriteResult = await styleRewrite(stringRequest, config);
 
 ### Batch Operations
 
-For processing multiple documents efficiently, the SDK provides batch operations:
+For processing multiple documents efficiently, the toolkit provides batch operations:
 
 ```typescript
 import { styleBatchCheckRequests, styleBatchSuggestions, styleBatchRewrites } from '@acrolinx/nextgen-toolkit';
@@ -138,7 +138,7 @@ batchCheck.cancel();
 
 ### Response Types
 
-The SDK provides comprehensive response types for different operations:
+The toolkit provides comprehensive response types for different operations:
 
 ```typescript
 import type {
