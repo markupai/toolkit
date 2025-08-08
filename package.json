@@ -9,9 +9,12 @@
   "author": "Acrolinx",
   "repository": {
     "type": "git",
-    "url": "https://github.com/acrolinx/nextgen-toolkit.git"
+    "url": "git@github.com:acrolinx/nextgen-toolkit.git"
   },
   "homepage": "https://github.com/acrolinx/nextgen-toolkit",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist",
     "dist/types/**/*.d.ts"
