@@ -1,13 +1,18 @@
 {
   "name": "@acrolinx/nextgen-toolkit",
-  "version": "0.0.66",
+  "version": "0.0.67",
   "type": "module",
   "main": "./dist/acrolinx-nextgen-toolkit.umd.cjs",
   "module": "./dist/acrolinx-nextgen-toolkit.js",
   "types": "./dist/types/main.d.ts",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+  "license": "Apache-2.0",
+  "author": "Acrolinx",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/acrolinx/nextgen-toolkit.git"
   },
+  "homepage": "https://github.com/acrolinx/nextgen-toolkit",
+  "bugs": "https://github.com/acrolinx/nextgen-toolkit/issues",
   "files": [
     "dist",
     "dist/types/**/*.d.ts"
