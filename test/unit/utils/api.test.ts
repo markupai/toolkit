@@ -7,20 +7,13 @@ import {
   DEFAULT_PLATFORM_URL_STAGE,
   DEFAULT_PLATFORM_URL_DEV,
 } from '../../../src/utils/api';
-import { PlatformType, Environment, ResponseBase, Status } from '../../../src/utils/api.types';
-import type { ApiConfig, Config } from '../../../src/utils/api.types';
-import { server, handlers } from '../setup';
+import { PlatformType, Environment } from '../../../src/utils/api.types';
+import type { Config } from '../../../src/utils/api.types';
+import { server } from '../setup';
 import { http } from 'msw';
 import { HttpResponse } from 'msw';
 
 const mockApiKey = 'test-api-key';
-const mockEndpoint = '/test-endpoint';
-const mockWorkflowId = 'test-workflow-id';
-const mockConfig: ApiConfig = {
-  endpoint: mockEndpoint,
-  apiKey: mockApiKey,
-  platform: { type: PlatformType.Environment, value: Environment.Dev },
-};
 
 const mockBaseConfig: Config = {
   apiKey: mockApiKey,
@@ -66,7 +59,7 @@ describe('API Utilities Unit Tests', () => {
       const customUrl = 'https://custom.acrolinx.com';
       const config: Config = {
         apiKey: 'test-key',
-        platform: { type: PlatformType.Custom, value: customUrl },
+        platform: { type: PlatformType.Url, value: customUrl },
       };
       const result = getPlatformUrl(config);
       expect(result).toBe(customUrl);
