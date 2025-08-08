@@ -97,7 +97,7 @@ describe('Style Guide Unit Tests', () => {
 
   describe('validateToken', () => {
     it('should return true when token is valid', async () => {
-      server.use(apiHandlers.internal.constants.success);
+      server.use(apiHandlers.style.guides.success);
 
       const result = await validateToken(mockConfig);
       expect(result).toBe(true);

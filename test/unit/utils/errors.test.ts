@@ -11,14 +11,13 @@ import {
 describe('AcrolinxError', () => {
   describe('fromResponse', () => {
     it('should handle 400 Bad Request errors', () => {
-      const mockResponse = new Response('Bad Request', { status: 400 });
       const errorData = {
         detail: 'Workflow not found',
         status: 400,
         request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(400, errorData);
 
       expect(error).toBeInstanceOf(AcrolinxError);
       expect(error.statusCode).toBe(400);
@@ -28,7 +27,6 @@ describe('AcrolinxError', () => {
     });
 
     it('should handle 401 Unauthorized errors with API format', () => {
-      const mockResponse = new Response('Unauthorized', { status: 401 });
       const errorData = {
         code: 'auth',
         message: 'Invalid API key',
@@ -36,7 +34,7 @@ describe('AcrolinxError', () => {
           'API key is not valid, maybe it expired or has been revoked. Log into the API key management app to create a new one.',
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(401, errorData);
 
       expect(error).toBeInstanceOf(AcrolinxError);
       expect(error.statusCode).toBe(401);
@@ -49,14 +47,13 @@ describe('AcrolinxError', () => {
     });
 
     it('should handle 401 Unauthorized errors with standard format', () => {
-      const mockResponse = new Response('Unauthorized', { status: 401 });
       const errorData = {
         detail: 'Invalid API key',
         status: 401,
         request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(401, errorData);
 
       expect(error).toBeInstanceOf(AcrolinxError);
       expect(error.statusCode).toBe(401);
@@ -67,7 +64,6 @@ describe('AcrolinxError', () => {
     });
 
     it('should handle 404 API error format', () => {
-      const mockResponse = new Response('Not Found', { status: 404 });
       const errorData: ApiErrorResponse = {
         error: {
           code: 'workflowNotFound',
@@ -76,7 +72,7 @@ describe('AcrolinxError', () => {
         },
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(404, errorData);
 
       expect(error).toBeInstanceOf(AcrolinxError);
       expect(error.statusCode).toBe(404);
@@ -88,14 +84,13 @@ describe('AcrolinxError', () => {
     });
 
     it('should handle 404 standard error format', () => {
-      const mockResponse = new Response('Not Found', { status: 404 });
       const errorData = {
         detail: 'Workflow not found',
         status: 404,
         request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(404, errorData);
 
       expect(error).toBeInstanceOf(AcrolinxError);
       expect(error.statusCode).toBe(404);
@@ -106,7 +101,6 @@ describe('AcrolinxError', () => {
     });
 
     it('should handle 413 Payload Too Large errors', () => {
-      const mockResponse = new Response('Payload Too Large', { status: 413 });
       const errorData: PayloadTooLargeErrorResponse = {
         summary: 'Uploaded file is too large.',
         value: {
@@ -116,7 +110,7 @@ describe('AcrolinxError', () => {
         },
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(413, errorData);
 
       expect(error).toBeInstanceOf(AcrolinxError);
       expect(error.statusCode).toBe(413);
@@ -127,14 +121,13 @@ describe('AcrolinxError', () => {
     });
 
     it('should handle 413 Payload Too Large errors with fallback', () => {
-      const mockResponse = new Response('Payload Too Large', { status: 413 });
       const errorData = {
         detail: 'File size exceeds limit',
         status: 413,
         request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(413, errorData);
 
       expect(error).toBeInstanceOf(AcrolinxError);
       expect(error.statusCode).toBe(413);
@@ -145,7 +138,6 @@ describe('AcrolinxError', () => {
     });
 
     it('should handle 422 validation error format (new format)', () => {
-      const mockResponse = new Response('Unprocessable Entity', { status: 422 });
       const errorData: ValidationErrorResponse422 = {
         detail: 'Invalid request',
         status: 422,
@@ -175,7 +167,7 @@ describe('AcrolinxError', () => {
         ],
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(422, errorData);
 
       expect(error).toBeInstanceOf(AcrolinxError);
       expect(error.statusCode).toBe(422);
@@ -189,7 +181,6 @@ describe('AcrolinxError', () => {
     });
 
     it('should handle 422 validation error format (legacy)', () => {
-      const mockResponse = new Response('Unprocessable Entity', { status: 422 });
       const errorData: ValidationErrorResponse = {
         detail: [
           {
@@ -205,7 +196,7 @@ describe('AcrolinxError', () => {
         ],
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(422, errorData);
 
       expect(error).toBeInstanceOf(AcrolinxError);
       expect(error.statusCode).toBe(422);
@@ -217,7 +208,6 @@ describe('AcrolinxError', () => {
     });
 
     it('should handle 500 Internal Server errors', () => {
-      const mockResponse = new Response('Internal Server Error', { status: 500 });
       const errorData = {
         detail:
           'An internal server error occurred. Please try again or contact support with the request ID if the issue persists.',
@@ -225,7 +215,7 @@ describe('AcrolinxError', () => {
         request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(500, errorData);
 
       expect(error).toBeInstanceOf(AcrolinxError);
       expect(error.statusCode).toBe(500);
@@ -238,13 +228,12 @@ describe('AcrolinxError', () => {
     });
 
     it('should handle unknown error format', () => {
-      const mockResponse = new Response('Internal Server Error', { status: 500 });
       const errorData = {
         message: 'Something went wrong',
         detail: 'Internal server error occurred',
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(500, errorData);
 
       expect(error).toBeInstanceOf(AcrolinxError);
       expect(error.statusCode).toBe(500);
@@ -256,10 +245,9 @@ describe('AcrolinxError', () => {
     });
 
     it('should handle empty error data', () => {
-      const mockResponse = new Response('Bad Request', { status: 400 });
       const errorData = {};
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(400, errorData);
 
       expect(error).toBeInstanceOf(AcrolinxError);
       expect(error.statusCode).toBe(400);
@@ -269,7 +257,6 @@ describe('AcrolinxError', () => {
     });
 
     it('should use description over message for API errors', () => {
-      const mockResponse = new Response('Not Found', { status: 404 });
       const errorData: ApiErrorResponse = {
         error: {
           code: 'workflowNotFound',
@@ -278,14 +265,13 @@ describe('AcrolinxError', () => {
         },
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(404, errorData);
 
       expect(error.message).toBe('Detailed description of what went wrong');
       expect(error.type).toBe(ErrorType.WORKFLOW_NOT_FOUND);
     });
 
     it('should fallback to message when description is not available', () => {
-      const mockResponse = new Response('Not Found', { status: 404 });
       const errorData = {
         error: {
           code: 'workflowNotFound',
@@ -293,7 +279,7 @@ describe('AcrolinxError', () => {
         },
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(404, errorData);
 
       expect(error.message).toBe('The workflow was not found.');
       expect(error.type).toBe(ErrorType.WORKFLOW_NOT_FOUND);
@@ -326,7 +312,6 @@ describe('AcrolinxError', () => {
 
   describe('getValidationErrors', () => {
     it('should return structured validation errors for new 422 format', () => {
-      const mockResponse = new Response('Unprocessable Entity', { status: 422 });
       const errorData: ValidationErrorResponse422 = {
         detail: 'Invalid request',
         status: 422,
@@ -350,7 +335,7 @@ describe('AcrolinxError', () => {
         ],
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(422, errorData);
       const validationErrors = error.getValidationErrors();
 
       expect(validationErrors).toEqual({
@@ -363,7 +348,6 @@ describe('AcrolinxError', () => {
     });
 
     it('should return structured validation errors for legacy format', () => {
-      const mockResponse = new Response('Unprocessable Entity', { status: 422 });
       const errorData: ValidationErrorResponse = {
         detail: [
           {
@@ -384,7 +368,7 @@ describe('AcrolinxError', () => {
         ],
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(422, errorData);
       const validationErrors = error.getValidationErrors();
 
       expect(validationErrors).toEqual({
@@ -394,7 +378,6 @@ describe('AcrolinxError', () => {
     });
 
     it('should return empty object for non-validation errors', () => {
-      const mockResponse = new Response('Not Found', { status: 404 });
       const errorData: ApiErrorResponse = {
         error: {
           code: 'workflowNotFound',
@@ -403,7 +386,7 @@ describe('AcrolinxError', () => {
         },
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(404, errorData);
       const validationErrors = error.getValidationErrors();
 
       expect(validationErrors).toEqual({});
@@ -434,7 +417,6 @@ describe('AcrolinxError', () => {
 
   describe('error type guards', () => {
     it('should correctly identify validation errors', () => {
-      const mockResponse = new Response('Unprocessable Entity', { status: 422 });
       const errorData: ValidationErrorResponse = {
         detail: [
           {
@@ -445,12 +427,11 @@ describe('AcrolinxError', () => {
         ],
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(422, errorData);
       expect(error.isValidationError).toBe(true);
     });
 
     it('should correctly identify not found errors', () => {
-      const mockResponse = new Response('Not Found', { status: 404 });
       const errorData: ApiErrorResponse = {
         error: {
           code: 'workflowNotFound',
@@ -459,47 +440,42 @@ describe('AcrolinxError', () => {
         },
       };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(404, errorData);
       expect(error.isNotFoundError).toBe(true);
     });
 
     it('should identify 404 status as not found even without specific error code', () => {
-      const mockResponse = new Response('Not Found', { status: 404 });
       const errorData = { message: 'Not found' };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(404, errorData);
       expect(error.isNotFoundError).toBe(true);
     });
 
     it('should identify 422 status as validation error even without specific error code', () => {
-      const mockResponse = new Response('Unprocessable Entity', { status: 422 });
       const errorData = { message: 'Validation failed' };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(422, errorData);
       expect(error.isValidationError).toBe(true);
     });
 
     it('should correctly identify unauthorized errors', () => {
-      const mockResponse = new Response('Unauthorized', { status: 401 });
       const errorData = { detail: 'Invalid API key' };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(401, errorData);
       expect(error.isUnauthorizedError).toBe(true);
     });
 
     it('should correctly identify payload too large errors', () => {
-      const mockResponse = new Response('Payload Too Large', { status: 413 });
       const errorData = { detail: 'File too large' };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(413, errorData);
       expect(error.isPayloadTooLargeError).toBe(true);
     });
 
     it('should correctly identify internal server errors', () => {
-      const mockResponse = new Response('Internal Server Error', { status: 500 });
       const errorData = { detail: 'Server error' };
 
-      const error = AcrolinxError.fromResponse(mockResponse, errorData);
+      const error = AcrolinxError.fromResponse(500, errorData);
       expect(error.isInternalServerError).toBe(true);
     });
 
