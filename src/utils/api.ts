@@ -1,14 +1,6 @@
-import { acrolinxClient, acrolinxError } from 'acrolinx-nextgen-api';
-import {
-  StyleOperationType,
-  type StyleAnalysisRewriteResp,
-  type StyleAnalysisSuccessResp,
-  type StyleAnalysisSuggestionResp,
-} from '../api/style/style.api.types';
-import { initEndpoint } from '../api/style/style.api.utils';
-import { Status, Environment, PlatformType } from './api.types';
+import { acrolinxClient } from 'acrolinx-nextgen-api';
+import { Environment, PlatformType } from './api.types';
 import type { Config } from './api.types';
-import { AcrolinxError, ErrorType } from './errors';
 
 export const DEFAULT_PLATFORM_URL_PROD = 'https://app.acrolinx.cloud';
 export const DEFAULT_PLATFORM_URL_STAGE = 'https://app.stg.acrolinx-cloud.net';
