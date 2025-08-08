@@ -1,8 +1,8 @@
-import type { CreateStyleGuideReq } from './style.api.types';
-import { postData } from '../../utils/api';
+import { StyleOperationType, type CreateStyleGuideReq } from './style.api.types';
+import { getPlatformUrl } from '../../utils/api';
 import { pollWorkflowForResult } from '../../utils/api';
 import { Status } from '../../utils/api.types';
-import type { Config, ApiConfig, Status as StatusType } from '../../utils/api.types';
+import type { Config, Status as StatusType } from '../../utils/api.types';
 import type { StyleAnalysisSubmitResp } from './style.api.types';
 import type { ResponseBase } from '../../utils/api.types';
 
@@ -128,6 +128,7 @@ export function isBuffer(obj: unknown): obj is Buffer {
 }
 
 import type { StyleAnalysisReq, FileDescriptor, BufferDescriptor } from './style.api.types';
+import type { Dialects, Tones } from 'acrolinx-nextgen-api/api';
 
 // Helper function to create form data from style analysis request
 export async function createStyleFormData(request: StyleAnalysisReq): Promise<FormData> {
@@ -165,30 +166,119 @@ export async function createStyleFormData(request: StyleAnalysisReq): Promise<Fo
   return formData;
 }
 
+export async function createBlob(request: StyleAnalysisReq): Promise<import('buffer').Blob> {
+  const filename = request.documentName || 'unknown.txt';
+  
+  // Dynamic import to avoid browser bundling issues
+  const { Blob } = await import('buffer');
+
+  if (typeof request.content === 'string') {
+    return new Blob([request.content], { type: 'text/plain' });
+  } else if (typeof File !== 'undefined' && 'file' in request.content && request.content.file instanceof File) {
+    const fileDescriptor = request.content as FileDescriptor;
+    // Convert File to Node.js Blob by reading it as ArrayBuffer first
+    const arrayBuffer = await fileDescriptor.file.arrayBuffer();
+    return new Blob([arrayBuffer], { type: fileDescriptor.mimeType || 'application/octet-stream' });
+  } else if ('buffer' in request.content && isBuffer(request.content.buffer)) {
+    const bufferDescriptor = request.content as BufferDescriptor;
+    const mimeType = bufferDescriptor.mimeType || getMimeTypeFromFilename(filename);
+    // Convert Buffer to ArrayBuffer to satisfy TypeScript 5.9.2 strict typing
+    const arrayBuffer = bufferDescriptor.buffer.buffer.slice(
+      bufferDescriptor.buffer.byteOffset,
+      bufferDescriptor.buffer.byteOffset + bufferDescriptor.buffer.byteLength,
+    ) as ArrayBuffer;
+    return new Blob([arrayBuffer], { type: mimeType });
+  } else {
+    throw new Error('Invalid content type. Expected string, FileDescriptor, or BufferDescriptor.');
+  }
+}
+
+export async function createFile(request: StyleAnalysisReq): Promise<File> {
+  const filename = request.documentName || 'unknown.txt';
+
+  if (typeof request.content === 'string') {
+    return new File([request.content], filename, { type: 'text/plain' });
+  } else if (typeof File !== 'undefined' && 'file' in request.content && request.content.file instanceof File) {
+    const fileDescriptor = request.content as FileDescriptor;
+    return fileDescriptor.file;
+  } else if ('buffer' in request.content && isBuffer(request.content.buffer)) {
+    const bufferDescriptor = request.content as BufferDescriptor;
+    const mimeType = bufferDescriptor.mimeType || getMimeTypeFromFilename(filename);
+    // Convert Buffer to ArrayBuffer to satisfy TypeScript 5.9.2 strict typing
+    const arrayBuffer = bufferDescriptor.buffer.buffer.slice(
+      bufferDescriptor.buffer.byteOffset,
+      bufferDescriptor.buffer.byteOffset + bufferDescriptor.buffer.byteLength,
+    ) as ArrayBuffer;
+    return new File([arrayBuffer], filename, { type: mimeType });
+  } else {
+    throw new Error('Invalid content type. Expected string, FileDescriptor, or BufferDescriptor.');
+  }
+}
+
+export async function createContentObject(request: StyleAnalysisReq): Promise<File | import('buffer').Blob> {
+  // Check if we're in a Node.js environment
+  if (isNodeEnvironment()) {
+    return createBlob(request);
+  } else {
+    // Browser environment
+    return createFile(request);
+  }
+}
+
 // Helper function to handle style analysis submission and polling
 export async function submitAndPollStyleAnalysis<T extends { status: StatusType }>(
-  endpoint: string,
+  operationType: StyleOperationType,
   request: StyleAnalysisReq,
   config: Config,
 ): Promise<T> {
-  const apiConfig: ApiConfig = {
-    ...config,
-    endpoint,
-  };
 
-  const formData = await createStyleFormData(request);
-  const initialResponse = await postData<StyleAnalysisSubmitResp>(apiConfig, formData);
+  const client = initEndpoint(config);
+  const contentObject = await createContentObject(request);
 
-  if (!initialResponse.workflow_id) {
-    throw new Error(`No workflow_id received from initial ${endpoint} request`);
+  let initialResponse: StyleAnalysisSubmitResp;
+  try {
+  switch (operationType) {
+    case StyleOperationType.Check:
+      initialResponse = await client.styleChecks.createStyleCheck(contentObject, {
+        dialect: request.dialect as Dialects,
+        tone: request.tone as Tones,
+        style_guide: request.style_guide,
+      }) as StyleAnalysisSubmitResp;
+      break;
+    case StyleOperationType.Suggestions:
+      initialResponse = await client.styleSuggestions.createStyleSuggestion(contentObject, {
+        dialect: request.dialect as Dialects,
+        tone: request.tone as Tones,
+        style_guide: request.style_guide,
+      }) as StyleAnalysisSubmitResp;
+      break;
+    case StyleOperationType.Rewrite:
+      initialResponse = await client.styleRewrites.createStyleRewrite(contentObject, {
+        dialect: request.dialect as Dialects,
+        tone: request.tone as Tones,
+        style_guide: request.style_guide,
+      }) as StyleAnalysisSubmitResp;
+      break;
+    default:
+        throw new Error(`Invalid operation type: ${operationType}`);
+    }
+  } catch (error) {
+    if (error instanceof acrolinxError) {
+      throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+    }
+    throw new Error(`Failed to submit style analysis: ${error}`);
   }
 
-  const polledResponse = await pollWorkflowForResult<T>(initialResponse.workflow_id, apiConfig);
+  if (!initialResponse.workflow_id) {
+    throw new Error(`No workflow_id received from initial ${operationType} request`);
+  }
+
+  const polledResponse = await pollWorkflowForResult<T>(initialResponse.workflow_id, config, operationType);
 
   if (polledResponse.status === Status.Completed) {
     return polledResponse;
   }
-  throw new Error(`${endpoint} failed with status: ${polledResponse.status}`);
+  throw new Error(`${operationType} failed with status: ${polledResponse.status}`);
 }
 
 // Generic type guard for completed responses
@@ -204,6 +294,8 @@ import type {
   BatchResponse,
   StyleAnalysisResponseType,
 } from './style.api.types';
+import { acrolinxClient, acrolinxError } from 'acrolinx-nextgen-api';
+import { AcrolinxError } from '../../utils/errors';
 
 // Type dispatcher for style functions
 type StyleFunction<T> = (request: StyleAnalysisReq, config: Config) => Promise<T>;
@@ -469,4 +561,9 @@ export function styleBatchCheck<T extends StyleAnalysisResponseType>(
     promise,
     cancel: () => queue.cancel(),
   };
+}
+
+export function initEndpoint(config: Config): acrolinxClient {
+  const platformUrl = getPlatformUrl(config);
+  return new acrolinxClient({ token: config.apiKey, baseUrl: platformUrl });
 }

@@ -1,18 +1,21 @@
-import { getData, postData } from '../../utils/api';
-import type {
-  StyleAnalysisReq,
-  StyleAnalysisSubmitResp,
-  StyleAnalysisSuccessResp,
-  StyleAnalysisSuggestionResp,
-  StyleAnalysisRewriteResp,
-  BatchOptions,
-  BatchResponse,
-  StyleAnalysisResponseType,
+import {
+  type StyleAnalysisReq,
+  type StyleAnalysisSubmitResp,
+  type StyleAnalysisSuccessResp,
+  type StyleAnalysisSuggestionResp,
+  type StyleAnalysisRewriteResp,
+  type BatchOptions,
+  type BatchResponse,
+  type StyleAnalysisResponseType,
+  StyleOperationType,
 } from './style.api.types';
 import type { Config, ApiConfig, StyleAnalysisPollResp } from '../../utils/api.types';
 
-import { createStyleFormData } from './style.api.utils';
+import { createContentObject, initEndpoint } from './style.api.utils';
 import { submitAndPollStyleAnalysis, styleBatchCheck } from './style.api.utils';
+import type { Dialects, Tones } from 'acrolinx-nextgen-api/api';
+import { acrolinxError } from 'acrolinx-nextgen-api';
+import { AcrolinxError } from '../../utils/errors';
 
 // Export utility functions for Node.js environments
 export { createStyleGuideReqFromUrl, createStyleGuideReqFromPath } from './style.api.utils';
@@ -32,8 +35,23 @@ export async function submitStyleCheck(
     ...config,
     endpoint: STYLE_API_ENDPOINTS.STYLE_CHECKS,
   };
-  const formData = await createStyleFormData(styleAnalysisRequest);
-  return postData<StyleAnalysisSubmitResp>(apiConfig, formData);
+
+  const client = initEndpoint(apiConfig);
+  const contentObject = await createContentObject(styleAnalysisRequest);
+  let response: StyleAnalysisSubmitResp;
+  try {
+   response = await client.styleChecks.createStyleCheck(contentObject, {
+    dialect: styleAnalysisRequest.dialect as Dialects,
+    tone: styleAnalysisRequest.tone as Tones,
+    style_guide: styleAnalysisRequest.style_guide,
+  }) as StyleAnalysisSubmitResp;
+  } catch (error) {
+    if (error instanceof acrolinxError) {
+      throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+    }
+    throw new Error(`Failed to submit style check: ${error}`);
+  }
+  return response;
 }
 
 export async function submitStyleSuggestion(
@@ -44,8 +62,22 @@ export async function submitStyleSuggestion(
     ...config,
     endpoint: STYLE_API_ENDPOINTS.STYLE_SUGGESTIONS,
   };
-  const formData = await createStyleFormData(styleAnalysisRequest);
-  return postData<StyleAnalysisSubmitResp>(apiConfig, formData);
+  const client = initEndpoint(apiConfig);
+  const contentObject = await createContentObject(styleAnalysisRequest);
+  let response: StyleAnalysisSubmitResp;
+  try {
+    response = await client.styleSuggestions.createStyleSuggestion(contentObject, {
+    dialect: styleAnalysisRequest.dialect as Dialects,
+    tone: styleAnalysisRequest.tone as Tones,
+    style_guide: styleAnalysisRequest.style_guide,
+  }) as StyleAnalysisSubmitResp;
+  } catch (error) {
+    if (error instanceof acrolinxError) {
+      throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+    }
+    throw new Error(`Failed to submit style suggestion: ${error}`);
+  }
+  return response;
 }
 
 export async function submitStyleRewrite(
@@ -56,8 +88,22 @@ export async function submitStyleRewrite(
     ...config,
     endpoint: STYLE_API_ENDPOINTS.STYLE_REWRITES,
   };
-  const formData = await createStyleFormData(styleAnalysisRequest);
-  return postData<StyleAnalysisSubmitResp>(apiConfig, formData);
+  const client = initEndpoint(apiConfig);
+  const contentObject = await createContentObject(styleAnalysisRequest);
+  let response: StyleAnalysisSubmitResp;
+  try {
+    response = await client.styleRewrites.createStyleRewrite(contentObject, {
+    dialect: styleAnalysisRequest.dialect as Dialects,
+    tone: styleAnalysisRequest.tone as Tones,
+    style_guide: styleAnalysisRequest.style_guide,
+  }) as StyleAnalysisSubmitResp;
+  } catch (error) {
+    if (error instanceof acrolinxError) {
+      throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+    }
+    throw new Error(`Failed to submit style rewrite: ${error}`);
+  }
+  return response;
 }
 
 // Convenience methods for style operations with polling
@@ -66,7 +112,7 @@ export async function styleCheck(
   config: Config,
 ): Promise<StyleAnalysisSuccessResp> {
   return submitAndPollStyleAnalysis<StyleAnalysisSuccessResp>(
-    STYLE_API_ENDPOINTS.STYLE_CHECKS,
+    StyleOperationType.Check, 
     styleAnalysisRequest,
     config,
   );
@@ -77,7 +123,7 @@ export async function styleSuggestions(
   config: Config,
 ): Promise<StyleAnalysisSuggestionResp> {
   return submitAndPollStyleAnalysis<StyleAnalysisSuggestionResp>(
-    STYLE_API_ENDPOINTS.STYLE_SUGGESTIONS,
+    StyleOperationType.Suggestions,
     styleAnalysisRequest,
     config,
   );
@@ -88,7 +134,7 @@ export async function styleRewrite(
   config: Config,
 ): Promise<StyleAnalysisRewriteResp> {
   return submitAndPollStyleAnalysis<StyleAnalysisRewriteResp>(
-    STYLE_API_ENDPOINTS.STYLE_REWRITES,
+    StyleOperationType.Rewrite,
     styleAnalysisRequest,
     config,
   );
@@ -103,7 +149,9 @@ export async function getStyleCheck(
     ...config,
     endpoint: `${STYLE_API_ENDPOINTS.STYLE_CHECKS}/${workflowId}`,
   };
-  return getData<StyleAnalysisSuccessResp | StyleAnalysisPollResp>(apiConfig);
+
+  const client = initEndpoint(apiConfig);
+  return await client.styleChecks.getStyleCheck(workflowId) as StyleAnalysisSuccessResp;
 }
 
 // Get style suggestion results by workflow ID
@@ -121,7 +169,8 @@ export async function getStyleSuggestion(
     ...config,
     endpoint: `${STYLE_API_ENDPOINTS.STYLE_SUGGESTIONS}/${workflowId}`,
   };
-  return getData<StyleAnalysisSuggestionResp | StyleAnalysisPollResp>(apiConfig);
+  const client = initEndpoint(apiConfig);
+  return await client.styleSuggestions.getStyleSuggestion(workflowId) as StyleAnalysisSuggestionResp;
 }
 
 /**
@@ -138,7 +187,8 @@ export async function getStyleRewrite(
     ...config,
     endpoint: `${STYLE_API_ENDPOINTS.STYLE_REWRITES}/${workflowId}`,
   };
-  return getData<StyleAnalysisRewriteResp | StyleAnalysisPollResp>(apiConfig);
+  const client = initEndpoint(apiConfig);
+  return await client.styleRewrites.getStyleRewrite(workflowId) as StyleAnalysisRewriteResp;
 }
 
 // Batch processing functions

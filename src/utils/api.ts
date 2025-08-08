@@ -1,5 +1,8 @@
+import { acrolinxError } from 'acrolinx-nextgen-api';
+import { StyleOperationType, type StyleAnalysisRewriteResp, type StyleAnalysisSuccessResp, type StyleAnalysisSuggestionResp } from '../api/style/style.api.types';
+import { initEndpoint } from '../api/style/style.api.utils';
 import { Status, Environment, PlatformType } from './api.types';
-import type { ResponseBase, Config, ApiConfig } from './api.types';
+import type { Config, ApiConfig } from './api.types';
 import { AcrolinxError, ErrorType } from './errors';
 
 export const DEFAULT_PLATFORM_URL_PROD = 'https://app.acrolinx.cloud';
@@ -47,42 +50,6 @@ function buildFullUrl(platformUrl: string, endpoint: string): string {
   return `${baseUrl}${normalizedEndpoint}`;
 }
 
-// Helper function to handle response processing and error handling
-async function handleResponse<T>(response: Response): Promise<T> {
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw AcrolinxError.fromResponse(response, errorData);
-  }
-
-  // Handle 204 No Content responses (common for DELETE operations)
-  if (response.status === 204) {
-    console.log('Operation successful (204 No Content)');
-    return {} as T;
-  }
-
-  const data = await response.json();
-  console.log('Response data:', JSON.stringify(data, null, 2));
-  return data;
-}
-
-// Helper function to create fetch options with common headers
-function createFetchOptions(
-  method: string,
-  apiKey: string,
-  body?: BodyInit,
-  additionalHeaders?: HeadersInit,
-): RequestInit {
-  const headers: HeadersInit = {
-    ...getCommonHeaders(apiKey),
-    ...additionalHeaders,
-  };
-
-  return {
-    method,
-    headers,
-    ...(body && { body }),
-  };
-}
 
 // Helper function to verify platform URL is reachable
 export async function verifyPlatformUrl(config: Config): Promise<{ success: boolean; url: string; error?: string }> {
@@ -109,39 +76,7 @@ export async function verifyPlatformUrl(config: Config): Promise<{ success: bool
   }
 }
 
-// Generic HTTP request function to eliminate code duplication
-async function makeRequest<T>(
-  config: ApiConfig,
-  method: string,
-  body?: BodyInit,
-  additionalHeaders?: HeadersInit,
-): Promise<T> {
-  try {
-    const platformUrl = getPlatformUrl(config);
-    const fullUrl = buildFullUrl(platformUrl, config.endpoint);
-    const fetchOptions = createFetchOptions(method, config.apiKey, body, additionalHeaders);
 
-    // Debug: Log the request details (can be removed in production)
-    // console.error('=== SDK Request Debug ===');
-    // console.error('Platform URL:', platformUrl);
-    // console.error('Endpoint:', config.endpoint);
-    // console.error('Full URL:', fullUrl);
-    // console.error('Headers:', JSON.stringify(fetchOptions.headers, null, 2));
-    // console.error('========================');
-
-    const response = await fetch(fullUrl, fetchOptions);
-    return await handleResponse<T>(response);
-  } catch (error) {
-    if (error instanceof AcrolinxError) {
-      throw error;
-    }
-    console.error('Unknown HTTP error:', error);
-    throw AcrolinxError.fromError(
-      error instanceof Error ? error : new Error('Unknown error occurred'),
-      ErrorType.NETWORK_ERROR,
-    );
-  }
-}
 
 export async function getData<T>(config: ApiConfig): Promise<T> {
   return makeRequest<T>(config, 'GET');
@@ -163,7 +98,7 @@ export async function deleteData<T>(config: ApiConfig): Promise<T> {
   return makeRequest<T>(config, 'DELETE');
 }
 
-export async function pollWorkflowForResult<T>(workflowId: string, config: ApiConfig): Promise<T> {
+export async function pollWorkflowForResult<T>(workflowId: string, config: Config, styleOperation: StyleOperationType): Promise<T> {
   let attempts = 0;
   const maxAttempts = 30;
   const pollInterval = 2000;
@@ -174,31 +109,24 @@ export async function pollWorkflowForResult<T>(workflowId: string, config: ApiCo
     }
 
     try {
-      const platformUrl = getPlatformUrl(config);
-      const baseUrl = platformUrl.endsWith('/') ? platformUrl.slice(0, -1) : platformUrl;
-      const endpoint = config.endpoint.startsWith('/') ? config.endpoint : `/${config.endpoint}`;
-      // Ensure there's exactly one slash between endpoint and workflowId
-      const normalizedEndpoint = endpoint.endsWith('/') ? endpoint : `${endpoint}/`;
-      const fullUrl = `${baseUrl}${normalizedEndpoint}${workflowId}`;
+      const client = initEndpoint(config);
+      let response: StyleAnalysisSuccessResp | StyleAnalysisSuggestionResp | StyleAnalysisRewriteResp;
 
-      const response = await fetch(fullUrl, {
-        method: 'GET',
-        headers: {
-          ...getCommonHeaders(config.apiKey),
-          Accept: 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw AcrolinxError.fromResponse(response, errorData);
+      switch (styleOperation) {
+        case StyleOperationType.Check:
+          response = await client.styleChecks.getStyleCheck(workflowId) as StyleAnalysisSuccessResp;
+          break;
+        case StyleOperationType.Suggestions:
+          response = await client.styleSuggestions.getStyleSuggestion(workflowId) as StyleAnalysisSuggestionResp;
+          break;
+        case StyleOperationType.Rewrite:
+          response = await client.styleRewrites.getStyleRewrite(workflowId) as StyleAnalysisRewriteResp;
+          break;
       }
-
-      const data = (await response.json()) as ResponseBase;
 
       // Add workflow_id to the response for consistency
       const dataWithWorkflowId = {
-        ...data,
+        ...response,
         workflow_id: workflowId,
       };
 
@@ -221,9 +149,8 @@ export async function pollWorkflowForResult<T>(workflowId: string, config: ApiCo
 
       throw new AcrolinxError(`Unexpected workflow status: ${dataWithWorkflowId.status}`, ErrorType.UNEXPECTED_STATUS);
     } catch (error) {
-      if (error instanceof AcrolinxError) {
-        console.error(`Polling error (attempt ${attempts + 1}/${maxAttempts}):`, error.message);
-        throw error;
+      if (error instanceof acrolinxError) {
+        throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
       }
       console.error(`Unknown polling error (attempt ${attempts + 1}/${maxAttempts}):`, error);
       throw AcrolinxError.fromError(

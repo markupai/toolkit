@@ -84,8 +84,7 @@ export class AcrolinxError extends Error {
    * Creates an AcrolinxError from an API response
    * Uses status code-based error type detection for better maintainability
    */
-  static fromResponse(response: Response, errorData: Record<string, unknown>): AcrolinxError {
-    const statusCode = response.status;
+  static fromResponse(statusCode: number, errorData: Record<string, unknown>): AcrolinxError {
 
     // Handle different status codes with appropriate error types
     switch (statusCode) {

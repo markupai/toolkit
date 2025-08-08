@@ -5,6 +5,12 @@ export interface StyleAnalysisSubmitResp extends ResponseBase {
   message?: string;
 }
 
+export enum StyleOperationType {
+  Check = 'check',
+  Suggestions = 'suggestions',
+  Rewrite = 'rewrite',
+}
+
 export enum IssueCategory {
   Grammar = 'grammar',
   SimpleVocab = 'simple_vocab',
