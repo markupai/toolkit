@@ -1,11 +1,15 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { STYLE_API_ENDPOINTS } from '../../../src/api/style/style.api';
-import { STYLE_GUIDES_ENDPOINT } from '../../../src/api/style/style-guides.api';
 import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
 
 describe('CORS Integration Tests', () => {
   let config: Config;
+  const STYLE_API_ENDPOINTS = {
+    STYLE_CHECKS: '/v1/style/checks',
+    STYLE_SUGGESTIONS: '/v1/style/suggestions',
+    STYLE_REWRITES: '/v1/style/rewrites',
+  };
+  const STYLE_GUIDES_ENDPOINT = '/v1/style-guides';
 
   beforeAll(() => {
     const apiKey = '';
@@ -111,7 +115,7 @@ describe('CORS Integration Tests', () => {
   describe('Individual Style Check CORS Headers', () => {
     it('should return proper CORS headers for individual style check endpoint', async () => {
       const workflowId = 'test-workflow-id';
-      const endpoint = `${STYLE_API_ENDPOINTS.STYLE_CHECKS}/${workflowId}`;
+      const endpoint = `/v1/style/checks/${workflowId}`;
       const url = `${config.platform!.value}${endpoint}`;
 
       const response = await fetch(url, {
