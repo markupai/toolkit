@@ -366,3 +366,7 @@ All notable changes to this SDK are documented in [CHANGELOG.md](./CHANGELOG.md)
 ## Support
 
 For support, please open an issue in the GitHub repository or contact Acrolinx support.
+
+## License
+
+This project is licensed under the Apache-2.0 License - see the LICENSE file for details.
