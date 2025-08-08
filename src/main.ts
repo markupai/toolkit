@@ -16,6 +16,3 @@ export * from './utils/api.types';
 
 // Export all issues utility functions and types
 export * from './utils/issues';
-
-// Export all localization functions and types
-export * from './utils/localization';

@@ -20,12 +20,6 @@ import { AcrolinxError } from '../../utils/errors';
 // Export utility functions for Node.js environments
 export { createStyleGuideReqFromUrl, createStyleGuideReqFromPath } from './style.api.utils';
 
-export const STYLE_API_ENDPOINTS = {
-  STYLE_CHECKS: '/v1/style/checks',
-  STYLE_SUGGESTIONS: '/v1/style/suggestions',
-  STYLE_REWRITES: '/v1/style/rewrites',
-} as const;
-
 // Style Check Operations
 export async function submitStyleCheck(
   styleAnalysisRequest: StyleAnalysisReq,

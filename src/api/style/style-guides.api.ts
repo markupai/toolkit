@@ -4,8 +4,6 @@ import { initEndpoint } from './style.api.utils';
 import { acrolinxError } from 'acrolinx-nextgen-api';
 import { AcrolinxError } from '../../utils/errors';
 
-export const STYLE_GUIDES_ENDPOINT = '/v1/style-guides';
-
 // List all style guides
 export async function listStyleGuides(config: Config): Promise<StyleGuides> {
   try {

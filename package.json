@@ -45,7 +45,6 @@
     "vite-plugin-dts": "^4.5.4"
   },
   "dependencies": {
-    "acrolinx-nextgen-api": "^0.0.4",
-    "i18next": "^25.3.2"
+    "acrolinx-nextgen-api": "^0.0.4"
   }
 }
