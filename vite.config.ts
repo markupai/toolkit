@@ -6,8 +6,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: './src/main.ts',
-      name: 'acrolinx-typescript-sdk',
-      fileName: 'acrolinx-typescript-sdk',
+      name: 'acrolinx-nextgen-toolkit',
+      fileName: 'acrolinx-nextgen-toolkit',
       formats: ['es', 'umd'],
     },
     rollupOptions: {

@@ -5,11 +5,6 @@ export * from './api/style/style-guides.api';
 export * from './api/style/style.api.defaults';
 export * from './api/style/style.api.types';
 
-// Export all Demo API functions and types
-export * from './api/demo/demo.api';
-export * from './api/demo/demo.api.defaults';
-export * from './api/demo/demo.api.types';
-
 // Export all Internal API functions and types
 export * from './api/internal/internal.api';
 export * from './api/internal/internal.api.types';

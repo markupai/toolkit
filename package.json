@@ -1,9 +1,9 @@
 {
-  "name": "@acrolinx/typescript-sdk",
+  "name": "@acrolinx/nextgen-toolkit",
   "version": "0.0.66",
   "type": "module",
-  "main": "./dist/acrolinx-typescript-sdk.umd.cjs",
-  "module": "./dist/acrolinx-typescript-sdk.js",
+  "main": "./dist/acrolinx-nextgen-toolkit.umd.cjs",
+  "module": "./dist/acrolinx-nextgen-toolkit.js",
   "types": "./dist/types/main.d.ts",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
@@ -15,8 +15,8 @@
   "exports": {
     ".": {
       "types": "./dist/types/main.d.ts",
-      "import": "./dist/acrolinx-typescript-sdk.js",
-      "require": "./dist/acrolinx-typescript-sdk.umd.cjs"
+      "import": "./dist/acrolinx-nextgen-toolkit.js",
+      "require": "./dist/acrolinx-nextgen-toolkit.umd.cjs"
     }
   },
   "scripts": {
@@ -45,6 +45,7 @@
     "vite-plugin-dts": "^4.5.4"
   },
   "dependencies": {
+    "acrolinx-nextgen-api": "^0.0.4",
     "i18next": "^25.3.2"
   }
 }
