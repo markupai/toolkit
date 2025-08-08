@@ -12,7 +12,6 @@
     "url": "https://github.com/acrolinx/nextgen-toolkit.git"
   },
   "homepage": "https://github.com/acrolinx/nextgen-toolkit",
-  "bugs": "https://github.com/acrolinx/nextgen-toolkit/issues",
   "files": [
     "dist",
     "dist/types/**/*.d.ts"
