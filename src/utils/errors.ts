@@ -8,7 +8,7 @@ export enum ErrorType {
   PAYLOAD_TOO_LARGE_ERROR = 'PAYLOAD_TOO_LARGE_ERROR',
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
 
-  // SDK Error Types (for non-API errors)
+  // Toolkit Error Types (for non-API errors)
   NETWORK_ERROR = 'NETWORK_ERROR',
   TIMEOUT_ERROR = 'TIMEOUT_ERROR',
   WORKFLOW_FAILED = 'WORKFLOW_FAILED',
