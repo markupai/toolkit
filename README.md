@@ -20,8 +20,8 @@ const config: Config = {
   apiKey: 'your-api-key-here',
   platform: {
     type: PlatformType.Environment,
-    value: Environment.Prod // or Environment.Stage, Environment.Dev
-  }
+    value: Environment.Prod, // or Environment.Stage, Environment.Dev
+  },
 };
 
 // Using custom URL configuration
@@ -29,8 +29,8 @@ const configWithUrl: Config = {
   apiKey: 'your-api-key-here',
   platform: {
     type: PlatformType.Url,
-    value: 'https://your-custom-acrolinx-instance.com'
-  }
+    value: 'https://your-custom-acrolinx-instance.com',
+  },
 };
 ```
 
@@ -41,13 +41,13 @@ const configWithUrl: Config = {
 The SDK supports string content, File objects, and Buffer objects for style analysis with automatic MIME type detection for binary files:
 
 ```typescript
-import { 
-  styleCheck, 
-  styleSuggestions, 
+import {
+  styleCheck,
+  styleSuggestions,
   styleRewrite,
   getStyleCheck,
   getStyleSuggestion,
-  getStyleRewrite 
+  getStyleRewrite,
 } from '@acrolinx/nextgen-toolkit';
 
 // Using string content
@@ -91,105 +91,12 @@ const suggestionResult = await styleSuggestions(stringRequest, config);
 const rewriteResult = await styleRewrite(stringRequest, config);
 ```
 
-### Binary File Support
-
-**Enhanced MIME Type Detection**: The SDK automatically detects and sets proper MIME types based on file extensions:
-
-- **PDF Files**: `.pdf` → `application/pdf`
-- **Word Documents**: `.docx` → `application/vnd.openxmlformats-officedocument.wordprocessingml.document`
-- **Legacy Word**: `.doc` → `application/msword`
-- **Text Files**: `.txt` → `text/plain`
-- **Markdown**: `.md` → `text/markdown`
-- **HTML**: `.html` → `text/html`
-- **Other**: `.xyz` → `application/octet-stream`
-
-**Automatic Processing**: When using Buffer objects with binary files:
-
-1. SDK reads the `documentName` parameter
-2. Extracts file extension (e.g., `.pdf`)
-3. Automatically sets correct MIME type (`application/pdf`)
-4. Sends binary content with proper content-type headers
-5. Server processes binary files correctly
-
-### Asynchronous Processing
-
-For long-running operations, you can submit requests and retrieve results later:
-
-```typescript
-import { 
-  submitStyleCheck, 
-  submitStyleSuggestion, 
-  submitStyleRewrite,
-  getStyleCheck,
-  getStyleSuggestion,
-  getStyleRewrite 
-} from '@acrolinx/nextgen-toolkit';
-
-// Submit a style check request
-const submitResponse = await submitStyleCheck(stringRequest, config);
-const workflowId = submitResponse.workflow_id;
-
-// Later, retrieve the results
-const result = await getStyleCheck(workflowId, config);
-
-// Submit style suggestions
-const suggestionSubmit = await submitStyleSuggestion(stringRequest, config);
-const suggestionResult = await getStyleSuggestion(suggestionSubmit.workflow_id, config);
-
-// Submit style rewrites
-const rewriteSubmit = await submitStyleRewrite(stringRequest, config);
-const rewriteResult = await getStyleRewrite(rewriteSubmit.workflow_id, config);
-```
-
-### Style Guide Management
-
-The SDK provides comprehensive style guide management capabilities:
-
-```typescript
-import { 
-  listStyleGuides,
-  getStyleGuide,
-  createStyleGuide,
-  updateStyleGuide,
-  deleteStyleGuide,
-  validateToken
-} from '@acrolinx/nextgen-toolkit';
-
-// List all available style guides
-const styleGuides = await listStyleGuides(config);
-
-// Get a specific style guide
-const styleGuide = await getStyleGuide('style-guide-id', config);
-
-// Create a new style guide from a PDF file
-const file = new File(['PDF content'], 'style-guide.pdf', { type: 'application/pdf' });
-const newStyleGuide = await createStyleGuide({
-  file: file,
-  name: 'My Custom Style Guide'
-}, config);
-
-// Update a style guide
-const updatedStyleGuide = await updateStyleGuide('style-guide-id', {
-  name: 'Updated Style Guide Name'
-}, config);
-
-// Delete a style guide
-await deleteStyleGuide('style-guide-id', config);
-
-// Validate your API token
-const isValid = await validateToken(config);
-```
-
 ### Batch Operations
 
 For processing multiple documents efficiently, the SDK provides batch operations:
 
 ```typescript
-import { 
-  styleBatchCheckRequests,
-  styleBatchSuggestions,
-  styleBatchRewrites
-} from '@acrolinx/nextgen-toolkit';
+import { styleBatchCheckRequests, styleBatchSuggestions, styleBatchRewrites } from '@acrolinx/nextgen-toolkit';
 
 const requests = [
   { content: 'First document content', style_guide: 'ap', dialect: 'american_english', tone: 'formal' },
@@ -202,14 +109,14 @@ const batchCheck = styleBatchCheckRequests(requests, config, {
   maxConcurrent: 5,
   retryAttempts: 3,
   retryDelay: 1000,
-  timeout: 30000
+  timeout: 30000,
 });
 
 // Monitor progress
-batchCheck.progress.then(finalProgress => {
+batchCheck.progress.then((finalProgress) => {
   console.log(`Completed: ${finalProgress.completed}/${finalProgress.total}`);
   console.log(`Failed: ${finalProgress.failed}`);
-  
+
   finalProgress.results.forEach((result, index) => {
     if (result.status === 'completed') {
       console.log(`Request ${index}: ${result.result?.scores.quality.score}`);
@@ -229,41 +136,18 @@ const batchRewrites = styleBatchRewrites(requests, config);
 batchCheck.cancel();
 ```
 
-### Content Support
-
-The SDK supports multiple content types:
-
-- **String**: Plain text content
-- **File**: File objects (browser environments)
-- **Buffer**: Buffer objects (Node.js environments) - **Full binary file support**
-
-**Binary File Processing**:
-
-- **Before**: Binary files failed with "Workflow execution failed"
-- **After**: Binary files process successfully with proper MIME types
-- **PDF Example**: 674KB PDF processes in ~15 seconds with full analysis results
-- **Auto-Detection**: File type automatically detected from `documentName` extension
-- **All Operations**: Style checks, suggestions, and rewrites support binary files
-
-**Usage Notes**:
-
-- Set `documentName` parameter with correct file extension for binary files
-- The SDK handles MIME type detection automatically
-- All style analysis operations (check, suggestions, rewrite) support all content types
-- Integration tests validate PDF, DOCX, and other binary file processing
-
 ### Response Types
 
 The SDK provides comprehensive response types for different operations:
 
 ```typescript
-import type { 
+import type {
   StyleAnalysisSuccessResp,
   StyleAnalysisSuggestionResp,
   StyleAnalysisRewriteResp,
   StyleScores,
   Issue,
-  IssueWithSuggestion
+  IssueWithSuggestion,
 } from '@acrolinx/nextgen-toolkit';
 
 // Style check response
@@ -273,7 +157,7 @@ console.log(`Issues found: ${checkResult.issues.length}`);
 
 // Style suggestion response
 const suggestionResult: StyleAnalysisSuggestionResp = await styleSuggestions(request, config);
-suggestionResult.issues.forEach(issue => {
+suggestionResult.issues.forEach((issue) => {
   console.log(`Issue: "${issue.original}" → Suggestion: "${issue.suggestion}"`);
 });
 
@@ -358,14 +242,6 @@ npm run lint:fix
 # Format code with Prettier
 npm run format
 ```
-
-## Changelog
-
-All notable changes to this SDK are documented in [CHANGELOG.md](./CHANGELOG.md).
-
-## Support
-
-For support, please open an issue in the GitHub repository or contact Acrolinx support.
 
 ## License
 
