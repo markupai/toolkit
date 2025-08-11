@@ -99,6 +99,10 @@ export interface StyleAnalysisSuccessResp extends ResponseBase {
     dialect: string;
     tone: string;
   };
+  webhook_response?: {
+    url: string;
+    status_code: number;
+  };
 }
 
 export interface StyleAnalysisSuggestionResp extends Omit<StyleAnalysisSuccessResp, 'issues'> {
