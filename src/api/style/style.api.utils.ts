@@ -21,6 +21,7 @@ import type {
 } from './style.api.types';
 import { acrolinxError } from 'acrolinx-nextgen-api';
 import { AcrolinxError, ErrorType } from '../../utils/errors';
+import { Blob } from 'buffer';
 
 /**
  * Detects if the current environment is Node.js
@@ -143,12 +144,8 @@ export function isBuffer(obj: unknown): obj is Buffer {
   return false;
 }
 
-export async function createBlob(request: StyleAnalysisReq): Promise<import('buffer').Blob> {
+export async function createBlob(request: StyleAnalysisReq): Promise<Blob> {
   const filename = request.documentName || 'unknown.txt';
-
-  // Dynamic import to avoid browser bundling issues
-  const { Blob } = await import('buffer');
-
   if (typeof request.content === 'string') {
     return new Blob([request.content], { type: 'text/plain' });
   } else if (typeof File !== 'undefined' && 'file' in request.content && request.content.file instanceof File) {
