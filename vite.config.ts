@@ -3,6 +3,9 @@ import dts from 'vite-plugin-dts';
 import { resolve } from 'path';
 
 export default defineConfig({
+  optimizeDeps: {
+    exclude: ['buffer'],
+  },
   build: {
     lib: {
       entry: './src/main.ts',
@@ -11,10 +14,14 @@ export default defineConfig({
       formats: ['es', 'umd'],
     },
     rollupOptions: {
-      external: ['buffer'],
+      external: ['buffer', 'fs', 'path', 'url', 'process'],
       output: {
         globals: {
           buffer: 'Buffer',
+          fs: 'fs',
+          path: 'path',
+          url: 'url',
+          process: 'process',
         },
       },
     },
