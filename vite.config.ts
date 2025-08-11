@@ -11,9 +11,11 @@ export default defineConfig({
       formats: ['es', 'umd'],
     },
     rollupOptions: {
-      external: [],
+      external: ['buffer'],
       output: {
-        globals: {},
+        globals: {
+          buffer: 'Buffer',
+        },
       },
     },
   },

@@ -189,7 +189,7 @@ export async function createFile(request: StyleAnalysisReq): Promise<File> {
   }
 }
 
-export async function createContentObject(request: StyleAnalysisReq): Promise<File | import('buffer').Blob> {
+export async function createContentObject(request: StyleAnalysisReq): Promise<File | Blob> {
   // Check if we're in a Node.js environment
   if (isNodeEnvironment()) {
     return createBlob(request);
