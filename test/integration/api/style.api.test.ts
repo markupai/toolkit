@@ -19,7 +19,7 @@ import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { AcrolinxError } from '../../../src/utils/errors';
+import { ApIError } from '../../../src/utils/errors';
 import { BufferDescriptor } from '../../../src/api/style/style.api.types';
 
 // Helper function to create a BufferDescriptor from the batteries.pdf
@@ -88,7 +88,7 @@ describe('Style API Integration Tests', () => {
             },
             config,
           ),
-      ).rejects.toThrow(AcrolinxError);
+      ).rejects.toThrow(ApIError);
     });
 
     it('should submit a style check with invalid api key', async () => {
@@ -106,7 +106,7 @@ describe('Style API Integration Tests', () => {
               apiKey: 'invalid-api-key',
             },
           ),
-      ).rejects.toThrow(AcrolinxError);
+      ).rejects.toThrow(ApIError);
     });
 
     it('should submit a style suggestion', async () => {

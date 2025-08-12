@@ -20,7 +20,7 @@ import type {
   StyleAnalysisResponseType,
 } from './style.api.types';
 import { acrolinxError } from 'acrolinx-nextgen-api';
-import { AcrolinxError, ErrorType } from '../../utils/errors';
+import { ApIError, ErrorType } from '../../utils/errors';
 import { Blob } from 'buffer';
 
 /**
@@ -240,7 +240,7 @@ export async function submitAndPollStyleAnalysis<T extends { status: StatusType 
     }
   } catch (error) {
     if (error instanceof acrolinxError) {
-      throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+      throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to submit style analysis: ${error}`);
   }
@@ -539,7 +539,7 @@ export async function pollWorkflowForResult<T>(
 
   const poll = async (): Promise<T> => {
     if (attempts >= maxAttempts) {
-      throw new AcrolinxError(`Workflow timed out after ${maxAttempts} attempts`, ErrorType.TIMEOUT_ERROR);
+      throw new ApIError(`Workflow timed out after ${maxAttempts} attempts`, ErrorType.TIMEOUT_ERROR);
     }
 
     try {
@@ -568,7 +568,7 @@ export async function pollWorkflowForResult<T>(
       const normalizedStatus = dataWithWorkflowId.status.toLowerCase() as Status;
 
       if (normalizedStatus === Status.Failed) {
-        throw new AcrolinxError(`Workflow failed with status: ${Status.Failed}`, ErrorType.WORKFLOW_FAILED);
+        throw new ApIError(`Workflow failed with status: ${Status.Failed}`, ErrorType.WORKFLOW_FAILED);
       }
 
       if (normalizedStatus === Status.Completed) {
@@ -581,13 +581,13 @@ export async function pollWorkflowForResult<T>(
         return poll();
       }
 
-      throw new AcrolinxError(`Unexpected workflow status: ${dataWithWorkflowId.status}`, ErrorType.UNEXPECTED_STATUS);
+      throw new ApIError(`Unexpected workflow status: ${dataWithWorkflowId.status}`, ErrorType.UNEXPECTED_STATUS);
     } catch (error) {
       if (error instanceof acrolinxError) {
-        throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+        throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
       }
       console.error(`Unknown polling error (attempt ${attempts + 1}/${maxAttempts}):`, error);
-      throw AcrolinxError.fromError(
+      throw ApIError.fromError(
         error instanceof Error ? error : new Error('Unknown error occurred'),
         ErrorType.POLLING_ERROR,
       );

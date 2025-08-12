@@ -15,7 +15,7 @@ import { createContentObject } from './style.api.utils';
 import { submitAndPollStyleAnalysis, styleBatchCheck } from './style.api.utils';
 import type { Dialects, Tones } from 'acrolinx-nextgen-api/api';
 import { acrolinxError } from 'acrolinx-nextgen-api';
-import { AcrolinxError } from '../../utils/errors';
+import { ApIError } from '../../utils/errors';
 import { initEndpoint } from '../../utils/api';
 
 // Export utility functions for Node.js environments
@@ -38,7 +38,7 @@ export async function submitStyleCheck(
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof acrolinxError) {
-      throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+      throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to submit style check: ${error}`);
   }
@@ -61,7 +61,7 @@ export async function submitStyleSuggestion(
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof acrolinxError) {
-      throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+      throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to submit style suggestion: ${error}`);
   }
@@ -84,7 +84,7 @@ export async function submitStyleRewrite(
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof acrolinxError) {
-      throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+      throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to submit style rewrite: ${error}`);
   }

@@ -63,28 +63,28 @@ export interface PayloadTooLargeErrorResponse {
   [key: string]: unknown;
 }
 
-// Simplified AcrolinxError with consolidated error information
-export class AcrolinxError extends Error {
+// Simplified ApIError with consolidated error information
+export class ApIError extends Error {
   public readonly statusCode?: number; // Optional - only present for API errors
   public readonly type: ErrorType;
   public readonly rawErrorData: Record<string, unknown>;
 
   constructor(message: string, type: ErrorType, statusCode?: number, rawErrorData: Record<string, unknown> = {}) {
     super(message);
-    this.name = 'AcrolinxError';
+    this.name = 'ApIError';
     this.statusCode = statusCode;
     this.type = type;
     this.rawErrorData = rawErrorData;
 
     // This is needed to make instanceof work correctly
-    Object.setPrototypeOf(this, AcrolinxError.prototype);
+    Object.setPrototypeOf(this, ApIError.prototype);
   }
 
   /**
-   * Creates an AcrolinxError from an API response
+   * Creates an ApIError from an API response
    * Uses status code-based error type detection for better maintainability
    */
-  static fromResponse(statusCode: number, errorData: Record<string, unknown>): AcrolinxError {
+  static fromResponse(statusCode: number, errorData: Record<string, unknown>): ApIError {
     // Handle different status codes with appropriate error types
     switch (statusCode) {
       case 400:
@@ -107,90 +107,90 @@ export class AcrolinxError extends Error {
   /**
    * Handle 400 Bad Request errors
    */
-  private static handle400Error(errorData: Record<string, unknown>, statusCode: number): AcrolinxError {
+  private static handle400Error(errorData: Record<string, unknown>, statusCode: number): ApIError {
     const message = typeof errorData.message === 'string' ? errorData.message : undefined;
     const detail = typeof errorData.detail === 'string' ? errorData.detail : undefined;
     const errorMessage = message || detail || `Bad Request (${statusCode})`;
 
-    return new AcrolinxError(errorMessage, ErrorType.UNKNOWN_ERROR, statusCode, errorData);
+    return new ApIError(errorMessage, ErrorType.UNKNOWN_ERROR, statusCode, errorData);
   }
 
   /**
    * Handle 401 Unauthorized errors
    */
-  private static handle401Error(errorData: Record<string, unknown>, statusCode: number): AcrolinxError {
+  private static handle401Error(errorData: Record<string, unknown>, statusCode: number): ApIError {
     // Handle the specific 401 format with code, message, description
     if (this.isApiErrorResponse(errorData)) {
       const { error } = errorData as ApiErrorResponse;
       const message = error.description || error.message;
 
-      return new AcrolinxError(message, ErrorType.UNAUTHORIZED_ERROR, statusCode, errorData);
+      return new ApIError(message, ErrorType.UNAUTHORIZED_ERROR, statusCode, errorData);
     }
 
     // Handle direct format with code, message, description
     if (this.isDirectApiErrorResponse(errorData)) {
       const message = (errorData.description as string) || (errorData.message as string);
 
-      return new AcrolinxError(message, ErrorType.UNAUTHORIZED_ERROR, statusCode, errorData);
+      return new ApIError(message, ErrorType.UNAUTHORIZED_ERROR, statusCode, errorData);
     }
 
     // Fallback for other 401 formats
     const detail = typeof errorData.detail === 'string' ? errorData.detail : undefined;
     const message = detail || `Unauthorized (${statusCode})`;
 
-    return new AcrolinxError(message, ErrorType.UNAUTHORIZED_ERROR, statusCode, errorData);
+    return new ApIError(message, ErrorType.UNAUTHORIZED_ERROR, statusCode, errorData);
   }
 
   /**
    * Handle 404 Not Found errors
    */
-  private static handle404Error(errorData: Record<string, unknown>, statusCode: number): AcrolinxError {
+  private static handle404Error(errorData: Record<string, unknown>, statusCode: number): ApIError {
     // Handle the specific 404 format with error object
     if (this.isApiErrorResponse(errorData)) {
       const { error } = errorData as ApiErrorResponse;
       const message = error.description || error.message;
       const type = error.code as ErrorType;
 
-      return new AcrolinxError(message, type, statusCode, errorData);
+      return new ApIError(message, type, statusCode, errorData);
     }
 
     // Handle standard 404 format
     const detail = typeof errorData.detail === 'string' ? errorData.detail : undefined;
     const message = detail || `Not Found (${statusCode})`;
 
-    return new AcrolinxError(message, ErrorType.WORKFLOW_NOT_FOUND, statusCode, errorData);
+    return new ApIError(message, ErrorType.WORKFLOW_NOT_FOUND, statusCode, errorData);
   }
 
   /**
    * Handle 413 Payload Too Large errors
    */
-  private static handle413Error(errorData: Record<string, unknown>, statusCode: number): AcrolinxError {
+  private static handle413Error(errorData: Record<string, unknown>, statusCode: number): ApIError {
     // Handle the specific 413 format with summary and value
     if (this.isPayloadTooLargeErrorResponse(errorData)) {
       const { summary, value } = errorData as PayloadTooLargeErrorResponse;
       const message = summary || value.detail || `Payload Too Large (${statusCode})`;
 
-      return new AcrolinxError(message, ErrorType.PAYLOAD_TOO_LARGE_ERROR, statusCode, errorData);
+      return new ApIError(message, ErrorType.PAYLOAD_TOO_LARGE_ERROR, statusCode, errorData);
     }
 
     // Fallback for other 413 formats
     const detail = typeof errorData.detail === 'string' ? errorData.detail : undefined;
     const message = detail || `Payload Too Large (${statusCode})`;
 
-    return new AcrolinxError(message, ErrorType.PAYLOAD_TOO_LARGE_ERROR, statusCode, errorData);
+    return new ApIError(message, ErrorType.PAYLOAD_TOO_LARGE_ERROR, statusCode, errorData);
   }
 
   /**
    * Handle 422 Validation errors
    */
-  private static handle422Error(errorData: Record<string, unknown>, statusCode: number): AcrolinxError {
+  private static handle422Error(errorData: Record<string, unknown>, statusCode: number): ApIError {
     // Handle the specific 422 format with errors array
     if (this.isValidationErrorResponse422(errorData)) {
       const { errors } = errorData as ValidationErrorResponse422;
       const validationMessages = errors.map((e) => e.msg).join('; ');
       const message = `Validation failed: ${validationMessages}`;
 
-      return new AcrolinxError(message, ErrorType.VALIDATION_ERROR, statusCode, errorData);
+      return new ApIError(message, ErrorType.VALIDATION_ERROR, statusCode, errorData);
     }
 
     // Handle legacy validation format
@@ -199,43 +199,43 @@ export class AcrolinxError extends Error {
       const validationMessages = detail.map((d) => d.msg).join('; ');
       const message = `Validation failed: ${validationMessages}`;
 
-      return new AcrolinxError(message, ErrorType.VALIDATION_ERROR, statusCode, errorData);
+      return new ApIError(message, ErrorType.VALIDATION_ERROR, statusCode, errorData);
     }
 
     // Fallback for other 422 formats
     const detail = typeof errorData.detail === 'string' ? errorData.detail : undefined;
     const message = detail || `Validation Error (${statusCode})`;
 
-    return new AcrolinxError(message, ErrorType.VALIDATION_ERROR, statusCode, errorData);
+    return new ApIError(message, ErrorType.VALIDATION_ERROR, statusCode, errorData);
   }
 
   /**
    * Handle 500 Internal Server errors
    */
-  private static handle500Error(errorData: Record<string, unknown>, statusCode: number): AcrolinxError {
+  private static handle500Error(errorData: Record<string, unknown>, statusCode: number): ApIError {
     const message = typeof errorData.message === 'string' ? errorData.message : undefined;
     const detail = typeof errorData.detail === 'string' ? errorData.detail : undefined;
     const errorMessage = message || detail || `Internal Server Error (${statusCode})`;
 
-    return new AcrolinxError(errorMessage, ErrorType.INTERNAL_SERVER_ERROR, statusCode, errorData);
+    return new ApIError(errorMessage, ErrorType.INTERNAL_SERVER_ERROR, statusCode, errorData);
   }
 
   /**
    * Handle unknown status codes
    */
-  private static handleUnknownError(errorData: Record<string, unknown>, statusCode: number): AcrolinxError {
+  private static handleUnknownError(errorData: Record<string, unknown>, statusCode: number): ApIError {
     const detail = typeof errorData.detail === 'string' ? errorData.detail : undefined;
     const message = typeof errorData.message === 'string' ? errorData.message : undefined;
     const errorMessage = message || detail || `HTTP error! status: ${statusCode}`;
 
-    return new AcrolinxError(errorMessage, ErrorType.UNKNOWN_ERROR, statusCode, errorData);
+    return new ApIError(errorMessage, ErrorType.UNKNOWN_ERROR, statusCode, errorData);
   }
 
   /**
-   * Creates an AcrolinxError for non-API errors (network, timeout, etc.)
+   * Creates an ApIError for non-API errors (network, timeout, etc.)
    */
-  static fromError(error: Error, type: ErrorType): AcrolinxError {
-    return new AcrolinxError(error.message, type, undefined, { originalError: error });
+  static fromError(error: Error, type: ErrorType): ApIError {
+    return new ApIError(error.message, type, undefined, { originalError: error });
   }
 
   /**

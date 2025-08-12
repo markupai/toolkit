@@ -2,7 +2,7 @@ import type { StyleGuides, StyleGuide, CreateStyleGuideReq, StyleGuideUpdateReq 
 import type { Config } from '../../utils/api.types';
 import { initEndpoint } from '../../utils/api';
 import { acrolinxError } from 'acrolinx-nextgen-api';
-import { AcrolinxError } from '../../utils/errors';
+import { ApIError } from '../../utils/errors';
 
 // List all style guides
 export async function listStyleGuides(config: Config): Promise<StyleGuides> {
@@ -11,7 +11,7 @@ export async function listStyleGuides(config: Config): Promise<StyleGuides> {
     return (await client.styleGuides.listStyleGuides()) as StyleGuides;
   } catch (error) {
     if (error instanceof acrolinxError) {
-      throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+      throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to list style guides: ${error}`);
   }
@@ -24,7 +24,7 @@ export async function getStyleGuide(styleGuideId: string, config: Config): Promi
     return (await client.styleGuides.getStyleGuide(styleGuideId)) as StyleGuide;
   } catch (error) {
     if (error instanceof acrolinxError) {
-      throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+      throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to get style guide: ${error}`);
   }
@@ -46,7 +46,7 @@ export async function createStyleGuide(request: CreateStyleGuideReq, config: Con
     })) as StyleGuide;
   } catch (error) {
     if (error instanceof acrolinxError) {
-      throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+      throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to create style guide: ${error}`);
   }
@@ -63,7 +63,7 @@ export async function updateStyleGuide(
     return (await client.styleGuides.updateStyleGuide(styleGuideId, updates)) as StyleGuide;
   } catch (error) {
     if (error instanceof acrolinxError) {
-      throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+      throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to update style guide: ${error}`);
   }
@@ -76,7 +76,7 @@ export async function deleteStyleGuide(styleGuideId: string, config: Config): Pr
     await client.styleGuides.deleteStyleGuide(styleGuideId);
   } catch (error) {
     if (error instanceof acrolinxError) {
-      throw AcrolinxError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+      throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to delete style guide: ${error}`);
   }
