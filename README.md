@@ -1,6 +1,6 @@
-# Acrolinx NextGen Toolkit
+# NextGen Toolkit
 
-A TypeScript toolkit for integrating with the Acrolinx NextGen API. This toolkit provides a type-safe way to interact with Acrolinx services including style analysis, style guide management, and batch operations.
+A TypeScript toolkit for integrating with the NextGen API. This toolkit provides a type-safe way to interact with NextGen services including style analysis, style guide management, and batch operations.
 
 ## Installation
 

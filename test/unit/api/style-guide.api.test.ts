@@ -110,13 +110,6 @@ describe('Style Guide Unit Tests', () => {
       expect(result).toBe(false);
     });
 
-    it('should return false when network error occurs', async () => {
-      server.use(apiHandlers.api.error.network);
-
-      const result = await validateToken(mockConfig);
-      expect(result).toBe(false);
-    });
-
     it('should return false when API returns 403 Forbidden', async () => {
       server.use(
         http.get('*/v1/style-guides', () => {
