@@ -8,32 +8,6 @@ A TypeScript toolkit for integrating with the NextGen API. This toolkit provides
 npm install @acrolinx/nextgen-toolkit
 ```
 
-## Configuration
-
-The toolkit requires a configuration object with your API key and platform settings:
-
-```typescript
-import { Config, Environment, PlatformType } from '@acrolinx/nextgen-toolkit';
-
-// Using environment-based configuration
-const config: Config = {
-  apiKey: 'your-api-key-here',
-  platform: {
-    type: PlatformType.Environment,
-    value: Environment.Prod, // or Environment.Stage, Environment.Dev
-  },
-};
-
-// Using custom URL configuration
-const configWithUrl: Config = {
-  apiKey: 'your-api-key-here',
-  platform: {
-    type: PlatformType.Url,
-    value: 'https://your-custom-acrolinx-instance.com',
-  },
-};
-```
-
 ## Usage
 
 ### Style Analysis
@@ -165,6 +139,32 @@ suggestionResult.issues.forEach((issue) => {
 const rewriteResult: StyleAnalysisRewriteResp = await styleRewrite(request, config);
 console.log(`Rewritten content: ${rewriteResult.rewrite}`);
 console.log(`Rewrite quality score: ${rewriteResult.rewrite_scores.quality.score}`);
+```
+
+## Configuration
+
+The toolkit requires a configuration object with your API key and platform settings:
+
+```typescript
+import { Config, Environment, PlatformType } from '@acrolinx/nextgen-toolkit';
+
+// Using environment-based configuration
+const config: Config = {
+  apiKey: 'your-api-key-here',
+  platform: {
+    type: PlatformType.Environment,
+    value: Environment.Prod, // or Environment.Stage, Environment.Dev
+  },
+};
+
+// Using custom URL configuration
+const configWithUrl: Config = {
+  apiKey: 'your-api-key-here',
+  platform: {
+    type: PlatformType.Url,
+    value: 'https://your-custom-acrolinx-instance.com',
+  },
+};
 ```
 
 ## Development
