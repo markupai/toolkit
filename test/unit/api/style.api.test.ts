@@ -219,14 +219,14 @@ describe('Style API Unit Tests', () => {
       server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
 
       const result = await styleRewrite(mockStyleAnalysisRequest, mockConfig);
-      expect(result.scores.terminology).toBeDefined();
-      expect(typeof result.scores.terminology.score).toBe('number');
-      expect(typeof result.scores.terminology.issues).toBe('number');
-      expect(result.rewrite_scores.terminology).toBeDefined();
-      expect(typeof result.rewrite_scores.terminology.score).toBe('number');
-      expect(typeof result.rewrite_scores.terminology.issues).toBe('number');
-      expect(result.rewrite_scores.terminology.score).toBe(90);
-      expect(result.rewrite_scores.terminology.issues).toBe(0);
+      expect(result.scores.quality.terminology).toBeDefined();
+      expect(typeof result.scores.quality.terminology.score).toBe('number');
+      expect(typeof result.scores.quality.terminology.issues).toBe('number');
+      expect(result.rewrite_scores.quality.terminology).toBeDefined();
+      expect(typeof result.rewrite_scores.quality.terminology.score).toBe('number');
+      expect(typeof result.rewrite_scores.quality.terminology.issues).toBe('number');
+      expect(result.rewrite_scores.quality.terminology.score).toBe(90);
+      expect(result.rewrite_scores.quality.terminology.issues).toBe(0);
     });
 
     it('should perform style check with polling and custom document name', async () => {
@@ -340,11 +340,11 @@ describe('Style API Unit Tests', () => {
       const result = await getStyleCheck(mockWorkflowId, mockConfig);
       const typedResult = isStyleAnalysisSuccessResp(result) ? result : null;
       expect(typedResult).not.toBeNull();
-      expect(typedResult!.scores.terminology).toBeDefined();
-      expect(typeof typedResult!.scores.terminology.score).toBe('number');
-      expect(typeof typedResult!.scores.terminology.issues).toBe('number');
-      expect(typedResult!.scores.terminology.score).toBe(85);
-      expect(typedResult!.scores.terminology.issues).toBe(0);
+      expect(typedResult!.scores.quality.terminology).toBeDefined();
+      expect(typeof typedResult!.scores.quality.terminology.score).toBe('number');
+      expect(typeof typedResult!.scores.quality.terminology.issues).toBe('number');
+      expect(typedResult!.scores.quality.terminology.score).toBe(85);
+      expect(typedResult!.scores.quality.terminology.issues).toBe(0);
     });
   });
 
@@ -384,11 +384,12 @@ describe('Style API Unit Tests', () => {
       expect(typeof typedResult!.rewrite).toBe('string');
       expect(typedResult!.rewrite_scores).toBeDefined();
       expect(typedResult!.rewrite_scores.quality).toBeDefined();
-      expect(typedResult!.rewrite_scores.clarity).toBeDefined();
-      expect(typedResult!.rewrite_scores.grammar).toBeDefined();
-      expect(typedResult!.rewrite_scores.style_guide).toBeDefined();
-      expect(typedResult!.rewrite_scores.tone).toBeDefined();
-      expect(typedResult!.rewrite_scores.terminology).toBeDefined();
+      expect(typedResult!.rewrite_scores.analysis).toBeDefined();
+      expect(typedResult!.rewrite_scores.analysis.clarity).toBeDefined();
+      expect(typedResult!.rewrite_scores.quality.grammar).toBeDefined();
+      expect(typedResult!.rewrite_scores.quality.style_guide).toBeDefined();
+      expect(typedResult!.rewrite_scores.analysis.tone).toBeDefined();
+      expect(typedResult!.rewrite_scores.quality.terminology).toBeDefined();
       // Check for suggestion in issues
       if (typedResult!.issues && typedResult!.issues.length > 0) {
         const issue = typedResult!.issues[0];

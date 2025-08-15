@@ -179,38 +179,38 @@ const styleHandlers = {
         scores: {
           quality: {
             score: 80,
+            grammar: {
+              score: 90,
+              issues: 1,
+            },
+            style_guide: {
+              score: 85,
+              issues: 0,
+            },
+            terminology: {
+              score: 85,
+              issues: 0,
+            },
           },
-          clarity: {
-            score: 75,
-            word_count: 75,
-            sentence_count: 5,
-            average_sentence_length: 15,
-            flesch_reading_ease: 80,
-            vocabulary_complexity: 85,
-            flesch_kincaid_grade: 8.1,
-            lexical_diversity: 48.3,
-            sentence_complexity: 97.4,
-          },
-          grammar: {
-            score: 90,
-            issues: 1,
-          },
-          style_guide: {
-            score: 85,
-            issues: 0,
-          },
-          tone: {
-            score: 70,
-            informality: 30,
-            liveliness: 60,
-            target_informality: 25.0,
-            target_liveliness: 40.0,
-            informality_tolerance: 15.0,
-            liveliness_tolerance: 20.0,
-          },
-          terminology: {
-            score: 85,
-            issues: 0,
+          analysis: {
+            clarity: {
+              score: 75,
+              word_count: 75,
+              sentence_count: 5,
+              average_sentence_length: 15,
+              flesch_reading_ease: 80,
+              vocabulary_complexity: 85,
+              flesch_kincaid_grade: 8.1,
+              lexical_diversity: 48.3,
+              sentence_complexity: 97.4,
+            },
+            tone: {
+              score: 70,
+              informality: 30,
+              liveliness: 60,
+              informality_alignment: 25.0,
+              liveliness_alignment: 40.0,
+            },
           },
         },
         issues: [
@@ -251,38 +251,38 @@ const styleHandlers = {
         scores: {
           quality: {
             score: 80,
+            grammar: {
+              score: 90,
+              issues: 1,
+            },
+            style_guide: {
+              score: 85,
+              issues: 0,
+            },
+            terminology: {
+              score: 85,
+              issues: 0,
+            },
           },
-          clarity: {
-            score: 75,
-            word_count: 75,
-            sentence_count: 5,
-            average_sentence_length: 15,
-            flesch_reading_ease: 80,
-            vocabulary_complexity: 85,
-            flesch_kincaid_grade: 8.1,
-            lexical_diversity: 48.3,
-            sentence_complexity: 97.4,
-          },
-          grammar: {
-            score: 90,
-            issues: 1,
-          },
-          style_guide: {
-            score: 85,
-            issues: 0,
-          },
-          tone: {
-            score: 70,
-            informality: 30,
-            liveliness: 60,
-            target_informality: 25.0,
-            target_liveliness: 40.0,
-            informality_tolerance: 15.0,
-            liveliness_tolerance: 20.0,
-          },
-          terminology: {
-            score: 85,
-            issues: 0,
+          analysis: {
+            clarity: {
+              score: 75,
+              word_count: 75,
+              sentence_count: 5,
+              average_sentence_length: 15,
+              flesch_reading_ease: 80,
+              vocabulary_complexity: 85,
+              flesch_kincaid_grade: 8.1,
+              lexical_diversity: 48.3,
+              sentence_complexity: 97.4,
+            },
+            tone: {
+              score: 70,
+              informality: 30,
+              liveliness: 60,
+              informality_alignment: 25.0,
+              liveliness_alignment: 40.0,
+            },
           },
         },
         issues: [
@@ -323,38 +323,38 @@ const styleHandlers = {
         scores: {
           quality: {
             score: 80,
+            grammar: {
+              score: 90,
+              issues: 1,
+            },
+            style_guide: {
+              score: 85,
+              issues: 0,
+            },
+            terminology: {
+              score: 85,
+              issues: 0,
+            },
           },
-          clarity: {
-            score: 80,
-            word_count: 75,
-            sentence_count: 5,
-            average_sentence_length: 15,
-            flesch_reading_ease: 80,
-            vocabulary_complexity: 85,
-            flesch_kincaid_grade: 8.1,
-            lexical_diversity: 48.3,
-            sentence_complexity: 97.4,
-          },
-          grammar: {
-            score: 90,
-            issues: 1,
-          },
-          style_guide: {
-            score: 85,
-            issues: 0,
-          },
-          tone: {
-            score: 70,
-            informality: 30,
-            liveliness: 60,
-            target_informality: 25.0,
-            target_liveliness: 40.0,
-            informality_tolerance: 15.0,
-            liveliness_tolerance: 20.0,
-          },
-          terminology: {
-            score: 85,
-            issues: 0,
+          analysis: {
+            clarity: {
+              score: 80,
+              word_count: 75,
+              sentence_count: 5,
+              average_sentence_length: 15,
+              flesch_reading_ease: 80,
+              vocabulary_complexity: 85,
+              flesch_kincaid_grade: 8.1,
+              lexical_diversity: 48.3,
+              sentence_complexity: 97.4,
+            },
+            tone: {
+              score: 70,
+              informality: 30,
+              liveliness: 60,
+              informality_alignment: 25.0,
+              liveliness_alignment: 40.0,
+            },
           },
         },
         issues: [
@@ -378,34 +378,38 @@ const styleHandlers = {
         rewrite_scores: {
           quality: {
             score: 85,
+            grammar: {
+              score: 95,
+              issues: 0,
+            },
+            style_guide: {
+              score: 90,
+              issues: 0,
+            },
+            terminology: {
+              score: 90,
+              issues: 0,
+            },
           },
-          clarity: {
-            score: 80,
-            word_count: 75,
-            sentence_count: 5,
-            average_sentence_length: 15,
-            flesch_reading_ease: 80,
-            vocabulary_complexity: 85,
-            flesch_kincaid_grade: 8.1,
-            lexical_diversity: 48.3,
-            sentence_complexity: 97.4,
-          },
-          grammar: {
-            score: 95,
-            issues: 0,
-          },
-          style_guide: {
-            score: 90,
-            issues: 0,
-          },
-          tone: {
-            score: 75,
-            informality: 25,
-            liveliness: 65,
-          },
-          terminology: {
-            score: 90,
-            issues: 0,
+          analysis: {
+            clarity: {
+              score: 80,
+              word_count: 75,
+              sentence_count: 5,
+              average_sentence_length: 15,
+              flesch_reading_ease: 80,
+              vocabulary_complexity: 85,
+              flesch_kincaid_grade: 8.1,
+              lexical_diversity: 48.3,
+              sentence_complexity: 97.4,
+            },
+            tone: {
+              score: 75,
+              informality: 25,
+              liveliness: 65,
+              informality_alignment: 25.0,
+              liveliness_alignment: 40.0,
+            },
           },
         },
       });

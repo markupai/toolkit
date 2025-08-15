@@ -57,34 +57,39 @@ export interface IssueWithSuggestion extends Issue {
 export interface StyleScores {
   quality: {
     score: number;
+    grammar: {
+      score: number;
+      issues: number;
+    };
+    style_guide: {
+      score: number;
+      issues: number;
+    };
+
+    terminology: {
+      score: number;
+      issues: number;
+    };
   };
-  clarity: {
-    score: number;
-    word_count: number;
-    sentence_count: number;
-    average_sentence_length: number;
-    flesch_reading_ease: number;
-    vocabulary_complexity: number;
-    flesch_kincaid_grade: number;
-    lexical_diversity: number;
-    sentence_complexity: number;
-  };
-  grammar: {
-    score: number;
-    issues: number;
-  };
-  style_guide: {
-    score: number;
-    issues: number;
-  };
-  tone: {
-    score: number;
-    informality: number;
-    liveliness: number;
-  };
-  terminology: {
-    score: number;
-    issues: number;
+  analysis: {
+    clarity: {
+      score: number;
+      word_count: number;
+      sentence_count: number;
+      average_sentence_length: number;
+      flesch_reading_ease: number;
+      vocabulary_complexity: number;
+      flesch_kincaid_grade: number;
+      lexical_diversity: number;
+      sentence_complexity: number;
+    };
+    tone: {
+      score: number;
+      informality: number;
+      liveliness: number;
+      informality_alignment: number;
+      liveliness_alignment: number;
+    };
   };
 }
 export interface StyleAnalysisSuccessResp extends ResponseBase {

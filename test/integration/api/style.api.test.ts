@@ -202,33 +202,34 @@ describe('Style API Integration Tests', () => {
       expect(response.scores.quality).toBeDefined();
       expect(typeof response.scores.quality.score).toBe('number');
 
-      expect(response.scores.clarity).toBeDefined();
-      expect(typeof response.scores.clarity.score).toBe('number');
-      expect(typeof response.scores.clarity.word_count).toBe('number');
-      expect(typeof response.scores.clarity.sentence_count).toBe('number');
-      expect(typeof response.scores.clarity.average_sentence_length).toBe('number');
-      expect(typeof response.scores.clarity.flesch_reading_ease).toBe('number');
-      expect(typeof response.scores.clarity.vocabulary_complexity).toBe('number');
-      expect(typeof response.scores.clarity.flesch_kincaid_grade).toBe('number');
-      expect(typeof response.scores.clarity.lexical_diversity).toBe('number');
-      expect(typeof response.scores.clarity.sentence_complexity).toBe('number');
+      expect(response.scores.analysis).toBeDefined();
+      expect(response.scores.analysis.clarity).toBeDefined();
+      expect(typeof response.scores.analysis.clarity.score).toBe('number');
+      expect(typeof response.scores.analysis.clarity.word_count).toBe('number');
+      expect(typeof response.scores.analysis.clarity.sentence_count).toBe('number');
+      expect(typeof response.scores.analysis.clarity.average_sentence_length).toBe('number');
+      expect(typeof response.scores.analysis.clarity.flesch_reading_ease).toBe('number');
+      expect(typeof response.scores.analysis.clarity.vocabulary_complexity).toBe('number');
+      expect(typeof response.scores.analysis.clarity.flesch_kincaid_grade).toBe('number');
+      expect(typeof response.scores.analysis.clarity.lexical_diversity).toBe('number');
+      expect(typeof response.scores.analysis.clarity.sentence_complexity).toBe('number');
 
-      expect(response.scores.grammar).toBeDefined();
-      expect(typeof response.scores.grammar.score).toBe('number');
-      expect(typeof response.scores.grammar.issues).toBe('number');
+      expect(response.scores.quality.grammar).toBeDefined();
+      expect(typeof response.scores.quality.grammar.score).toBe('number');
+      expect(typeof response.scores.quality.grammar.issues).toBe('number');
 
-      expect(response.scores.style_guide).toBeDefined();
-      expect(typeof response.scores.style_guide.score).toBe('number');
-      expect(typeof response.scores.style_guide.issues).toBe('number');
+      expect(response.scores.quality.style_guide).toBeDefined();
+      expect(typeof response.scores.quality.style_guide.score).toBe('number');
+      expect(typeof response.scores.quality.style_guide.issues).toBe('number');
 
-      expect(response.scores.tone).toBeDefined();
-      expect(typeof response.scores.tone.score).toBe('number');
-      expect(typeof response.scores.tone.informality).toBe('number');
-      expect(typeof response.scores.tone.liveliness).toBe('number');
+      expect(response.scores.analysis.tone).toBeDefined();
+      expect(typeof response.scores.analysis.tone.score).toBe('number');
+      expect(typeof response.scores.analysis.tone.informality).toBe('number');
+      expect(typeof response.scores.analysis.tone.liveliness).toBe('number');
 
-      expect(response.scores.terminology).toBeDefined();
-      expect(typeof response.scores.terminology.score).toBe('number');
-      expect(typeof response.scores.terminology.issues).toBe('number');
+      expect(response.scores.quality.terminology).toBeDefined();
+      expect(typeof response.scores.quality.terminology.score).toBe('number');
+      expect(typeof response.scores.quality.terminology.issues).toBe('number');
 
       if (response.issues && response.issues.length > 0) {
         const issue = response.issues[0];
@@ -257,11 +258,12 @@ describe('Style API Integration Tests', () => {
       expect(response.check_options).toBeDefined();
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
-      expect(response.scores.clarity).toBeDefined();
-      expect(response.scores.grammar).toBeDefined();
-      expect(response.scores.style_guide).toBeDefined();
-      expect(response.scores.tone).toBeDefined();
-      expect(response.scores.terminology).toBeDefined();
+      expect(response.scores.analysis).toBeDefined();
+      expect(response.scores.analysis.clarity).toBeDefined();
+      expect(response.scores.quality.grammar).toBeDefined();
+      expect(response.scores.quality.style_guide).toBeDefined();
+      expect(response.scores.analysis.tone).toBeDefined();
+      expect(response.scores.quality.terminology).toBeDefined();
     });
 
     // The style suggestions endpoint is currently throwing errors
@@ -281,11 +283,12 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.workflow_id).toBe('string');
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
-      expect(response.scores.clarity).toBeDefined();
-      expect(response.scores.grammar).toBeDefined();
-      expect(response.scores.style_guide).toBeDefined();
-      expect(response.scores.tone).toBeDefined();
-      expect(response.scores.terminology).toBeDefined();
+      expect(response.scores.analysis).toBeDefined();
+      expect(response.scores.analysis.clarity).toBeDefined();
+      expect(response.scores.quality.grammar).toBeDefined();
+      expect(response.scores.quality.style_guide).toBeDefined();
+      expect(response.scores.analysis.tone).toBeDefined();
+      expect(response.scores.quality.terminology).toBeDefined();
 
       if (response.issues && response.issues.length > 0) {
         const issue = response.issues[0];
@@ -311,11 +314,12 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.workflow_id).toBe('string');
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
-      expect(response.scores.clarity).toBeDefined();
-      expect(response.scores.grammar).toBeDefined();
-      expect(response.scores.style_guide).toBeDefined();
-      expect(response.scores.tone).toBeDefined();
-      expect(response.scores.terminology).toBeDefined();
+      expect(response.scores.analysis).toBeDefined();
+      expect(response.scores.analysis.clarity).toBeDefined();
+      expect(response.scores.quality.grammar).toBeDefined();
+      expect(response.scores.quality.style_guide).toBeDefined();
+      expect(response.scores.analysis.tone).toBeDefined();
+      expect(response.scores.quality.terminology).toBeDefined();
 
       if (response.issues && response.issues.length > 0) {
         const issue = response.issues[0];
@@ -340,11 +344,12 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.workflow_id).toBe('string');
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
-      expect(response.scores.clarity).toBeDefined();
-      expect(response.scores.grammar).toBeDefined();
-      expect(response.scores.style_guide).toBeDefined();
-      expect(response.scores.tone).toBeDefined();
-      expect(response.scores.terminology).toBeDefined();
+      expect(response.scores.analysis).toBeDefined();
+      expect(response.scores.analysis.clarity).toBeDefined();
+      expect(response.scores.quality.grammar).toBeDefined();
+      expect(response.scores.quality.style_guide).toBeDefined();
+      expect(response.scores.analysis.tone).toBeDefined();
+      expect(response.scores.quality.terminology).toBeDefined();
 
       // Test rewrite and rewrite_scores
       expect(response.rewrite).toBeDefined();
@@ -352,11 +357,12 @@ describe('Style API Integration Tests', () => {
 
       expect(response.rewrite_scores).toBeDefined();
       expect(response.rewrite_scores.quality).toBeDefined();
-      expect(response.rewrite_scores.clarity).toBeDefined();
-      expect(response.rewrite_scores.grammar).toBeDefined();
-      expect(response.rewrite_scores.style_guide).toBeDefined();
-      expect(response.rewrite_scores.tone).toBeDefined();
-      expect(response.rewrite_scores.terminology).toBeDefined();
+      expect(response.rewrite_scores.analysis).toBeDefined();
+      expect(response.rewrite_scores.analysis.clarity).toBeDefined();
+      expect(response.rewrite_scores.quality.grammar).toBeDefined();
+      expect(response.rewrite_scores.quality.style_guide).toBeDefined();
+      expect(response.rewrite_scores.analysis.tone).toBeDefined();
+      expect(response.rewrite_scores.quality.terminology).toBeDefined();
 
       if (response.issues && response.issues.length > 0) {
         const issue = response.issues[0];
@@ -382,11 +388,12 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.workflow_id).toBe('string');
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
-      expect(response.scores.clarity).toBeDefined();
-      expect(response.scores.grammar).toBeDefined();
-      expect(response.scores.style_guide).toBeDefined();
-      expect(response.scores.tone).toBeDefined();
-      expect(response.scores.terminology).toBeDefined();
+      expect(response.scores.analysis).toBeDefined();
+      expect(response.scores.analysis.clarity).toBeDefined();
+      expect(response.scores.quality.grammar).toBeDefined();
+      expect(response.scores.quality.style_guide).toBeDefined();
+      expect(response.scores.analysis.tone).toBeDefined();
+      expect(response.scores.quality.terminology).toBeDefined();
 
       // Test rewrite and rewrite_scores
       expect(response.rewrite).toBeDefined();
@@ -394,11 +401,12 @@ describe('Style API Integration Tests', () => {
 
       expect(response.rewrite_scores).toBeDefined();
       expect(response.rewrite_scores.quality).toBeDefined();
-      expect(response.rewrite_scores.clarity).toBeDefined();
-      expect(response.rewrite_scores.grammar).toBeDefined();
-      expect(response.rewrite_scores.style_guide).toBeDefined();
-      expect(response.rewrite_scores.tone).toBeDefined();
-      expect(response.rewrite_scores.terminology).toBeDefined();
+      expect(response.rewrite_scores.analysis).toBeDefined();
+      expect(response.rewrite_scores.analysis.clarity).toBeDefined();
+      expect(response.rewrite_scores.quality.grammar).toBeDefined();
+      expect(response.rewrite_scores.quality.style_guide).toBeDefined();
+      expect(response.rewrite_scores.analysis.tone).toBeDefined();
+      expect(response.rewrite_scores.quality.terminology).toBeDefined();
 
       if (response.issues && response.issues.length > 0) {
         const issue = response.issues[0];
@@ -509,11 +517,12 @@ describe('Style API Integration Tests', () => {
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
       expect(typeof response.scores.quality.score).toBe('number');
-      expect(response.scores.clarity).toBeDefined();
-      expect(response.scores.grammar).toBeDefined();
-      expect(response.scores.style_guide).toBeDefined();
-      expect(response.scores.tone).toBeDefined();
-      expect(response.scores.terminology).toBeDefined();
+      expect(response.scores.analysis).toBeDefined();
+      expect(response.scores.analysis.clarity).toBeDefined();
+      expect(response.scores.quality.grammar).toBeDefined();
+      expect(response.scores.quality.style_guide).toBeDefined();
+      expect(response.scores.analysis.tone).toBeDefined();
+      expect(response.scores.quality.terminology).toBeDefined();
     });
 
     it('should submit a style suggestion with File content and get result', async () => {
@@ -536,11 +545,12 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.workflow_id).toBe('string');
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
-      expect(response.scores.clarity).toBeDefined();
-      expect(response.scores.grammar).toBeDefined();
-      expect(response.scores.style_guide).toBeDefined();
-      expect(response.scores.tone).toBeDefined();
-      expect(response.scores.terminology).toBeDefined();
+      expect(response.scores.analysis).toBeDefined();
+      expect(response.scores.analysis.clarity).toBeDefined();
+      expect(response.scores.quality.grammar).toBeDefined();
+      expect(response.scores.quality.style_guide).toBeDefined();
+      expect(response.scores.analysis.tone).toBeDefined();
+      expect(response.scores.quality.terminology).toBeDefined();
 
       if (response.issues && response.issues.length > 0) {
         const issue = response.issues[0];
@@ -569,11 +579,12 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.workflow_id).toBe('string');
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
-      expect(response.scores.clarity).toBeDefined();
-      expect(response.scores.grammar).toBeDefined();
-      expect(response.scores.style_guide).toBeDefined();
-      expect(response.scores.tone).toBeDefined();
-      expect(response.scores.terminology).toBeDefined();
+      expect(response.scores.analysis).toBeDefined();
+      expect(response.scores.analysis.clarity).toBeDefined();
+      expect(response.scores.quality.grammar).toBeDefined();
+      expect(response.scores.quality.style_guide).toBeDefined();
+      expect(response.scores.analysis.tone).toBeDefined();
+      expect(response.scores.quality.terminology).toBeDefined();
 
       // Test rewrite and rewrite_scores
       expect(response.rewrite).toBeDefined();
@@ -581,11 +592,12 @@ describe('Style API Integration Tests', () => {
 
       expect(response.rewrite_scores).toBeDefined();
       expect(response.rewrite_scores.quality).toBeDefined();
-      expect(response.rewrite_scores.clarity).toBeDefined();
-      expect(response.rewrite_scores.grammar).toBeDefined();
-      expect(response.rewrite_scores.style_guide).toBeDefined();
-      expect(response.rewrite_scores.tone).toBeDefined();
-      expect(response.rewrite_scores.terminology).toBeDefined();
+      expect(response.rewrite_scores.analysis).toBeDefined();
+      expect(response.rewrite_scores.analysis.clarity).toBeDefined();
+      expect(response.rewrite_scores.quality.grammar).toBeDefined();
+      expect(response.rewrite_scores.quality.style_guide).toBeDefined();
+      expect(response.rewrite_scores.analysis.tone).toBeDefined();
+      expect(response.rewrite_scores.quality.terminology).toBeDefined();
 
       if (response.issues && response.issues.length > 0) {
         const issue = response.issues[0];
@@ -614,11 +626,12 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.workflow_id).toBe('string');
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
-      expect(response.scores.clarity).toBeDefined();
-      expect(response.scores.grammar).toBeDefined();
-      expect(response.scores.style_guide).toBeDefined();
-      expect(response.scores.tone).toBeDefined();
-      expect(response.scores.terminology).toBeDefined();
+      expect(response.scores.analysis).toBeDefined();
+      expect(response.scores.analysis.clarity).toBeDefined();
+      expect(response.scores.quality.grammar).toBeDefined();
+      expect(response.scores.quality.style_guide).toBeDefined();
+      expect(response.scores.analysis.tone).toBeDefined();
+      expect(response.scores.quality.terminology).toBeDefined();
     });
   });
 
@@ -721,11 +734,12 @@ describe('Style API Integration Tests', () => {
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
       expect(typeof response.scores.quality.score).toBe('number');
-      expect(response.scores.clarity).toBeDefined();
-      expect(response.scores.grammar).toBeDefined();
-      expect(response.scores.style_guide).toBeDefined();
-      expect(response.scores.tone).toBeDefined();
-      expect(response.scores.terminology).toBeDefined();
+      expect(response.scores.analysis).toBeDefined();
+      expect(response.scores.analysis.clarity).toBeDefined();
+      expect(response.scores.quality.grammar).toBeDefined();
+      expect(response.scores.quality.style_guide).toBeDefined();
+      expect(response.scores.analysis.tone).toBeDefined();
+      expect(response.scores.quality.terminology).toBeDefined();
     });
 
     it('should submit a style suggestion with Buffer content and get result', async () => {
@@ -748,11 +762,12 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.workflow_id).toBe('string');
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
-      expect(response.scores.clarity).toBeDefined();
-      expect(response.scores.grammar).toBeDefined();
-      expect(response.scores.style_guide).toBeDefined();
-      expect(response.scores.tone).toBeDefined();
-      expect(response.scores.terminology).toBeDefined();
+      expect(response.scores.analysis).toBeDefined();
+      expect(response.scores.analysis.clarity).toBeDefined();
+      expect(response.scores.quality.grammar).toBeDefined();
+      expect(response.scores.quality.style_guide).toBeDefined();
+      expect(response.scores.analysis.tone).toBeDefined();
+      expect(response.scores.quality.terminology).toBeDefined();
 
       if (response.issues && response.issues.length > 0) {
         const issue = response.issues[0];
@@ -781,11 +796,12 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.workflow_id).toBe('string');
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
-      expect(response.scores.clarity).toBeDefined();
-      expect(response.scores.grammar).toBeDefined();
-      expect(response.scores.style_guide).toBeDefined();
-      expect(response.scores.tone).toBeDefined();
-      expect(response.scores.terminology).toBeDefined();
+      expect(response.scores.analysis).toBeDefined();
+      expect(response.scores.analysis.clarity).toBeDefined();
+      expect(response.scores.quality.grammar).toBeDefined();
+      expect(response.scores.quality.style_guide).toBeDefined();
+      expect(response.scores.analysis.tone).toBeDefined();
+      expect(response.scores.quality.terminology).toBeDefined();
 
       // Test rewrite and rewrite_scores
       expect(response.rewrite).toBeDefined();
@@ -793,11 +809,12 @@ describe('Style API Integration Tests', () => {
 
       expect(response.rewrite_scores).toBeDefined();
       expect(response.rewrite_scores.quality).toBeDefined();
-      expect(response.rewrite_scores.clarity).toBeDefined();
-      expect(response.rewrite_scores.grammar).toBeDefined();
-      expect(response.rewrite_scores.style_guide).toBeDefined();
-      expect(response.rewrite_scores.tone).toBeDefined();
-      expect(response.rewrite_scores.terminology).toBeDefined();
+      expect(response.rewrite_scores.analysis).toBeDefined();
+      expect(response.rewrite_scores.analysis.clarity).toBeDefined();
+      expect(response.rewrite_scores.quality.grammar).toBeDefined();
+      expect(response.rewrite_scores.quality.style_guide).toBeDefined();
+      expect(response.rewrite_scores.analysis.tone).toBeDefined();
+      expect(response.rewrite_scores.quality.terminology).toBeDefined();
 
       if (response.issues && response.issues.length > 0) {
         const issue = response.issues[0];
@@ -826,11 +843,12 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.workflow_id).toBe('string');
       expect(response.scores).toBeDefined();
       expect(response.scores.quality).toBeDefined();
-      expect(response.scores.clarity).toBeDefined();
-      expect(response.scores.grammar).toBeDefined();
-      expect(response.scores.style_guide).toBeDefined();
-      expect(response.scores.tone).toBeDefined();
-      expect(response.scores.terminology).toBeDefined();
+      expect(response.scores.analysis).toBeDefined();
+      expect(response.scores.analysis.clarity).toBeDefined();
+      expect(response.scores.quality.grammar).toBeDefined();
+      expect(response.scores.quality.style_guide).toBeDefined();
+      expect(response.scores.analysis.tone).toBeDefined();
+      expect(response.scores.quality.terminology).toBeDefined();
     });
 
     it('should handle PDF Buffer content', async () => {
@@ -903,11 +921,12 @@ describe('Style API Integration Tests', () => {
       expect(styleCheckResponse.scores).toBeDefined();
       expect(styleCheckResponse.scores.quality).toBeDefined();
       expect(typeof styleCheckResponse.scores.quality.score).toBe('number');
-      expect(styleCheckResponse.scores.clarity).toBeDefined();
-      expect(styleCheckResponse.scores.grammar).toBeDefined();
-      expect(styleCheckResponse.scores.style_guide).toBeDefined();
-      expect(styleCheckResponse.scores.tone).toBeDefined();
-      expect(styleCheckResponse.scores.terminology).toBeDefined();
+      expect(styleCheckResponse.scores.analysis).toBeDefined();
+      expect(styleCheckResponse.scores.analysis.clarity).toBeDefined();
+      expect(styleCheckResponse.scores.quality.grammar).toBeDefined();
+      expect(styleCheckResponse.scores.quality.style_guide).toBeDefined();
+      expect(styleCheckResponse.scores.analysis.tone).toBeDefined();
+      expect(styleCheckResponse.scores.quality.terminology).toBeDefined();
 
       // Log some information about the downloaded content for debugging
       console.log(`Downloaded file size: ${arrayBuffer.byteLength} bytes`);
