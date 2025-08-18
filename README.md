@@ -1,11 +1,11 @@
-# NextGen Toolkit
+# Markup AI API Toolkit
 
 A TypeScript toolkit for integrating with the NextGen API. This toolkit provides a type-safe way to interact with NextGen services including style analysis, style guide management, and batch operations.
 
 ## Installation
 
 ```bash
-npm install @acrolinx/nextgen-toolkit
+npm install @markupai/toolkit
 ```
 
 ## Usage
@@ -22,7 +22,7 @@ import {
   getStyleCheck,
   getStyleSuggestion,
   getStyleRewrite,
-} from '@acrolinx/nextgen-toolkit';
+} from '@markupai/toolkit';
 
 // Using string content
 const stringRequest = {
@@ -70,7 +70,7 @@ const rewriteResult = await styleRewrite(stringRequest, config);
 For processing multiple documents efficiently, the toolkit provides batch operations:
 
 ```typescript
-import { styleBatchCheckRequests, styleBatchSuggestions, styleBatchRewrites } from '@acrolinx/nextgen-toolkit';
+import { styleBatchCheckRequests, styleBatchSuggestions, styleBatchRewrites } from '@markupai/toolkit';
 
 const requests = [
   { content: 'First document content', style_guide: 'ap', dialect: 'american_english', tone: 'formal' },
@@ -122,7 +122,7 @@ import type {
   StyleScores,
   Issue,
   IssueWithSuggestion,
-} from '@acrolinx/nextgen-toolkit';
+} from '@markupai/toolkit';
 
 // Style check response
 const checkResult: StyleAnalysisSuccessResp = await styleCheck(request, config);
@@ -146,7 +146,7 @@ console.log(`Rewrite quality score: ${rewriteResult.rewrite_scores.quality.score
 The toolkit requires a configuration object with your API key and platform settings:
 
 ```typescript
-import { Config, Environment, PlatformType } from '@acrolinx/nextgen-toolkit';
+import { Config, Environment, PlatformType } from '@markupai/toolkit';
 
 // Using environment-based configuration
 const config: Config = {

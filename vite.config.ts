@@ -9,8 +9,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: './src/main.ts',
-      name: 'acrolinx-nextgen-toolkit',
-      fileName: 'acrolinx-nextgen-toolkit',
+      name: 'toolkit',
+      fileName: 'toolkit',
       formats: ['es', 'umd'],
     },
     rollupOptions: {

@@ -1,17 +1,17 @@
 {
-  "name": "@acrolinx/nextgen-toolkit",
-  "version": "0.0.69",
+  "name": "@markupai/toolkit",
+  "version": "0.0.70",
   "type": "module",
-  "main": "./dist/acrolinx-nextgen-toolkit.umd.cjs",
-  "module": "./dist/acrolinx-nextgen-toolkit.js",
+  "main": "./dist/toolkit.umd.cjs",
+  "module": "./dist/toolkit.js",
   "types": "./dist/types/main.d.ts",
   "license": "Apache-2.0",
-  "author": "Acrolinx",
+  "author": "Markup AI",
   "repository": {
     "type": "git",
-    "url": "git@github.com:acrolinx/nextgen-toolkit.git"
+    "url": "git@github.com:markupai/toolkit-ts.git"
   },
-  "homepage": "https://github.com/acrolinx/nextgen-toolkit",
+  "homepage": "https://github.com/markupai/toolkit-ts",
   "publishConfig": {
     "access": "public"
   },
@@ -22,8 +22,8 @@
   "exports": {
     ".": {
       "types": "./dist/types/main.d.ts",
-      "import": "./dist/acrolinx-nextgen-toolkit.js",
-      "require": "./dist/acrolinx-nextgen-toolkit.umd.cjs"
+      "import": "./dist/toolkit.js",
+      "require": "./dist/toolkit.umd.cjs"
     }
   },
   "scripts": {
