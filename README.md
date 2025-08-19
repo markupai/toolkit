@@ -42,15 +42,18 @@ const fileRequest = {
   documentName: 'my-document.txt', // Optional custom filename
 };
 
-// Using Buffer object (Node.js environments) - BINARY FILES SUPPORTED
+// Using BufferDescriptor (Node.js environments) - BINARY FILES SUPPORTED
 const fs = require('fs');
 const pdfBuffer = fs.readFileSync('technical-report.pdf');
 const bufferRequest = {
-  content: pdfBuffer,
+  content: {
+    buffer: pdfBuffer,
+    mimeType: 'application/pdf'
+  },
   style_guide: 'ap',
   dialect: 'american_english',
   tone: 'academic',
-  documentName: 'technical-report.pdf', // Filename determines MIME type
+  documentName: 'technical-report.pdf', // Optional custom filename
 };
 
 // Perform style analysis with polling
