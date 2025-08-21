@@ -306,8 +306,6 @@ describe('Batch Processing', () => {
           average_sentence_length: 20,
           flesch_reading_ease: 70,
           vocabulary_complexity: 0.6,
-          flesch_kincaid_grade: 8,
-          lexical_diversity: 0.7,
           sentence_complexity: 0.5,
         },
         tone: {

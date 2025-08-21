@@ -48,7 +48,7 @@ const pdfBuffer = fs.readFileSync('technical-report.pdf');
 const bufferRequest = {
   content: {
     buffer: pdfBuffer,
-    mimeType: 'application/pdf'
+    mimeType: 'application/pdf',
   },
   style_guide: 'ap',
   dialect: 'american_english',

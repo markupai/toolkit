@@ -200,8 +200,6 @@ const styleHandlers = {
               average_sentence_length: 15,
               flesch_reading_ease: 80,
               vocabulary_complexity: 85,
-              flesch_kincaid_grade: 8.1,
-              lexical_diversity: 48.3,
               sentence_complexity: 97.4,
             },
             tone: {
@@ -272,8 +270,6 @@ const styleHandlers = {
               average_sentence_length: 15,
               flesch_reading_ease: 80,
               vocabulary_complexity: 85,
-              flesch_kincaid_grade: 8.1,
-              lexical_diversity: 48.3,
               sentence_complexity: 97.4,
             },
             tone: {
@@ -344,8 +340,6 @@ const styleHandlers = {
               average_sentence_length: 15,
               flesch_reading_ease: 80,
               vocabulary_complexity: 85,
-              flesch_kincaid_grade: 8.1,
-              lexical_diversity: 48.3,
               sentence_complexity: 97.4,
             },
             tone: {
@@ -399,8 +393,6 @@ const styleHandlers = {
               average_sentence_length: 15,
               flesch_reading_ease: 80,
               vocabulary_complexity: 85,
-              flesch_kincaid_grade: 8.1,
-              lexical_diversity: 48.3,
               sentence_complexity: 97.4,
             },
             tone: {
