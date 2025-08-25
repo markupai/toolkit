@@ -1,10 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import {
-  listStyleGuides,
-  createStyleGuide,
-  validateToken,
-  deleteStyleGuide,
-} from '../../../src/api/style/style-guides.api';
+import { listStyleGuides, createStyleGuide, validateToken } from '../../../src/api/style/style-guides.api';
 import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
 import { readFileSync } from 'fs';
