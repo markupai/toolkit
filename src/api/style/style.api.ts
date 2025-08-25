@@ -15,7 +15,7 @@ import { createContentObject } from './style.api.utils';
 import { submitAndPollStyleAnalysis, styleBatchCheck } from './style.api.utils';
 import type { Dialects, Tones } from '@markupai/api/api';
 import { MarkupAIError } from '@markupai/api';
-import { ApIError } from '../../utils/errors';
+import { ApiError } from '../../utils/errors';
 import { initEndpoint } from '../../utils/api';
 
 // Export utility functions for Node.js environments
@@ -38,7 +38,7 @@ export async function submitStyleCheck(
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof MarkupAIError) {
-      throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+      throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to submit style check: ${error}`);
   }
@@ -61,7 +61,7 @@ export async function submitStyleSuggestion(
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof MarkupAIError) {
-      throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+      throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to submit style suggestion: ${error}`);
   }
@@ -84,7 +84,7 @@ export async function submitStyleRewrite(
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof MarkupAIError) {
-      throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
+      throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to submit style rewrite: ${error}`);
   }
