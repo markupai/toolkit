@@ -1,7 +1,7 @@
 import type { StyleGuides, StyleGuide, CreateStyleGuideReq, StyleGuideUpdateReq } from './style.api.types';
 import type { Config } from '../../utils/api.types';
 import { initEndpoint } from '../../utils/api';
-import { acrolinxError } from 'acrolinx-nextgen-api';
+import { MarkupAIError } from '@markupai/api';
 import { ApIError } from '../../utils/errors';
 
 // List all style guides
@@ -10,7 +10,7 @@ export async function listStyleGuides(config: Config): Promise<StyleGuides> {
     const client = initEndpoint(config);
     return (await client.styleGuides.listStyleGuides()) as StyleGuides;
   } catch (error) {
-    if (error instanceof acrolinxError) {
+    if (error instanceof MarkupAIError) {
       throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to list style guides: ${error}`);
@@ -23,7 +23,7 @@ export async function getStyleGuide(styleGuideId: string, config: Config): Promi
     const client = initEndpoint(config);
     return (await client.styleGuides.getStyleGuide(styleGuideId)) as StyleGuide;
   } catch (error) {
-    if (error instanceof acrolinxError) {
+    if (error instanceof MarkupAIError) {
       throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to get style guide: ${error}`);
@@ -45,7 +45,7 @@ export async function createStyleGuide(request: CreateStyleGuideReq, config: Con
       name,
     })) as StyleGuide;
   } catch (error) {
-    if (error instanceof acrolinxError) {
+    if (error instanceof MarkupAIError) {
       throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to create style guide: ${error}`);
@@ -62,7 +62,7 @@ export async function updateStyleGuide(
     const client = initEndpoint(config);
     return (await client.styleGuides.updateStyleGuide(styleGuideId, updates)) as StyleGuide;
   } catch (error) {
-    if (error instanceof acrolinxError) {
+    if (error instanceof MarkupAIError) {
       throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to update style guide: ${error}`);
@@ -75,7 +75,7 @@ export async function deleteStyleGuide(styleGuideId: string, config: Config): Pr
     const client = initEndpoint(config);
     await client.styleGuides.deleteStyleGuide(styleGuideId);
   } catch (error) {
-    if (error instanceof acrolinxError) {
+    if (error instanceof MarkupAIError) {
       throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to delete style guide: ${error}`);

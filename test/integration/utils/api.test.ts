@@ -98,26 +98,6 @@ describe('API Utilities Integration Tests', () => {
         expect(result.error).toBe('Failed to parse URL from not-a-valid-url/v1/style-guides');
       });
 
-      it('should handle different HTTP status codes appropriately', async () => {
-        // Test with demo URL which might return different status codes
-        const demoConfig: Config = {
-          ...config,
-          platform: { type: PlatformType.Url, value: 'https://app.acrolinx.cloud' },
-        };
-        const result = await verifyPlatformUrl(demoConfig);
-
-        // The demo URL should either be reachable or return an error
-        expect(result).toHaveProperty('success');
-        expect(result).toHaveProperty('url');
-        expect(result).toHaveProperty('error');
-
-        if (result.success) {
-          expect(result.error).toBeUndefined();
-        } else {
-          expect(result.error).toBeDefined();
-        }
-      });
-
       it('should handle timeout scenarios gracefully', async () => {
         // This test verifies that the function doesn't hang indefinitely
         const timeoutConfig: Config = {

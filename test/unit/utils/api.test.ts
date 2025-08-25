@@ -56,7 +56,7 @@ describe('API Utilities Unit Tests', () => {
     });
 
     it('should return custom platform URL when provided', () => {
-      const customUrl = 'https://custom.acrolinx.com';
+      const customUrl = 'https://custom.markup.ai';
       const config: Config = {
         apiKey: 'test-key',
         platform: { type: PlatformType.Url, value: customUrl },
