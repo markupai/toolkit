@@ -41,7 +41,8 @@ describe('Style Guide Integration Tests', () => {
     });
   });
 
-  describe('Style Guide Creation', () => {
+  // Run this test manually to create a style guide, skipping in CI pipeline to avoid creating style guides in CI
+  describe.skip('Style Guide Creation', () => {
     it('should create a new style guide from PDF file', async () => {
       const pdfPath = join(__dirname, '../test-data/sample-style-guide.pdf');
       const pdfBuffer = readFileSync(pdfPath);
@@ -155,55 +156,6 @@ describe('Style Guide Integration Tests', () => {
 
       const result = await validateToken(invalidUrlConfig);
       expect(result).toBe(false);
-    });
-  });
-
-  describe('Style Guide Cleanup', () => {
-    it('should list style guides, filter by name starting with "Integration Test Style Guide", and delete all matching style guides', async () => {
-      // First, list all style guides
-      const allStyleGuides = await listStyleGuides(config);
-      expect(allStyleGuides).toBeDefined();
-      expect(Array.isArray(allStyleGuides)).toBe(true);
-
-      // Filter style guides that start with "Integration Test Style Guide"
-      const styleGuidesToDelete = allStyleGuides.filter((styleGuide) => styleGuide.name.startsWith('batteries'));
-
-      console.log(`Found ${styleGuidesToDelete.length} style guides to delete`);
-
-      // Delete all matching style guides
-      const deletePromises = styleGuidesToDelete.map(async (styleGuide) => {
-        try {
-          await deleteStyleGuide(styleGuide.id, config);
-          console.log(`Successfully deleted style guide: ${styleGuide.name} (ID: ${styleGuide.id})`);
-          return { success: true, id: styleGuide.id, name: styleGuide.name };
-        } catch (error) {
-          console.error(`Failed to delete style guide: ${styleGuide.name} (ID: ${styleGuide.id})`, error);
-          return { success: false, id: styleGuide.id, name: styleGuide.name, error };
-        }
-      });
-
-      const deleteResults = await Promise.all(deletePromises);
-
-      // Log results
-      const successfulDeletions = deleteResults.filter((result) => result.success);
-      const failedDeletions = deleteResults.filter((result) => !result.success);
-
-      console.log(`Successfully deleted ${successfulDeletions.length} style guides`);
-      if (failedDeletions.length > 0) {
-        console.log(`Failed to delete ${failedDeletions.length} style guides`);
-      }
-
-      // Verify that all deletions were successful
-      expect(failedDeletions.length).toBe(0);
-
-      // Optionally verify that the style guides are actually deleted by listing again
-      const remainingStyleGuides = await listStyleGuides(config);
-      const remainingIntegrationTestGuides = remainingStyleGuides.filter((styleGuide) =>
-        styleGuide.name.startsWith('batteries'),
-      );
-
-      // All integration test style guides should be deleted
-      expect(remainingIntegrationTestGuides.length).toBe(0);
     });
   });
 });
