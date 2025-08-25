@@ -1,6 +1,6 @@
 # Markup AI API Toolkit
 
-A TypeScript toolkit for integrating with the NextGen API. This toolkit provides a type-safe way to interact with NextGen services including style analysis, style guide management, and batch operations.
+This toolkit provides a type-safe way to interact with Markup AI services including style analysis, style guide management, and batch operations.
 
 ## Installation
 
