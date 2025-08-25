@@ -52,6 +52,6 @@
     "vite-plugin-dts": "^4.5.4"
   },
   "dependencies": {
-    "acrolinx-nextgen-api": "^0.0.4"
+    "@markupai/api": "^0.0.6"
   }
 }

@@ -1,4 +1,4 @@
-import { acrolinxClient } from 'acrolinx-nextgen-api';
+import { MarkupAIClient } from '@markupai/api';
 import { Environment, PlatformType } from './api.types';
 import type { Config } from './api.types';
 
@@ -72,7 +72,7 @@ export async function verifyPlatformUrl(config: Config): Promise<{ success: bool
   }
 }
 
-export function initEndpoint(config: Config): acrolinxClient {
+export function initEndpoint(config: Config): MarkupAIClient {
   const platformUrl = getPlatformUrl(config);
-  return new acrolinxClient({ token: config.apiKey, baseUrl: platformUrl });
+  return new MarkupAIClient({ token: config.apiKey, baseUrl: platformUrl });
 }

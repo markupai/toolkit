@@ -165,7 +165,7 @@ const configWithUrl: Config = {
   apiKey: 'your-api-key-here',
   platform: {
     type: PlatformType.Url,
-    value: 'https://your-custom-acrolinx-instance.com',
+    value: 'https://app.dev.markup.ai',
   },
 };
 ```
@@ -182,8 +182,8 @@ const configWithUrl: Config = {
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/acrolinx/nextgen-toolkit.git
-cd nextgen-toolkit
+git clone https://github.com/markupai/toolkit-ts
+cd toolkit-ts
 ```
 
 2. Install dependencies:

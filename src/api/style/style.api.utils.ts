@@ -10,7 +10,7 @@ import type {
 } from './style.api.types';
 import type { ResponseBase } from '../../utils/api.types';
 import type { StyleAnalysisReq, FileDescriptor, BufferDescriptor } from './style.api.types';
-import type { Dialects, Tones } from 'acrolinx-nextgen-api/api';
+import type { Dialects, Tones } from '@markupai/api/api';
 // Batch processing utilities
 import type {
   BatchOptions,
@@ -19,7 +19,7 @@ import type {
   BatchResponse,
   StyleAnalysisResponseType,
 } from './style.api.types';
-import { acrolinxError } from 'acrolinx-nextgen-api';
+import { MarkupAIError } from '@markupai/api';
 import { ApIError, ErrorType } from '../../utils/errors';
 import { Blob } from 'buffer';
 
@@ -239,7 +239,7 @@ export async function submitAndPollStyleAnalysis<T extends { status: StatusType 
         throw new Error(`Invalid operation type: ${operationType}`);
     }
   } catch (error) {
-    if (error instanceof acrolinxError) {
+    if (error instanceof MarkupAIError) {
       throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to submit style analysis: ${error}`);
@@ -583,7 +583,7 @@ export async function pollWorkflowForResult<T>(
 
       throw new ApIError(`Unexpected workflow status: ${dataWithWorkflowId.status}`, ErrorType.UNEXPECTED_STATUS);
     } catch (error) {
-      if (error instanceof acrolinxError) {
+      if (error instanceof MarkupAIError) {
         throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
       }
       console.error(`Unknown polling error (attempt ${attempts + 1}/${maxAttempts}):`, error);

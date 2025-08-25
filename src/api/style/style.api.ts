@@ -13,8 +13,8 @@ import type { Config, StyleAnalysisPollResp } from '../../utils/api.types';
 
 import { createContentObject } from './style.api.utils';
 import { submitAndPollStyleAnalysis, styleBatchCheck } from './style.api.utils';
-import type { Dialects, Tones } from 'acrolinx-nextgen-api/api';
-import { acrolinxError } from 'acrolinx-nextgen-api';
+import type { Dialects, Tones } from '@markupai/api/api';
+import { MarkupAIError } from '@markupai/api';
 import { ApIError } from '../../utils/errors';
 import { initEndpoint } from '../../utils/api';
 
@@ -37,7 +37,7 @@ export async function submitStyleCheck(
       webhook_url: styleAnalysisRequest.webhook_url,
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
-    if (error instanceof acrolinxError) {
+    if (error instanceof MarkupAIError) {
       throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to submit style check: ${error}`);
@@ -60,7 +60,7 @@ export async function submitStyleSuggestion(
       webhook_url: styleAnalysisRequest.webhook_url,
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
-    if (error instanceof acrolinxError) {
+    if (error instanceof MarkupAIError) {
       throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to submit style suggestion: ${error}`);
@@ -83,7 +83,7 @@ export async function submitStyleRewrite(
       webhook_url: styleAnalysisRequest.webhook_url,
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
-    if (error instanceof acrolinxError) {
+    if (error instanceof MarkupAIError) {
       throw ApIError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
     throw new Error(`Failed to submit style rewrite: ${error}`);
