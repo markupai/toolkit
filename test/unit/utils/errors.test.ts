@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  ApIError,
+  ApiError,
   ApiErrorResponse,
   ValidationErrorResponse,
   ErrorType,
@@ -8,7 +8,7 @@ import {
   PayloadTooLargeErrorResponse,
 } from '../../../src/utils/errors';
 
-describe('ApIError', () => {
+describe('ApiError', () => {
   describe('fromResponse', () => {
     it('should handle 400 Bad Request errors', () => {
       const errorData = {
@@ -17,9 +17,9 @@ describe('ApIError', () => {
         request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
       };
 
-      const error = ApIError.fromResponse(400, errorData);
+      const error = ApiError.fromResponse(400, errorData);
 
-      expect(error).toBeInstanceOf(ApIError);
+      expect(error).toBeInstanceOf(ApiError);
       expect(error.statusCode).toBe(400);
       expect(error.type).toBe(ErrorType.UNKNOWN_ERROR);
       expect(error.message).toBe('Workflow not found');
@@ -34,9 +34,9 @@ describe('ApIError', () => {
           'API key is not valid, maybe it expired or has been revoked. Log into the API key management app to create a new one.',
       };
 
-      const error = ApIError.fromResponse(401, errorData);
+      const error = ApiError.fromResponse(401, errorData);
 
-      expect(error).toBeInstanceOf(ApIError);
+      expect(error).toBeInstanceOf(ApiError);
       expect(error.statusCode).toBe(401);
       expect(error.type).toBe(ErrorType.UNAUTHORIZED_ERROR);
       expect(error.message).toBe(
@@ -53,9 +53,9 @@ describe('ApIError', () => {
         request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
       };
 
-      const error = ApIError.fromResponse(401, errorData);
+      const error = ApiError.fromResponse(401, errorData);
 
-      expect(error).toBeInstanceOf(ApIError);
+      expect(error).toBeInstanceOf(ApiError);
       expect(error.statusCode).toBe(401);
       expect(error.type).toBe(ErrorType.UNAUTHORIZED_ERROR);
       expect(error.message).toBe('Invalid API key');
@@ -72,9 +72,9 @@ describe('ApIError', () => {
         },
       };
 
-      const error = ApIError.fromResponse(404, errorData);
+      const error = ApiError.fromResponse(404, errorData);
 
-      expect(error).toBeInstanceOf(ApIError);
+      expect(error).toBeInstanceOf(ApiError);
       expect(error.statusCode).toBe(404);
       expect(error.type).toBe(ErrorType.WORKFLOW_NOT_FOUND);
       expect(error.message).toBe("The client attempted to poll or retrieve results for an ID that doesn't exist.");
@@ -90,9 +90,9 @@ describe('ApIError', () => {
         request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
       };
 
-      const error = ApIError.fromResponse(404, errorData);
+      const error = ApiError.fromResponse(404, errorData);
 
-      expect(error).toBeInstanceOf(ApIError);
+      expect(error).toBeInstanceOf(ApiError);
       expect(error.statusCode).toBe(404);
       expect(error.type).toBe(ErrorType.WORKFLOW_NOT_FOUND);
       expect(error.message).toBe('Workflow not found');
@@ -110,9 +110,9 @@ describe('ApIError', () => {
         },
       };
 
-      const error = ApIError.fromResponse(413, errorData);
+      const error = ApiError.fromResponse(413, errorData);
 
-      expect(error).toBeInstanceOf(ApIError);
+      expect(error).toBeInstanceOf(ApiError);
       expect(error.statusCode).toBe(413);
       expect(error.type).toBe(ErrorType.PAYLOAD_TOO_LARGE_ERROR);
       expect(error.message).toBe('Uploaded file is too large.');
@@ -127,9 +127,9 @@ describe('ApIError', () => {
         request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
       };
 
-      const error = ApIError.fromResponse(413, errorData);
+      const error = ApiError.fromResponse(413, errorData);
 
-      expect(error).toBeInstanceOf(ApIError);
+      expect(error).toBeInstanceOf(ApiError);
       expect(error.statusCode).toBe(413);
       expect(error.type).toBe(ErrorType.PAYLOAD_TOO_LARGE_ERROR);
       expect(error.message).toBe('File size exceeds limit');
@@ -167,9 +167,9 @@ describe('ApIError', () => {
         ],
       };
 
-      const error = ApIError.fromResponse(422, errorData);
+      const error = ApiError.fromResponse(422, errorData);
 
-      expect(error).toBeInstanceOf(ApIError);
+      expect(error).toBeInstanceOf(ApiError);
       expect(error.statusCode).toBe(422);
       expect(error.type).toBe(ErrorType.VALIDATION_ERROR);
       expect(error.message).toBe(
@@ -196,9 +196,9 @@ describe('ApIError', () => {
         ],
       };
 
-      const error = ApIError.fromResponse(422, errorData);
+      const error = ApiError.fromResponse(422, errorData);
 
-      expect(error).toBeInstanceOf(ApIError);
+      expect(error).toBeInstanceOf(ApiError);
       expect(error.statusCode).toBe(422);
       expect(error.type).toBe(ErrorType.VALIDATION_ERROR);
       expect(error.message).toBe('Validation failed: field required; ensure this value has at least 1 characters');
@@ -215,9 +215,9 @@ describe('ApIError', () => {
         request_id: '2fde4ca0-01f9-4343-8e40-2d85793a3897',
       };
 
-      const error = ApIError.fromResponse(500, errorData);
+      const error = ApiError.fromResponse(500, errorData);
 
-      expect(error).toBeInstanceOf(ApIError);
+      expect(error).toBeInstanceOf(ApiError);
       expect(error.statusCode).toBe(500);
       expect(error.type).toBe(ErrorType.INTERNAL_SERVER_ERROR);
       expect(error.message).toBe(
@@ -233,9 +233,9 @@ describe('ApIError', () => {
         detail: 'Internal server error occurred',
       };
 
-      const error = ApIError.fromResponse(500, errorData);
+      const error = ApiError.fromResponse(500, errorData);
 
-      expect(error).toBeInstanceOf(ApIError);
+      expect(error).toBeInstanceOf(ApiError);
       expect(error.statusCode).toBe(500);
       expect(error.type).toBe(ErrorType.INTERNAL_SERVER_ERROR);
       expect(error.message).toBe('Something went wrong');
@@ -247,9 +247,9 @@ describe('ApIError', () => {
     it('should handle empty error data', () => {
       const errorData = {};
 
-      const error = ApIError.fromResponse(400, errorData);
+      const error = ApiError.fromResponse(400, errorData);
 
-      expect(error).toBeInstanceOf(ApIError);
+      expect(error).toBeInstanceOf(ApiError);
       expect(error.statusCode).toBe(400);
       expect(error.type).toBe(ErrorType.UNKNOWN_ERROR);
       expect(error.message).toBe('Bad Request (400)');
@@ -265,7 +265,7 @@ describe('ApIError', () => {
         },
       };
 
-      const error = ApIError.fromResponse(404, errorData);
+      const error = ApiError.fromResponse(404, errorData);
 
       expect(error.message).toBe('Detailed description of what went wrong');
       expect(error.type).toBe(ErrorType.WORKFLOW_NOT_FOUND);
@@ -279,7 +279,7 @@ describe('ApIError', () => {
         },
       };
 
-      const error = ApIError.fromResponse(404, errorData);
+      const error = ApiError.fromResponse(404, errorData);
 
       expect(error.message).toBe('The workflow was not found.');
       expect(error.type).toBe(ErrorType.WORKFLOW_NOT_FOUND);
@@ -289,9 +289,9 @@ describe('ApIError', () => {
   describe('fromError', () => {
     it('should create error from non-API errors', () => {
       const originalError = new Error('Network connection failed');
-      const error = ApIError.fromError(originalError, ErrorType.NETWORK_ERROR);
+      const error = ApiError.fromError(originalError, ErrorType.NETWORK_ERROR);
 
-      expect(error).toBeInstanceOf(ApIError);
+      expect(error).toBeInstanceOf(ApiError);
       expect(error.message).toBe('Network connection failed');
       expect(error.type).toBe(ErrorType.NETWORK_ERROR);
       expect(error.statusCode).toBeUndefined();
@@ -302,7 +302,7 @@ describe('ApIError', () => {
 
     it('should create timeout error', () => {
       const originalError = new Error('Request timeout');
-      const error = ApIError.fromError(originalError, ErrorType.TIMEOUT_ERROR);
+      const error = ApiError.fromError(originalError, ErrorType.TIMEOUT_ERROR);
 
       expect(error.type).toBe(ErrorType.TIMEOUT_ERROR);
       expect(error.isTimeoutError).toBe(true);
@@ -335,7 +335,7 @@ describe('ApIError', () => {
         ],
       };
 
-      const error = ApIError.fromResponse(422, errorData);
+      const error = ApiError.fromResponse(422, errorData);
       const validationErrors = error.getValidationErrors();
 
       expect(validationErrors).toEqual({
@@ -368,7 +368,7 @@ describe('ApIError', () => {
         ],
       };
 
-      const error = ApIError.fromResponse(422, errorData);
+      const error = ApiError.fromResponse(422, errorData);
       const validationErrors = error.getValidationErrors();
 
       expect(validationErrors).toEqual({
@@ -386,7 +386,7 @@ describe('ApIError', () => {
         },
       };
 
-      const error = ApIError.fromResponse(404, errorData);
+      const error = ApiError.fromResponse(404, errorData);
       const validationErrors = error.getValidationErrors();
 
       expect(validationErrors).toEqual({});
@@ -395,7 +395,7 @@ describe('ApIError', () => {
 
   describe('constructor', () => {
     it('should create error with all properties', () => {
-      const error = new ApIError('Test error', ErrorType.UNKNOWN_ERROR, 400, { test: 'data' });
+      const error = new ApiError('Test error', ErrorType.UNKNOWN_ERROR, 400, { test: 'data' });
 
       expect(error.message).toBe('Test error');
       expect(error.statusCode).toBe(400);
@@ -405,7 +405,7 @@ describe('ApIError', () => {
     });
 
     it('should create error without status code for non-API errors', () => {
-      const error = new ApIError('Network error', ErrorType.NETWORK_ERROR, undefined, { test: 'data' });
+      const error = new ApiError('Network error', ErrorType.NETWORK_ERROR, undefined, { test: 'data' });
 
       expect(error.message).toBe('Network error');
       expect(error.statusCode).toBeUndefined();
@@ -427,7 +427,7 @@ describe('ApIError', () => {
         ],
       };
 
-      const error = ApIError.fromResponse(422, errorData);
+      const error = ApiError.fromResponse(422, errorData);
       expect(error.isValidationError).toBe(true);
     });
 
@@ -440,53 +440,53 @@ describe('ApIError', () => {
         },
       };
 
-      const error = ApIError.fromResponse(404, errorData);
+      const error = ApiError.fromResponse(404, errorData);
       expect(error.isNotFoundError).toBe(true);
     });
 
     it('should identify 404 status as not found even without specific error code', () => {
       const errorData = { message: 'Not found' };
 
-      const error = ApIError.fromResponse(404, errorData);
+      const error = ApiError.fromResponse(404, errorData);
       expect(error.isNotFoundError).toBe(true);
     });
 
     it('should identify 422 status as validation error even without specific error code', () => {
       const errorData = { message: 'Validation failed' };
 
-      const error = ApIError.fromResponse(422, errorData);
+      const error = ApiError.fromResponse(422, errorData);
       expect(error.isValidationError).toBe(true);
     });
 
     it('should correctly identify unauthorized errors', () => {
       const errorData = { detail: 'Invalid API key' };
 
-      const error = ApIError.fromResponse(401, errorData);
+      const error = ApiError.fromResponse(401, errorData);
       expect(error.isUnauthorizedError).toBe(true);
     });
 
     it('should correctly identify payload too large errors', () => {
       const errorData = { detail: 'File too large' };
 
-      const error = ApIError.fromResponse(413, errorData);
+      const error = ApiError.fromResponse(413, errorData);
       expect(error.isPayloadTooLargeError).toBe(true);
     });
 
     it('should correctly identify internal server errors', () => {
       const errorData = { detail: 'Server error' };
 
-      const error = ApIError.fromResponse(500, errorData);
+      const error = ApiError.fromResponse(500, errorData);
       expect(error.isInternalServerError).toBe(true);
     });
 
     it('should correctly identify workflow failed errors', () => {
-      const error = new ApIError('Workflow failed', ErrorType.WORKFLOW_FAILED);
+      const error = new ApiError('Workflow failed', ErrorType.WORKFLOW_FAILED);
       expect(error.isWorkflowFailed).toBe(true);
       expect(error.isApiError).toBe(false);
     });
 
     it('should correctly identify timeout errors', () => {
-      const error = new ApIError('Timeout', ErrorType.TIMEOUT_ERROR);
+      const error = new ApiError('Timeout', ErrorType.TIMEOUT_ERROR);
       expect(error.isTimeoutError).toBe(true);
       expect(error.isApiError).toBe(false);
     });
