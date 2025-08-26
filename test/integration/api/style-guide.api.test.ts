@@ -146,7 +146,7 @@ describe('Style Guide Integration Tests', () => {
     it('should return false for invalid platform URL', async () => {
       const invalidUrlConfig: Config = {
         apiKey: process.env.API_KEY || '',
-        platform: { type: PlatformType.Url, value: 'https://invalid-url-that-does-not-exist.com' },
+        platform: { type: PlatformType.Url, value: 'https://markupai.cloud' },
       };
 
       const result = await validateToken(invalidUrlConfig);
