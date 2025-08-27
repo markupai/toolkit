@@ -2,7 +2,7 @@ import { MarkupAIClient } from '@markupai/api';
 import { Environment, PlatformType } from './api.types';
 import type { Config } from './api.types';
 
-export const DEFAULT_PLATFORM_URL_PROD = 'https://app.acrolinx.cloud';
+export const DEFAULT_PLATFORM_URL_PROD = 'https://api.markup.ai';
 export const DEFAULT_PLATFORM_URL_STAGE = 'https://api.stg.markup.ai';
 export const DEFAULT_PLATFORM_URL_DEV = 'https://api.dev.markup.ai';
 
