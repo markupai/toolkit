@@ -1,6 +1,6 @@
 {
   "name": "@markupai/toolkit",
-  "version": "0.0.73",
+  "version": "0.0.74",
   "type": "module",
   "main": "./dist/toolkit.umd.cjs",
   "module": "./dist/toolkit.js",
