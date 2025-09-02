@@ -224,9 +224,15 @@ export class ApiError extends Error {
    * Handle unknown status codes
    */
   private static handleUnknownError(errorData: Record<string, unknown>, statusCode: number): ApiError {
-    const detail = typeof errorData.detail === 'string' ? errorData.detail : undefined;
-    const message = typeof errorData.message === 'string' ? errorData.message : undefined;
-    const errorMessage = message || detail || `HTTP error! status: ${statusCode}`;
+    if (!errorData || typeof errorData !== 'object') {
+      return new ApiError(`HTTP error! status: ${statusCode}`, ErrorType.UNKNOWN_ERROR, statusCode, errorData);
+    }
+
+    // Extract error message with fallback chain
+    const errorMessage =
+      (typeof errorData.message === 'string' && errorData.message) ||
+      (typeof errorData.detail === 'string' && errorData.detail) ||
+      `HTTP error! status: ${statusCode}`;
 
     return new ApiError(errorMessage, ErrorType.UNKNOWN_ERROR, statusCode, errorData);
   }
