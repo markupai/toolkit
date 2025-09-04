@@ -1,4 +1,4 @@
-import type { ResponseBase } from '../../utils/api.types';
+import type { ResponseBase, Status } from '../../utils/api.types';
 
 // Enums
 export interface StyleAnalysisSubmitResp extends ResponseBase {
@@ -42,7 +42,9 @@ export interface BufferDescriptor {
  */
 export interface Issue {
   original: string;
-  char_index: number;
+  position: {
+    start_index: number;
+  };
   subcategory: string;
   category: IssueCategory;
 }
@@ -61,7 +63,7 @@ export interface StyleScores {
       score: number;
       issues: number;
     };
-    style_guide: {
+    alignment: {
       score: number;
       issues: number;
     };
@@ -90,31 +92,44 @@ export interface StyleScores {
     };
   };
 }
-export interface StyleAnalysisSuccessResp extends ResponseBase {
-  style_guide_id: string;
-  scores: StyleScores;
-  issues: Issue[];
-  check_options: {
-    style_guide: {
-      style_guide_type: string;
-      style_guide_id: string;
+export interface StyleAnalysisSuccessResp {
+  workflow: {
+    id: string;
+    type: string; // e.g., 'checks', 'suggestions', 'rewrites'
+    api_version: string;
+    generated_at: string;
+    status: Status;
+    webhook_response?: {
+      url: string;
+      status_code: number;
     };
+  };
+  config: {
     dialect: string;
+    style_guide: {
+      style_guide_type: string; // TODO: confirmation on this
+      style_guide_id: string; // TODO: confirmation on this
+    };
     tone: string;
   };
-  webhook_response?: {
-    url: string;
-    status_code: number;
+  original: {
+    issues: Issue[];
+    scores: StyleScores;
   };
 }
 
-export interface StyleAnalysisSuggestionResp extends Omit<StyleAnalysisSuccessResp, 'issues'> {
-  issues: IssueWithSuggestion[];
+export interface StyleAnalysisSuggestionResp extends Omit<StyleAnalysisSuccessResp, 'original'> {
+  original: {
+    issues: IssueWithSuggestion[];
+    scores: StyleScores;
+  };
 }
 
 export interface StyleAnalysisRewriteResp extends StyleAnalysisSuggestionResp {
-  rewrite: string;
-  rewrite_scores: StyleScores;
+  rewrite: {
+    text: string;
+    scores: StyleScores;
+  };
 }
 
 export interface StyleAnalysisErrorResp extends ResponseBase {
