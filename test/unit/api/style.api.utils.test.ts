@@ -20,52 +20,193 @@ const mockFileURLToPath = vi.mocked(fileURLToPath);
 
 // Mock response types
 const completedSuccessResp = {
-  workflow_id: 'abc',
-  status: Status.Completed,
-  style_guide_id: 'sg1',
-  scores: {},
-  issues: [],
-  check_options: {
-    style_guide: { style_guide_type: 'custom', style_guide_id: 'sg1' },
+  workflow: {
+    id: 'abc',
+    type: 'checks',
+    api_version: '1.0.0',
+    generated_at: '2025-01-01T00:00:00Z',
+    status: Status.Completed,
+  },
+  config: {
     dialect: 'american_english',
+    style_guide: { style_guide_type: 'custom', style_guide_id: 'sg1' },
     tone: 'formal',
+  },
+  original: {
+    issues: [],
+    scores: {
+      quality: {
+        score: 0,
+        grammar: { score: 0, issues: 0 },
+        alignment: { score: 0, issues: 0 },
+        terminology: { score: 0, issues: 0 },
+      },
+      analysis: {
+        clarity: {
+          score: 0,
+          word_count: 0,
+          sentence_count: 0,
+          average_sentence_length: 0,
+          flesch_reading_ease: 0,
+          vocabulary_complexity: 0,
+          sentence_complexity: 0,
+        },
+        tone: { score: 0, informality: 0, liveliness: 0, informality_alignment: 0, liveliness_alignment: 0 },
+      },
+    },
   },
 };
 
 const runningSuccessResp = {
-  workflow_id: 'abc',
-  status: Status.Running,
-  style_guide_id: 'sg1',
-  scores: {},
-  issues: [],
-  check_options: {
-    style_guide: { style_guide_type: 'custom', style_guide_id: 'sg1' },
+  workflow: {
+    id: 'abc',
+    type: 'checks',
+    api_version: '1.0.0',
+    generated_at: '2025-01-01T00:00:00Z',
+    status: Status.Running,
+  },
+  config: {
     dialect: 'american_english',
+    style_guide: { style_guide_type: 'custom', style_guide_id: 'sg1' },
     tone: 'formal',
+  },
+  original: {
+    issues: [],
+    scores: {
+      quality: {
+        score: 0,
+        grammar: { score: 0, issues: 0 },
+        alignment: { score: 0, issues: 0 },
+        terminology: { score: 0, issues: 0 },
+      },
+      analysis: {
+        clarity: {
+          score: 0,
+          word_count: 0,
+          sentence_count: 0,
+          average_sentence_length: 0,
+          flesch_reading_ease: 0,
+          vocabulary_complexity: 0,
+          sentence_complexity: 0,
+        },
+        tone: { score: 0, informality: 0, liveliness: 0, informality_alignment: 0, liveliness_alignment: 0 },
+      },
+    },
   },
 };
 
 const completedSuggestionResp = {
-  workflow_id: 'def',
-  status: Status.Completed,
-  style_guide_id: 'sg2',
-  scores: {},
-  issues: [{ original: 'foo', char_index: 0, subcategory: 'bar', category: 'baz', suggestion: 'baz' }],
-  check_options: {
-    style_guide: { style_guide_type: 'custom', style_guide_id: 'sg2' },
+  workflow: {
+    id: 'def',
+    type: 'suggestions',
+    api_version: '1.0.0',
+    generated_at: '2025-01-01T00:00:00Z',
+    status: Status.Completed,
+  },
+  config: {
     dialect: 'british_english',
+    style_guide: { style_guide_type: 'custom', style_guide_id: 'sg2' },
     tone: 'casual',
+  },
+  original: {
+    issues: [{ original: 'foo', position: { start_index: 0 }, subcategory: 'bar', category: 'baz', suggestion: 'baz' }],
+    scores: {
+      quality: {
+        score: 0,
+        grammar: { score: 0, issues: 0 },
+        alignment: { score: 0, issues: 0 },
+        terminology: { score: 0, issues: 0 },
+      },
+      analysis: {
+        clarity: {
+          score: 0,
+          word_count: 0,
+          sentence_count: 0,
+          average_sentence_length: 0,
+          flesch_reading_ease: 0,
+          vocabulary_complexity: 0,
+          sentence_complexity: 0,
+        },
+        tone: { score: 0, informality: 0, liveliness: 0, informality_alignment: 0, liveliness_alignment: 0 },
+      },
+    },
   },
 };
 
 const pollResp = {
-  workflow_id: 'ghi',
-  status: Status.Running,
+  workflow: {
+    id: 'ghi',
+    type: 'checks',
+    api_version: '1.0.0',
+    generated_at: '2025-01-01T00:00:00Z',
+    status: Status.Running,
+  },
+  config: {
+    dialect: 'american_english',
+    style_guide: { style_guide_type: 'custom', style_guide_id: 'sg1' },
+    tone: 'formal',
+  },
+  original: {
+    issues: [],
+    scores: {
+      quality: {
+        score: 0,
+        grammar: { score: 0, issues: 0 },
+        alignment: { score: 0, issues: 0 },
+        terminology: { score: 0, issues: 0 },
+      },
+      analysis: {
+        clarity: {
+          score: 0,
+          word_count: 0,
+          sentence_count: 0,
+          average_sentence_length: 0,
+          flesch_reading_ease: 0,
+          vocabulary_complexity: 0,
+          sentence_complexity: 0,
+        },
+        tone: { score: 0, informality: 0, liveliness: 0, informality_alignment: 0, liveliness_alignment: 0 },
+      },
+    },
+  },
 };
 
 const failedResp = {
-  workflow_id: 'jkl',
-  status: Status.Failed,
+  workflow: {
+    id: 'jkl',
+    type: 'checks',
+    api_version: '1.0.0',
+    generated_at: '2025-01-01T00:00:00Z',
+    status: Status.Failed,
+  },
+  config: {
+    dialect: 'american_english',
+    style_guide: { style_guide_type: 'custom', style_guide_id: 'sg1' },
+    tone: 'formal',
+  },
+  original: {
+    issues: [],
+    scores: {
+      quality: {
+        score: 0,
+        grammar: { score: 0, issues: 0 },
+        alignment: { score: 0, issues: 0 },
+        terminology: { score: 0, issues: 0 },
+      },
+      analysis: {
+        clarity: {
+          score: 0,
+          word_count: 0,
+          sentence_count: 0,
+          average_sentence_length: 0,
+          flesch_reading_ease: 0,
+          vocabulary_complexity: 0,
+          sentence_complexity: 0,
+        },
+        tone: { score: 0, informality: 0, liveliness: 0, informality_alignment: 0, liveliness_alignment: 0 },
+      },
+    },
+  },
 };
 
 describe('Style API Utils', () => {
@@ -251,11 +392,11 @@ describe('isCompletedResponse', () => {
   it('narrows type for completed response', () => {
     const resp = completedSuccessResp as typeof completedSuccessResp | typeof pollResp;
     if (isCompletedResponse(resp)) {
-      // TypeScript should know resp.status === Status.Completed
-      expect(resp.status).toBe(Status.Completed);
-      expect('scores' in resp).toBe(true);
+      // TypeScript should know resp.workflow.status === Status.Completed
+      expect(resp.workflow.status).toBe(Status.Completed);
+      expect('original' in resp).toBe(true);
     } else {
-      expect(resp.status).not.toBe(Status.Completed);
+      expect(resp.workflow.status).not.toBe(Status.Completed);
     }
   });
 });
