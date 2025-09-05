@@ -1,8 +1,9 @@
 import type { ResponseBase, Status } from '../../utils/api.types';
 
 // Enums
-export interface StyleAnalysisSubmitResp extends ResponseBase {
-  message?: string;
+export interface StyleAnalysisSubmitResp {
+  workflow_id: string;
+  status: Status;
 }
 
 export enum StyleOperationType {
@@ -92,7 +93,17 @@ export interface StyleScores {
     };
   };
 }
-export interface StyleAnalysisSuccessResp {
+
+export interface StyleAnalysisResponseBase {
+  workflow: {
+    id: string;
+    type: string;
+    api_version: string;
+    status: Status;
+  };
+}
+
+export interface StyleAnalysisSuccessResp extends StyleAnalysisResponseBase {
   workflow: {
     id: string;
     type: string; // e.g., 'checks', 'suggestions', 'rewrites'
@@ -118,7 +129,7 @@ export interface StyleAnalysisSuccessResp {
   };
 }
 
-export interface StyleAnalysisSuggestionResp extends Omit<StyleAnalysisSuccessResp, 'original'> {
+export interface StyleAnalysisSuggestionResp extends StyleAnalysisSuccessResp {
   original: {
     issues: IssueWithSuggestion[];
     scores: StyleScores;

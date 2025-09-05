@@ -3,6 +3,7 @@ import { initEndpoint } from '../../utils/api';
 import { Status } from '../../utils/api.types';
 import type { Config } from '../../utils/api.types';
 import type {
+  StyleAnalysisResponseBase,
   StyleAnalysisRewriteResp,
   StyleAnalysisSubmitResp,
   StyleAnalysisSuccessResp,
@@ -272,9 +273,9 @@ export async function submitAndPollStyleAnalysis<
 }
 
 // Generic type guard for completed responses
-export function isCompletedResponse<T extends { workflow: { status: Status.Completed } }>(
+export function isCompletedResponse<T extends StyleAnalysisResponseBase>(
   resp: T,
-): resp is T & { workflow: { status: Status.Completed } } {
+): resp is T & { workflow: { status: Status.Completed } } & StyleAnalysisResponseBase {
   return resp.workflow.status === Status.Completed;
 }
 
@@ -560,48 +561,24 @@ export async function pollWorkflowForResult<T>(
 
     try {
       const client = initEndpoint(config);
-      let response:
-        | StyleAnalysisSubmitResp
-        | StyleAnalysisSuccessResp
-        | StyleAnalysisSuggestionResp
-        | StyleAnalysisRewriteResp;
+      let response: StyleAnalysisResponseBase;
 
       // TODO: Remove the unknown as cast once the SDK API is updated
       switch (styleOperation) {
         case StyleOperationType.Check:
-          response = (await client.styleChecks.getStyleCheck(workflowId)) as unknown as
-            | StyleAnalysisSubmitResp
-            | StyleAnalysisSuccessResp;
+          response = (await client.styleChecks.getStyleCheck(workflowId)) as unknown as StyleAnalysisResponseBase;
           break;
         case StyleOperationType.Suggestions:
-          response = (await client.styleSuggestions.getStyleSuggestion(workflowId)) as unknown as
-            | StyleAnalysisSubmitResp
-            | StyleAnalysisSuggestionResp;
+          response = (await client.styleSuggestions.getStyleSuggestion(
+            workflowId,
+          )) as unknown as StyleAnalysisResponseBase;
           break;
         case StyleOperationType.Rewrite:
-          response = (await client.styleRewrites.getStyleRewrite(workflowId)) as unknown as
-            | StyleAnalysisSubmitResp
-            | StyleAnalysisRewriteResp;
+          response = (await client.styleRewrites.getStyleRewrite(workflowId)) as unknown as StyleAnalysisResponseBase;
           break;
       }
 
-      // Discriminate between submit (poll/in-progress) vs final response shapes
-      if (isSubmitResponse(response)) {
-        const currentStatus = response.status as Status;
-        if (currentStatus === Status.Failed) {
-          throw new ApiError(`Workflow failed with status: ${Status.Failed}`, ErrorType.WORKFLOW_FAILED);
-        }
-        // For queued or running (or even completed without payload), keep polling
-        attempts++;
-        await new Promise((resolve) => setTimeout(resolve, pollInterval));
-        return poll();
-      }
-
-      if (!isFinalResponse(response)) {
-        throw new ApiError('Unexpected response shape while polling for results', ErrorType.UNEXPECTED_STATUS);
-      }
-
-      const currentStatus = response.workflow.status as Status;
+      const currentStatus = response.workflow.status;
 
       if (currentStatus === Status.Failed) {
         throw new ApiError(`Workflow failed with status: ${Status.Failed}`, ErrorType.WORKFLOW_FAILED);
