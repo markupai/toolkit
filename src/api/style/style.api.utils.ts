@@ -23,23 +23,6 @@ import { MarkupAIError } from '@markupai/api';
 import { ApiError, ErrorType } from '../../utils/errors';
 import { Blob } from 'buffer';
 
-// Type guards for style analysis responses
-export function isSubmitResponse(resp: unknown): resp is StyleAnalysisSubmitResp {
-  return (
-    !!resp &&
-    typeof resp === 'object' &&
-    'workflow_id' in (resp as Record<string, unknown>) &&
-    'status' in (resp as Record<string, unknown>) &&
-    !('workflow' in (resp as Record<string, unknown>))
-  );
-}
-
-export function isFinalResponse(
-  resp: unknown,
-): resp is StyleAnalysisSuccessResp | StyleAnalysisSuccessResp | StyleAnalysisRewriteResp {
-  return !!resp && typeof resp === 'object' && 'workflow' in (resp as Record<string, unknown>);
-}
-
 /**
  * Detects if the current environment is Node.js
  */
