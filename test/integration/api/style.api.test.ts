@@ -50,7 +50,7 @@ describe('Style API Integration Tests', () => {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
         },
         config,
       );
@@ -65,7 +65,7 @@ describe('Style API Integration Tests', () => {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'integration-test-document.txt',
         },
         config,
@@ -98,7 +98,7 @@ describe('Style API Integration Tests', () => {
               content: testContent,
               style_guide: styleGuideId,
               dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-              tone: STYLE_DEFAULTS.tones.formal,
+              tone: STYLE_DEFAULTS.tones.technical,
               documentName: 'integration-test-document.txt',
             },
             {
@@ -114,7 +114,7 @@ describe('Style API Integration Tests', () => {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
         },
         config,
       );
@@ -129,7 +129,7 @@ describe('Style API Integration Tests', () => {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'suggestions-test-document.txt',
         },
         config,
@@ -145,7 +145,7 @@ describe('Style API Integration Tests', () => {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
         },
         config,
       );
@@ -160,7 +160,7 @@ describe('Style API Integration Tests', () => {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'rewrite-test-document.txt',
         },
         config,
@@ -176,7 +176,7 @@ describe('Style API Integration Tests', () => {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
         },
         config,
       );
@@ -196,7 +196,7 @@ describe('Style API Integration Tests', () => {
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
       );
       expect(response.config.dialect).toBe(STYLE_DEFAULTS.dialects.americanEnglish);
-      expect(response.config.tone).toBe(STYLE_DEFAULTS.tones.formal);
+      expect(response.config.tone).toBe(STYLE_DEFAULTS.tones.technical);
 
       // Test scores structure (original)
       expect(response.original).toBeDefined();
@@ -218,9 +218,9 @@ describe('Style API Integration Tests', () => {
       expect(typeof response.original.scores.quality.grammar.score).toBe('number');
       expect(typeof response.original.scores.quality.grammar.issues).toBe('number');
 
-      expect(response.original.scores.quality.alignment).toBeDefined();
-      expect(typeof response.original.scores.quality.alignment.score).toBe('number');
-      expect(typeof response.original.scores.quality.alignment.issues).toBe('number');
+      expect(response.original.scores.quality.consistency).toBeDefined();
+      expect(typeof response.original.scores.quality.consistency.score).toBe('number');
+      expect(typeof response.original.scores.quality.consistency.issues).toBe('number');
 
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(typeof response.original.scores.analysis.tone.score).toBe('number');
@@ -238,7 +238,7 @@ describe('Style API Integration Tests', () => {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'custom-check-document.txt',
         },
         config,
@@ -254,7 +254,7 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(response.original.scores.quality.alignment).toBeDefined();
+      expect(response.original.scores.quality.consistency).toBeDefined();
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
     });
@@ -266,7 +266,7 @@ describe('Style API Integration Tests', () => {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
         },
         config,
       );
@@ -280,7 +280,7 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(response.original.scores.quality.alignment).toBeDefined();
+      expect(response.original.scores.quality.consistency).toBeDefined();
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
 
@@ -297,7 +297,7 @@ describe('Style API Integration Tests', () => {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'custom-suggestions-document.txt',
         },
         config,
@@ -312,7 +312,7 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(response.original.scores.quality.alignment).toBeDefined();
+      expect(response.original.scores.quality.consistency).toBeDefined();
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
 
@@ -329,7 +329,7 @@ describe('Style API Integration Tests', () => {
           content: testContent,
           style_guide: '01971e03-dd27-75ee-9044-b48e654848cf',
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
         },
         config,
       );
@@ -343,13 +343,13 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(response.original.scores.quality.alignment).toBeDefined();
+      expect(response.original.scores.quality.consistency).toBeDefined();
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
 
       // Test rewrite
       expect(response.rewrite).toBeDefined();
-      expect(typeof response.rewrite).toBe('string');
+      expect(typeof response.rewrite.text).toBe('string');
 
       if (response.original.issues && response.original.issues.length > 0) {
         const issue = response.original.issues[0];
@@ -364,7 +364,7 @@ describe('Style API Integration Tests', () => {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'custom-rewrite-document.txt',
         },
         config,
@@ -378,13 +378,13 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(response.original.scores.quality.alignment).toBeDefined();
+      expect(response.original.scores.quality.consistency).toBeDefined();
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
 
       // Test rewrite
       expect(response.rewrite).toBeDefined();
-      expect(typeof response.rewrite).toBe('string');
+      expect(typeof response.rewrite.text).toBe('string');
     });
   });
 
@@ -407,7 +407,7 @@ describe('Style API Integration Tests', () => {
           content: fileDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'batteries-integration-test.pdf',
         },
         config,
@@ -426,7 +426,7 @@ describe('Style API Integration Tests', () => {
           content: fileDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'batteries-suggestions-test.pdf',
         },
         config,
@@ -445,7 +445,7 @@ describe('Style API Integration Tests', () => {
           content: fileDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'batteries-rewrite-test.pdf',
         },
         config,
@@ -464,7 +464,7 @@ describe('Style API Integration Tests', () => {
           content: fileDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'batteries-check-result-test.pdf',
         },
         config,
@@ -477,7 +477,7 @@ describe('Style API Integration Tests', () => {
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
       );
       expect(response.config.dialect).toBe(STYLE_DEFAULTS.dialects.americanEnglish);
-      expect(response.config.tone).toBe(STYLE_DEFAULTS.tones.formal);
+      expect(response.config.tone).toBe(STYLE_DEFAULTS.tones.technical);
 
       // Test scores structure
       expect(response.original.scores).toBeDefined();
@@ -486,7 +486,7 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(response.original.scores.quality.alignment).toBeDefined();
+      expect(response.original.scores.quality.consistency).toBeDefined();
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
     });
@@ -500,7 +500,7 @@ describe('Style API Integration Tests', () => {
           content: fileDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'batteries-suggestions-result-test.pdf',
         },
         config,
@@ -514,7 +514,7 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(response.original.scores.quality.alignment).toBeDefined();
+      expect(response.original.scores.quality.consistency).toBeDefined();
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
 
@@ -534,7 +534,7 @@ describe('Style API Integration Tests', () => {
           content: fileDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'batteries-rewrite-result-test.pdf',
         },
         config,
@@ -548,13 +548,13 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(response.original.scores.quality.alignment).toBeDefined();
+      expect(response.original.scores.quality.consistency).toBeDefined();
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
 
       // Test rewrite
       expect(response.rewrite).toBeDefined();
-      expect(typeof response.rewrite).toBe('string');
+      expect(typeof response.rewrite.text).toBe('string');
 
       if (response.original.issues && response.original.issues.length > 0) {
         const issue = response.original.issues[0];
@@ -572,7 +572,7 @@ describe('Style API Integration Tests', () => {
           content: fileDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           // No documentName - should use default
         },
         config,
@@ -586,7 +586,7 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(response.original.scores.quality.alignment).toBeDefined();
+      expect(response.original.scores.quality.consistency).toBeDefined();
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
     });
@@ -609,7 +609,7 @@ describe('Style API Integration Tests', () => {
           content: bufferDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'buffer-integration-test.txt',
         },
         config,
@@ -628,7 +628,7 @@ describe('Style API Integration Tests', () => {
           content: bufferDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'buffer-suggestions-test.txt',
         },
         config,
@@ -647,7 +647,7 @@ describe('Style API Integration Tests', () => {
           content: bufferDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'buffer-rewrite-test.txt',
         },
         config,
@@ -666,7 +666,7 @@ describe('Style API Integration Tests', () => {
           content: bufferDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'buffer-check-result-test.txt',
         },
         config,
@@ -679,7 +679,7 @@ describe('Style API Integration Tests', () => {
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
       );
       expect(response.config.dialect).toBe(STYLE_DEFAULTS.dialects.americanEnglish);
-      expect(response.config.tone).toBe(STYLE_DEFAULTS.tones.formal);
+      expect(response.config.tone).toBe(STYLE_DEFAULTS.tones.technical);
 
       // Test scores structure
       expect(response.original.scores).toBeDefined();
@@ -688,7 +688,7 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(response.original.scores.quality.alignment).toBeDefined();
+      expect(response.original.scores.quality.consistency).toBeDefined();
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
     });
@@ -702,7 +702,7 @@ describe('Style API Integration Tests', () => {
           content: bufferDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'buffer-suggestions-result-test.txt',
         },
         config,
@@ -716,7 +716,7 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(response.original.scores.quality.alignment).toBeDefined();
+      expect(response.original.scores.quality.consistency).toBeDefined();
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
 
@@ -736,7 +736,7 @@ describe('Style API Integration Tests', () => {
           content: bufferDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'buffer-rewrite-result-test.txt',
         },
         config,
@@ -750,20 +750,20 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(response.original.scores.quality.alignment).toBeDefined();
+      expect(response.original.scores.quality.consistency).toBeDefined();
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
 
       // Test rewrite and rewrite_scores
       expect(response.rewrite).toBeDefined();
-      expect(typeof response.rewrite).toBe('string');
+      expect(typeof response.rewrite.text).toBe('string');
 
       expect(response.rewrite.scores).toBeDefined();
       expect(response.rewrite.scores.quality).toBeDefined();
       expect(response.rewrite.scores.analysis).toBeDefined();
       expect(response.rewrite.scores.analysis.clarity).toBeDefined();
       expect(response.rewrite.scores.quality.grammar).toBeDefined();
-      expect(response.rewrite.scores.quality.alignment).toBeDefined();
+      expect(response.rewrite.scores.quality.consistency).toBeDefined();
       expect(response.rewrite.scores.analysis.tone).toBeDefined();
       expect(response.rewrite.scores.quality.terminology).toBeDefined();
 
@@ -783,7 +783,7 @@ describe('Style API Integration Tests', () => {
           content: bufferDescriptor,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           // No documentName - should use default
         },
         config,
@@ -797,7 +797,7 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(response.original.scores.quality.alignment).toBeDefined();
+      expect(response.original.scores.quality.consistency).toBeDefined();
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
     });
@@ -810,7 +810,7 @@ describe('Style API Integration Tests', () => {
           content: testPdfBuffer,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'buffer-pdf-test.pdf',
         },
         config,
@@ -846,7 +846,7 @@ describe('Style API Integration Tests', () => {
           content: { buffer: fileBuffer, mimeType: 'text/plain' },
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
           documentName: 'downloaded-file.txt',
         },
         config,
@@ -866,7 +866,7 @@ describe('Style API Integration Tests', () => {
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
       );
       expect(styleCheckResponse.config.dialect).toBe(STYLE_DEFAULTS.dialects.americanEnglish);
-      expect(styleCheckResponse.config.tone).toBe(STYLE_DEFAULTS.tones.formal);
+      expect(styleCheckResponse.config.tone).toBe(STYLE_DEFAULTS.tones.technical);
 
       // Test scores structure
       expect(styleCheckResponse.original.scores).toBeDefined();
@@ -875,7 +875,7 @@ describe('Style API Integration Tests', () => {
       expect(styleCheckResponse.original.scores.analysis).toBeDefined();
       expect(styleCheckResponse.original.scores.analysis.clarity).toBeDefined();
       expect(styleCheckResponse.original.scores.quality.grammar).toBeDefined();
-      expect(styleCheckResponse.original.scores.quality.alignment).toBeDefined();
+      expect(styleCheckResponse.original.scores.quality.consistency).toBeDefined();
       expect(styleCheckResponse.original.scores.analysis.tone).toBeDefined();
       expect(styleCheckResponse.original.scores.quality.terminology).toBeDefined();
 
@@ -897,7 +897,7 @@ describe('Style API Integration Tests', () => {
           content: 'Integration test for getStyleSuggestion',
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
         },
         config,
       );
@@ -916,7 +916,7 @@ describe('Style API Integration Tests', () => {
           content: 'Integration test for getStyleRewrite',
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.formal,
+          tone: STYLE_DEFAULTS.tones.technical,
         },
         config,
       );
@@ -935,21 +935,21 @@ describe('Style API Integration Tests', () => {
         content: 'This is a test document for style checking. It contains multiple sentences to analyze.',
         style_guide: 'ap',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-        tone: STYLE_DEFAULTS.tones.formal,
+        tone: STYLE_DEFAULTS.tones.technical,
         documentName: 'test-document-1.txt',
       },
       {
         content: 'Another test document with different content. This should be processed separately.',
         style_guide: 'chicago',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-        tone: STYLE_DEFAULTS.tones.informal,
+        tone: STYLE_DEFAULTS.tones.technical,
         documentName: 'test-document-2.txt',
       },
       {
         content: 'A third document for comprehensive testing of the batch processing system.',
         style_guide: 'microsoft',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-        tone: STYLE_DEFAULTS.tones.formal,
+        tone: STYLE_DEFAULTS.tones.technical,
         documentName: 'test-document-3.txt',
       },
     ];
@@ -1007,7 +1007,7 @@ describe('Style API Integration Tests', () => {
             content: '', // Empty content should fail
             style_guide: 'ap',
             dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-            tone: STYLE_DEFAULTS.tones.formal,
+            tone: STYLE_DEFAULTS.tones.technical,
           },
           mockBatchRequests[2], // Should succeed
         ];
@@ -1145,7 +1145,7 @@ describe('Style API Integration Tests', () => {
             content: 'Invalid content that might cause issues',
             style_guide: 'invalid_style_guide', // Invalid style guide
             dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-            tone: STYLE_DEFAULTS.tones.formal,
+            tone: STYLE_DEFAULTS.tones.technical,
           },
           mockBatchRequests[2], // Should succeed
         ];
@@ -1169,7 +1169,7 @@ describe('Style API Integration Tests', () => {
             content: `Test document ${index + 1} for large batch processing.`,
             style_guide: 'ap',
             dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-            tone: STYLE_DEFAULTS.tones.formal,
+            tone: STYLE_DEFAULTS.tones.technical,
             documentName: `test-document-${index + 1}.txt`,
           }));
 
@@ -1194,7 +1194,7 @@ describe('Style API Integration Tests', () => {
             content: `Test document ${index + 1} for reactive progress testing. This document contains multiple sentences to ensure proper processing time. Document ${index + 1} has unique content for comprehensive testing.`,
             style_guide: 'ap',
             dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-            tone: STYLE_DEFAULTS.tones.formal,
+            tone: STYLE_DEFAULTS.tones.technical,
             documentName: `test-document-${index + 1}.txt`,
           }));
 

@@ -42,7 +42,7 @@ describe('Style API Unit Tests', () => {
     content: 'test content',
     style_guide: 'ap',
     dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-    tone: STYLE_DEFAULTS.tones.formal,
+    tone: STYLE_DEFAULTS.tones.technical,
   };
 
   describe('Style Analysis Operations', () => {
@@ -121,7 +121,7 @@ describe('Style API Unit Tests', () => {
         content: fileDescriptor,
         style_guide: 'ap',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-        tone: STYLE_DEFAULTS.tones.formal,
+        tone: STYLE_DEFAULTS.tones.technical,
         documentName: 'custom-file.txt',
       };
 
@@ -142,7 +142,7 @@ describe('Style API Unit Tests', () => {
         content: bufferDescriptor,
         style_guide: 'ap',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-        tone: STYLE_DEFAULTS.tones.formal,
+        tone: STYLE_DEFAULTS.tones.technical,
         documentName: 'custom-buffer.txt',
       };
 
@@ -262,7 +262,7 @@ describe('Style API Unit Tests', () => {
         content: fileDescriptor,
         style_guide: 'ap',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-        tone: STYLE_DEFAULTS.tones.formal,
+        tone: STYLE_DEFAULTS.tones.technical,
       };
 
       const result = await styleCheck(requestWithFile, mockConfig);
@@ -282,7 +282,7 @@ describe('Style API Unit Tests', () => {
         content: bufferDescriptor,
         style_guide: 'ap',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-        tone: STYLE_DEFAULTS.tones.formal,
+        tone: STYLE_DEFAULTS.tones.technical,
       };
 
       const result = await styleCheck(requestWithBuffer, mockConfig);
@@ -354,7 +354,7 @@ describe('Style API Unit Tests', () => {
       expect(typedResult.rewrite.scores.analysis).toBeDefined();
       expect(typedResult.rewrite.scores.analysis.clarity).toBeDefined();
       expect(typedResult.rewrite.scores.quality.grammar).toBeDefined();
-      expect(typedResult.rewrite.scores.quality.alignment).toBeDefined();
+      expect(typedResult.rewrite.scores.quality.consistency).toBeDefined();
       expect(typedResult.rewrite.scores.analysis.tone).toBeDefined();
       expect(typedResult.rewrite.scores.quality.terminology).toBeDefined();
       // Check for suggestion in issues
@@ -372,7 +372,7 @@ describe('Style API Unit Tests', () => {
         content: 'test content 1',
         style_guide: 'ap',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-        tone: STYLE_DEFAULTS.tones.formal,
+        tone: STYLE_DEFAULTS.tones.technical,
       },
       {
         content: 'test content 2',
