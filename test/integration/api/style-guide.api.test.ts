@@ -31,8 +31,6 @@ describe('Style Guide Integration Tests', () => {
       expect(firstStyleGuide).toHaveProperty('created_at');
       expect(firstStyleGuide).toHaveProperty('created_by');
       expect(firstStyleGuide).toHaveProperty('status');
-      expect(firstStyleGuide).toHaveProperty('updated_at');
-      expect(firstStyleGuide).toHaveProperty('updated_by');
     });
   });
 
@@ -51,15 +49,12 @@ describe('Style Guide Integration Tests', () => {
       expect(response.created_at).toBeDefined();
       expect(response.created_by).toBeDefined();
       expect(response.status).toBeDefined();
-      expect(response.updated_at).toBeDefined();
-      expect(response.updated_by).toBeDefined();
+
       expect(typeof response.id).toBe('string');
       expect(typeof response.name).toBe('string');
       expect(typeof response.created_at).toBe('string');
       expect(typeof response.created_by).toBe('string');
       expect(typeof response.status).toBe('string');
-      expect(typeof response.updated_at === 'string' || response.updated_at === null).toBe(true);
-      expect(typeof response.updated_by === 'string' || response.updated_by === null).toBe(true);
       expect(response.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
     });
 

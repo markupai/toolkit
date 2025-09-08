@@ -87,8 +87,6 @@ const styleHandlers = {
           created_at: '2025-06-20T11:46:30.537Z',
           created_by: 'test-user',
           status: 'running',
-          updated_at: '2025-06-20T11:46:30.537Z',
-          updated_by: 'test-user',
         },
       ]);
     }),
@@ -102,8 +100,6 @@ const styleHandlers = {
         created_at: '2025-06-20T11:46:30.537Z',
         created_by: 'test-user',
         status: 'running',
-        updated_at: '2025-06-20T11:46:30.537Z',
-        updated_by: 'test-user',
       });
     }),
     getError: http.get('*/v1/style-guides/:styleGuideId', () => {
@@ -125,8 +121,6 @@ const styleHandlers = {
         created_at: '2025-06-20T11:46:30.537Z',
         created_by: 'test-user',
         status: 'running',
-        updated_at: '2025-06-20T11:46:30.537Z',
-        updated_by: 'test-user',
       });
     }),
     createError: http.post('*/v1/style-guides', () => {
@@ -146,8 +140,6 @@ const styleHandlers = {
         created_at: '2025-06-20T11:46:30.537Z',
         created_by: 'test-user',
         status: 'running',
-        updated_at: '2025-06-20T12:00:00.000Z',
-        updated_by: 'test-user',
       });
     }),
     updateError: http.patch('*/v1/style-guides/:styleGuideId', () => {
