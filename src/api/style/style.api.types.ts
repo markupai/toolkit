@@ -162,8 +162,6 @@ export interface StyleGuide {
   created_at: string;
   created_by: string;
   status: string;
-  updated_at: string;
-  updated_by: string;
 }
 
 export type StyleGuides = StyleGuide[];

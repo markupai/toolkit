@@ -35,8 +35,6 @@ describe('Style Guide Unit Tests', () => {
           created_at: '2025-06-20T11:46:30.537Z',
           created_by: 'test-user',
           status: 'running',
-          updated_at: '2025-06-20T11:46:30.537Z',
-          updated_by: 'test-user',
         },
       ]);
     });
@@ -50,8 +48,6 @@ describe('Style Guide Unit Tests', () => {
         created_at: '2025-06-20T11:46:30.537Z',
         created_by: 'test-user',
         status: 'running',
-        updated_at: '2025-06-20T11:46:30.537Z',
-        updated_by: 'test-user',
       });
     });
 
@@ -65,8 +61,6 @@ describe('Style Guide Unit Tests', () => {
         created_at: '2025-06-20T11:46:30.537Z',
         created_by: 'test-user',
         status: 'running',
-        updated_at: '2025-06-20T11:46:30.537Z',
-        updated_by: 'test-user',
       });
     });
 
@@ -79,8 +73,6 @@ describe('Style Guide Unit Tests', () => {
         created_at: '2025-06-20T11:46:30.537Z',
         created_by: 'test-user',
         status: 'running',
-        updated_at: '2025-06-20T12:00:00.000Z',
-        updated_by: 'test-user',
       });
     });
 
