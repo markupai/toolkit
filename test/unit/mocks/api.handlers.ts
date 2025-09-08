@@ -201,7 +201,7 @@ const styleHandlers = {
             quality: {
               score: 80,
               grammar: { score: 90, issues: 1 },
-              alignment: { score: 85, issues: 0 },
+              consistency: { score: 85, issues: 0 },
               terminology: { score: 85, issues: 0 },
             },
             analysis: {
@@ -269,7 +269,7 @@ const styleHandlers = {
             quality: {
               score: 80,
               grammar: { score: 90, issues: 1 },
-              alignment: { score: 85, issues: 0 },
+              consistency: { score: 85, issues: 0 },
               terminology: { score: 85, issues: 0 },
             },
             analysis: {
@@ -337,7 +337,7 @@ const styleHandlers = {
             quality: {
               score: 80,
               grammar: { score: 90, issues: 1 },
-              alignment: { score: 85, issues: 0 },
+              consistency: { score: 85, issues: 0 },
               terminology: { score: 85, issues: 0 },
             },
             analysis: {
@@ -366,7 +366,7 @@ const styleHandlers = {
             quality: {
               score: 85,
               grammar: { score: 95, issues: 0 },
-              alignment: { score: 90, issues: 0 },
+              consistency: { score: 90, issues: 0 },
               terminology: { score: 90, issues: 0 },
             },
             analysis: {

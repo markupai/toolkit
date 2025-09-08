@@ -38,7 +38,7 @@ const completedSuccessResp = {
       quality: {
         score: 0,
         grammar: { score: 0, issues: 0 },
-        alignment: { score: 0, issues: 0 },
+        consistency: { score: 0, issues: 0 },
         terminology: { score: 0, issues: 0 },
       },
       analysis: {
@@ -76,7 +76,7 @@ const runningSuccessResp = {
       quality: {
         score: 0,
         grammar: { score: 0, issues: 0 },
-        alignment: { score: 0, issues: 0 },
+        consistency: { score: 0, issues: 0 },
         terminology: { score: 0, issues: 0 },
       },
       analysis: {
@@ -114,7 +114,7 @@ const completedSuggestionResp = {
       quality: {
         score: 0,
         grammar: { score: 0, issues: 0 },
-        alignment: { score: 0, issues: 0 },
+        consistency: { score: 0, issues: 0 },
         terminology: { score: 0, issues: 0 },
       },
       analysis: {
@@ -152,7 +152,7 @@ const pollResp = {
       quality: {
         score: 0,
         grammar: { score: 0, issues: 0 },
-        alignment: { score: 0, issues: 0 },
+        consistency: { score: 0, issues: 0 },
         terminology: { score: 0, issues: 0 },
       },
       analysis: {
@@ -470,7 +470,7 @@ describe('Batch Processing', () => {
             score: 95,
             issues: 1,
           },
-          alignment: {
+          consistency: {
             score: 80,
             issues: 2,
           },
