@@ -32,12 +32,12 @@ jobs:
           npm run test:unit
           npm run test:integration
           npm run build
+
       - name: Publish to NPM
         id: publish
         uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_ACCESS_TOKEN }}
-          tag: dev
 
       - name: Push Tag
         uses: anothrNick/github-tag-action@v1
