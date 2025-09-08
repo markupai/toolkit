@@ -1,15 +1,17 @@
 export const STYLE_DEFAULTS = {
   dialects: {
     americanEnglish: 'american_english',
-    britishOxford: 'british_oxford',
+    britishEnglish: 'british_english',
     canadianEnglish: 'canadian_english',
   },
   tones: {
     academic: 'academic',
-    business: 'business',
+    confident: 'confident',
     conversational: 'conversational',
-    formal: 'formal',
-    informal: 'informal',
+    empathetic: 'empathetic',
+    engaging: 'engaging',
+    friendly: 'friendly',
+    professional: 'professional',
     technical: 'technical',
   },
   styleGuides: {

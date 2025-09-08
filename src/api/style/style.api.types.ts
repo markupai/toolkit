@@ -64,7 +64,7 @@ export interface StyleScores {
       score: number;
       issues: number;
     };
-    alignment: {
+    consistency: {
       score: number;
       issues: number;
     };
