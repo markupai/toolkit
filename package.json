@@ -1,6 +1,6 @@
 {
   "name": "@markupai/toolkit",
-  "version": "0.2.0-dev.2",
+  "version": "0.2.0",
   "type": "module",
   "main": "./dist/toolkit.umd.cjs",
   "module": "./dist/toolkit.js",
@@ -13,8 +13,7 @@
   },
   "homepage": "https://github.com/markupai/toolkit-ts",
   "publishConfig": {
-    "access": "public",
-    "tag": "dev"
+    "access": "public"
   },
   "files": [
     "dist",
@@ -40,11 +39,11 @@
     "coverage": "vitest run --coverage"
   },
   "devDependencies": {
-    "@eslint/js": "^9.34.0",
+    "@eslint/js": "^9.35.0",
     "@types/node": "^24.3.1",
     "@vitest/coverage-v8": "^3.2.4",
     "dotenv": "^17.2.2",
-    "eslint": "^9.34.0",
+    "eslint": "^9.35.0",
     "msw": "^2.11.1",
     "prettier": "^3.6.2",
     "typescript": "^5.9.2",
