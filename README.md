@@ -16,9 +16,14 @@ The toolkit supports string content, File objects, and Buffer objects for style 
 
 ```typescript
 import {
+  // Auto-polling convenience methods
   styleCheck,
   styleSuggestions,
   styleRewrite,
+  // Async workflow helpers
+  submitStyleCheck,
+  submitStyleSuggestion,
+  submitStyleRewrite,
   getStyleCheck,
   getStyleSuggestion,
   getStyleRewrite,
@@ -35,7 +40,7 @@ const stringRequest = {
 // Using File object (browser environments)
 const file = new File(['This is content from a file.'], 'document.txt', { type: 'text/plain' });
 const fileRequest = {
-  content: file,
+  content: { file }, // FileDescriptor (optionally add mimeType)
   style_guide: 'chicago',
   dialect: 'american_english',
   tone: 'academic',
@@ -56,7 +61,7 @@ const bufferRequest = {
   documentName: 'technical-report.pdf', // Optional custom filename
 };
 
-// Perform style analysis with polling
+// Perform style analysis with polling (convenience)
 const result = await styleCheck(stringRequest, config);
 const fileResult = await styleCheck(fileRequest, config);
 const pdfResult = await styleCheck(bufferRequest, config); // Works with PDFs!
@@ -89,14 +94,22 @@ const batchCheck = styleBatchCheckRequests(requests, config, {
   timeout: 30000,
 });
 
-// Monitor progress
-batchCheck.progress.then((finalProgress) => {
+// Monitor progress (live snapshot)
+console.log(`Started: total ${batchCheck.progress.total}`);
+const interval = setInterval(() => {
+  const p = batchCheck.progress;
+  console.log(`Progress: ${p.completed}/${p.total} completed, ${p.inProgress} in-progress, ${p.failed} failed`);
+  if (p.completed + p.failed === p.total) clearInterval(interval);
+}, 1000);
+
+// Await final results
+batchCheck.promise.then((finalProgress) => {
   console.log(`Completed: ${finalProgress.completed}/${finalProgress.total}`);
   console.log(`Failed: ${finalProgress.failed}`);
 
   finalProgress.results.forEach((result, index) => {
     if (result.status === 'completed') {
-      console.log(`Request ${index}: ${result.result?.scores.quality.score}`);
+      console.log(`Request ${index}: ${result.result?.original.scores.quality.score}`);
     } else if (result.status === 'failed') {
       console.log(`Request ${index} failed: ${result.error?.message}`);
     }
@@ -129,19 +142,19 @@ import type {
 
 // Style check response
 const checkResult: StyleAnalysisSuccessResp = await styleCheck(request, config);
-console.log(`Quality score: ${checkResult.scores.quality.score}`);
-console.log(`Issues found: ${checkResult.issues.length}`);
+console.log(`Quality score: ${checkResult.original.scores.quality.score}`);
+console.log(`Issues found: ${checkResult.original.issues.length}`);
 
 // Style suggestion response
 const suggestionResult: StyleAnalysisSuggestionResp = await styleSuggestions(request, config);
-suggestionResult.issues.forEach((issue) => {
+suggestionResult.original.issues.forEach((issue) => {
   console.log(`Issue: "${issue.original}" → Suggestion: "${issue.suggestion}"`);
 });
 
 // Style rewrite response
 const rewriteResult: StyleAnalysisRewriteResp = await styleRewrite(request, config);
-console.log(`Rewritten content: ${rewriteResult.rewrite}`);
-console.log(`Rewrite quality score: ${rewriteResult.rewrite_scores.quality.score}`);
+console.log(`Rewritten content: ${rewriteResult.rewrite.text}`);
+console.log(`Rewrite quality score: ${rewriteResult.rewrite.scores.quality.score}`);
 ```
 
 ## Configuration
@@ -165,7 +178,7 @@ const configWithUrl: Config = {
   apiKey: 'your-api-key-here',
   platform: {
     type: PlatformType.Url,
-    value: 'https://app.dev.markup.ai',
+    value: 'https://api.dev.markup.ai',
   },
 };
 ```
