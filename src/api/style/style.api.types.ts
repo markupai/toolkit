@@ -14,11 +14,9 @@ export enum StyleOperationType {
 
 export enum IssueCategory {
   Grammar = 'grammar',
-  SimpleVocab = 'simple_vocab',
-  SentenceStructure = 'sentence_structure',
-  SentenceLength = 'sentence_length',
+  Clarity = 'clarity',
   Tone = 'tone',
-  StyleGuide = 'style_guide',
+  Consistency = 'consistency',
   Terminology = 'terminology',
 }
 
