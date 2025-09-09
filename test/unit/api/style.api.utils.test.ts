@@ -436,7 +436,7 @@ describe('Batch Processing', () => {
             start_index: 156,
           },
           subcategory: 'vocabulary',
-          category: IssueCategory.SimpleVocab,
+          category: IssueCategory.Clarity,
         },
         {
           original: 'going forward',
@@ -452,7 +452,7 @@ describe('Batch Processing', () => {
             start_index: 312,
           },
           subcategory: 'punctuation',
-          category: IssueCategory.StyleGuide,
+          category: IssueCategory.Consistency,
         },
         {
           original: 'towards',

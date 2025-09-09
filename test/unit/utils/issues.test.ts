@@ -6,49 +6,65 @@ describe('Issues Utils', () => {
   const mockIssues: Issue[] = [
     {
       original: 'grammar error',
-      char_index: 0,
+      position: {
+        start_index: 0,
+      },
       subcategory: 'spelling',
       category: IssueCategory.Grammar,
     },
     {
       original: 'simple word',
-      char_index: 10,
+      position: {
+        start_index: 10,
+      },
       subcategory: 'basic',
-      category: IssueCategory.SimpleVocab,
+      category: IssueCategory.Clarity,
     },
     {
       original: 'complex sentence structure',
-      char_index: 20,
+      position: {
+        start_index: 20,
+      },
       subcategory: 'fragment',
-      category: IssueCategory.SentenceStructure,
+      category: IssueCategory.Consistency,
     },
     {
       original: 'very long sentence',
-      char_index: 30,
+      position: {
+        start_index: 30,
+      },
       subcategory: 'length',
-      category: IssueCategory.SentenceLength,
+      category: IssueCategory.Terminology,
     },
     {
       original: 'informal tone',
-      char_index: 40,
+      position: {
+        start_index: 40,
+      },
       subcategory: 'casual',
       category: IssueCategory.Tone,
     },
     {
       original: 'style guide violation',
-      char_index: 50,
+      position: {
+        start_index: 50,
+      },
       subcategory: 'formatting',
-      category: IssueCategory.StyleGuide,
+      category: IssueCategory.Consistency,
     },
     {
       original: 'technical term',
-      char_index: 60,
+      position: {
+        start_index: 60,
+      },
       subcategory: 'jargon',
       category: IssueCategory.Terminology,
     },
     {
       original: 'another grammar issue',
-      char_index: 70,
+      position: {
+        start_index: 70,
+      },
       subcategory: 'punctuation',
       category: IssueCategory.Grammar,
     },
@@ -59,17 +75,15 @@ describe('Issues Utils', () => {
       const result = categorizeIssues(mockIssues);
 
       expect(result.grammar).toHaveLength(2);
-      expect(result.simple_vocab).toHaveLength(1);
-      expect(result.sentence_structure).toHaveLength(1);
-      expect(result.sentence_length).toHaveLength(1);
+      expect(result.clarity).toHaveLength(1);
+      expect(result.consistency).toHaveLength(2);
       expect(result.tone).toHaveLength(1);
-      expect(result.style_guide).toHaveLength(1);
-      expect(result.terminology).toHaveLength(1);
+      expect(result.terminology).toHaveLength(2);
 
       // Check specific issues are in correct categories
       expect(result.grammar[0].original).toBe('grammar error');
       expect(result.grammar[1].original).toBe('another grammar issue');
-      expect(result.simple_vocab[0].original).toBe('simple word');
+      expect(result.clarity[0].original).toBe('simple word');
     });
 
     it('should return empty arrays for categories with no issues', () => {
@@ -77,11 +91,11 @@ describe('Issues Utils', () => {
       const result = categorizeIssues(emptyIssues);
 
       expect(result.grammar).toEqual([]);
-      expect(result.simple_vocab).toEqual([]);
-      expect(result.sentence_structure).toEqual([]);
-      expect(result.sentence_length).toEqual([]);
+      expect(result.clarity).toEqual([]);
+      expect(result.consistency).toEqual([]);
+      expect(result.terminology).toEqual([]);
       expect(result.tone).toEqual([]);
-      expect(result.style_guide).toEqual([]);
+      expect(result.consistency).toEqual([]);
       expect(result.terminology).toEqual([]);
     });
 
@@ -89,7 +103,9 @@ describe('Issues Utils', () => {
       const issuesWithSuggestions: IssueWithSuggestion[] = [
         {
           original: 'grammar error',
-          char_index: 0,
+          position: {
+            start_index: 0,
+          },
           subcategory: 'spelling',
           category: IssueCategory.Grammar,
           suggestion: 'grammar correction',

@@ -5,11 +5,9 @@ import { IssueCategory, type Issue } from '../api/style/style.api.types';
  */
 export interface CategorizedIssues<T extends Issue = Issue> {
   grammar: T[];
-  simple_vocab: T[];
-  sentence_structure: T[];
-  sentence_length: T[];
+  clarity: T[];
   tone: T[];
-  style_guide: T[];
+  consistency: T[];
   terminology: T[];
 }
 
@@ -44,11 +42,9 @@ export function categorizeIssues<T extends Issue>(issues: T[]): CategorizedIssue
   // Initialize empty arrays for each category
   const categorized: CategorizedIssues<T> = {
     grammar: [],
-    simple_vocab: [],
-    sentence_structure: [],
-    sentence_length: [],
+    clarity: [],
     tone: [],
-    style_guide: [],
+    consistency: [],
     terminology: [],
   };
 
@@ -58,23 +54,17 @@ export function categorizeIssues<T extends Issue>(issues: T[]): CategorizedIssue
       case IssueCategory.Grammar:
         categorized.grammar.push(issue);
         break;
-      case IssueCategory.SimpleVocab:
-        categorized.simple_vocab.push(issue);
+      case IssueCategory.Clarity:
+        categorized.clarity.push(issue);
         break;
-      case IssueCategory.SentenceStructure:
-        categorized.sentence_structure.push(issue);
-        break;
-      case IssueCategory.SentenceLength:
-        categorized.sentence_length.push(issue);
-        break;
-      case IssueCategory.Tone:
-        categorized.tone.push(issue);
-        break;
-      case IssueCategory.StyleGuide:
-        categorized.style_guide.push(issue);
+      case IssueCategory.Consistency:
+        categorized.consistency.push(issue);
         break;
       case IssueCategory.Terminology:
         categorized.terminology.push(issue);
+        break;
+      case IssueCategory.Tone:
+        categorized.tone.push(issue);
         break;
       default:
         // Handle any future categories that might be added
