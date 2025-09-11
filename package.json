@@ -1,24 +1,14 @@
 {
   "name": "@markupai/toolkit",
   "version": "0.2.1",
-  "type": "module",
-  "main": "./dist/toolkit.umd.cjs",
-  "module": "./dist/toolkit.js",
-  "types": "./dist/types/main.d.ts",
-  "license": "Apache-2.0",
-  "author": "Markup AI",
+  "homepage": "https://github.com/markupai/toolkit-ts",
   "repository": {
     "type": "git",
     "url": "git@github.com:markupai/toolkit-ts.git"
   },
-  "homepage": "https://github.com/markupai/toolkit-ts",
-  "publishConfig": {
-    "access": "public"
-  },
-  "files": [
-    "dist",
-    "dist/types/**/*.d.ts"
-  ],
+  "license": "Apache-2.0",
+  "author": "Markup AI",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/types/main.d.ts",
@@ -26,17 +16,27 @@
       "require": "./dist/toolkit.umd.cjs"
     }
   },
+  "main": "./dist/toolkit.umd.cjs",
+  "module": "./dist/toolkit.js",
+  "types": "./dist/types/main.d.ts",
+  "files": [
+    "dist",
+    "dist/types/**/*.d.ts"
+  ],
   "scripts": {
-    "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview",
+    "coverage": "vitest run --coverage",
+    "dev": "vite",
+    "format": "prettier . --write",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier . --write",
+    "preview": "vite preview",
     "test": "npm run test:unit && npm run test:integration",
-    "test:unit": "vitest run -c vitest.unit.config.ts",
     "test:integration": "vitest -c vitest.integration.config.ts",
-    "coverage": "vitest run --coverage"
+    "test:unit": "vitest run -c vitest.unit.config.ts"
+  },
+  "dependencies": {
+    "@markupai/api": "^0.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
@@ -51,7 +51,7 @@
     "vite": "^7.1.5",
     "vite-plugin-dts": "^4.5.4"
   },
-  "dependencies": {
-    "@markupai/api": "^0.1.1"
+  "publishConfig": {
+    "access": "public"
   }
 }
