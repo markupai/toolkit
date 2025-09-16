@@ -212,27 +212,27 @@ export async function submitAndPollStyleAnalysis<
         initialResponse = (await client.styleChecks.createStyleCheck({
           file_upload: contentObject,
           dialect: request.dialect as MarkupAI.Dialects,
-          tone: request.tone as MarkupAI.Tones,
           style_guide: request.style_guide,
           webhook_url: request.webhook_url,
+          ...(request.tone ? { tone: request.tone as MarkupAI.Tones } : {}),
         })) as StyleAnalysisSubmitResp;
         break;
       case StyleOperationType.Suggestions:
         initialResponse = (await client.styleSuggestions.createStyleSuggestion({
           file_upload: contentObject,
           dialect: request.dialect as MarkupAI.Dialects,
-          tone: request.tone as MarkupAI.Tones,
           style_guide: request.style_guide,
           webhook_url: request.webhook_url,
+          ...(request.tone ? { tone: request.tone as MarkupAI.Tones } : {}),
         })) as StyleAnalysisSubmitResp;
         break;
       case StyleOperationType.Rewrite:
         initialResponse = (await client.styleRewrites.createStyleRewrite({
           file_upload: contentObject,
           dialect: request.dialect as MarkupAI.Dialects,
-          tone: request.tone as MarkupAI.Tones,
           style_guide: request.style_guide,
           webhook_url: request.webhook_url,
+          ...(request.tone ? { tone: request.tone as MarkupAI.Tones } : {}),
         })) as StyleAnalysisSubmitResp;
         break;
       default:

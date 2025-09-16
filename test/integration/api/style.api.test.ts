@@ -59,6 +59,20 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
+    it('should submit a style check without tone', async () => {
+      const response = await submitStyleCheck(
+        {
+          content: testContent,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow_id).toBeDefined();
+    });
+
     it('should submit a style check with custom document name', async () => {
       const response = await submitStyleCheck(
         {
