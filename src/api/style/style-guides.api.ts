@@ -41,7 +41,8 @@ export async function createStyleGuide(request: CreateStyleGuideReq, config: Con
 
   try {
     const client = initEndpoint(config);
-    return (await client.styleGuides.createStyleGuide(file, {
+    return (await client.styleGuides.createStyleGuide({
+      file_upload: file,
       name,
     })) as StyleGuide;
   } catch (error) {

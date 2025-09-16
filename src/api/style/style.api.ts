@@ -13,8 +13,7 @@ import type { Config, StyleAnalysisPollResp } from '../../utils/api.types';
 
 import { createContentObject } from './style.api.utils';
 import { submitAndPollStyleAnalysis, styleBatchCheck } from './style.api.utils';
-import type { Dialects, Tones } from '@markupai/api/api';
-import { MarkupAIError } from '@markupai/api';
+import { MarkupAI, MarkupAIError } from '@markupai/api';
 import { ApiError } from '../../utils/errors';
 import { initEndpoint } from '../../utils/api';
 
@@ -30,9 +29,10 @@ export async function submitStyleCheck(
   const contentObject = await createContentObject(styleAnalysisRequest);
   let response: StyleAnalysisSubmitResp;
   try {
-    response = (await client.styleChecks.createStyleCheck(contentObject, {
-      dialect: styleAnalysisRequest.dialect as Dialects,
-      tone: styleAnalysisRequest.tone as Tones,
+    response = (await client.styleChecks.createStyleCheck({
+      file_upload: contentObject,
+      dialect: styleAnalysisRequest.dialect as MarkupAI.Dialects,
+      tone: styleAnalysisRequest.tone as MarkupAI.Tones,
       style_guide: styleAnalysisRequest.style_guide,
       webhook_url: styleAnalysisRequest.webhook_url,
     })) as StyleAnalysisSubmitResp;
@@ -53,9 +53,10 @@ export async function submitStyleSuggestion(
   const contentObject = await createContentObject(styleAnalysisRequest);
   let response: StyleAnalysisSubmitResp;
   try {
-    response = (await client.styleSuggestions.createStyleSuggestion(contentObject, {
-      dialect: styleAnalysisRequest.dialect as Dialects,
-      tone: styleAnalysisRequest.tone as Tones,
+    response = (await client.styleSuggestions.createStyleSuggestion({
+      file_upload: contentObject,
+      dialect: styleAnalysisRequest.dialect as MarkupAI.Dialects,
+      tone: styleAnalysisRequest.tone as MarkupAI.Tones,
       style_guide: styleAnalysisRequest.style_guide,
       webhook_url: styleAnalysisRequest.webhook_url,
     })) as StyleAnalysisSubmitResp;
@@ -76,9 +77,10 @@ export async function submitStyleRewrite(
   const contentObject = await createContentObject(styleAnalysisRequest);
   let response: StyleAnalysisSubmitResp;
   try {
-    response = (await client.styleRewrites.createStyleRewrite(contentObject, {
-      dialect: styleAnalysisRequest.dialect as Dialects,
-      tone: styleAnalysisRequest.tone as Tones,
+    response = (await client.styleRewrites.createStyleRewrite({
+      file_upload: contentObject,
+      dialect: styleAnalysisRequest.dialect as MarkupAI.Dialects,
+      tone: styleAnalysisRequest.tone as MarkupAI.Tones,
       style_guide: styleAnalysisRequest.style_guide,
       webhook_url: styleAnalysisRequest.webhook_url,
     })) as StyleAnalysisSubmitResp;

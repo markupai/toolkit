@@ -10,7 +10,6 @@ import type {
   StyleAnalysisSuggestionResp,
 } from './style.api.types';
 import type { StyleAnalysisReq, FileDescriptor, BufferDescriptor } from './style.api.types';
-import type { Dialects, Tones } from '@markupai/api/api';
 // Batch processing utilities
 import type {
   BatchOptions,
@@ -19,7 +18,7 @@ import type {
   BatchResponse,
   StyleAnalysisResponseType,
 } from './style.api.types';
-import { MarkupAIError } from '@markupai/api';
+import { MarkupAI, MarkupAIError } from '@markupai/api';
 import { ApiError, ErrorType } from '../../utils/errors';
 import { Blob } from 'buffer';
 
@@ -210,25 +209,28 @@ export async function submitAndPollStyleAnalysis<
   try {
     switch (operationType) {
       case StyleOperationType.Check:
-        initialResponse = (await client.styleChecks.createStyleCheck(contentObject, {
-          dialect: request.dialect as Dialects,
-          tone: request.tone as Tones,
+        initialResponse = (await client.styleChecks.createStyleCheck({
+          file_upload: contentObject,
+          dialect: request.dialect as MarkupAI.Dialects,
+          tone: request.tone as MarkupAI.Tones,
           style_guide: request.style_guide,
           webhook_url: request.webhook_url,
         })) as StyleAnalysisSubmitResp;
         break;
       case StyleOperationType.Suggestions:
-        initialResponse = (await client.styleSuggestions.createStyleSuggestion(contentObject, {
-          dialect: request.dialect as Dialects,
-          tone: request.tone as Tones,
+        initialResponse = (await client.styleSuggestions.createStyleSuggestion({
+          file_upload: contentObject,
+          dialect: request.dialect as MarkupAI.Dialects,
+          tone: request.tone as MarkupAI.Tones,
           style_guide: request.style_guide,
           webhook_url: request.webhook_url,
         })) as StyleAnalysisSubmitResp;
         break;
       case StyleOperationType.Rewrite:
-        initialResponse = (await client.styleRewrites.createStyleRewrite(contentObject, {
-          dialect: request.dialect as Dialects,
-          tone: request.tone as Tones,
+        initialResponse = (await client.styleRewrites.createStyleRewrite({
+          file_upload: contentObject,
+          dialect: request.dialect as MarkupAI.Dialects,
+          tone: request.tone as MarkupAI.Tones,
           style_guide: request.style_guide,
           webhook_url: request.webhook_url,
         })) as StyleAnalysisSubmitResp;
