@@ -997,7 +997,7 @@ describe('Style API Integration Tests', () => {
           expect(batchResult.index).toBe(index);
           expect(batchResult.request).toEqual(mockBatchRequests[index]);
         });
-      }, 30000);
+      });
 
       it('should respect maxConcurrent limit', async () => {
         const batchResponse = styleBatchCheckRequests(mockBatchRequests, config, {
@@ -1012,7 +1012,7 @@ describe('Style API Integration Tests', () => {
 
         expect(result.completed).toBe(3);
         expect(result.failed).toBe(0);
-      }, 30000);
+      });
 
       it('should handle mixed success and failure scenarios', async () => {
         const mixedRequests = [
@@ -1034,7 +1034,7 @@ describe('Style API Integration Tests', () => {
         expect(result.results[0].status).toBe('completed');
         expect(result.results[1].status).toBe('failed');
         expect(result.results[2].status).toBe('completed');
-      }, 30000);
+      });
     });
 
     describe('styleBatchSuggestions Integration', () => {
@@ -1055,7 +1055,7 @@ describe('Style API Integration Tests', () => {
           // Suggestions should have issues with suggestions
           expect(Array.isArray(batchResult.result!.original.issues)).toBe(true);
         });
-      }, 30000);
+      });
     });
 
     describe('styleBatchRewrites Integration', () => {
@@ -1076,7 +1076,7 @@ describe('Style API Integration Tests', () => {
           expect(batchResult.result!.rewrite).toBeDefined();
           expect(batchResult.result!.rewrite.scores).toBeDefined();
         });
-      }, 30000);
+      });
     });
 
     describe('Batch Progress Tracking', () => {
@@ -1123,7 +1123,7 @@ describe('Style API Integration Tests', () => {
         expect(result.pending).toBe(0);
         expect(result.startTime).toBeGreaterThan(0);
         expect(result.results).toHaveLength(3);
-      }, 30000);
+      });
     });
 
     describe('Batch Cancellation Integration', () => {
@@ -1171,7 +1171,7 @@ describe('Style API Integration Tests', () => {
         expect(result.completed + result.failed).toBe(3);
         expect(result.results.some((r) => r.status === 'completed')).toBe(true);
         expect(result.results.some((r) => r.status === 'failed')).toBe(true);
-      }, 30000);
+      });
     });
 
     describe('Large Batch Processing', () => {
