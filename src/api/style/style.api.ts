@@ -32,9 +32,9 @@ export async function submitStyleCheck(
     response = (await client.styleChecks.createStyleCheck({
       file_upload: contentObject,
       dialect: styleAnalysisRequest.dialect as MarkupAI.Dialects,
-      tone: styleAnalysisRequest.tone as MarkupAI.Tones,
       style_guide: styleAnalysisRequest.style_guide,
       webhook_url: styleAnalysisRequest.webhook_url,
+      ...(styleAnalysisRequest.tone ? { tone: styleAnalysisRequest.tone as MarkupAI.Tones } : {}),
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof MarkupAIError) {
@@ -56,9 +56,9 @@ export async function submitStyleSuggestion(
     response = (await client.styleSuggestions.createStyleSuggestion({
       file_upload: contentObject,
       dialect: styleAnalysisRequest.dialect as MarkupAI.Dialects,
-      tone: styleAnalysisRequest.tone as MarkupAI.Tones,
       style_guide: styleAnalysisRequest.style_guide,
       webhook_url: styleAnalysisRequest.webhook_url,
+      ...(styleAnalysisRequest.tone ? { tone: styleAnalysisRequest.tone as MarkupAI.Tones } : {}),
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof MarkupAIError) {
@@ -80,9 +80,9 @@ export async function submitStyleRewrite(
     response = (await client.styleRewrites.createStyleRewrite({
       file_upload: contentObject,
       dialect: styleAnalysisRequest.dialect as MarkupAI.Dialects,
-      tone: styleAnalysisRequest.tone as MarkupAI.Tones,
       style_guide: styleAnalysisRequest.style_guide,
       webhook_url: styleAnalysisRequest.webhook_url,
+      ...(styleAnalysisRequest.tone ? { tone: styleAnalysisRequest.tone as MarkupAI.Tones } : {}),
     })) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof MarkupAIError) {

@@ -68,6 +68,23 @@ describe('Style API Unit Tests', () => {
       });
     });
 
+    it('should submit style check successfully without tone', async () => {
+      server.use(apiHandlers.style.checks.success);
+
+      const requestWithoutTone = {
+        content: 'test content',
+        style_guide: 'ap',
+        dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+      };
+
+      const result = await submitStyleCheck(requestWithoutTone, mockConfig);
+      expect(result).toEqual({
+        status: Status.Running,
+        workflow_id: mockWorkflowId,
+        message: 'Style check workflow started successfully.',
+      });
+    });
+
     it('should submit style rewrite successfully', async () => {
       server.use(apiHandlers.style.rewrites.success);
 
@@ -188,6 +205,23 @@ describe('Style API Unit Tests', () => {
       expect(result.original.scores).toBeDefined();
       expect(result.original.issues).toBeDefined();
       expect(result.rewrite.text).toBeDefined();
+    });
+
+    it('should perform style check with polling successfully without tone', async () => {
+      server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
+
+      const requestWithoutTone = {
+        content: 'test content',
+        style_guide: 'ap',
+        dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+      };
+
+      const result = await styleCheck(requestWithoutTone, mockConfig);
+      expect(result.workflow.status).toBe(Status.Completed);
+      expect(result.workflow.id).toBeDefined();
+      expect(result.config.style_guide.style_guide_id).toBeDefined();
+      expect(result.original.scores).toBeDefined();
+      expect(result.original.issues).toBeDefined();
     });
 
     it('should include terminology scores in rewrite results', async () => {
