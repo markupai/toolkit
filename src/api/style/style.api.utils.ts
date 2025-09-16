@@ -436,6 +436,19 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
       this.resolvePromise = resolve;
       this.rejectPromise = reject;
 
+      // Set up timeout
+      const timeoutId = setTimeout(() => {
+        this.cancelled = true;
+        reject(new Error(`Batch operation timed out after ${this.options.timeout}ms`));
+      }, this.options.timeout);
+
+      // Override resolve to clear timeout
+      const originalResolve = this.resolvePromise;
+      this.resolvePromise = (value) => {
+        clearTimeout(timeoutId);
+        originalResolve?.(value);
+      };
+
       // Start initial batch of requests
       const initialBatch = Math.min(this.options.maxConcurrent, this.requests.length);
 

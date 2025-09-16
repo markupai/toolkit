@@ -676,6 +676,17 @@ describe('Batch Processing', () => {
       await expect(batchResponse.promise).rejects.toThrow('Batch operation cancelled');
     });
 
+    it('should timeout when operations exceed timeout limit', async () => {
+      const mockStyleFunction = vi.fn().mockImplementation(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 200)); // 200ms delay
+        return mockStyleCheckResponse;
+      });
+
+      const batchResponse = styleBatchCheck(mockRequests, mockConfig, { timeout: 100 }, mockStyleFunction); // 100ms timeout
+
+      await expect(batchResponse.promise).rejects.toThrow('Batch operation timed out after 100ms');
+    });
+
     it('should track timing information', async () => {
       const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
 
