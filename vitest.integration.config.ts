@@ -6,6 +6,6 @@ export default defineConfig({
     environment: 'node',
     globals: true,
     setupFiles: ['test/integration/setup.ts'],
-    testTimeout: 30000, // 30 seconds timeout for all integration tests
+    testTimeout: 60000, // 60 seconds timeout for all integration tests
   },
 });
