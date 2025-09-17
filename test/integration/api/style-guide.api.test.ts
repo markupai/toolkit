@@ -16,6 +16,7 @@ describe('Style Guide Integration Tests', () => {
     config = {
       apiKey,
       platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
+      rateLimit: { maxRetries: 3, initialDelayMs: 500, maxDelayMs: 2000, jitter: true },
     };
   });
 

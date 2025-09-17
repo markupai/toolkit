@@ -15,7 +15,7 @@ import { createContentObject } from './style.api.utils';
 import { submitAndPollStyleAnalysis, styleBatchCheck } from './style.api.utils';
 import { MarkupAI, MarkupAIError } from '@markupai/api';
 import { ApiError } from '../../utils/errors';
-import { initEndpoint } from '../../utils/api';
+import { initEndpoint, withRateLimitRetry } from '../../utils/api';
 
 // Export utility functions for Node.js environments
 export { createStyleGuideReqFromUrl, createStyleGuideReqFromPath } from './style.api.utils';
@@ -29,13 +29,18 @@ export async function submitStyleCheck(
   const contentObject = await createContentObject(styleAnalysisRequest);
   let response: StyleAnalysisSubmitResp;
   try {
-    response = (await client.styleChecks.createStyleCheck({
-      file_upload: contentObject,
-      dialect: styleAnalysisRequest.dialect as MarkupAI.Dialects,
-      style_guide: styleAnalysisRequest.style_guide,
-      webhook_url: styleAnalysisRequest.webhook_url,
-      ...(styleAnalysisRequest.tone ? { tone: styleAnalysisRequest.tone as MarkupAI.Tones } : {}),
-    })) as StyleAnalysisSubmitResp;
+    response = (await withRateLimitRetry(
+      () =>
+        client.styleChecks.createStyleCheck({
+          file_upload: contentObject,
+          dialect: styleAnalysisRequest.dialect as MarkupAI.Dialects,
+          style_guide: styleAnalysisRequest.style_guide,
+          webhook_url: styleAnalysisRequest.webhook_url,
+          ...(styleAnalysisRequest.tone ? { tone: styleAnalysisRequest.tone as MarkupAI.Tones } : {}),
+        }),
+      config,
+      'styleChecks.createStyleCheck',
+    )) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
@@ -53,13 +58,18 @@ export async function submitStyleSuggestion(
   const contentObject = await createContentObject(styleAnalysisRequest);
   let response: StyleAnalysisSubmitResp;
   try {
-    response = (await client.styleSuggestions.createStyleSuggestion({
-      file_upload: contentObject,
-      dialect: styleAnalysisRequest.dialect as MarkupAI.Dialects,
-      style_guide: styleAnalysisRequest.style_guide,
-      webhook_url: styleAnalysisRequest.webhook_url,
-      ...(styleAnalysisRequest.tone ? { tone: styleAnalysisRequest.tone as MarkupAI.Tones } : {}),
-    })) as StyleAnalysisSubmitResp;
+    response = (await withRateLimitRetry(
+      () =>
+        client.styleSuggestions.createStyleSuggestion({
+          file_upload: contentObject,
+          dialect: styleAnalysisRequest.dialect as MarkupAI.Dialects,
+          style_guide: styleAnalysisRequest.style_guide,
+          webhook_url: styleAnalysisRequest.webhook_url,
+          ...(styleAnalysisRequest.tone ? { tone: styleAnalysisRequest.tone as MarkupAI.Tones } : {}),
+        }),
+      config,
+      'styleSuggestions.createStyleSuggestion',
+    )) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
@@ -77,13 +87,18 @@ export async function submitStyleRewrite(
   const contentObject = await createContentObject(styleAnalysisRequest);
   let response: StyleAnalysisSubmitResp;
   try {
-    response = (await client.styleRewrites.createStyleRewrite({
-      file_upload: contentObject,
-      dialect: styleAnalysisRequest.dialect as MarkupAI.Dialects,
-      style_guide: styleAnalysisRequest.style_guide,
-      webhook_url: styleAnalysisRequest.webhook_url,
-      ...(styleAnalysisRequest.tone ? { tone: styleAnalysisRequest.tone as MarkupAI.Tones } : {}),
-    })) as StyleAnalysisSubmitResp;
+    response = (await withRateLimitRetry(
+      () =>
+        client.styleRewrites.createStyleRewrite({
+          file_upload: contentObject,
+          dialect: styleAnalysisRequest.dialect as MarkupAI.Dialects,
+          style_guide: styleAnalysisRequest.style_guide,
+          webhook_url: styleAnalysisRequest.webhook_url,
+          ...(styleAnalysisRequest.tone ? { tone: styleAnalysisRequest.tone as MarkupAI.Tones } : {}),
+        }),
+      config,
+      'styleRewrites.createStyleRewrite',
+    )) as StyleAnalysisSubmitResp;
   } catch (error) {
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
@@ -126,7 +141,11 @@ export async function getStyleCheck(
 ): Promise<StyleAnalysisSuccessResp | StyleAnalysisPollResp> {
   const client = initEndpoint(config);
   // TODO: Remove the unknown as cast once the SDK API is updated
-  return (await client.styleChecks.getStyleCheck(workflowId)) as unknown as StyleAnalysisSuccessResp;
+  return (await withRateLimitRetry(
+    () => client.styleChecks.getStyleCheck(workflowId),
+    config,
+    'styleChecks.getStyleCheck',
+  )) as unknown as StyleAnalysisSuccessResp;
 }
 
 // Get style suggestion results by workflow ID
@@ -142,7 +161,11 @@ export async function getStyleSuggestion(
 ): Promise<StyleAnalysisSuggestionResp | StyleAnalysisPollResp> {
   const client = initEndpoint(config);
   // TODO: Remove the unknown as cast once the SDK API is updated
-  return (await client.styleSuggestions.getStyleSuggestion(workflowId)) as unknown as StyleAnalysisSuggestionResp;
+  return (await withRateLimitRetry(
+    () => client.styleSuggestions.getStyleSuggestion(workflowId),
+    config,
+    'styleSuggestions.getStyleSuggestion',
+  )) as unknown as StyleAnalysisSuggestionResp;
 }
 
 /**
@@ -157,7 +180,11 @@ export async function getStyleRewrite(
 ): Promise<StyleAnalysisRewriteResp | StyleAnalysisPollResp> {
   const client = initEndpoint(config);
   // TODO: Remove the unknown as cast once the SDK API is updated
-  return (await client.styleRewrites.getStyleRewrite(workflowId)) as unknown as StyleAnalysisRewriteResp;
+  return (await withRateLimitRetry(
+    () => client.styleRewrites.getStyleRewrite(workflowId),
+    config,
+    'styleRewrites.getStyleRewrite',
+  )) as unknown as StyleAnalysisRewriteResp;
 }
 
 // Batch processing functions

@@ -170,6 +170,38 @@ describe('Style API Unit Tests', () => {
         message: 'Style check workflow started successfully.',
       });
     });
+
+    it('should retry on 429 with Retry-After and succeed', async () => {
+      server.use(apiHandlers.style.checks.rateLimitOnce);
+
+      const result = await submitStyleCheck(
+        {
+          content: 'test content',
+          style_guide: 'ap',
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.technical,
+        },
+        { ...mockConfig, rateLimit: { maxRetries: 3, initialDelayMs: 0, maxDelayMs: 0, jitter: false } },
+      );
+
+      expect(result.workflow_id).toBeDefined();
+    }, 10000);
+
+    it('should surface ApiError after exhausting 429 retries', async () => {
+      server.use(apiHandlers.style.checks.rateLimitAlways);
+
+      await expect(
+        submitStyleCheck(
+          {
+            content: 'test content',
+            style_guide: 'ap',
+            dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+            tone: STYLE_DEFAULTS.tones.technical,
+          },
+          { ...mockConfig, rateLimit: { maxRetries: 1, initialDelayMs: 0, maxDelayMs: 0, jitter: false } },
+        ),
+      ).rejects.toThrow('Rate limit exceeded');
+    }, 15000);
   });
 
   describe('Style Analysis with Polling', () => {

@@ -31,4 +31,10 @@ export type PlatformConfig =
 export interface Config {
   platform?: PlatformConfig;
   apiKey: string;
+  rateLimit?: {
+    maxRetries?: number;
+    initialDelayMs?: number;
+    maxDelayMs?: number;
+    jitter?: boolean;
+  };
 }

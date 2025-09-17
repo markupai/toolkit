@@ -14,6 +14,7 @@ export enum ErrorType {
   WORKFLOW_FAILED = 'WORKFLOW_FAILED',
   UNEXPECTED_STATUS = 'UNEXPECTED_STATUS',
   POLLING_ERROR = 'POLLING_ERROR',
+  RATE_LIMIT_ERROR = 'RATE_LIMIT_ERROR',
 }
 
 // Error types for different API error formats
@@ -97,6 +98,8 @@ export class ApiError extends Error {
         return this.handle413Error(errorData, statusCode);
       case 422:
         return this.handle422Error(errorData, statusCode);
+      case 429:
+        return this.handle429Error(errorData, statusCode);
       case 500:
         return this.handle500Error(errorData, statusCode);
       default:
@@ -178,6 +181,17 @@ export class ApiError extends Error {
     const message = detail || `Payload Too Large (${statusCode})`;
 
     return new ApiError(message, ErrorType.PAYLOAD_TOO_LARGE_ERROR, statusCode, errorData);
+  }
+
+  /**
+   * Handle 429 Too Many Requests (rate limit) errors
+   */
+  private static handle429Error(errorData: Record<string, unknown>, statusCode: number): ApiError {
+    const std = errorData as Partial<StandardErrorResponse>;
+    const detail = typeof std.detail === 'string' ? std.detail : undefined;
+    const message = detail || `Rate limit exceeded (${statusCode})`;
+
+    return new ApiError(message, ErrorType.RATE_LIMIT_ERROR, statusCode, errorData);
   }
 
   /**
