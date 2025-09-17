@@ -20,7 +20,6 @@ import type {
 } from './style.api.types';
 import { MarkupAI, MarkupAIError } from '@markupai/api';
 import { ApiError, ErrorType } from '../../utils/errors';
-import { Blob } from 'buffer';
 
 /**
  * Detects if the current environment is Node.js
@@ -144,14 +143,23 @@ export function isBuffer(obj: unknown): obj is Buffer {
 }
 
 export async function createBlob(request: StyleAnalysisReq): Promise<Blob> {
+  // Cross-environment Blob constructor
+  const getBlobCtor = async (): Promise<typeof Blob> => {
+    if (typeof Blob !== 'undefined') return Blob;
+    // Node fallback: dynamically import from 'buffer' only when needed
+    const mod = (await import('buffer')) as unknown as { Blob: typeof Blob };
+    return mod.Blob ?? Blob;
+  };
+
+  const BlobCtor = await getBlobCtor();
   const filename = request.documentName || 'unknown.txt';
   if (typeof request.content === 'string') {
-    return new Blob([request.content], { type: 'text/plain' });
+    return new BlobCtor([request.content], { type: 'text/plain' });
   } else if (typeof File !== 'undefined' && 'file' in request.content && request.content.file instanceof File) {
     const fileDescriptor = request.content as FileDescriptor;
     // Convert File to Node.js Blob by reading it as ArrayBuffer first
     const arrayBuffer = await fileDescriptor.file.arrayBuffer();
-    return new Blob([arrayBuffer], { type: fileDescriptor.mimeType || 'application/octet-stream' });
+    return new BlobCtor([arrayBuffer], { type: fileDescriptor.mimeType || 'application/octet-stream' });
   } else if ('buffer' in request.content && isBuffer(request.content.buffer)) {
     const bufferDescriptor = request.content as BufferDescriptor;
     const mimeType = bufferDescriptor.mimeType || getMimeTypeFromFilename(filename);
@@ -160,7 +168,7 @@ export async function createBlob(request: StyleAnalysisReq): Promise<Blob> {
       bufferDescriptor.buffer.byteOffset,
       bufferDescriptor.buffer.byteOffset + bufferDescriptor.buffer.byteLength,
     ) as ArrayBuffer;
-    return new Blob([arrayBuffer], { type: mimeType });
+    return new BlobCtor([arrayBuffer], { type: mimeType });
   } else {
     throw new Error('Invalid content type. Expected string, FileDescriptor, or BufferDescriptor.');
   }
