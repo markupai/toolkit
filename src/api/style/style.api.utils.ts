@@ -1,5 +1,5 @@
 import { StyleOperationType, type CreateStyleGuideReq } from './style.api.types';
-import { initEndpoint, withRateLimitRetry } from '../../utils/api';
+import { initEndpoint } from '../../utils/api';
 import { Status } from '../../utils/api.types';
 import type { Config } from '../../utils/api.types';
 import type {
@@ -209,46 +209,31 @@ export async function submitAndPollStyleAnalysis<
   try {
     switch (operationType) {
       case StyleOperationType.Check:
-        initialResponse = (await withRateLimitRetry(
-          () =>
-            client.styleChecks.createStyleCheck({
-              file_upload: contentObject,
-              dialect: request.dialect as MarkupAI.Dialects,
-              style_guide: request.style_guide,
-              webhook_url: request.webhook_url,
-              ...(request.tone ? { tone: request.tone as MarkupAI.Tones } : {}),
-            }),
-          config,
-          'styleChecks.createStyleCheck',
-        )) as StyleAnalysisSubmitResp;
+        initialResponse = (await client.styleChecks.createStyleCheck({
+          file_upload: contentObject,
+          dialect: request.dialect as MarkupAI.Dialects,
+          style_guide: request.style_guide,
+          webhook_url: request.webhook_url,
+          ...(request.tone ? { tone: request.tone as MarkupAI.Tones } : {}),
+        })) as StyleAnalysisSubmitResp;
         break;
       case StyleOperationType.Suggestions:
-        initialResponse = (await withRateLimitRetry(
-          () =>
-            client.styleSuggestions.createStyleSuggestion({
-              file_upload: contentObject,
-              dialect: request.dialect as MarkupAI.Dialects,
-              style_guide: request.style_guide,
-              webhook_url: request.webhook_url,
-              ...(request.tone ? { tone: request.tone as MarkupAI.Tones } : {}),
-            }),
-          config,
-          'styleSuggestions.createStyleSuggestion',
-        )) as StyleAnalysisSubmitResp;
+        initialResponse = (await client.styleSuggestions.createStyleSuggestion({
+          file_upload: contentObject,
+          dialect: request.dialect as MarkupAI.Dialects,
+          style_guide: request.style_guide,
+          webhook_url: request.webhook_url,
+          ...(request.tone ? { tone: request.tone as MarkupAI.Tones } : {}),
+        })) as StyleAnalysisSubmitResp;
         break;
       case StyleOperationType.Rewrite:
-        initialResponse = (await withRateLimitRetry(
-          () =>
-            client.styleRewrites.createStyleRewrite({
-              file_upload: contentObject,
-              dialect: request.dialect as MarkupAI.Dialects,
-              style_guide: request.style_guide,
-              webhook_url: request.webhook_url,
-              ...(request.tone ? { tone: request.tone as MarkupAI.Tones } : {}),
-            }),
-          config,
-          'styleRewrites.createStyleRewrite',
-        )) as StyleAnalysisSubmitResp;
+        initialResponse = (await client.styleRewrites.createStyleRewrite({
+          file_upload: contentObject,
+          dialect: request.dialect as MarkupAI.Dialects,
+          style_guide: request.style_guide,
+          webhook_url: request.webhook_url,
+          ...(request.tone ? { tone: request.tone as MarkupAI.Tones } : {}),
+        })) as StyleAnalysisSubmitResp;
         break;
       default:
         throw new Error(`Invalid operation type: ${operationType}`);
@@ -572,25 +557,15 @@ export async function pollWorkflowForResult<T>(
       // TODO: Remove the unknown as cast once the SDK API is updated
       switch (styleOperation) {
         case StyleOperationType.Check:
-          response = (await withRateLimitRetry(
-            () => client.styleChecks.getStyleCheck(workflowId),
-            config,
-            'styleChecks.getStyleCheck',
-          )) as unknown as StyleAnalysisResponseBase;
+          response = (await client.styleChecks.getStyleCheck(workflowId)) as unknown as StyleAnalysisResponseBase;
           break;
         case StyleOperationType.Suggestions:
-          response = (await withRateLimitRetry(
-            () => client.styleSuggestions.getStyleSuggestion(workflowId),
-            config,
-            'styleSuggestions.getStyleSuggestion',
+          response = (await client.styleSuggestions.getStyleSuggestion(
+            workflowId,
           )) as unknown as StyleAnalysisResponseBase;
           break;
         case StyleOperationType.Rewrite:
-          response = (await withRateLimitRetry(
-            () => client.styleRewrites.getStyleRewrite(workflowId),
-            config,
-            'styleRewrites.getStyleRewrite',
-          )) as unknown as StyleAnalysisResponseBase;
+          response = (await client.styleRewrites.getStyleRewrite(workflowId)) as unknown as StyleAnalysisResponseBase;
           break;
       }
 

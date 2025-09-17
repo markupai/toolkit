@@ -75,7 +75,8 @@ export async function verifyPlatformUrl(config: Config): Promise<{ success: bool
 
 export function initEndpoint(config: Config): MarkupAIClient {
   const platformUrl = getPlatformUrl(config);
-  return new MarkupAIClient({ token: config.apiKey, baseUrl: platformUrl });
+  const rawClient = new MarkupAIClient({ token: config.apiKey, baseUrl: platformUrl });
+  return wrapClientWithRateLimit(rawClient, config);
 }
 
 // Generic rate limit aware retry helper for SDK calls
@@ -166,4 +167,41 @@ export async function withRateLimitRetry<T>(
       continue;
     }
   }
+}
+
+// Deep Proxy wrapper to apply rate limit retry to all SDK method calls
+function wrapClientWithRateLimit<T extends object>(client: T, config: Config, path: string = 'client'): T {
+  const proxyCache = new WeakMap<object, object>();
+
+  const makeProxy = <U extends object>(target: U, currentPath: string): U => {
+    if (typeof target !== 'object' || target === null) return target;
+    const cached = proxyCache.get(target);
+    if (cached) return cached as U;
+
+    const proxy = new Proxy(target as object, {
+      get: (t: object, prop: string | symbol, receiver: unknown) => {
+        const value = Reflect.get(t as Record<string | symbol, unknown>, prop, receiver as object);
+
+        // If value is a function, return a wrapped function that retries on 429
+        if (typeof value === 'function') {
+          const methodLabel = `${currentPath}.${String(prop)}`;
+          type AnyAsyncMethod = (...methodArgs: unknown[]) => Promise<unknown>;
+          const original = value as AnyAsyncMethod;
+          return (...args: unknown[]) => withRateLimitRetry(() => original.apply(t, args), config, methodLabel);
+        }
+
+        // If value is an object, recursively proxy it
+        if (typeof value === 'object' && value !== null) {
+          return makeProxy(value as object, `${currentPath}.${String(prop)}`);
+        }
+
+        return value;
+      },
+    });
+
+    proxyCache.set(target, proxy as object);
+    return proxy as U;
+  };
+
+  return makeProxy(client, path);
 }
