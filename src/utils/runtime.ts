@@ -4,7 +4,10 @@
  * Detects if the current environment is Node.js
  */
 export function isNodeEnvironment(): boolean {
-  return typeof process !== 'undefined' && !!(process as any)?.versions?.node;
+  // Narrow process with a local type to avoid 'any'
+  type ProcessLike = { versions?: { node?: string } };
+  const proc = typeof process !== 'undefined' ? (process as unknown as ProcessLike) : undefined;
+  return !!proc?.versions?.node;
 }
 
 /**
