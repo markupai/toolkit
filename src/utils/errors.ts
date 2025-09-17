@@ -70,12 +70,21 @@ export class ApiError extends Error {
   public readonly type: ErrorType;
   public readonly rawErrorData: Record<string, unknown>;
 
-  constructor(message: string, type: ErrorType, statusCode?: number, rawErrorData: Record<string, unknown> = {}) {
-    super(message);
+  constructor(
+    message: string,
+    type: ErrorType,
+    statusCode?: number,
+    rawErrorData: Record<string, unknown> = {},
+    cause?: unknown,
+  ) {
+    // Leverage native Error cause when available
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore - TS supports ErrorOptions in lib, but to be safe we ignore if not present
+    super(message, cause !== undefined ? { cause } : undefined);
     this.name = 'ApiError';
     this.statusCode = statusCode;
     this.type = type;
-    this.rawErrorData = rawErrorData;
+    this.rawErrorData = cause instanceof Error ? { ...rawErrorData, originalError: cause } : rawErrorData;
 
     // This is needed to make instanceof work correctly
     Object.setPrototypeOf(this, ApiError.prototype);
@@ -255,7 +264,7 @@ export class ApiError extends Error {
    * Creates an ApiError for non-API errors (network, timeout, etc.)
    */
   static fromError(error: Error, type: ErrorType): ApiError {
-    return new ApiError(error.message, type, undefined, { originalError: error });
+    return new ApiError(error.message, type, undefined, { originalError: error }, error);
   }
 
   /**
