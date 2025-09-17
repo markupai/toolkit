@@ -4,7 +4,7 @@ import { resolve } from 'path';
 
 export default defineConfig({
   optimizeDeps: {
-    exclude: ['buffer'],
+    exclude: [],
   },
   build: {
     lib: {
@@ -14,14 +14,12 @@ export default defineConfig({
       formats: ['es', 'umd'],
     },
     rollupOptions: {
-      external: ['buffer', 'fs', 'path', 'url', 'process'],
+      external: ['fs', 'path', 'url'],
       output: {
         globals: {
-          buffer: 'Buffer',
           fs: 'fs',
           path: 'path',
           url: 'url',
-          process: 'process',
         },
       },
     },
