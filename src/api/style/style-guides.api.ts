@@ -1,7 +1,6 @@
 import type { StyleGuides, StyleGuide, CreateStyleGuideReq, StyleGuideUpdateReq } from './style.api.types';
 import type { Config } from '../../utils/api.types';
 import { initEndpoint } from '../../utils/api';
-import { withRateLimitRetry } from '../../utils/api';
 import { MarkupAIError } from '@markupai/api';
 import { ApiError } from '../../utils/errors';
 
@@ -9,11 +8,7 @@ import { ApiError } from '../../utils/errors';
 export async function listStyleGuides(config: Config): Promise<StyleGuides> {
   try {
     const client = initEndpoint(config);
-    return (await withRateLimitRetry(
-      () => client.styleGuides.listStyleGuides(),
-      config,
-      'styleGuides.listStyleGuides',
-    )) as StyleGuides;
+    return (await client.styleGuides.listStyleGuides()) as StyleGuides;
   } catch (error) {
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
@@ -26,11 +21,7 @@ export async function listStyleGuides(config: Config): Promise<StyleGuides> {
 export async function getStyleGuide(styleGuideId: string, config: Config): Promise<StyleGuide> {
   try {
     const client = initEndpoint(config);
-    return (await withRateLimitRetry(
-      () => client.styleGuides.getStyleGuide(styleGuideId),
-      config,
-      'styleGuides.getStyleGuide',
-    )) as StyleGuide;
+    return (await client.styleGuides.getStyleGuide(styleGuideId)) as StyleGuide;
   } catch (error) {
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
@@ -50,15 +41,10 @@ export async function createStyleGuide(request: CreateStyleGuideReq, config: Con
 
   try {
     const client = initEndpoint(config);
-    return (await withRateLimitRetry(
-      () =>
-        client.styleGuides.createStyleGuide({
-          file_upload: file,
-          name,
-        }),
-      config,
-      'styleGuides.createStyleGuide',
-    )) as StyleGuide;
+    return (await client.styleGuides.createStyleGuide({
+      file_upload: file,
+      name,
+    })) as StyleGuide;
   } catch (error) {
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
@@ -75,11 +61,7 @@ export async function updateStyleGuide(
 ): Promise<StyleGuide> {
   try {
     const client = initEndpoint(config);
-    return (await withRateLimitRetry(
-      () => client.styleGuides.updateStyleGuide(styleGuideId, updates),
-      config,
-      'styleGuides.updateStyleGuide',
-    )) as StyleGuide;
+    return (await client.styleGuides.updateStyleGuide(styleGuideId, updates)) as StyleGuide;
   } catch (error) {
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
@@ -92,11 +74,7 @@ export async function updateStyleGuide(
 export async function deleteStyleGuide(styleGuideId: string, config: Config): Promise<void> {
   try {
     const client = initEndpoint(config);
-    await withRateLimitRetry(
-      () => client.styleGuides.deleteStyleGuide(styleGuideId),
-      config,
-      'styleGuides.deleteStyleGuide',
-    );
+    await client.styleGuides.deleteStyleGuide(styleGuideId);
   } catch (error) {
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);

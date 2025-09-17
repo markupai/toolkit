@@ -444,7 +444,7 @@ describe('Style API Unit Tests', () => {
         content: 'test content 2',
         style_guide: 'chicago',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-        tone: STYLE_DEFAULTS.tones.informal,
+        tone: STYLE_DEFAULTS.tones.professional,
       },
     ];
 
