@@ -30,6 +30,8 @@ type ApiHandlers = {
       success: HttpHandler;
       error: HttpHandler;
       poll: HttpHandler;
+      rateLimitOnce: HttpHandler;
+      rateLimitAlways: HttpHandler;
     };
     suggestions: {
       success: HttpHandler;
@@ -162,6 +164,45 @@ const styleHandlers = {
     }),
     error: http.post('*/v1/style/checks', () => {
       return HttpResponse.json({ message: 'Could not validate credentials' }, { status: 401 });
+    }),
+    rateLimitOnce: (() => {
+      let called = false;
+      return http.post('*/v1/style/checks', () => {
+        if (!called) {
+          called = true;
+          return HttpResponse.json(
+            { detail: 'Rate limit exceeded', status: 429, request_id: 'req-rate-limit-once' },
+            {
+              status: 429,
+              headers: {
+                'Retry-After': '0',
+                'X-RateLimit-Limit': '10',
+                'X-RateLimit-Remaining': '0',
+                'X-RateLimit-Reset': `${Math.floor(Date.now() / 1000)}`,
+              },
+            },
+          );
+        }
+        return HttpResponse.json({
+          status: Status.Running,
+          workflow_id: 'test-workflow-id',
+          message: 'Style check workflow started successfully.',
+        });
+      });
+    })(),
+    rateLimitAlways: http.post('*/v1/style/checks', () => {
+      return HttpResponse.json(
+        { detail: 'Rate limit exceeded', status: 429, request_id: 'req-rate-limit-always' },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': '0',
+            'X-RateLimit-Limit': '10',
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': `${Math.floor(Date.now() / 1000)}`,
+          },
+        },
+      );
     }),
     poll: http.get('*/v1/style/checks/:workflowId', () => {
       return HttpResponse.json({

@@ -1,6 +1,7 @@
 import { MarkupAIClient } from '@markupai/api';
 import { Environment, PlatformType } from './api.types';
 import type { Config } from './api.types';
+import { ApiError, ErrorType } from './errors';
 
 export const DEFAULT_PLATFORM_URL_PROD = 'https://api.markup.ai';
 export const DEFAULT_PLATFORM_URL_STAGE = 'https://api.stg.markup.ai';
@@ -75,4 +76,94 @@ export async function verifyPlatformUrl(config: Config): Promise<{ success: bool
 export function initEndpoint(config: Config): MarkupAIClient {
   const platformUrl = getPlatformUrl(config);
   return new MarkupAIClient({ token: config.apiKey, baseUrl: platformUrl });
+}
+
+// Generic rate limit aware retry helper for SDK calls
+export async function withRateLimitRetry<T>(
+  operation: () => Promise<T>,
+  config: Config,
+  operationLabel?: string,
+): Promise<T> {
+  const maxRetries = config.rateLimit?.maxRetries ?? 5;
+  const baseDelay = config.rateLimit?.initialDelayMs ?? 1000;
+  const maxDelay = config.rateLimit?.maxDelayMs ?? 16000;
+  const jitter = config.rateLimit?.jitter ?? true;
+
+  let attempt = 0;
+  for (;;) {
+    try {
+      return await operation();
+    } catch (err) {
+      type RateLimitLike = {
+        statusCode?: number;
+        status?: number;
+        body?: Record<string, unknown> | unknown;
+        headers?: Record<string, unknown>;
+      };
+      const error = err as RateLimitLike | Error;
+
+      const status = (error as RateLimitLike)?.statusCode ?? (error as RateLimitLike)?.status ?? undefined;
+      const isRateLimit = status === 429;
+
+      if (!isRateLimit) {
+        // rethrow non-rate limit errors immediately
+        throw err;
+      }
+
+      if (attempt >= maxRetries) {
+        // Convert into our ApiError with rate limit type
+        if ('statusCode' in (error as RateLimitLike)) {
+          throw ApiError.fromResponse(
+            429,
+            ((error as RateLimitLike).body as Record<string, unknown>) ?? { detail: 'Rate limit exceeded' },
+          );
+        }
+        throw new ApiError('Rate limit exceeded', ErrorType.RATE_LIMIT_ERROR, 429, {});
+      }
+
+      // Respect Retry-After header if available
+      let delayMs: number | undefined;
+      const headers = (error as RateLimitLike)?.headers as Record<string, unknown> | undefined;
+      const retryAfterHeader = (headers?.['Retry-After'] ?? headers?.['retry-after'] ?? headers?.['retry_after']) as
+        | string
+        | number
+        | undefined;
+
+      if (retryAfterHeader !== undefined) {
+        const retryAfterSec =
+          typeof retryAfterHeader === 'string' ? parseFloat(retryAfterHeader) : Number(retryAfterHeader);
+        if (!Number.isNaN(retryAfterSec) && Number.isFinite(retryAfterSec)) {
+          delayMs = Math.max(0, Math.floor(retryAfterSec * 1000));
+        }
+      }
+
+      // If X-RateLimit-Reset is present (epoch seconds), compute until reset
+      if (!delayMs && headers && (headers['X-RateLimit-Reset'] || headers['x-ratelimit-reset'])) {
+        const reset = (headers['X-RateLimit-Reset'] ?? headers['x-ratelimit-reset']) as string | number;
+        const resetEpochSec = typeof reset === 'string' ? parseInt(reset, 10) : Number(reset);
+        if (!Number.isNaN(resetEpochSec)) {
+          const msUntilReset = resetEpochSec * 1000 - Date.now();
+          if (Number.isFinite(msUntilReset)) {
+            delayMs = Math.max(0, msUntilReset);
+          }
+        }
+      }
+
+      // Fallback to exponential backoff
+      if (!delayMs) {
+        const backoff = Math.min(maxDelay, baseDelay * Math.pow(2, attempt));
+        delayMs = jitter ? Math.floor(backoff / 2 + Math.random() * (backoff / 2)) : backoff;
+      }
+
+      if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV !== 'test') {
+        console.warn(
+          `[RateLimit] ${operationLabel ?? 'operation'} attempt ${attempt + 1} hit 429. Retrying in ${delayMs} ms...`,
+        );
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      attempt += 1;
+      continue;
+    }
+  }
 }

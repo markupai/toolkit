@@ -715,5 +715,21 @@ describe('Batch Processing', () => {
       expect(result.completed).toBe(3);
       expect(result.failed).toBe(0);
     });
+
+    it('should mark rate limit errors as non-retryable in batch', async () => {
+      const rateLimitError = new Error('Rate limit exceeded');
+      const mockStyleFunction = vi
+        .fn()
+        .mockRejectedValueOnce(rateLimitError)
+        .mockResolvedValueOnce(mockStyleCheckResponse)
+        .mockResolvedValueOnce(mockStyleCheckResponse);
+
+      const batchResponse = styleBatchCheck(mockRequests, mockConfig, { retryAttempts: 2 }, mockStyleFunction);
+      const result = await batchResponse.promise;
+
+      expect(result.completed + result.failed).toBe(3);
+      expect(result.failed).toBe(1);
+      expect(result.completed).toBe(2);
+    });
   });
 });
