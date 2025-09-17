@@ -114,12 +114,14 @@ export async function withRateLimitRetry<T>(
       if (attempt >= maxRetries) {
         // Convert into our ApiError with rate limit type
         if ('statusCode' in (error as RateLimitLike)) {
-          throw ApiError.fromResponse(
-            429,
-            ((error as RateLimitLike).body as Record<string, unknown>) ?? { detail: 'Rate limit exceeded' },
-          );
+          const errBody = ((error as RateLimitLike).body as Record<string, unknown>) ?? {
+            detail: 'Rate limit exceeded',
+          };
+          const apiErr = ApiError.fromResponse(429, errBody);
+          // Attach original error as cause for debugging/transparency
+          throw new ApiError(apiErr.message, apiErr.type, apiErr.statusCode, apiErr.rawErrorData, err as Error);
         }
-        throw new ApiError('Rate limit exceeded', ErrorType.RATE_LIMIT_ERROR, 429, {});
+        throw new ApiError('Rate limit exceeded', ErrorType.RATE_LIMIT_ERROR, 429, {}, err as Error);
       }
 
       // Respect Retry-After header if available

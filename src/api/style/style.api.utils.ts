@@ -20,13 +20,7 @@ import type {
 } from './style.api.types';
 import { MarkupAI, MarkupAIError } from '@markupai/api';
 import { ApiError, ErrorType } from '../../utils/errors';
-
-/**
- * Detects if the current environment is Node.js
- */
-function isNodeEnvironment(): boolean {
-  return typeof process !== 'undefined' && process.versions != null && process.versions.node != null;
-}
+import { isNodeEnvironment, getBlobCtor } from '../../utils/runtime';
 
 /**
  * Creates a CreateStyleGuideReq from a file URL in Node.js environments.
@@ -143,14 +137,6 @@ export function isBuffer(obj: unknown): obj is Buffer {
 }
 
 export async function createBlob(request: StyleAnalysisReq): Promise<Blob> {
-  // Cross-environment Blob constructor
-  const getBlobCtor = async (): Promise<typeof Blob> => {
-    if (typeof Blob !== 'undefined') return Blob;
-    // Node fallback: dynamically import from 'buffer' only when needed
-    const mod = (await import('buffer')) as unknown as { Blob: typeof Blob };
-    return mod.Blob ?? Blob;
-  };
-
   const BlobCtor = await getBlobCtor();
   const filename = request.documentName || 'unknown.txt';
   if (typeof request.content === 'string') {
@@ -412,7 +398,7 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
     if (nonRetryableErrors.some((keyword) => error.message.toLowerCase().includes(keyword))) {
       return true;
     }
-    if (error instanceof ApiError && (error.statusCode === 429 || error.type === ErrorType.RATE_LIMIT_ERROR)) {
+    if (error instanceof ApiError && error.type === ErrorType.RATE_LIMIT_ERROR) {
       return true;
     }
     return false;
