@@ -1,6 +1,6 @@
 {
   "name": "@markupai/toolkit",
-  "version": "0.3.2-dev.2",
+  "version": "0.3.2",
   "homepage": "https://github.com/markupai/toolkit-ts",
   "repository": {
     "type": "git",
@@ -52,7 +52,6 @@
     "vite-plugin-dts": "^4.5.4"
   },
   "publishConfig": {
-    "access": "public",
-    "tag": "dev"
+    "access": "public"
   }
 }
