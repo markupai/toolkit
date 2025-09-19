@@ -88,7 +88,7 @@ export interface StyleScores {
       liveliness: number;
       informality_alignment: number;
       liveliness_alignment: number;
-    };
+    } | null;
   };
 }
 
