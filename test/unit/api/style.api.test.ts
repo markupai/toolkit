@@ -216,6 +216,13 @@ describe('Style API Unit Tests', () => {
       expect(result.original.issues).toBeDefined();
     });
 
+    it('should handle analysis.tone as null for style check results', async () => {
+      server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
+
+      const result = await styleCheck(mockStyleAnalysisRequest, mockConfig);
+      expect(result.original.scores.analysis.tone).toBeNull();
+    });
+
     it('should perform style suggestions with polling successfully', async () => {
       server.use(apiHandlers.style.suggestions.success, apiHandlers.style.suggestions.poll);
 
@@ -225,6 +232,18 @@ describe('Style API Unit Tests', () => {
       expect(result.config.style_guide.style_guide_id).toBeDefined();
       expect(result.original.scores).toBeDefined();
       expect(result.original.issues).toBeDefined();
+    });
+
+    it('should handle analysis.tone as object for style suggestions', async () => {
+      server.use(apiHandlers.style.suggestions.success, apiHandlers.style.suggestions.poll);
+
+      const result = await styleSuggestions(mockStyleAnalysisRequest, mockConfig);
+      expect(result.original.scores.analysis.tone).not.toBeNull();
+      if (result.original.scores.analysis.tone !== null) {
+        expect(typeof result.original.scores.analysis.tone.score).toBe('number');
+        expect(typeof result.original.scores.analysis.tone.informality).toBe('number');
+        expect(typeof result.original.scores.analysis.tone.liveliness).toBe('number');
+      }
     });
 
     it('should perform style rewrite with polling successfully', async () => {
@@ -237,6 +256,18 @@ describe('Style API Unit Tests', () => {
       expect(result.original.scores).toBeDefined();
       expect(result.original.issues).toBeDefined();
       expect(result.rewrite.text).toBeDefined();
+    });
+
+    it('should handle analysis.tone as object for style rewrites', async () => {
+      server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
+
+      const result = await styleRewrite(mockStyleAnalysisRequest, mockConfig);
+      expect(result.rewrite.scores.analysis.tone).not.toBeNull();
+      if (result.rewrite.scores.analysis.tone !== null) {
+        expect(typeof result.rewrite.scores.analysis.tone.score).toBe('number');
+        expect(typeof result.rewrite.scores.analysis.tone.informality).toBe('number');
+        expect(typeof result.rewrite.scores.analysis.tone.liveliness).toBe('number');
+      }
     });
 
     it('should perform style check with polling successfully without tone', async () => {
