@@ -452,7 +452,10 @@ describe('Style API Unit Tests', () => {
       expect(typedResult.rewrite.scores.analysis.clarity).toBeDefined();
       expect(typedResult.rewrite.scores.quality.grammar).toBeDefined();
       expect(typedResult.rewrite.scores.quality.consistency).toBeDefined();
-      expect(typedResult.rewrite.scores.analysis.tone === null || typeof typedResult.rewrite.scores.analysis.tone === 'object').toBe(true);
+      expect(
+        typedResult.rewrite.scores.analysis.tone === null ||
+          typeof typedResult.rewrite.scores.analysis.tone === 'object',
+      ).toBe(true);
       expect(typedResult.rewrite.scores.quality.terminology).toBeDefined();
       // Check for suggestion in issues
       if (typedResult.original.issues && typedResult.original.issues.length > 0) {
