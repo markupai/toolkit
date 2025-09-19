@@ -51,7 +51,7 @@ const completedSuccessResp = {
           vocabulary_complexity: 0,
           sentence_complexity: 0,
         },
-        tone: null,
+        tone: { score: 0, informality: 0, liveliness: 0, informality_alignment: 0, liveliness_alignment: 0 },
       },
     },
   },
@@ -64,111 +64,7 @@ const runningSuccessResp = {
     api_version: '1.0.0',
     generated_at: '2025-01-01T00:00:00Z',
     status: Status.Running,
-  },
-  config: {
-    dialect: 'american_english',
-    style_guide: { style_guide_type: 'custom', style_guide_id: 'sg1' },
-    tone: 'formal',
-  },
-  original: {
-    issues: [],
-    scores: {
-      quality: {
-        score: 0,
-        grammar: { score: 0, issues: 0 },
-        consistency: { score: 0, issues: 0 },
-        terminology: { score: 0, issues: 0 },
-      },
-      analysis: {
-        clarity: {
-          score: 0,
-          word_count: 0,
-          sentence_count: 0,
-          average_sentence_length: 0,
-          flesch_reading_ease: 0,
-          vocabulary_complexity: 0,
-          sentence_complexity: 0,
-        },
-        tone: null,
-      },
-    },
-  },
-};
-
-const completedSuggestionResp = {
-  workflow: {
-    id: 'def',
-    type: 'suggestions',
-    api_version: '1.0.0',
-    generated_at: '2025-01-01T00:00:00Z',
-    status: Status.Completed,
-  },
-  config: {
-    dialect: 'british_english',
-    style_guide: { style_guide_type: 'custom', style_guide_id: 'sg2' },
-    tone: 'casual',
-  },
-  original: {
-    issues: [{ original: 'foo', position: { start_index: 0 }, subcategory: 'bar', category: 'baz', suggestion: 'baz' }],
-    scores: {
-      quality: {
-        score: 0,
-        grammar: { score: 0, issues: 0 },
-        consistency: { score: 0, issues: 0 },
-        terminology: { score: 0, issues: 0 },
-      },
-      analysis: {
-        clarity: {
-          score: 0,
-          word_count: 0,
-          sentence_count: 0,
-          average_sentence_length: 0,
-          flesch_reading_ease: 0,
-          vocabulary_complexity: 0,
-          sentence_complexity: 0,
-        },
-        tone: null,
-      },
-    },
-  },
-};
-
-const pollResp = {
-  workflow: {
-    id: 'ghi',
-    type: 'checks',
-    api_version: '1.0.0',
-    generated_at: '2025-01-01T00:00:00Z',
-    status: Status.Running,
-  },
-  config: {
-    dialect: 'american_english',
-    style_guide: { style_guide_type: 'custom', style_guide_id: 'sg1' },
-    tone: 'formal',
-  },
-  original: {
-    issues: [],
-    scores: {
-      quality: {
-        score: 0,
-        grammar: { score: 0, issues: 0 },
-        consistency: { score: 0, issues: 0 },
-        terminology: { score: 0, issues: 0 },
-      },
-      analysis: {
-        clarity: {
-          score: 0,
-          word_count: 0,
-          sentence_count: 0,
-          average_sentence_length: 0,
-          flesch_reading_ease: 0,
-          vocabulary_complexity: 0,
-          sentence_complexity: 0,
-        },
-        tone: null,
-      },
-    },
-  },
+  }
 };
 
 const failedResp = {
@@ -350,11 +246,11 @@ describe('isCompletedResponse', () => {
   });
 
   it('returns true for completed suggestion response', () => {
-    expect(isCompletedResponse(completedSuggestionResp)).toBe(true);
+    expect(isCompletedResponse(completedSuccessResp)).toBe(true);
   });
 
   it('returns false for polling response', () => {
-    expect(isCompletedResponse(pollResp)).toBe(false);
+    expect(isCompletedResponse(runningSuccessResp)).toBe(false);
   });
 
   it('returns false for failed response', () => {
@@ -362,7 +258,7 @@ describe('isCompletedResponse', () => {
   });
 
   it('narrows type for completed response', () => {
-    const resp = completedSuccessResp as typeof completedSuccessResp | typeof pollResp;
+    const resp = completedSuccessResp as typeof completedSuccessResp | typeof runningSuccessResp;
     if (isCompletedResponse(resp)) {
       // TypeScript should know resp.workflow.status === Status.Completed
       expect(resp.workflow.status).toBe(Status.Completed);
