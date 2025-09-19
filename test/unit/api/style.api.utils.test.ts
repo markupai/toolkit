@@ -64,7 +64,7 @@ const runningSuccessResp = {
     api_version: '1.0.0',
     generated_at: '2025-01-01T00:00:00Z',
     status: Status.Running,
-  }
+  },
 };
 
 const failedResp = {
