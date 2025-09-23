@@ -21,6 +21,7 @@ describe('CORS Integration Tests', () => {
 
   const testOrigins = [
     'https://uuid-2323423.ctfcloud.net',
+    'https://app.contentful.com'
   ];
 
   // Normalize a comma-separated header value into a lowercase list for case-insensitive checks
