@@ -26,6 +26,7 @@ import {
   StyleAnalysisSuggestionResp,
   StyleAnalysisRewriteResp,
 } from '../../../src/api/style/style.api.types';
+import { fail } from 'assert';
 
 // Set up MSW server lifecycle hooks
 beforeAll(() => server.listen());
@@ -216,6 +217,18 @@ describe('Style API Unit Tests', () => {
       expect(result.original.issues).toBeDefined();
     });
 
+    it('should abort style check with polling after timeout', async () => {
+      server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
+
+      try {
+        await styleCheck(mockStyleAnalysisRequest, mockConfig, { timeout: 0 });
+        fail('Expected timeout error');
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.message).toContain('timeout');
+      }
+    });
+
     it('should handle analysis.tone as null for style check results', async () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
@@ -232,6 +245,18 @@ describe('Style API Unit Tests', () => {
       expect(result.config.style_guide.style_guide_id).toBeDefined();
       expect(result.original.scores).toBeDefined();
       expect(result.original.issues).toBeDefined();
+    });
+
+    it('should abort style suggestions with polling after timeout', async () => {
+      server.use(apiHandlers.style.suggestions.success, apiHandlers.style.suggestions.poll);
+
+      try {
+        await styleSuggestions(mockStyleAnalysisRequest, mockConfig, { timeout: 0 });
+        fail('Expected timeout error');
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.message).toContain('timeout');
+      }
     });
 
     it('should handle analysis.tone as object for style suggestions', async () => {
@@ -256,6 +281,18 @@ describe('Style API Unit Tests', () => {
       expect(result.original.scores).toBeDefined();
       expect(result.original.issues).toBeDefined();
       expect(result.rewrite.text).toBeDefined();
+    });
+
+    it('should abort style rewrite with polling after timeout', async () => {
+      server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
+
+      try {
+        await styleRewrite(mockStyleAnalysisRequest, mockConfig, { timeout: 0 });
+        fail('Expected timeout error');
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.message).toContain('timeout');
+      }
     });
 
     it('should handle analysis.tone as object for style rewrites', async () => {
