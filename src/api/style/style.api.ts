@@ -11,7 +11,7 @@ import {
 } from './style.api.types';
 import type { Config, StyleAnalysisPollResp } from '../../utils/api.types';
 
-import { createContentObject } from './style.api.utils';
+import { createContentObject, defaultAnalysisWorkflowOptions, type AnalysisWorkflowOptions } from './style.api.utils';
 import { submitAndPollStyleAnalysis, styleBatchCheck } from './style.api.utils';
 import { MarkupAI, MarkupAIError } from '@markupai/api';
 import { ApiError } from '../../utils/errors';
@@ -97,26 +97,40 @@ export async function submitStyleRewrite(
 export async function styleCheck(
   styleAnalysisRequest: StyleAnalysisReq,
   config: Config,
+  options: AnalysisWorkflowOptions = defaultAnalysisWorkflowOptions,
 ): Promise<StyleAnalysisSuccessResp> {
-  return submitAndPollStyleAnalysis<StyleAnalysisSuccessResp>(StyleOperationType.Check, styleAnalysisRequest, config);
+  return submitAndPollStyleAnalysis<StyleAnalysisSuccessResp>(
+    StyleOperationType.Check,
+    styleAnalysisRequest,
+    config,
+    options,
+  );
 }
 
 export async function styleSuggestions(
   styleAnalysisRequest: StyleAnalysisReq,
   config: Config,
+  options: AnalysisWorkflowOptions = defaultAnalysisWorkflowOptions,
 ): Promise<StyleAnalysisSuggestionResp> {
   return submitAndPollStyleAnalysis<StyleAnalysisSuggestionResp>(
     StyleOperationType.Suggestions,
     styleAnalysisRequest,
     config,
+    options,
   );
 }
 
 export async function styleRewrite(
   styleAnalysisRequest: StyleAnalysisReq,
   config: Config,
+  options: AnalysisWorkflowOptions = defaultAnalysisWorkflowOptions,
 ): Promise<StyleAnalysisRewriteResp> {
-  return submitAndPollStyleAnalysis<StyleAnalysisRewriteResp>(StyleOperationType.Rewrite, styleAnalysisRequest, config);
+  return submitAndPollStyleAnalysis<StyleAnalysisRewriteResp>(
+    StyleOperationType.Rewrite,
+    styleAnalysisRequest,
+    config,
+    options,
+  );
 }
 
 // Get style check results by workflow ID
