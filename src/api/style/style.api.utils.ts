@@ -564,7 +564,7 @@ export async function pollWorkflowForResult<T>(
     // Check if we've exceeded the timeout
     const elapsedTime = Date.now() - startTime;
     if (elapsedTime > timeout) {
-      throw new Error(`${styleOperation} failed: timeout of ${timeout}ms exceeded`);
+      throw new ApiError(`Workflow timed out after ${elapsedTime}ms`, ErrorType.TIMEOUT_ERROR);
     }
 
     if (attempts >= maxAttempts) {

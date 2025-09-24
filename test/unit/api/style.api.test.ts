@@ -27,6 +27,7 @@ import {
   StyleAnalysisRewriteResp,
 } from '../../../src/api/style/style.api.types';
 import { fail } from 'assert';
+import { ErrorType } from '../../../src/utils/errors';
 
 // Set up MSW server lifecycle hooks
 beforeAll(() => server.listen());
@@ -225,7 +226,8 @@ describe('Style API Unit Tests', () => {
         fail('Expected timeout error');
       } catch (error) {
         expect(error).toBeDefined();
-        expect(error.message).toContain('timeout');
+        expect(error.type).toBe(ErrorType.TIMEOUT_ERROR);
+        expect(error.message).toContain('ms');
       }
     });
 
@@ -255,7 +257,8 @@ describe('Style API Unit Tests', () => {
         fail('Expected timeout error');
       } catch (error) {
         expect(error).toBeDefined();
-        expect(error.message).toContain('timeout');
+        expect(error.type).toBe(ErrorType.TIMEOUT_ERROR);
+        expect(error.message).toContain('ms');
       }
     });
 
@@ -291,7 +294,8 @@ describe('Style API Unit Tests', () => {
         fail('Expected timeout error');
       } catch (error) {
         expect(error).toBeDefined();
-        expect(error.message).toContain('timeout');
+        expect(error.type).toBe(ErrorType.TIMEOUT_ERROR);
+        expect(error.message).toContain('ms');
       }
     });
 
