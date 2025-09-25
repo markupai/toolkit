@@ -483,7 +483,7 @@ export function styleBatchCheck<T extends StyleAnalysisResponseType>(
     maxConcurrent: 100,
     retryAttempts: 2,
     retryDelay: 1000,
-    timeout: 300000, // 5 minutes
+    timeout: defaultWorkflowTimeout,
   };
 
   const finalOptions: Required<BatchOptions> = {
