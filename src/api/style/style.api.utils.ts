@@ -558,10 +558,6 @@ export async function pollWorkflowForResult<T>(
       throw new ApiError(`Workflow timed out after ${elapsedTime}ms`, ErrorType.TIMEOUT_ERROR);
     }
 
-    if (attempts >= maxAttempts) {
-      throw new ApiError(`Workflow timed out after ${maxAttempts} attempts`, ErrorType.TIMEOUT_ERROR);
-    }
-
     try {
       const client = initEndpoint(config);
       let response: StyleAnalysisResponseBase;
