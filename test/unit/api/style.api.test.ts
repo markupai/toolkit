@@ -28,6 +28,7 @@ import {
 } from '../../../src/api/style/style.api.types';
 import { fail } from 'assert';
 import { ErrorType } from '../../../src/utils/errors';
+import { WorkflowConfig } from '../../../src/api/style/style.api.utils';
 
 // Set up MSW server lifecycle hooks
 beforeAll(() => server.listen());
