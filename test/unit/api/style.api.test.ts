@@ -41,7 +41,7 @@ describe('Style API Unit Tests', () => {
   };
   const mockWorkflowConfig: WorkflowConfig = {
     ...mockConfig,
-    timeout: 300000,
+    timeout: 0,
   };
   const mockWorkflowId = 'test-workflow-id';
   const mockStyleAnalysisRequest = {
@@ -299,6 +299,7 @@ describe('Style API Unit Tests', () => {
         await styleRewrite(mockStyleAnalysisRequest, mockWorkflowConfig);
         fail('Expected timeout error');
       } catch (error) {
+        console.log(error);
         expect(error).toBeDefined();
         expect(error.type).toBe(ErrorType.TIMEOUT_ERROR);
         expect(error.message).toContain('Workflow timed out');
