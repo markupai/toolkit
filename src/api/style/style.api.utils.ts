@@ -192,10 +192,20 @@ export async function createContentObject(request: StyleAnalysisReq): Promise<Fi
   }
 }
 
-// Helper function to handle style analysis submission and polling
+export const defaultWorkflowTimeout = 300000;
+export interface WorkflowConfig extends Config {
+  /**
+   * The timeout for the workflow in milliseconds.
+   * @default 5 minutes, 300000 milliseconds
+   */
+  timeout?: number;
+}
+
+// Helper function to handle style analysis submission and polling, has a default timeout of 5 minutes
 export async function submitAndPollStyleAnalysis<
   T extends StyleAnalysisSuccessResp | StyleAnalysisSuggestionResp | StyleAnalysisRewriteResp,
->(operationType: StyleOperationType, request: StyleAnalysisReq, config: Config): Promise<T> {
+>(operationType: StyleOperationType, request: StyleAnalysisReq, config: WorkflowConfig): Promise<T> {
+  const startTime = Date.now();
   const client = initEndpoint(config);
   const contentObject = await createContentObject(request);
 
@@ -243,7 +253,7 @@ export async function submitAndPollStyleAnalysis<
     throw new Error(`No workflow_id received from initial ${operationType} request`);
   }
 
-  const polledResponse = await pollWorkflowForResult<T>(initialResponse.workflow_id, config, operationType);
+  const polledResponse = await pollWorkflowForResult<T>(initialResponse.workflow_id, config, operationType, startTime);
 
   if (polledResponse.workflow.status === Status.Completed) {
     return polledResponse;
@@ -259,7 +269,7 @@ export function isCompletedResponse<T extends StyleAnalysisResponseBase>(
 }
 
 // Type dispatcher for style functions
-type StyleFunction<T> = (request: StyleAnalysisReq, config: Config) => Promise<T>;
+type StyleFunction<T> = (request: StyleAnalysisReq, config: WorkflowConfig) => Promise<T>;
 
 // Queue management for batch processing
 class BatchQueue<T extends StyleAnalysisResponseType> {
@@ -365,7 +375,7 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
 
     for (let attempt = 0; attempt <= this.options.retryAttempts; attempt++) {
       try {
-        return await this.styleFunction(request, this.config);
+        return await this.styleFunction(request, { ...this.config, timeout: this.options.timeout } as WorkflowConfig);
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
 
@@ -473,7 +483,7 @@ export function styleBatchCheck<T extends StyleAnalysisResponseType>(
     maxConcurrent: 100,
     retryAttempts: 2,
     retryDelay: 1000,
-    timeout: 300000, // 5 minutes
+    timeout: defaultWorkflowTimeout,
   };
 
   const finalOptions: Required<BatchOptions> = {
@@ -532,16 +542,20 @@ export function styleBatchCheck<T extends StyleAnalysisResponseType>(
 
 export async function pollWorkflowForResult<T>(
   workflowId: string,
-  config: Config,
+  config: WorkflowConfig,
   styleOperation: StyleOperationType,
+  startTime: number = Date.now(),
 ): Promise<T> {
   let attempts = 0;
-  const maxAttempts = 30;
   const pollInterval = 2000;
+  const timeout = config.timeout ?? defaultWorkflowTimeout;
+  const maxAttempts = Math.floor(timeout / pollInterval);
 
   const poll = async (): Promise<T> => {
-    if (attempts >= maxAttempts) {
-      throw new ApiError(`Workflow timed out after ${maxAttempts} attempts`, ErrorType.TIMEOUT_ERROR);
+    // Check if we've exceeded the timeout
+    const elapsedTime = Date.now() - startTime;
+    if (elapsedTime > timeout) {
+      throw new ApiError(`Workflow timed out after ${elapsedTime}ms`, ErrorType.TIMEOUT_ERROR);
     }
 
     try {

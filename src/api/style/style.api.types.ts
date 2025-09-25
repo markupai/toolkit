@@ -178,6 +178,10 @@ export interface BatchOptions {
   maxConcurrent?: number;
   retryAttempts?: number;
   retryDelay?: number;
+  /**
+   * The timeout for the analysis of one content item in milliseconds.
+   * @default 5 minutes, 300000 milliseconds
+   */
   timeout?: number;
 }
 
