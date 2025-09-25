@@ -39,6 +39,10 @@ describe('Style API Unit Tests', () => {
     apiKey: 'test-api-key',
     platform: { type: PlatformType.Environment, value: Environment.Dev },
   };
+  const mockWorkflowConfig: WorkflowConfig = {
+    ...mockConfig,
+    timeout: 300000,
+  };
   const mockWorkflowId = 'test-workflow-id';
   const mockStyleAnalysisRequest = {
     content: 'test content',
@@ -222,11 +226,12 @@ describe('Style API Unit Tests', () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
       try {
-        await styleCheck(mockStyleAnalysisRequest, mockConfig, { timeout: 0 });
+        await styleCheck(mockStyleAnalysisRequest, mockWorkflowConfig);
         fail('Expected timeout error');
       } catch (error) {
         expect(error).toBeDefined();
         expect(error.type).toBe(ErrorType.TIMEOUT_ERROR);
+        expect(error.message).toContain('Workflow timed out');
         expect(error.message).toContain('ms');
       }
     });
@@ -253,11 +258,12 @@ describe('Style API Unit Tests', () => {
       server.use(apiHandlers.style.suggestions.success, apiHandlers.style.suggestions.poll);
 
       try {
-        await styleSuggestions(mockStyleAnalysisRequest, mockConfig, { timeout: 0 });
+        await styleSuggestions(mockStyleAnalysisRequest, mockWorkflowConfig);
         fail('Expected timeout error');
       } catch (error) {
         expect(error).toBeDefined();
         expect(error.type).toBe(ErrorType.TIMEOUT_ERROR);
+        expect(error.message).toContain('Workflow timed out');
         expect(error.message).toContain('ms');
       }
     });
@@ -290,11 +296,12 @@ describe('Style API Unit Tests', () => {
       server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
 
       try {
-        await styleRewrite(mockStyleAnalysisRequest, mockConfig, { timeout: 0 });
+        await styleRewrite(mockStyleAnalysisRequest, mockWorkflowConfig);
         fail('Expected timeout error');
       } catch (error) {
         expect(error).toBeDefined();
         expect(error.type).toBe(ErrorType.TIMEOUT_ERROR);
+        expect(error.message).toContain('Workflow timed out');
         expect(error.message).toContain('ms');
       }
     });

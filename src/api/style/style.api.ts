@@ -11,7 +11,7 @@ import {
 } from './style.api.types';
 import type { Config, StyleAnalysisPollResp } from '../../utils/api.types';
 
-import { createContentObject, defaultAnalysisWorkflowOptions, type AnalysisWorkflowOptions } from './style.api.utils';
+import { createContentObject, type WorkflowConfig } from './style.api.utils';
 import { submitAndPollStyleAnalysis, styleBatchCheck } from './style.api.utils';
 import { MarkupAI, MarkupAIError } from '@markupai/api';
 import { ApiError } from '../../utils/errors';
@@ -96,41 +96,27 @@ export async function submitStyleRewrite(
 // Convenience methods for style operations with polling
 export async function styleCheck(
   styleAnalysisRequest: StyleAnalysisReq,
-  config: Config,
-  options: AnalysisWorkflowOptions = defaultAnalysisWorkflowOptions,
+  config: WorkflowConfig,
 ): Promise<StyleAnalysisSuccessResp> {
-  return submitAndPollStyleAnalysis<StyleAnalysisSuccessResp>(
-    StyleOperationType.Check,
-    styleAnalysisRequest,
-    config,
-    options,
-  );
+  return submitAndPollStyleAnalysis<StyleAnalysisSuccessResp>(StyleOperationType.Check, styleAnalysisRequest, config);
 }
 
 export async function styleSuggestions(
   styleAnalysisRequest: StyleAnalysisReq,
-  config: Config,
-  options: AnalysisWorkflowOptions = defaultAnalysisWorkflowOptions,
+  config: WorkflowConfig,
 ): Promise<StyleAnalysisSuggestionResp> {
   return submitAndPollStyleAnalysis<StyleAnalysisSuggestionResp>(
     StyleOperationType.Suggestions,
     styleAnalysisRequest,
     config,
-    options,
   );
 }
 
 export async function styleRewrite(
   styleAnalysisRequest: StyleAnalysisReq,
-  config: Config,
-  options: AnalysisWorkflowOptions = defaultAnalysisWorkflowOptions,
+  config: WorkflowConfig,
 ): Promise<StyleAnalysisRewriteResp> {
-  return submitAndPollStyleAnalysis<StyleAnalysisRewriteResp>(
-    StyleOperationType.Rewrite,
-    styleAnalysisRequest,
-    config,
-    options,
-  );
+  return submitAndPollStyleAnalysis<StyleAnalysisRewriteResp>(StyleOperationType.Rewrite, styleAnalysisRequest, config);
 }
 
 // Get style check results by workflow ID
