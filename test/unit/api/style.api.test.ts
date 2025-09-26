@@ -1,34 +1,33 @@
-import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
+import { fail } from 'assert';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import {
-  submitStyleCheck,
-  submitStyleSuggestion,
-  submitStyleRewrite,
-  styleCheck,
-  styleSuggestions,
-  styleRewrite,
   getStyleCheck,
-  getStyleSuggestion,
   getStyleRewrite,
+  getStyleSuggestion,
   styleBatchCheckRequests,
-  styleBatchSuggestions,
-  styleBatchRewrites,
   styleBatchOperation,
+  styleBatchRewrites,
+  styleBatchSuggestions,
+  styleCheck,
+  styleRewrite,
+  styleSuggestions,
+  submitStyleCheck,
+  submitStyleRewrite,
+  submitStyleSuggestion,
 } from '../../../src/api/style/style.api';
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
-import { Status } from '../../../src/utils/api.types';
-import type { Config } from '../../../src/utils/api.types';
-import { PlatformType, Environment } from '../../../src/utils/api.types';
-import { server } from '../setup';
-import { apiHandlers } from '../mocks/api.handlers';
 import {
   StyleAnalysisReq,
+  StyleAnalysisRewriteResp,
   StyleAnalysisSuccessResp,
   StyleAnalysisSuggestionResp,
-  StyleAnalysisRewriteResp,
 } from '../../../src/api/style/style.api.types';
-import { fail } from 'assert';
-import { ErrorType } from '../../../src/utils/errors';
 import { WorkflowConfig } from '../../../src/api/style/style.api.utils';
+import type { Config } from '../../../src/utils/api.types';
+import { Environment, PlatformType, Status } from '../../../src/utils/api.types';
+import { ErrorType } from '../../../src/utils/errors';
+import { apiHandlers } from '../mocks/api.handlers';
+import { server } from '../setup';
 
 // Set up MSW server lifecycle hooks
 beforeAll(() => server.listen());

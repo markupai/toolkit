@@ -10,8 +10,7 @@ import {
 import { PlatformType, Environment } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
 import { server } from '../setup';
-import { http } from 'msw';
-import { HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 const mockApiKey = 'test-api-key';
 

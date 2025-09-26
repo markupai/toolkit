@@ -141,7 +141,7 @@ export class ApiError extends Error {
 
     // Handle direct format with code, message, description
     if (this.isDirectApiErrorResponse(errorData)) {
-      const message = (errorData.description as string) || (errorData.message as string);
+      const message = (errorData.description as string) || errorData.message;
 
       return new ApiError(message, ErrorType.UNAUTHORIZED_ERROR, statusCode, errorData);
     }

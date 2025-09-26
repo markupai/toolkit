@@ -1,26 +1,25 @@
-import { StyleOperationType, type CreateStyleGuideReq } from './style.api.types';
 import { initEndpoint } from '../../utils/api';
-import { Status } from '../../utils/api.types';
 import type { Config } from '../../utils/api.types';
-import type {
-  StyleAnalysisResponseBase,
-  StyleAnalysisRewriteResp,
-  StyleAnalysisSubmitResp,
-  StyleAnalysisSuccessResp,
-  StyleAnalysisSuggestionResp,
+import { Status } from '../../utils/api.types';
+import {
+  StyleOperationType,
+  type BatchOptions,
+  type BatchProgress,
+  type BatchResponse,
+  type BatchResult,
+  type CreateStyleGuideReq,
+  type StyleAnalysisReq,
+  type StyleAnalysisResponseBase,
+  type StyleAnalysisResponseType,
+  type StyleAnalysisRewriteResp,
+  type StyleAnalysisSubmitResp,
+  type StyleAnalysisSuccessResp,
+  type StyleAnalysisSuggestionResp,
 } from './style.api.types';
-import type { StyleAnalysisReq, FileDescriptor, BufferDescriptor } from './style.api.types';
 // Batch processing utilities
-import type {
-  BatchOptions,
-  BatchResult,
-  BatchProgress,
-  BatchResponse,
-  StyleAnalysisResponseType,
-} from './style.api.types';
 import { MarkupAI, MarkupAIError } from '@markupai/api';
 import { ApiError, ErrorType } from '../../utils/errors';
-import { isNodeEnvironment, getBlobCtor } from '../../utils/runtime';
+import { getBlobCtor, isNodeEnvironment } from '../../utils/runtime';
 
 /**
  * Creates a CreateStyleGuideReq from a file URL in Node.js environments.
@@ -53,13 +52,11 @@ export async function createStyleGuideReqFromUrl(fileUrl: string | URL, name?: s
       } else {
         filePath = fileUrl;
       }
-    } else {
+    } else if (fileUrl.protocol === 'file:') {
       // URL object
-      if (fileUrl.protocol === 'file:') {
-        filePath = fileURLToPath(fileUrl);
-      } else {
-        throw new Error('Only file:// URLs are supported. Please provide a local file path or file:// URL.');
-      }
+      filePath = fileURLToPath(fileUrl);
+    } else {
+      throw new Error('Only file:// URLs are supported. Please provide a local file path or file:// URL.');
     }
 
     // Read the file
@@ -142,12 +139,12 @@ export async function createBlob(request: StyleAnalysisReq): Promise<Blob> {
   if (typeof request.content === 'string') {
     return new BlobCtor([request.content], { type: 'text/plain' });
   } else if (typeof File !== 'undefined' && 'file' in request.content && request.content.file instanceof File) {
-    const fileDescriptor = request.content as FileDescriptor;
+    const fileDescriptor = request.content;
     // Convert File to Node.js Blob by reading it as ArrayBuffer first
     const arrayBuffer = await fileDescriptor.file.arrayBuffer();
     return new BlobCtor([arrayBuffer], { type: fileDescriptor.mimeType || 'application/octet-stream' });
   } else if ('buffer' in request.content && isBuffer(request.content.buffer)) {
-    const bufferDescriptor = request.content as BufferDescriptor;
+    const bufferDescriptor = request.content;
     const mimeType = bufferDescriptor.mimeType || getMimeTypeFromFilename(filename);
     // Convert Buffer to ArrayBuffer to satisfy TypeScript 5.9.2 strict typing
     const arrayBuffer = bufferDescriptor.buffer.buffer.slice(
@@ -166,10 +163,10 @@ export async function createFile(request: StyleAnalysisReq): Promise<File> {
   if (typeof request.content === 'string') {
     return new File([request.content], filename, { type: 'text/plain' });
   } else if (typeof File !== 'undefined' && 'file' in request.content && request.content.file instanceof File) {
-    const fileDescriptor = request.content as FileDescriptor;
+    const fileDescriptor = request.content;
     return fileDescriptor.file;
   } else if ('buffer' in request.content && isBuffer(request.content.buffer)) {
-    const bufferDescriptor = request.content as BufferDescriptor;
+    const bufferDescriptor = request.content;
     const mimeType = bufferDescriptor.mimeType || getMimeTypeFromFilename(filename);
     // Convert Buffer to ArrayBuffer to satisfy TypeScript 5.9.2 strict typing
     const arrayBuffer = bufferDescriptor.buffer.buffer.slice(
@@ -273,7 +270,7 @@ type StyleFunction<T> = (request: StyleAnalysisReq, config: WorkflowConfig) => P
 
 // Queue management for batch processing
 class BatchQueue<T extends StyleAnalysisResponseType> {
-  private inProgress = new Set<number>();
+  private readonly inProgress = new Set<number>();
   public results: Array<BatchResult<T>> = [];
   private cancelled = false;
   private resolvePromise?: (value: BatchProgress<T>) => void;
@@ -282,11 +279,11 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
   public estimatedCompletionTime?: number;
 
   constructor(
-    private requests: StyleAnalysisReq[],
-    private config: Config,
-    private styleFunction: StyleFunction<T>,
-    private options: Required<BatchOptions>,
-    private onProgressUpdate?: (progress: BatchProgress<T>) => void,
+    private readonly requests: StyleAnalysisReq[],
+    private readonly config: Config,
+    private readonly styleFunction: StyleFunction<T>,
+    private readonly options: Required<BatchOptions>,
+    private readonly onProgressUpdate?: (progress: BatchProgress<T>) => void,
   ) {
     this.startTime = Date.now();
     this.initializeResults();

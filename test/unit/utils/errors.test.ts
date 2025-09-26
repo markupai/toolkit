@@ -147,22 +147,11 @@ describe('ApiError', () => {
             type: 'value_error',
             loc: ['body', 'file_upload'],
             msg: 'Value error, File must be one of the following content types: application/pdf, text/plain',
-            input: {
-              filename: 'not_text.png',
-              size: 21286,
-            },
-            ctx: {
-              error: {},
-            },
           },
           {
             type: 'enum',
             loc: ['body', 'dialect'],
             msg: "Input should be 'american_english', 'british_oxford' or 'canadian_english'",
-            input: 'spanish',
-            ctx: {
-              expected: "'american_english', 'british_oxford' or 'canadian_english'",
-            },
           },
         ],
       };

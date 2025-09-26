@@ -98,7 +98,7 @@ export async function withRateLimitRetry<T>(
       type RateLimitLike = {
         statusCode?: number;
         status?: number;
-        body?: Record<string, unknown> | unknown;
+        body?: Record<string, unknown>;
         headers?: Record<string, unknown>;
       };
       const error = err as RateLimitLike | Error;
@@ -126,7 +126,7 @@ export async function withRateLimitRetry<T>(
 
       // Respect Retry-After header if available
       let delayMs: number | undefined;
-      const headers = (error as RateLimitLike)?.headers as Record<string, unknown> | undefined;
+      const headers = (error as RateLimitLike)?.headers;
       const retryAfterHeader = (headers?.['Retry-After'] ?? headers?.['retry-after'] ?? headers?.['retry_after']) as
         | string
         | number
@@ -194,14 +194,14 @@ function wrapClientWithRateLimit<T extends object>(client: T, config: Config, pa
 
         // If value is an object, recursively proxy it
         if (typeof value === 'object' && value !== null) {
-          return makeProxy(value as object, `${currentPath}.${String(prop)}`);
+          return makeProxy(value, `${currentPath}.${String(prop)}`);
         }
 
         return value;
       },
     });
 
-    proxyCache.set(target, proxy as object);
+    proxyCache.set(target, proxy);
     return proxy as U;
   };
 
