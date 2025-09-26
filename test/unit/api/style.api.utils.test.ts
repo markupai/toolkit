@@ -1,13 +1,15 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { createStyleGuideReqFromUrl, createStyleGuideReqFromPath } from '../../../src/api/style/style.api.utils';
 import { readFileSync } from 'fs';
 import { basename } from 'path';
 import { fileURLToPath } from 'url';
-import { isCompletedResponse } from '../../../src/api/style/style.api.utils';
-import { Status } from '../../../src/utils/api.types';
-import { styleBatchCheck } from '../../../src/api/style/style.api.utils';
-import { Config, PlatformType, Environment } from '../../../src/utils/api.types';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { IssueCategory, StyleAnalysisReq, StyleAnalysisSuccessResp } from '../../../src/api/style/style.api.types';
+import {
+  createStyleGuideReqFromPath,
+  createStyleGuideReqFromUrl,
+  isCompletedResponse,
+  styleBatchCheck,
+} from '../../../src/api/style/style.api.utils';
+import { Config, Environment, PlatformType, Status } from '../../../src/utils/api.types';
 
 // Mock Node.js modules
 vi.mock('fs');

@@ -19,10 +19,7 @@ describe('CORS Integration Tests', () => {
     };
   });
 
-  const testOrigins = [
-    'https://uuid-2323423.ctfcloud.net',
-    'https://app.contentful.com'
-  ];
+  const testOrigins = ['https://uuid-2323423.ctfcloud.net', 'https://app.contentful.com'];
 
   // Normalize a comma-separated header value into a lowercase list for case-insensitive checks
   function parseHeaderList(value: string | null): string[] {
@@ -106,7 +103,7 @@ describe('CORS Integration Tests', () => {
           },
         });
 
-      expect(response.status).toBe(200);
+        expect(response.status).toBe(200);
 
         const corsHeaders = {
           'access-control-allow-credentials': response.headers.get('access-control-allow-credentials'),
@@ -148,7 +145,7 @@ describe('CORS Integration Tests', () => {
           },
         });
 
-      expect(response.status).toBe(200);
+        expect(response.status).toBe(200);
 
         const corsHeaders = {
           'access-control-allow-credentials': response.headers.get('access-control-allow-credentials'),
@@ -174,9 +171,7 @@ describe('CORS Integration Tests', () => {
 
   describe('CORS Headers with Different Origins', () => {
     it('should handle different origins correctly', async () => {
-      const origins = [
-        ...testOrigins,
-      ];
+      const origins = [...testOrigins];
 
       for (const origin of origins) {
         const url = `${config.platform!.value}${STYLE_GUIDES_ENDPOINT}`;
@@ -255,7 +250,7 @@ describe('CORS Integration Tests', () => {
 
           const body = await response.text();
           expect(response.status).toBe(200);
-          
+
           console.log(`Origin: ${origin} Request Headers: ${headers}, Body: ${body}`);
 
           const allowHeaders = response.headers.get('access-control-allow-headers');
