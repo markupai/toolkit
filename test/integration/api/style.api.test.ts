@@ -28,6 +28,18 @@ async function createTestPdfBuffer(): Promise<BufferDescriptor> {
   return { buffer, mimeType: 'application/pdf' };
 }
 
+// Helper function to create a File object from the batteries.pdf
+async function createTestFile(): Promise<File> {
+  const pdfPath = join(__dirname, '../test-data/batteries.pdf');
+  const pdfBuffer = readFileSync(pdfPath);
+  return new File([pdfBuffer], 'batteries.pdf', { type: 'application/pdf' });
+}
+
+// Helper function to create a Buffer object from text content
+function createTestBuffer(content: string): Buffer {
+  return Buffer.from(content, 'utf8');
+}
+
 describe('Style API Integration Tests', () => {
   let config: Config;
   beforeAll(() => {
@@ -417,13 +429,6 @@ describe('Style API Integration Tests', () => {
   describe('Style Operations with File Content', () => {
     const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft;
 
-    // Helper function to create a File object from the batteries.pdf
-    async function createTestFile(): Promise<File> {
-      const pdfPath = join(__dirname, '../test-data/batteries.pdf');
-      const pdfBuffer = readFileSync(pdfPath);
-      return new File([pdfBuffer], 'batteries.pdf', { type: 'application/pdf' });
-    }
-
     it('should submit a style check with File content', async () => {
       const testFile = await createTestFile();
       const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
@@ -624,11 +629,6 @@ describe('Style API Integration Tests', () => {
 
   describe('Style Operations with Buffer Content', () => {
     const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft;
-
-    // Helper function to create a Buffer object from text content
-    function createTestBuffer(content: string): Buffer {
-      return Buffer.from(content, 'utf8');
-    }
 
     it('should submit a style check with Buffer content', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer style operations.');
