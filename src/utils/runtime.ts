@@ -17,6 +17,6 @@ export function isNodeEnvironment(): boolean {
  */
 export async function getBlobCtor(): Promise<typeof Blob> {
   if (typeof Blob !== 'undefined') return Blob;
-  const { Blob: NodeBlob } = (await import('buffer')) as typeof import('node:buffer');
+  const { Blob: NodeBlob } = (await import('node:buffer')) as typeof import('node:buffer');
   return (NodeBlob as unknown as typeof Blob) ?? Blob;
 }

@@ -2,6 +2,14 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
 
+// Normalize a comma-separated header value into a lowercase list for case-insensitive checks
+function parseHeaderList(value: string | null): string[] {
+  return (value ?? '')
+    .split(',')
+    .map((header) => header.trim().toLowerCase())
+    .filter(Boolean);
+}
+
 describe('CORS Integration Tests', () => {
   let config: Config;
   const STYLE_API_ENDPOINTS = {
@@ -20,14 +28,6 @@ describe('CORS Integration Tests', () => {
   });
 
   const testOrigins = ['https://uuid-2323423.ctfcloud.net', 'https://app.contentful.com'];
-
-  // Normalize a comma-separated header value into a lowercase list for case-insensitive checks
-  function parseHeaderList(value: string | null): string[] {
-    return (value ?? '')
-      .split(',')
-      .map((h) => h.trim().toLowerCase())
-      .filter(Boolean);
-  }
 
   // Helper function to make OPTIONS request and check CORS headers
   async function testCorsHeaders(endpoint: string, description: string) {
