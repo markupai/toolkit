@@ -2,7 +2,7 @@ import { fail } from 'assert';
 import { ErrorType } from '../../src/utils/errors';
 import { expect, vi } from 'vitest';
 
-export const testTimeout = async (pollingFunction: () => Promise<any>, timeout: number) => {
+export const testTimeout = async (pollingFunction: () => Promise<unknown>, timeout: number) => {
   let success = false;
   try {
     const promise = pollingFunction();

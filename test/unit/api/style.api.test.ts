@@ -24,7 +24,6 @@ import {
 import { WorkflowConfig } from '../../../src/api/style/style.api.utils';
 import type { Config } from '../../../src/utils/api.types';
 import { Environment, PlatformType, Status } from '../../../src/utils/api.types';
-import { ErrorType } from '../../../src/utils/errors';
 import { apiHandlers } from '../mocks/api.handlers';
 import { server } from '../setup';
 import { testTimeout } from '../testUtils';
