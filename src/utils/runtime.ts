@@ -6,7 +6,7 @@
 export function isNodeEnvironment(): boolean {
   // Narrow process with a local type to avoid 'any'
   type ProcessLike = { versions?: { node?: string } };
-  const proc = typeof process !== 'undefined' ? (process as unknown as ProcessLike) : undefined;
+  const proc = typeof process === 'undefined' ? undefined : (process as unknown as ProcessLike);
   return !!proc?.versions?.node;
 }
 

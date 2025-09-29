@@ -205,8 +205,8 @@ describe('Style API Utils', () => {
   describe('environment detection', () => {
     it('should work in Node.js environment', async () => {
       // Mock Node.js environment
-      const originalProcess = global.process;
-      global.process = {
+      const originalProcess = globalThis.process;
+      globalThis.process = {
         ...originalProcess,
         versions: { node: '22.0.0' },
       } as NodeJS.Process;
@@ -217,13 +217,13 @@ describe('Style API Utils', () => {
       expect(result.file).toBeInstanceOf(File);
 
       // Restore original process
-      global.process = originalProcess;
+      globalThis.process = originalProcess;
     });
 
     it('should throw error in browser environment', async () => {
       // Mock browser environment (no process.versions.node)
-      const originalProcess = global.process;
-      global.process = {
+      const originalProcess = globalThis.process;
+      globalThis.process = {
         ...originalProcess,
         versions: {},
       } as NodeJS.Process;
@@ -233,7 +233,7 @@ describe('Style API Utils', () => {
       );
 
       // Restore original process
-      global.process = originalProcess;
+      globalThis.process = originalProcess;
     });
   });
 });

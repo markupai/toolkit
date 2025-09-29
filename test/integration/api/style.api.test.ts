@@ -16,8 +16,8 @@ import type { StyleAnalysisReq, StyleAnalysisSuccessResp, BatchProgress } from '
 import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
 import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
-import { readFileSync } from 'fs';
-import { join } from 'path';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { ApiError } from '../../../src/utils/errors';
 import { BufferDescriptor } from '../../../src/api/style/style.api.types';
 
@@ -1197,15 +1197,13 @@ describe('Style API Integration Tests', () => {
     describe('Large Batch Processing', () => {
       it('should handle larger batches efficiently', async () => {
         // Create a larger batch (but not too large for testing)
-        const largeBatch = Array(10)
-          .fill(null)
-          .map((_, index) => ({
-            content: `Test document ${index + 1} for large batch processing.`,
-            style_guide: 'ap',
-            dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-            tone: STYLE_DEFAULTS.tones.technical,
-            documentName: `test-document-${index + 1}.txt`,
-          }));
+        const largeBatch = new Array(10).fill(null).map((_, index) => ({
+          content: `Test document ${index + 1} for large batch processing.`,
+          style_guide: 'ap',
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.technical,
+          documentName: `test-document-${index + 1}.txt`,
+        }));
 
         const batchResponse = styleBatchCheckRequests(largeBatch, config, {
           maxConcurrent: 3,
