@@ -1,6 +1,5 @@
 import { setupServer } from 'msw/node';
 import { beforeAll, afterAll, afterEach } from 'vitest';
-import { apiHandlers } from './mocks/api.handlers';
 import { DEFAULT_PLATFORM_URL_DEV } from '../../src/utils/api';
 
 // Create MSW server instance
@@ -21,4 +20,4 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 // Export handlers from centralized location
-export const handlers = apiHandlers;
+export { apiHandlers as handlers } from './mocks/api.handlers';
