@@ -1,4 +1,4 @@
-import { fail } from 'assert';
+import { fail } from 'node:assert';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import {
   getStyleCheck,

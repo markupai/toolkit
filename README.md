@@ -107,13 +107,13 @@ batchCheck.promise.then((finalProgress) => {
   console.log(`Completed: ${finalProgress.completed}/${finalProgress.total}`);
   console.log(`Failed: ${finalProgress.failed}`);
 
-  finalProgress.results.forEach((result, index) => {
+  for (const [index, result] of finalProgress.results.entries()) {
     if (result.status === 'completed') {
       console.log(`Request ${index}: ${result.result?.original.scores.quality.score}`);
     } else if (result.status === 'failed') {
       console.log(`Request ${index} failed: ${result.error?.message}`);
     }
-  });
+  }
 });
 
 // Batch suggestions
@@ -147,9 +147,9 @@ console.log(`Issues found: ${checkResult.original.issues.length}`);
 
 // Style suggestion response
 const suggestionResult: StyleAnalysisSuggestionResp = await styleSuggestions(request, config);
-suggestionResult.original.issues.forEach((issue) => {
+for (const issue of suggestionResult.original.issues) {
   console.log(`Issue: "${issue.original}" → Suggestion: "${issue.suggestion}"`);
-});
+}
 
 // Style rewrite response
 const rewriteResult: StyleAnalysisRewriteResp = await styleRewrite(request, config);

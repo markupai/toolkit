@@ -134,7 +134,7 @@ export async function withRateLimitRetry<T>(
 
       if (retryAfterHeader !== undefined) {
         const retryAfterSec =
-          typeof retryAfterHeader === 'string' ? parseFloat(retryAfterHeader) : Number(retryAfterHeader);
+          typeof retryAfterHeader === 'string' ? Number.parseFloat(retryAfterHeader) : Number(retryAfterHeader);
         if (!Number.isNaN(retryAfterSec) && Number.isFinite(retryAfterSec)) {
           delayMs = Math.max(0, Math.floor(retryAfterSec * 1000));
         }
@@ -143,7 +143,7 @@ export async function withRateLimitRetry<T>(
       // If X-RateLimit-Reset is present (epoch seconds), compute until reset
       if (!delayMs && headers && (headers['X-RateLimit-Reset'] || headers['x-ratelimit-reset'])) {
         const reset = (headers['X-RateLimit-Reset'] ?? headers['x-ratelimit-reset']) as string | number;
-        const resetEpochSec = typeof reset === 'string' ? parseInt(reset, 10) : Number(reset);
+        const resetEpochSec = typeof reset === 'string' ? Number.parseInt(reset, 10) : Number(reset);
         if (!Number.isNaN(resetEpochSec)) {
           const msUntilReset = resetEpochSec * 1000 - Date.now();
           if (Number.isFinite(msUntilReset)) {

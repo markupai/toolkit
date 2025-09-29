@@ -1008,7 +1008,7 @@ describe('Style API Integration Tests', () => {
         expect(result.pending).toBe(0);
 
         // Verify individual results
-        result.results.forEach((batchResult, index) => {
+        for (const [index, batchResult] of result.results.entries()) {
           expect(batchResult.status).toBe('completed');
           expect(batchResult.result).toBeDefined();
           expect(batchResult.result!.workflow).toBeDefined();
@@ -1016,7 +1016,7 @@ describe('Style API Integration Tests', () => {
           expect(batchResult.result!.original.scores).toBeDefined();
           expect(batchResult.index).toBe(index);
           expect(batchResult.request).toEqual(mockBatchRequests[index]);
-        });
+        }
       });
 
       it('should respect maxConcurrent limit', async () => {
@@ -1066,7 +1066,7 @@ describe('Style API Integration Tests', () => {
         expect(result.completed).toBe(3);
         expect(result.failed).toBe(0);
 
-        result.results.forEach((batchResult) => {
+        for (const batchResult of result.results) {
           expect(batchResult.status).toBe('completed');
           expect(batchResult.result).toBeDefined();
           expect(batchResult.result!.workflow.id).toBeDefined();
@@ -1074,7 +1074,7 @@ describe('Style API Integration Tests', () => {
           expect(batchResult.result!.original.scores).toBeDefined();
           // Suggestions should have issues with suggestions
           expect(Array.isArray(batchResult.result!.original.issues)).toBe(true);
-        });
+        }
       });
     });
 
@@ -1087,7 +1087,7 @@ describe('Style API Integration Tests', () => {
         expect(result.completed).toBe(3);
         expect(result.failed).toBe(0);
 
-        result.results.forEach((batchResult) => {
+        for (const batchResult of result.results) {
           expect(batchResult.status).toBe('completed');
           expect(batchResult.result).toBeDefined();
           expect(batchResult.result!.workflow.id).toBeDefined();
@@ -1095,7 +1095,7 @@ describe('Style API Integration Tests', () => {
           expect(batchResult.result!.original.scores).toBeDefined();
           expect(batchResult.result!.rewrite).toBeDefined();
           expect(batchResult.result!.rewrite.scores).toBeDefined();
-        });
+        }
       });
     });
 
@@ -1222,15 +1222,13 @@ describe('Style API Integration Tests', () => {
     describe('Reactive Progress Updates', () => {
       it('should provide real-time progress updates with 25 requests', async () => {
         // Create 25 test requests
-        const largeBatch = Array(25)
-          .fill(null)
-          .map((_, index) => ({
-            content: `Test document ${index + 1} for reactive progress testing. This document contains multiple sentences to ensure proper processing time. Document ${index + 1} has unique content for comprehensive testing.`,
-            style_guide: 'ap',
-            dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-            tone: STYLE_DEFAULTS.tones.technical,
-            documentName: `test-document-${index + 1}.txt`,
-          }));
+        const largeBatch = new Array(25).fill(null).map((_, index) => ({
+          content: `Test document ${index + 1} for reactive progress testing. This document contains multiple sentences to ensure proper processing time. Document ${index + 1} has unique content for comprehensive testing.`,
+          style_guide: 'ap',
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.technical,
+          documentName: `test-document-${index + 1}.txt`,
+        }));
 
         const batchResponse = styleBatchCheckRequests(largeBatch, config, {
           maxConcurrent: 3,
@@ -1301,7 +1299,7 @@ describe('Style API Integration Tests', () => {
         expect(result.completed).toBeGreaterThan(0);
 
         // Verify individual results for completed requests
-        result.results.forEach((batchResult, index) => {
+        for (const [index, batchResult] of result.results.entries()) {
           if (batchResult.status === 'completed') {
             expect(batchResult.result).toBeDefined();
             expect(batchResult.result!.workflow).toBeDefined();
@@ -1310,7 +1308,7 @@ describe('Style API Integration Tests', () => {
             expect(batchResult.index).toBe(index);
             expect(batchResult.request).toEqual(largeBatch[index]);
           }
-        });
+        }
 
         console.log(
           `Progress test completed: ${result.completed} successful, ${result.failed} failed, max completed during processing: ${maxCompleted}`,
