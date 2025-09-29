@@ -40,9 +40,9 @@ export async function createStyleGuideReqFromUrl(fileUrl: string | URL, name?: s
 
   try {
     // Dynamic imports to avoid browser bundling issues
-    const { readFileSync } = await import('fs');
-    const { basename } = await import('path');
-    const { fileURLToPath } = await import('url');
+    const { readFileSync } = await import('node:fs');
+    const { basename } = await import('node:path');
+    const { fileURLToPath } = await import('node:url');
 
     // Convert URL to path if it's a file:// URL
     let filePath: string;
@@ -336,7 +336,7 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
       const result = await this.executeWithRetry(request);
 
       // If result is undefined, treat as failure
-      if (typeof result === 'undefined') {
+      if (result === undefined) {
         this.results[index] = {
           ...this.results[index],
           status: 'failed',

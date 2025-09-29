@@ -1,6 +1,6 @@
-import { readFileSync } from 'fs';
-import { basename } from 'path';
-import { fileURLToPath } from 'url';
+import { readFileSync } from 'node:fs';
+import { basename } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { IssueCategory, StyleAnalysisReq, StyleAnalysisSuccessResp } from '../../../src/api/style/style.api.types';
 import {
@@ -425,7 +425,7 @@ describe('Batch Processing', () => {
       expect(() => styleBatchCheck([], mockConfig, {}, mockStyleFunction)).toThrow('Requests array cannot be empty');
 
       // Test too many requests
-      const tooManyRequests = Array(1001).fill(mockRequests[0]);
+      const tooManyRequests = new Array(1001).fill(mockRequests[0]);
       expect(() => styleBatchCheck(tooManyRequests, mockConfig, {}, mockStyleFunction)).toThrow(
         'Maximum 1000 requests allowed per batch',
       );
@@ -463,12 +463,12 @@ describe('Batch Processing', () => {
       expect(result.pending).toBe(0);
       expect(result.results).toHaveLength(3);
 
-      result.results.forEach((batchResult, index) => {
+      for (const [index, batchResult] of result.results.entries()) {
         expect(batchResult.status).toBe('completed');
         expect(batchResult.result).toEqual(mockStyleCheckResponse);
         expect(batchResult.index).toBe(index);
         expect(batchResult.request).toEqual(mockRequests[index]);
-      });
+      }
     });
 
     it('should respect maxConcurrent limit', async () => {
@@ -514,16 +514,16 @@ describe('Batch Processing', () => {
 
       // Check that completed results have data (if any)
       if (completedResults.length > 0) {
-        completedResults.forEach((batchResult) => {
+        for (const batchResult of completedResults) {
           expect(batchResult.result).toBeDefined();
-        });
+        }
       }
 
       // Check that failed results have errors (if any)
       if (failedResults.length > 0) {
-        failedResults.forEach((batchResult) => {
+        for (const batchResult of failedResults) {
           expect(batchResult.error).toBeInstanceOf(Error);
-        });
+        }
       }
     });
 
@@ -582,11 +582,11 @@ describe('Batch Processing', () => {
       const result = await batchResponse.promise;
 
       expect(result.startTime).toBeGreaterThan(0);
-      result.results.forEach((batchResult) => {
+      for (const batchResult of result.results) {
         expect(batchResult.startTime).toBeGreaterThan(0);
         expect(batchResult.endTime).toBeGreaterThan(0);
         expect(batchResult.endTime).toBeGreaterThanOrEqual(batchResult.startTime!);
-      });
+      }
     });
 
     it('should handle edge case with single request', async () => {

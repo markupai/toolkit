@@ -130,12 +130,12 @@ describe('API Utilities Integration Tests', () => {
         const results = await Promise.all(promises);
         expect(results).toHaveLength(3);
 
-        results.forEach((result) => {
+        for (const result of results) {
           expect(result).toHaveProperty('success');
           expect(result).toHaveProperty('url');
           expect(result).toHaveProperty('error');
           expect(result.url).toBe(process.env.TEST_PLATFORM_URL);
-        });
+        }
       });
     });
   });

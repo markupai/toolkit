@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import { beforeAll } from 'vitest';
-import path from 'path';
-import fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs';
 import { DEFAULT_PLATFORM_URL_DEV } from '../../src/utils/api';
 
 // Load environment variables before running integration tests

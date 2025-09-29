@@ -2,8 +2,8 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { listStyleGuides, createStyleGuide, validateToken } from '../../../src/api/style/style-guides.api';
 import { PlatformType } from '../../../src/utils/api.types';
 import type { Config } from '../../../src/utils/api.types';
-import { readFileSync } from 'fs';
-import { join } from 'path';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { createStyleGuideReqFromPath } from '../../../src/api/style/style.api.utils';
 
 describe('Style Guide Integration Tests', () => {
