@@ -1,5 +1,4 @@
-import { fail } from 'node:assert';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   getStyleCheck,
   getStyleRewrite,
@@ -25,9 +24,9 @@ import {
 import { WorkflowConfig } from '../../../src/api/style/style.api.utils';
 import type { Config } from '../../../src/utils/api.types';
 import { Environment, PlatformType, Status } from '../../../src/utils/api.types';
-import { ErrorType } from '../../../src/utils/errors';
 import { apiHandlers } from '../mocks/api.handlers';
 import { server } from '../setup';
+import { testTimeout } from '../testUtils';
 
 // Set up MSW server lifecycle hooks
 beforeAll(() => server.listen());
@@ -211,6 +210,14 @@ describe('Style API Unit Tests', () => {
   });
 
   describe('Style Analysis with Polling', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
     it('should perform style check with polling successfully', async () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
@@ -225,15 +232,7 @@ describe('Style API Unit Tests', () => {
     it('should abort style check with polling after timeout', async () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
-      try {
-        await styleCheck(mockStyleAnalysisRequest, mockWorkflowConfig);
-        fail('Expected timeout error');
-      } catch (error) {
-        expect(error).toBeDefined();
-        expect(error.type).toBe(ErrorType.TIMEOUT_ERROR);
-        expect(error.message).toContain('Workflow timed out');
-        expect(error.message).toContain('ms');
-      }
+      await testTimeout(() => styleCheck(mockStyleAnalysisRequest, mockWorkflowConfig), mockWorkflowConfig.timeout!);
     });
 
     it('should handle analysis.tone as null for style check results', async () => {
@@ -257,15 +256,10 @@ describe('Style API Unit Tests', () => {
     it('should abort style suggestions with polling after timeout', async () => {
       server.use(apiHandlers.style.suggestions.success, apiHandlers.style.suggestions.poll);
 
-      try {
-        await styleSuggestions(mockStyleAnalysisRequest, mockWorkflowConfig);
-        fail('Expected timeout error');
-      } catch (error) {
-        expect(error).toBeDefined();
-        expect(error.type).toBe(ErrorType.TIMEOUT_ERROR);
-        expect(error.message).toContain('Workflow timed out');
-        expect(error.message).toContain('ms');
-      }
+      await testTimeout(
+        () => styleSuggestions(mockStyleAnalysisRequest, mockWorkflowConfig),
+        mockWorkflowConfig.timeout!,
+      );
     });
 
     it('should handle analysis.tone as object for style suggestions', async () => {
@@ -295,16 +289,7 @@ describe('Style API Unit Tests', () => {
     it('should abort style rewrite with polling after timeout', async () => {
       server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
 
-      try {
-        await styleRewrite(mockStyleAnalysisRequest, mockWorkflowConfig);
-        fail('Expected timeout error');
-      } catch (error) {
-        console.log(error);
-        expect(error).toBeDefined();
-        expect(error.type).toBe(ErrorType.TIMEOUT_ERROR);
-        expect(error.message).toContain('Workflow timed out');
-        expect(error.message).toContain('ms');
-      }
+      await testTimeout(() => styleRewrite(mockStyleAnalysisRequest, mockWorkflowConfig), mockWorkflowConfig.timeout!);
     });
 
     it('should handle analysis.tone as object for style rewrites', async () => {
