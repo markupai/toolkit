@@ -143,7 +143,12 @@ export async function createBlob(request: StyleAnalysisReq): Promise<Blob> {
   if (typeof request.content === 'string') {
     // Prefer MIME type based on filename if provided; fallback to simple HTML heuristic, then text/plain
     const nameDerived = getMimeTypeFromFilename(filename);
-    const type = nameDerived !== 'application/octet-stream' ? nameDerived : isLikelyHtmlString(request.content) ? 'text/html' : 'text/plain';
+    const type =
+      nameDerived !== 'application/octet-stream'
+        ? nameDerived
+        : isLikelyHtmlString(request.content)
+          ? 'text/html'
+          : 'text/plain';
     return new BlobCtor([request.content], { type });
   } else if (typeof File !== 'undefined' && 'file' in request.content && request.content.file instanceof File) {
     const fileDescriptor = request.content;
@@ -170,7 +175,12 @@ export async function createFile(request: StyleAnalysisReq): Promise<File> {
   if (typeof request.content === 'string') {
     // Prefer MIME type based on filename if provided; fallback to simple HTML heuristic, then text/plain
     const nameDerived = getMimeTypeFromFilename(filename);
-    const type = nameDerived !== 'application/octet-stream' ? nameDerived : isLikelyHtmlString(request.content) ? 'text/html' : 'text/plain';
+    const type =
+      nameDerived !== 'application/octet-stream'
+        ? nameDerived
+        : isLikelyHtmlString(request.content)
+          ? 'text/html'
+          : 'text/plain';
     return new File([request.content], filename, { type });
   } else if (typeof File !== 'undefined' && 'file' in request.content && request.content.file instanceof File) {
     const fileDescriptor = request.content;

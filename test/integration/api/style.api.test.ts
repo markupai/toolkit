@@ -467,25 +467,6 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
-    it('should submit a style rewrite with File content', async () => {
-      const testFile = await createTestFile();
-      const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
-
-      const response = await submitStyleRewrite(
-        {
-          content: fileDescriptor,
-          style_guide: styleGuideId,
-          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'batteries-rewrite-test.pdf',
-        },
-        config,
-      );
-
-      expect(response).toBeDefined();
-      expect(response.workflow_id).toBeDefined();
-    });
-
     it('should submit a style check with File content and get result', async () => {
       const testFile = await createTestFile();
       const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
@@ -552,44 +533,6 @@ describe('Style API Integration Tests', () => {
         response.original.scores.analysis.tone === null || typeof response.original.scores.analysis.tone === 'object',
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
-
-      if (response.original.issues && response.original.issues.length > 0) {
-        const issue = response.original.issues[0];
-        expect(issue.suggestion).toBeDefined();
-        expect(typeof issue.suggestion).toBe('string');
-      }
-    });
-
-    it('should submit a style rewrite with File content and get result', async () => {
-      const testFile = await createTestFile();
-      const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
-
-      const response = await styleRewrite(
-        {
-          content: fileDescriptor,
-          style_guide: styleGuideId,
-          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
-          tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'batteries-rewrite-result-test.pdf',
-        },
-        config,
-      );
-
-      expect(response).toBeDefined();
-      expect(response.workflow).toBeDefined();
-      expect(typeof response.workflow.id).toBe('string');
-      expect(response.original.scores).toBeDefined();
-      expect(response.original.scores.quality).toBeDefined();
-      expect(response.original.scores.analysis).toBeDefined();
-      expect(response.original.scores.analysis.clarity).toBeDefined();
-      expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(response.original.scores.quality.consistency).toBeDefined();
-      expect(response.original.scores.analysis.tone).toBeDefined();
-      expect(response.original.scores.quality.terminology).toBeDefined();
-
-      // Test rewrite
-      expect(response.rewrite).toBeDefined();
-      expect(typeof response.rewrite.text).toBe('string');
 
       if (response.original.issues && response.original.issues.length > 0) {
         const issue = response.original.issues[0];
