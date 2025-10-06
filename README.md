@@ -101,8 +101,8 @@ const requests = [
 const batchCheck = styleBatchCheckRequests(requests, config, {
   maxConcurrent: 5,
   retryAttempts: 3,
-  retryDelay: 1000,
-  timeoutMillis: 30000,
+  retryDelay: 1_000,
+  timeoutMillis: 30_000,
 });
 
 // Monitor progress (live snapshot)
@@ -111,7 +111,7 @@ const interval = setInterval(() => {
   const p = batchCheck.progress;
   console.log(`Progress: ${p.completed}/${p.total} completed, ${p.inProgress} in-progress, ${p.failed} failed`);
   if (p.completed + p.failed === p.total) clearInterval(interval);
-}, 1000);
+}, 1_000);
 
 // Await final results
 batchCheck.promise.then((finalProgress) => {

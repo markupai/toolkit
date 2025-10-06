@@ -677,7 +677,7 @@ describe('Batch Processing', () => {
 
     it('should support cancellation', async () => {
       const mockStyleFunction = vi.fn().mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Long running
+        await new Promise((resolve) => setTimeout(resolve, 1_000)); // Long running
         return mockStyleCheckResponse;
       });
 

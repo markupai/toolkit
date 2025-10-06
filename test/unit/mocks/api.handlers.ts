@@ -178,7 +178,7 @@ const styleHandlers = {
                 'Retry-After': '0',
                 'X-RateLimit-Limit': '10',
                 'X-RateLimit-Remaining': '0',
-                'X-RateLimit-Reset': `${Math.floor(Date.now() / 1000)}`,
+                'X-RateLimit-Reset': `${Math.floor(Date.now() / 1_000)}`,
               },
             },
           );
@@ -199,7 +199,7 @@ const styleHandlers = {
             'Retry-After': '0',
             'X-RateLimit-Limit': '10',
             'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': `${Math.floor(Date.now() / 1000)}`,
+            'X-RateLimit-Reset': `${Math.floor(Date.now() / 1_000)}`,
           },
         },
       );

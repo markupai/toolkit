@@ -50,7 +50,7 @@ describe('Style API Integration Tests', () => {
     config = {
       apiKey,
       platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
-      rateLimit: { maxRetries: 3, initialDelayMs: 500, maxDelayMs: 2000, jitter: true },
+      rateLimit: { maxRetries: 3, initialDelayMs: 500, maxDelayMs: 2_000, jitter: true },
     };
   });
 
@@ -1105,7 +1105,7 @@ describe('Style API Integration Tests', () => {
         });
 
         // Wait a bit for some progress
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1_000));
 
         // Cancel
         batchResponse.cancel();
@@ -1157,7 +1157,7 @@ describe('Style API Integration Tests', () => {
         expect(result.total).toBe(10);
         expect(result.completed + result.failed).toBe(10);
         expect(result.results).toHaveLength(10);
-      }, 60000); // Longer timeout for larger batch
+      }, 60_000); // Longer timeout for larger batch
     });
 
     describe('Reactive Progress Updates', () => {
@@ -1254,7 +1254,7 @@ describe('Style API Integration Tests', () => {
         console.log(
           `Progress test completed: ${result.completed} successful, ${result.failed} failed, max completed during processing: ${maxCompleted}`,
         );
-      }, 120000); // 2 minutes timeout for 25 requests
+      }, 120_000); // 2 minutes timeout for 25 requests
     });
   });
 });

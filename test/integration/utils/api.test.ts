@@ -107,7 +107,7 @@ describe('API Utilities Integration Tests', () => {
 
         // Set a timeout for this test
         const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Test timeout')), 5000);
+          setTimeout(() => reject(new Error('Test timeout')), 5_000);
         });
 
         const verifyPromise = verifyPlatformUrl(timeoutConfig);

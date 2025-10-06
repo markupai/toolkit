@@ -190,7 +190,7 @@ describe('Style API Unit Tests', () => {
       );
 
       expect(result.workflow_id).toBeDefined();
-    }, 10000);
+    }, 10_000);
 
     it('should surface ApiError after exhausting 429 retries', async () => {
       server.use(apiHandlers.style.checks.rateLimitAlways);
@@ -206,7 +206,7 @@ describe('Style API Unit Tests', () => {
           { ...mockConfig, rateLimit: { maxRetries: 1, initialDelayMs: 0, maxDelayMs: 0, jitter: false } },
         ),
       ).rejects.toThrow('Rate limit exceeded');
-    }, 15000);
+    }, 15_000);
   });
 
   describe('Style Analysis with Polling', () => {
