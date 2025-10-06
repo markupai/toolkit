@@ -230,7 +230,7 @@ function resolveFilename(request: StyleAnalysisReq): string {
   return 'unknown.txt';
 }
 
-export const defaultWorkflowTimeoutMillis = 300000;
+export const defaultWorkflowTimeoutMillis = 300_000;
 export interface WorkflowConfig extends Config {
   /**
    * The timeout for the workflow in milliseconds.
