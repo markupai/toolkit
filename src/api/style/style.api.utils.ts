@@ -234,7 +234,7 @@ export const defaultWorkflowTimeoutMillis = 300_000;
 export interface WorkflowConfig extends Config {
   /**
    * The timeout for the workflow in milliseconds.
-   * @default 5 minutes, 300000 milliseconds
+   * @default 5 minutes, 300_000 milliseconds
    */
   timeoutMillis?: number;
 }
@@ -515,7 +515,7 @@ export function styleBatchCheck<T extends StyleAnalysisResponseType>(
     throw new Error('Requests array cannot be empty');
   }
 
-  if (requests.length > 1000) {
+  if (requests.length > 1_000) {
     throw new Error('Maximum 1000 requests allowed per batch');
   }
 
@@ -523,7 +523,7 @@ export function styleBatchCheck<T extends StyleAnalysisResponseType>(
   const defaultOptions: Required<BatchOptions> = {
     maxConcurrent: 100,
     retryAttempts: 2,
-    retryDelay: 1000,
+    retryDelay: 1_000,
     timeoutMillis: defaultWorkflowTimeoutMillis,
   };
 
@@ -588,7 +588,7 @@ export async function pollWorkflowForResult<T>(
   startTime: number = Date.now(),
 ): Promise<T> {
   let attempts = 0;
-  const pollInterval = 2000;
+  const pollInterval = 2_000;
   const timeoutMillis = config.timeoutMillis ?? defaultWorkflowTimeoutMillis;
   const maxAttempts = Math.floor(timeoutMillis / pollInterval);
 

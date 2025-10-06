@@ -86,8 +86,8 @@ export async function withRateLimitRetry<T>(
   operationLabel?: string,
 ): Promise<T> {
   const maxRetries = config.rateLimit?.maxRetries ?? 5;
-  const baseDelay = config.rateLimit?.initialDelayMs ?? 1000;
-  const maxDelay = config.rateLimit?.maxDelayMs ?? 16000;
+  const baseDelay = config.rateLimit?.initialDelayMs ?? 1_000;
+  const maxDelay = config.rateLimit?.maxDelayMs ?? 16_000;
   const jitter = config.rateLimit?.jitter ?? true;
 
   let attempt = 0;
@@ -136,7 +136,7 @@ export async function withRateLimitRetry<T>(
         const retryAfterSec =
           typeof retryAfterHeader === 'string' ? Number.parseFloat(retryAfterHeader) : Number(retryAfterHeader);
         if (!Number.isNaN(retryAfterSec) && Number.isFinite(retryAfterSec)) {
-          delayMs = Math.max(0, Math.floor(retryAfterSec * 1000));
+          delayMs = Math.max(0, Math.floor(retryAfterSec * 1_000));
         }
       }
 
@@ -145,7 +145,7 @@ export async function withRateLimitRetry<T>(
         const reset = (headers['X-RateLimit-Reset'] ?? headers['x-ratelimit-reset']) as string | number;
         const resetEpochSec = typeof reset === 'string' ? Number.parseInt(reset, 10) : Number(reset);
         if (!Number.isNaN(resetEpochSec)) {
-          const msUntilReset = resetEpochSec * 1000 - Date.now();
+          const msUntilReset = resetEpochSec * 1_000 - Date.now();
           if (Number.isFinite(msUntilReset)) {
             delayMs = Math.max(0, msUntilReset);
           }

@@ -16,7 +16,7 @@ describe('Style Guide Integration Tests', () => {
     config = {
       apiKey,
       platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
-      rateLimit: { maxRetries: 3, initialDelayMs: 500, maxDelayMs: 2000, jitter: true },
+      rateLimit: { maxRetries: 3, initialDelayMs: 500, maxDelayMs: 2_000, jitter: true },
     };
   });
 
@@ -41,7 +41,7 @@ describe('Style Guide Integration Tests', () => {
       const pdfPath = join(__dirname, '../test-data/sample-style-guide.pdf');
       const pdfBuffer = readFileSync(pdfPath);
       const pdfFile = new File([pdfBuffer], 'sample-style-guide.pdf', { type: 'application/pdf' });
-      const randomNumber = Math.floor(Math.random() * 10000);
+      const randomNumber = Math.floor(Math.random() * 1_0000);
       const styleGuideName = `Integration Test Style Guide ${randomNumber}`;
       const response = await createStyleGuide({ file: pdfFile, name: styleGuideName }, config);
       expect(response).toBeDefined();
@@ -63,8 +63,8 @@ describe('Style Guide Integration Tests', () => {
       const pdfPath = join(__dirname, '../test-data/sample-style-guide.pdf');
       const pdfBuffer = readFileSync(pdfPath);
       const pdfFile = new File([pdfBuffer], 'sample-style-guide.pdf', { type: 'application/pdf' });
-      const randomNumber1 = Math.floor(Math.random() * 10000);
-      const randomNumber2 = Math.floor(Math.random() * 10000);
+      const randomNumber1 = Math.floor(Math.random() * 1_0000);
+      const randomNumber2 = Math.floor(Math.random() * 1_0000);
       const styleGuideName1 = `Integration Test Style Guide A ${randomNumber1}`;
       const styleGuideName2 = `Integration Test Style Guide B ${randomNumber2}`;
       const response1 = await createStyleGuide({ file: pdfFile, name: styleGuideName1 }, config);
@@ -76,7 +76,7 @@ describe('Style Guide Integration Tests', () => {
 
     it('should create style guide using utility function from file path', async () => {
       const pdfPath = join(__dirname, '../test-data/batteries.pdf');
-      const randomNumber = Math.floor(Math.random() * 10000);
+      const randomNumber = Math.floor(Math.random() * 1_0000);
       const styleGuideName = `Utility Test Style Guide ${randomNumber}`;
       const request = await createStyleGuideReqFromPath(pdfPath, styleGuideName);
       expect(request).toBeDefined();

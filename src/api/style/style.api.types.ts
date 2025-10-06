@@ -184,7 +184,7 @@ export interface BatchOptions {
   retryDelay?: number;
   /**
    * The timeout for the analysis of one content item in milliseconds.
-   * @default 5 minutes, 300000 milliseconds
+   * @default 5 minutes, 300_000 milliseconds
    */
   timeoutMillis?: number;
 }
