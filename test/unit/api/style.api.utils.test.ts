@@ -4,13 +4,14 @@ import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { IssueCategory, StyleAnalysisReq, StyleAnalysisSuccessResp } from '../../../src/api/style/style.api.types';
 import {
+  createBlob,
+  createContentObject,
+  createFile,
   createStyleGuideReqFromPath,
   createStyleGuideReqFromUrl,
   isCompletedResponse,
   styleBatchCheck,
 } from '../../../src/api/style/style.api.utils';
-import { createBlob, createFile } from '../../../src/api/style/style.api.utils';
-import { createContentObject } from '../../../src/api/style/style.api.utils';
 import { Config, Environment, PlatformType, Status } from '../../../src/utils/api.types';
 
 // Mock Node.js modules

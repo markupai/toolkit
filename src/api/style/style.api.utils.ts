@@ -143,12 +143,7 @@ export async function createBlob(request: StyleAnalysisReq): Promise<Blob> {
   if (typeof request.content === 'string') {
     // Prefer MIME type based on filename if provided; fallback to simple HTML heuristic, then text/plain
     const nameDerived = getMimeTypeFromFilename(filename);
-    const type =
-      nameDerived !== 'application/octet-stream'
-        ? nameDerived
-        : isLikelyHtmlString(request.content)
-          ? 'text/html'
-          : 'text/plain';
+    const type = getStringContentType(nameDerived, request.content);
     return new BlobCtor([request.content], { type });
   } else if (typeof File !== 'undefined' && 'file' in request.content && request.content.file instanceof File) {
     const fileDescriptor = request.content;
@@ -175,12 +170,7 @@ export async function createFile(request: StyleAnalysisReq): Promise<File> {
   if (typeof request.content === 'string') {
     // Prefer MIME type based on filename if provided; fallback to simple HTML heuristic, then text/plain
     const nameDerived = getMimeTypeFromFilename(filename);
-    const type =
-      nameDerived !== 'application/octet-stream'
-        ? nameDerived
-        : isLikelyHtmlString(request.content)
-          ? 'text/html'
-          : 'text/plain';
+    const type = getStringContentType(nameDerived, request.content);
     return new File([request.content], filename, { type });
   } else if (typeof File !== 'undefined' && 'file' in request.content && request.content.file instanceof File) {
     const fileDescriptor = request.content;
@@ -214,6 +204,14 @@ function isLikelyHtmlString(content: string): boolean {
   if (sample.startsWith('<!doctype html') || sample.startsWith('<html')) return true;
   // Common HTML tags early in documents
   return /<(head|body|title|div|span|p|h1|h2|h3|h4|h5|h6)\b/.test(sample);
+}
+
+// Helper function to determine MIME type for string content
+function getStringContentType(nameDerived: string, content: string): string {
+  if (nameDerived === 'application/octet-stream') {
+    return isLikelyHtmlString(content) ? 'text/html' : 'text/plain';
+  }
+  return nameDerived;
 }
 
 // Determine best filename: prefer explicit documentName/filename, then derive from content heuristics

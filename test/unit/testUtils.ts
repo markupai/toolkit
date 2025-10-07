@@ -1,4 +1,4 @@
-import { fail } from 'assert';
+import { fail } from 'node:assert';
 import { ErrorType } from '../../src/utils/errors';
 import { expect, vi } from 'vitest';
 
