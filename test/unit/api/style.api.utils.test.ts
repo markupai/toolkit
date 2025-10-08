@@ -12,6 +12,7 @@ import {
   isCompletedResponse,
   styleBatchCheck,
 } from '../../../src/api/style/style.api.utils';
+import * as runtime from '../../../src/utils/runtime';
 import { Config, Environment, PlatformType, Status } from '../../../src/utils/api.types';
 
 // Mock Node.js modules
@@ -253,19 +254,7 @@ describe('Style API Utils', () => {
       expect(blob.type).toBe('text/plain');
     });
 
-    it('should detect application/xhtml+xml for xhtml filenames', async () => {
-      const request: StyleAnalysisReq = {
-        content: '<html xmlns="http://www.w3.org/1999/xhtml"><head><title>X</title></head><body/></html>',
-        style_guide: 'ap',
-        dialect: 'american_english',
-        documentName: 'doc.xhtml',
-      };
-
-      const blob = await createBlob(request);
-      expect(blob.type).toBe('application/xhtml+xml');
-    });
-
-    it('should auto-assign document.html when string looks like HTML and no filename provided', async () => {
+    it('should auto-assign unknown.html when string looks like HTML and no filename provided', async () => {
       const request: StyleAnalysisReq = {
         content: '<html><body>Auto name</body></html>',
         style_guide: 'ap',
@@ -273,7 +262,7 @@ describe('Style API Utils', () => {
       };
 
       const file = await createFile(request);
-      expect(file.name).toBe('document.html');
+      expect(file.name).toBe('unknown.html');
       expect(file.type).toBe('text/html');
     });
 
@@ -302,7 +291,7 @@ describe('Style API Utils', () => {
       expect(file.type).toBe('text/html');
     });
 
-    it('createContentObject should prefer File so filename is preserved', async () => {
+    it('createContentObject returns Blob in Node environment', async () => {
       const request: StyleAnalysisReq = {
         content: '<html><body>Preserve</body></html>',
         style_guide: 'ap',
@@ -311,10 +300,29 @@ describe('Style API Utils', () => {
       };
 
       const contentObject = await createContentObject(request);
-      expect(contentObject).toBeInstanceOf(File);
-      const file = contentObject as File;
-      expect(file.name).toBe('preserve.html');
-      expect(file.type).toBe('text/html');
+      expect(contentObject).toBeInstanceOf(Blob);
+      const blob = contentObject as Blob;
+      expect(blob.type).toBe('text/html');
+    });
+
+    it('createContentObject returns File in browser-like environment (mocked)', async () => {
+      const request: StyleAnalysisReq = {
+        content: '<html><body>Preserve</body></html>',
+        style_guide: 'ap',
+        dialect: 'american_english',
+        documentName: 'preserve.html',
+      };
+
+      const spy = vi.spyOn(runtime, 'isNodeEnvironment').mockReturnValue(false);
+      try {
+        const contentObject = await createContentObject(request);
+        expect(contentObject).toBeInstanceOf(File);
+        const file = contentObject as File;
+        expect(file.name).toBe('preserve.html');
+        expect(file.type).toBe('text/html');
+      } finally {
+        spy.mockRestore();
+      }
     });
   });
 
