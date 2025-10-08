@@ -184,12 +184,13 @@ export async function createFile(request: StyleAnalysisReq): Promise<File> {
 }
 
 export async function createContentObject(request: StyleAnalysisReq): Promise<File | Blob> {
-  // Prefer File when available so filename (extension) is preserved in uploads
-  if (typeof File !== 'undefined') {
+  // Check if we're in a Node.js environment
+  if (isNodeEnvironment()) {
+    return createBlob(request);
+  } else {
+    // Browser environment
     return createFile(request);
   }
-  // Fallback to Blob when File is not available
-  return createBlob(request);
 }
 
 // Simple and fast heuristic to detect likely HTML content in a string
