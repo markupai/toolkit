@@ -131,56 +131,66 @@ export function isBuffer(obj: unknown): obj is Buffer {
   return false;
 }
 
-export async function createBlob(request: StyleAnalysisReq): Promise<Blob> {
-  const BlobCtor = await getBlobCtor();
-  const filename = resolveFilename(request);
+// Prepare content parts, MIME type, and best filename for upload operations
+async function prepareUploadContent(
+  request: StyleAnalysisReq,
+  bestFilename: string,
+): Promise<{ parts: Array<BlobPart>; type: string; filename: string; file?: File }> {
   if (typeof request.content === 'string') {
-    // Prefer MIME type based on filename if provided; fallback to simple HTML heuristic, then text/plain
-    const nameDerived = getMimeTypeFromFilename(filename);
+    const nameDerived = getMimeTypeFromFilename(bestFilename);
     const type = getStringContentType(nameDerived, request.content);
-    return new BlobCtor([request.content], { type });
-  } else if (typeof File !== 'undefined' && 'file' in request.content && request.content.file instanceof File) {
+    return { parts: [request.content], type, filename: bestFilename };
+  }
+
+  if (
+    typeof File !== 'undefined' &&
+    typeof request.content !== 'string' &&
+    request.content !== null &&
+    'file' in request.content &&
+    request.content.file instanceof File
+  ) {
     const fileDescriptor = request.content;
-    // Convert File to Node.js Blob by reading it as ArrayBuffer first
     const arrayBuffer = await fileDescriptor.file.arrayBuffer();
-    return new BlobCtor([arrayBuffer], { type: fileDescriptor.mimeType || 'application/octet-stream' });
-  } else if ('buffer' in request.content && isBuffer(request.content.buffer)) {
+    const type = fileDescriptor.mimeType || fileDescriptor.file.type || 'application/octet-stream';
+    return { parts: [arrayBuffer], type, filename: fileDescriptor.file.name, file: fileDescriptor.file };
+  }
+
+  if (typeof request.content !== 'string' && request.content !== null && 'buffer' in request.content && isBuffer(request.content.buffer)) {
     const bufferDescriptor = request.content;
-    const mimeType = bufferDescriptor.mimeType || getMimeTypeFromFilename(bufferDescriptor.filename || filename);
-    // Convert Buffer to ArrayBuffer to satisfy TypeScript 5.9.2 strict typing
+    const mimeType = bufferDescriptor.mimeType || getMimeTypeFromFilename(bufferDescriptor.filename || bestFilename);
     const arrayBuffer = bufferDescriptor.buffer.buffer.slice(
       bufferDescriptor.buffer.byteOffset,
       bufferDescriptor.buffer.byteOffset + bufferDescriptor.buffer.byteLength,
     ) as ArrayBuffer;
-    return new BlobCtor([arrayBuffer], { type: mimeType });
-  } else {
-    throw new Error('Invalid content type. Expected string, FileDescriptor, or BufferDescriptor.');
+    return { parts: [arrayBuffer], type: mimeType, filename: bestFilename };
   }
+
+  throw new Error('Invalid content type. Expected string, FileDescriptor, or BufferDescriptor.');
+}
+
+export async function createBlob(request: StyleAnalysisReq): Promise<Blob> {
+  const filename = resolveFilename(request);
+  const { parts, type } = await prepareUploadContent(request, filename);
+  const BlobCtor = await getBlobCtor();
+  return new BlobCtor(parts, { type });
 }
 
 export async function createFile(request: StyleAnalysisReq): Promise<File> {
   const filename = resolveFilename(request);
 
-  if (typeof request.content === 'string') {
-    // Prefer MIME type based on filename if provided; fallback to simple HTML heuristic, then text/plain
-    const nameDerived = getMimeTypeFromFilename(filename);
-    const type = getStringContentType(nameDerived, request.content);
-    return new File([request.content], filename, { type });
-  } else if (typeof File !== 'undefined' && 'file' in request.content && request.content.file instanceof File) {
+  if (
+    typeof File !== 'undefined' &&
+    typeof request.content !== 'string' &&
+    request.content !== null &&
+    'file' in request.content &&
+    request.content.file instanceof File
+  ) {
     const fileDescriptor = request.content;
     return fileDescriptor.file;
-  } else if ('buffer' in request.content && isBuffer(request.content.buffer)) {
-    const bufferDescriptor = request.content;
-    const mimeType = bufferDescriptor.mimeType || getMimeTypeFromFilename(bufferDescriptor.filename || filename);
-    // Convert Buffer to ArrayBuffer to satisfy TypeScript 5.9.2 strict typing
-    const arrayBuffer = bufferDescriptor.buffer.buffer.slice(
-      bufferDescriptor.buffer.byteOffset,
-      bufferDescriptor.buffer.byteOffset + bufferDescriptor.buffer.byteLength,
-    ) as ArrayBuffer;
-    return new File([arrayBuffer], filename, { type: mimeType });
-  } else {
-    throw new Error('Invalid content type. Expected string, FileDescriptor, or BufferDescriptor.');
   }
+
+  const { parts, type } = await prepareUploadContent(request, filename);
+  return new File(parts, filename, { type });
 }
 
 export async function createContentObject(request: StyleAnalysisReq): Promise<File | Blob> {
