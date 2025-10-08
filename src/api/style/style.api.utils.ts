@@ -118,12 +118,6 @@ export function getMimeTypeFromFilename(filename: string): string {
       return 'text/html';
     case 'html':
       return 'text/html';
-    case 'xhtml':
-      return 'application/xhtml+xml';
-    case 'docx':
-      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-    case 'doc':
-      return 'application/msword';
     default:
       return 'application/octet-stream';
   }
@@ -216,11 +210,11 @@ function getStringContentType(nameDerived: string, content: string): string {
 
 // Determine best filename: prefer explicit documentName/filename, then derive from content heuristics
 function resolveFilename(request: StyleAnalysisReq): string {
-  const explicit = request.documentName || request.filename;
+  const explicit = request.documentName;
   if (explicit) return explicit;
   if (typeof request.content === 'string') {
     // If looks like HTML, default to .html to satisfy backend validation
-    if (isLikelyHtmlString(request.content)) return 'document.html';
+    if (isLikelyHtmlString(request.content)) return 'unknown.html';
   } else if ('buffer' in request.content) {
     const bd = request.content;
     if (bd.filename) return bd.filename;

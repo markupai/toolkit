@@ -289,12 +289,12 @@ describe('Style API Utils', () => {
       expect(blob.type).toBe('text/html');
     });
 
-    it('should use request.filename to set name and MIME for HTML string', async () => {
+    it('should use request.documentName to set name and MIME for HTML string', async () => {
       const request: StyleAnalysisReq = {
         content: '<html><body>Title</body></html>',
         style_guide: 'ap',
         dialect: 'american_english',
-        filename: 'sample.html',
+        documentName: 'sample.html',
       };
 
       const file = await createFile(request);
