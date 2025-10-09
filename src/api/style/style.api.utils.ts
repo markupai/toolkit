@@ -265,19 +265,29 @@ function resolveFilename(request: StyleAnalysisReq): string {
     if (isLikelyMarkdownString(stringReq.content)) return 'unknown.md';
     return 'unknown.txt';
   }
-  
+
   // Check if it's a StyleAnalysisReqBuffer
-  if ('content' in request && request.content !== null && typeof request.content === 'object' && 'buffer' in request.content) {
+  if (
+    'content' in request &&
+    request.content !== null &&
+    typeof request.content === 'object' &&
+    'buffer' in request.content
+  ) {
     const bufferReq = request as StyleAnalysisReqBuffer;
     return bufferReq.content.documentNameWithExtension;
   }
-  
+
   // Check if it's a StyleAnalysisReqFile
-  if ('content' in request && request.content !== null && typeof request.content === 'object' && 'file' in request.content) {
+  if (
+    'content' in request &&
+    request.content !== null &&
+    typeof request.content === 'object' &&
+    'file' in request.content
+  ) {
     const fileReq = request as StyleAnalysisReqFile;
     return fileReq.content.file.name;
   }
-  
+
   return 'unknown.txt';
 }
 
