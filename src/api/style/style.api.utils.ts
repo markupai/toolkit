@@ -9,6 +9,9 @@ import {
   type BatchResult,
   type CreateStyleGuideReq,
   type StyleAnalysisReq,
+  type StyleAnalysisReqBuffer,
+  type StyleAnalysisReqFile,
+  type StyleAnalysisReqString,
   type StyleAnalysisResponseBase,
   type StyleAnalysisResponseType,
   type StyleAnalysisRewriteResp,
@@ -235,7 +238,7 @@ function isLikelyMarkdownString(content: string): boolean {
   // Lists
   if (/^(?:\s*[-*+]\s+\S|\s*\d+\.\s+\S)/m.test(sample)) return true;
   // Links or images
-  if (/\[[^\]]+\]\([^\)]+\)/.test(sample) || /!\[[^\]]*\]\([^\)]+\)/.test(sample)) return true;
+  if (/\[[^\]]+\]\([^)]+\)/.test(sample) || /!\[[^\]]*\]\([^)]+\)/.test(sample)) return true;
   // Code fences
   if (/```[\s\S]*?```/.test(sample)) return true;
   return false;
@@ -253,17 +256,28 @@ function getStringContentType(nameDerived: string, content: string): string {
 
 // Determine best filename: prefer explicit documentName/filename, then derive from content heuristics
 function resolveFilename(request: StyleAnalysisReq): string {
-  // documentNameWithExtension only exists for string requests
-  if (typeof request.content === 'string') {
-    const explicit = (request as any).documentNameWithExtension as string | undefined;
-    if (explicit) return explicit;
+  // Check if it's a StyleAnalysisReqString
+  if ('content' in request && typeof request.content === 'string') {
+    const stringReq = request as StyleAnalysisReqString;
+    if (stringReq.documentNameWithExtension) return stringReq.documentNameWithExtension;
     // If looks like HTML, default to .html to satisfy backend validation
-    if (isLikelyHtmlString(request.content)) return 'unknown.html';
-    if (isLikelyMarkdownString(request.content)) return 'unknown.md';
-  } else if ('buffer' in request.content) {
-    const bd = request.content;
-    if (bd.documentNameWithExtension) return bd.documentNameWithExtension;
+    if (isLikelyHtmlString(stringReq.content)) return 'unknown.html';
+    if (isLikelyMarkdownString(stringReq.content)) return 'unknown.md';
+    return 'unknown.txt';
   }
+  
+  // Check if it's a StyleAnalysisReqBuffer
+  if ('content' in request && request.content !== null && typeof request.content === 'object' && 'buffer' in request.content) {
+    const bufferReq = request as StyleAnalysisReqBuffer;
+    return bufferReq.content.documentNameWithExtension;
+  }
+  
+  // Check if it's a StyleAnalysisReqFile
+  if ('content' in request && request.content !== null && typeof request.content === 'object' && 'file' in request.content) {
+    const fileReq = request as StyleAnalysisReqFile;
+    return fileReq.content.file.name;
+  }
+  
   return 'unknown.txt';
 }
 
