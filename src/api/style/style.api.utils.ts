@@ -114,6 +114,14 @@ export function getMimeTypeFromFilename(filename: string): string {
       return 'text/plain';
     case 'md':
       return 'text/markdown';
+    case 'markdown':
+      return 'text/markdown';
+    case 'mdown':
+      return 'text/markdown';
+    case 'mkd':
+      return 'text/markdown';
+    case 'mdx':
+      return 'text/markdown';
     case 'htm':
       return 'text/html';
     case 'html':
@@ -155,9 +163,15 @@ async function prepareUploadContent(
     return { parts: [arrayBuffer], type, filename: fileDescriptor.file.name, file: fileDescriptor.file };
   }
 
-  if (typeof request.content !== 'string' && request.content !== null && 'buffer' in request.content && isBuffer(request.content.buffer)) {
+  if (
+    typeof request.content !== 'string' &&
+    request.content !== null &&
+    'buffer' in request.content &&
+    isBuffer(request.content.buffer)
+  ) {
     const bufferDescriptor = request.content;
-    const mimeType = bufferDescriptor.mimeType || getMimeTypeFromFilename(bufferDescriptor.filename || bestFilename);
+    const mimeType =
+      bufferDescriptor.mimeType || getMimeTypeFromFilename(bufferDescriptor.documentNameWithExtension || bestFilename);
     const arrayBuffer = bufferDescriptor.buffer.buffer.slice(
       bufferDescriptor.buffer.byteOffset,
       bufferDescriptor.buffer.byteOffset + bufferDescriptor.buffer.byteLength,
@@ -211,24 +225,44 @@ function isLikelyHtmlString(content: string): boolean {
   return /<(head|body|title|div|span|p|h1|h2|h3|h4|h5|h6)\b/.test(sample);
 }
 
+// Heuristic to detect likely Markdown content in a string
+function isLikelyMarkdownString(content: string): boolean {
+  const sample = content.trimStart().slice(0, 512);
+  // Frontmatter
+  if (/^---\n[\s\S]*?\n---\n/.test(sample)) return true;
+  // Headings
+  if (/^#{1,6}\s+.+/m.test(sample)) return true;
+  // Lists
+  if (/^(?:\s*[-*+]\s+\S|\s*\d+\.\s+\S)/m.test(sample)) return true;
+  // Links or images
+  if (/\[[^\]]+\]\([^\)]+\)/.test(sample) || /!\[[^\]]*\]\([^\)]+\)/.test(sample)) return true;
+  // Code fences
+  if (/```[\s\S]*?```/.test(sample)) return true;
+  return false;
+}
+
 // Helper function to determine MIME type for string content
 function getStringContentType(nameDerived: string, content: string): string {
   if (nameDerived === 'application/octet-stream') {
-    return isLikelyHtmlString(content) ? 'text/html' : 'text/plain';
+    if (isLikelyMarkdownString(content)) return 'text/markdown';
+    if (isLikelyHtmlString(content)) return 'text/html';
+    return 'text/plain';
   }
   return nameDerived;
 }
 
 // Determine best filename: prefer explicit documentName/filename, then derive from content heuristics
 function resolveFilename(request: StyleAnalysisReq): string {
-  const explicit = request.documentName;
-  if (explicit) return explicit;
+  // documentNameWithExtension only exists for string requests
   if (typeof request.content === 'string') {
+    const explicit = (request as any).documentNameWithExtension as string | undefined;
+    if (explicit) return explicit;
     // If looks like HTML, default to .html to satisfy backend validation
     if (isLikelyHtmlString(request.content)) return 'unknown.html';
+    if (isLikelyMarkdownString(request.content)) return 'unknown.md';
   } else if ('buffer' in request.content) {
     const bd = request.content;
-    if (bd.filename) return bd.filename;
+    if (bd.documentNameWithExtension) return bd.documentNameWithExtension;
   }
   return 'unknown.txt';
 }

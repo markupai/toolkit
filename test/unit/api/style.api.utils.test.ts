@@ -207,12 +207,12 @@ describe('Style API Utils', () => {
   });
 
   describe('HTML content handling', () => {
-    it('should create Blob with text/html for HTML string content when documentName indicates html', async () => {
+    it('should create Blob with text/html for HTML string content when documentNameWithExtension indicates html', async () => {
       const request: StyleAnalysisReq = {
         content: '<!doctype html><html><head><title>T</title></head><body><p>Hello</p></body></html>',
         style_guide: 'ap',
         dialect: 'american_english',
-        documentName: 'page.html',
+        documentNameWithExtension: 'page.html',
       };
 
       const blob = await createBlob(request);
@@ -235,7 +235,7 @@ describe('Style API Utils', () => {
         content: '<html><body><span>Hi</span></body></html>',
         style_guide: 'ap',
         dialect: 'american_english',
-        documentName: 'index.htm',
+        documentNameWithExtension: 'index.htm',
       };
 
       const file = await createFile(request);
@@ -266,10 +266,10 @@ describe('Style API Utils', () => {
       expect(file.type).toBe('text/html');
     });
 
-    it('should prefer BufferDescriptor.filename for MIME inference', async () => {
+    it('should infer MIME for BufferDescriptor using its filename', async () => {
       const buffer = Buffer.from('<html><body>buf</body></html>', 'utf8');
       const request: StyleAnalysisReq = {
-        content: { buffer, filename: 'page.html' },
+        content: { buffer, documentNameWithExtension: 'page.html', mimeType: 'text/html' },
         style_guide: 'ap',
         dialect: 'american_english',
       };
@@ -278,12 +278,12 @@ describe('Style API Utils', () => {
       expect(blob.type).toBe('text/html');
     });
 
-    it('should use request.documentName to set name and MIME for HTML string', async () => {
+    it('should use request.documentNameWithExtension to set name and MIME for HTML string', async () => {
       const request: StyleAnalysisReq = {
         content: '<html><body>Title</body></html>',
         style_guide: 'ap',
         dialect: 'american_english',
-        documentName: 'sample.html',
+        documentNameWithExtension: 'sample.html',
       };
 
       const file = await createFile(request);
@@ -296,7 +296,7 @@ describe('Style API Utils', () => {
         content: '<html><body>Preserve</body></html>',
         style_guide: 'ap',
         dialect: 'american_english',
-        documentName: 'preserve.html',
+        documentNameWithExtension: 'preserve.html',
       };
 
       const contentObject = await createContentObject(request);
@@ -310,7 +310,7 @@ describe('Style API Utils', () => {
         content: '<html><body>Preserve</body></html>',
         style_guide: 'ap',
         dialect: 'american_english',
-        documentName: 'preserve.html',
+        documentNameWithExtension: 'preserve.html',
       };
 
       const spy = vi.spyOn(runtime, 'isNodeEnvironment').mockReturnValue(false);
@@ -323,6 +323,31 @@ describe('Style API Utils', () => {
       } finally {
         spy.mockRestore();
       }
+    });
+
+    it('should detect text/markdown for markdown filenames', async () => {
+      const request: StyleAnalysisReq = {
+        content: '# Title\n\nSome text with a [link](https://example.com).',
+        style_guide: 'ap',
+        dialect: 'american_english',
+        documentNameWithExtension: 'readme.md',
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe('text/markdown');
+    });
+
+    it('should detect text/markdown by heuristic when no filename provided', async () => {
+      const request: StyleAnalysisReq = {
+        content: '---\na: 1\n---\n\n# Heading\n\n* item',
+        style_guide: 'ap',
+        dialect: 'american_english',
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe('text/markdown');
+      const file = await createFile(request);
+      expect(file.name).toBe('unknown.md');
     });
   });
 
