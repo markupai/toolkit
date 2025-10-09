@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   getStyleCheck,
   getStyleRewrite,
@@ -13,72 +13,72 @@ import {
   submitStyleCheck,
   submitStyleRewrite,
   submitStyleSuggestion,
-} from '../../../src/api/style/style.api';
-import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
+} from "../../../src/api/style/style.api";
+import { STYLE_DEFAULTS } from "../../../src/api/style/style.api.defaults";
 import {
   StyleAnalysisReq,
   StyleAnalysisRewriteResp,
   StyleAnalysisSuccessResp,
   StyleAnalysisSuggestionResp,
-} from '../../../src/api/style/style.api.types';
-import { WorkflowConfig } from '../../../src/api/style/style.api.utils';
-import type { Config } from '../../../src/utils/api.types';
-import { Environment, PlatformType, Status } from '../../../src/utils/api.types';
-import { apiHandlers } from '../mocks/api.handlers';
-import { server } from '../setup';
-import { testTimeout } from '../testUtils';
+} from "../../../src/api/style/style.api.types";
+import { WorkflowConfig } from "../../../src/api/style/style.api.utils";
+import type { Config } from "../../../src/utils/api.types";
+import { Environment, PlatformType, Status } from "../../../src/utils/api.types";
+import { apiHandlers } from "../mocks/api.handlers";
+import { server } from "../setup";
+import { testTimeout } from "../testUtils";
 
 // Set up MSW server lifecycle hooks
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-describe('Style API Unit Tests', () => {
+describe("Style API Unit Tests", () => {
   const mockConfig: Config = {
-    apiKey: 'test-api-key',
+    apiKey: "test-api-key",
     platform: { type: PlatformType.Environment, value: Environment.Dev },
   };
   const mockWorkflowConfig: WorkflowConfig = {
     ...mockConfig,
     timeoutMillis: 0,
   };
-  const mockWorkflowId = 'test-workflow-id';
+  const mockWorkflowId = "test-workflow-id";
   const mockStyleAnalysisRequest = {
-    content: 'test content',
-    style_guide: 'ap',
+    content: "test content",
+    style_guide: "ap",
     dialect: STYLE_DEFAULTS.dialects.americanEnglish,
     tone: STYLE_DEFAULTS.tones.technical,
   };
 
-  describe('Style Analysis Operations', () => {
-    it('should submit style check successfully', async () => {
+  describe("Style Analysis Operations", () => {
+    it("should submit style check successfully", async () => {
       server.use(apiHandlers.style.checks.success);
 
       const result = await submitStyleCheck(mockStyleAnalysisRequest, mockConfig);
       expect(result).toEqual({
         status: Status.Running,
         workflow_id: mockWorkflowId,
-        message: 'Style check workflow started successfully.',
+        message: "Style check workflow started successfully.",
       });
     });
 
-    it('should submit style suggestion successfully', async () => {
+    it("should submit style suggestion successfully", async () => {
       server.use(apiHandlers.style.suggestions.success);
 
       const result = await submitStyleSuggestion(mockStyleAnalysisRequest, mockConfig);
       expect(result).toEqual({
         status: Status.Running,
         workflow_id: mockWorkflowId,
-        message: 'Style suggestions workflow started successfully.',
+        message: "Style suggestions workflow started successfully.",
       });
     });
 
-    it('should submit style check successfully without tone', async () => {
+    it("should submit style check successfully without tone", async () => {
       server.use(apiHandlers.style.checks.success);
 
       const requestWithoutTone = {
-        content: 'test content',
-        style_guide: 'ap',
+        content: "test content",
+        style_guide: "ap",
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
       };
 
@@ -86,83 +86,89 @@ describe('Style API Unit Tests', () => {
       expect(result).toEqual({
         status: Status.Running,
         workflow_id: mockWorkflowId,
-        message: 'Style check workflow started successfully.',
+        message: "Style check workflow started successfully.",
       });
     });
 
-    it('should submit style rewrite successfully', async () => {
+    it("should submit style rewrite successfully", async () => {
       server.use(apiHandlers.style.rewrites.success);
 
       const result = await submitStyleRewrite(mockStyleAnalysisRequest, mockConfig);
       expect(result).toEqual({
         status: Status.Running,
         workflow_id: mockWorkflowId,
-        message: 'Style rewrite workflow started successfully.',
+        message: "Style rewrite workflow started successfully.",
       });
     });
 
-    it('should handle style analysis errors', async () => {
+    it("should handle style analysis errors", async () => {
       server.use(apiHandlers.style.checks.error);
 
-      await expect(submitStyleCheck(mockStyleAnalysisRequest, mockConfig)).rejects.toThrow('Unauthorized (401)');
+      await expect(submitStyleCheck(mockStyleAnalysisRequest, mockConfig)).rejects.toThrow(
+        "Unauthorized (401)",
+      );
     });
 
-    it('should submit style check with custom document name', async () => {
+    it("should submit style check with custom document name", async () => {
       server.use(apiHandlers.style.checks.success);
 
       const requestWithDocumentName = {
         ...mockStyleAnalysisRequest,
-        documentNameWithExtension: 'custom-document.txt',
+        documentNameWithExtension: "custom-document.txt",
       };
 
       const result = await submitStyleCheck(requestWithDocumentName, mockConfig);
       expect(result).toEqual({
         status: Status.Running,
         workflow_id: mockWorkflowId,
-        message: 'Style check workflow started successfully.',
+        message: "Style check workflow started successfully.",
       });
     });
 
-    it('should submit style check without document name (uses default)', async () => {
+    it("should submit style check without document name (uses default)", async () => {
       server.use(apiHandlers.style.checks.success);
 
       const result = await submitStyleCheck(mockStyleAnalysisRequest, mockConfig);
       expect(result).toEqual({
         status: Status.Running,
         workflow_id: mockWorkflowId,
-        message: 'Style check workflow started successfully.',
+        message: "Style check workflow started successfully.",
       });
     });
 
-    it('should submit style check with File content successfully', async () => {
+    it("should submit style check with File content successfully", async () => {
       server.use(apiHandlers.style.checks.success);
 
-      const file = new File(['test file content'], 'test.txt', { type: 'text/plain' });
-      const fileDescriptor = { file, mimeType: 'text/plain' };
+      const file = new File(["test file content"], "test.txt", { type: "text/plain" });
+      const fileDescriptor = { file, mimeType: "text/plain" };
       const requestWithFile = {
         content: fileDescriptor,
-        style_guide: 'ap',
+        style_guide: "ap",
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.technical,
-        documentNameWithExtension: 'custom-file.txt',
+        documentNameWithExtension: "custom-file.txt",
       };
 
       const result = await submitStyleCheck(requestWithFile, mockConfig);
       expect(result).toEqual({
         status: Status.Running,
         workflow_id: mockWorkflowId,
-        message: 'Style check workflow started successfully.',
+        message: "Style check workflow started successfully.",
       });
     });
 
-    it('should submit style check with Buffer content successfully', async () => {
+    it("should submit style check with Buffer content successfully", async () => {
       server.use(apiHandlers.style.checks.success);
 
-      const buffer = Buffer.from('test buffer content', 'utf8');
-      const bufferDescriptor = { buffer, mimeType: 'text/plain', documentNameWithExtension: 'custom-buffer.txt' };
+      const buffer = Buffer.from("test buffer content", "utf8");
+      const bufferDescriptor = {
+        buffer,
+        mimeType: "text/plain",
+        documentNameWithExtension: "custom-buffer.txt",
+      };
       const requestWithBuffer = {
         content: bufferDescriptor,
-        style_guide: 'ap',
+        style_guide: "ap",
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.technical,
       };
@@ -171,44 +177,50 @@ describe('Style API Unit Tests', () => {
       expect(result).toEqual({
         status: Status.Running,
         workflow_id: mockWorkflowId,
-        message: 'Style check workflow started successfully.',
+        message: "Style check workflow started successfully.",
       });
     });
 
-    it('should retry on 429 with Retry-After and succeed', async () => {
+    it("should retry on 429 with Retry-After and succeed", async () => {
       server.use(apiHandlers.style.checks.rateLimitOnce);
 
       const result = await submitStyleCheck(
         {
-          content: 'test content',
-          style_guide: 'ap',
+          content: "test content",
+          style_guide: "ap",
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
         },
-        { ...mockConfig, rateLimit: { maxRetries: 3, initialDelayMs: 0, maxDelayMs: 0, jitter: false } },
+        {
+          ...mockConfig,
+          rateLimit: { maxRetries: 3, initialDelayMs: 0, maxDelayMs: 0, jitter: false },
+        },
       );
 
       expect(result.workflow_id).toBeDefined();
     }, 10_000);
 
-    it('should surface ApiError after exhausting 429 retries', async () => {
+    it("should surface ApiError after exhausting 429 retries", async () => {
       server.use(apiHandlers.style.checks.rateLimitAlways);
 
       await expect(
         submitStyleCheck(
           {
-            content: 'test content',
-            style_guide: 'ap',
+            content: "test content",
+            style_guide: "ap",
             dialect: STYLE_DEFAULTS.dialects.americanEnglish,
             tone: STYLE_DEFAULTS.tones.technical,
           },
-          { ...mockConfig, rateLimit: { maxRetries: 1, initialDelayMs: 0, maxDelayMs: 0, jitter: false } },
+          {
+            ...mockConfig,
+            rateLimit: { maxRetries: 1, initialDelayMs: 0, maxDelayMs: 0, jitter: false },
+          },
         ),
-      ).rejects.toThrow('Rate limit exceeded');
+      ).rejects.toThrow("Rate limit exceeded");
     }, 15_000);
   });
 
-  describe('Style Analysis with Polling', () => {
+  describe("Style Analysis with Polling", () => {
     beforeEach(() => {
       vi.useFakeTimers();
     });
@@ -217,7 +229,7 @@ describe('Style API Unit Tests', () => {
       vi.useRealTimers();
     });
 
-    it('should perform style check with polling successfully', async () => {
+    it("should perform style check with polling successfully", async () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
       const result = await styleCheck(mockStyleAnalysisRequest, mockConfig);
@@ -228,7 +240,7 @@ describe('Style API Unit Tests', () => {
       expect(result.original.issues).toBeDefined();
     });
 
-    it('should abort style check with polling after timeout', async () => {
+    it("should abort style check with polling after timeout", async () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
       await testTimeout(
@@ -237,14 +249,14 @@ describe('Style API Unit Tests', () => {
       );
     });
 
-    it('should handle analysis.tone as null for style check results', async () => {
+    it("should handle analysis.tone as null for style check results", async () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
       const result = await styleCheck(mockStyleAnalysisRequest, mockConfig);
       expect(result.original.scores.analysis.tone).toBeNull();
     });
 
-    it('should perform style suggestions with polling successfully', async () => {
+    it("should perform style suggestions with polling successfully", async () => {
       server.use(apiHandlers.style.suggestions.success, apiHandlers.style.suggestions.poll);
 
       const result = await styleSuggestions(mockStyleAnalysisRequest, mockConfig);
@@ -255,7 +267,7 @@ describe('Style API Unit Tests', () => {
       expect(result.original.issues).toBeDefined();
     });
 
-    it('should abort style suggestions with polling after timeout', async () => {
+    it("should abort style suggestions with polling after timeout", async () => {
       server.use(apiHandlers.style.suggestions.success, apiHandlers.style.suggestions.poll);
 
       await testTimeout(
@@ -264,19 +276,19 @@ describe('Style API Unit Tests', () => {
       );
     });
 
-    it('should handle analysis.tone as object for style suggestions', async () => {
+    it("should handle analysis.tone as object for style suggestions", async () => {
       server.use(apiHandlers.style.suggestions.success, apiHandlers.style.suggestions.poll);
 
       const result = await styleSuggestions(mockStyleAnalysisRequest, mockConfig);
       expect(result.original.scores.analysis.tone).not.toBeNull();
       if (result.original.scores.analysis.tone !== null) {
-        expect(typeof result.original.scores.analysis.tone.score).toBe('number');
-        expect(typeof result.original.scores.analysis.tone.informality).toBe('number');
-        expect(typeof result.original.scores.analysis.tone.liveliness).toBe('number');
+        expect(typeof result.original.scores.analysis.tone.score).toBe("number");
+        expect(typeof result.original.scores.analysis.tone.informality).toBe("number");
+        expect(typeof result.original.scores.analysis.tone.liveliness).toBe("number");
       }
     });
 
-    it('should perform style rewrite with polling successfully', async () => {
+    it("should perform style rewrite with polling successfully", async () => {
       server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
 
       const result = await styleRewrite(mockStyleAnalysisRequest, mockConfig);
@@ -288,7 +300,7 @@ describe('Style API Unit Tests', () => {
       expect(result.rewrite.text).toBeDefined();
     });
 
-    it('should abort style rewrite with polling after timeout', async () => {
+    it("should abort style rewrite with polling after timeout", async () => {
       server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
 
       await testTimeout(
@@ -297,24 +309,24 @@ describe('Style API Unit Tests', () => {
       );
     });
 
-    it('should handle analysis.tone as object for style rewrites', async () => {
+    it("should handle analysis.tone as object for style rewrites", async () => {
       server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
 
       const result = await styleRewrite(mockStyleAnalysisRequest, mockConfig);
       expect(result.rewrite.scores.analysis.tone).not.toBeNull();
       if (result.rewrite.scores.analysis.tone !== null) {
-        expect(typeof result.rewrite.scores.analysis.tone.score).toBe('number');
-        expect(typeof result.rewrite.scores.analysis.tone.informality).toBe('number');
-        expect(typeof result.rewrite.scores.analysis.tone.liveliness).toBe('number');
+        expect(typeof result.rewrite.scores.analysis.tone.score).toBe("number");
+        expect(typeof result.rewrite.scores.analysis.tone.informality).toBe("number");
+        expect(typeof result.rewrite.scores.analysis.tone.liveliness).toBe("number");
       }
     });
 
-    it('should perform style check with polling successfully without tone', async () => {
+    it("should perform style check with polling successfully without tone", async () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
       const requestWithoutTone = {
-        content: 'test content',
-        style_guide: 'ap',
+        content: "test content",
+        style_guide: "ap",
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
       };
 
@@ -326,26 +338,26 @@ describe('Style API Unit Tests', () => {
       expect(result.original.issues).toBeDefined();
     });
 
-    it('should include terminology scores in rewrite results', async () => {
+    it("should include terminology scores in rewrite results", async () => {
       server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
 
       const result = await styleRewrite(mockStyleAnalysisRequest, mockConfig);
       expect(result.original.scores.quality.terminology).toBeDefined();
-      expect(typeof result.original.scores.quality.terminology.score).toBe('number');
-      expect(typeof result.original.scores.quality.terminology.issues).toBe('number');
+      expect(typeof result.original.scores.quality.terminology.score).toBe("number");
+      expect(typeof result.original.scores.quality.terminology.issues).toBe("number");
       expect(result.rewrite.scores.quality.terminology).toBeDefined();
-      expect(typeof result.rewrite.scores.quality.terminology.score).toBe('number');
-      expect(typeof result.rewrite.scores.quality.terminology.issues).toBe('number');
+      expect(typeof result.rewrite.scores.quality.terminology.score).toBe("number");
+      expect(typeof result.rewrite.scores.quality.terminology.issues).toBe("number");
       expect(result.rewrite.scores.quality.terminology.score).toBe(90);
       expect(result.rewrite.scores.quality.terminology.issues).toBe(0);
     });
 
-    it('should perform style check with polling and custom document name', async () => {
+    it("should perform style check with polling and custom document name", async () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
       const requestWithDocumentName = {
         ...mockStyleAnalysisRequest,
-        documentNameWithExtension: 'test-document.txt',
+        documentNameWithExtension: "test-document.txt",
       };
 
       const result = await styleCheck(requestWithDocumentName, mockConfig);
@@ -356,12 +368,12 @@ describe('Style API Unit Tests', () => {
       expect(result.original.issues).toBeDefined();
     });
 
-    it('should perform style suggestions with polling and custom document name', async () => {
+    it("should perform style suggestions with polling and custom document name", async () => {
       server.use(apiHandlers.style.suggestions.success, apiHandlers.style.suggestions.poll);
 
       const requestWithDocumentName = {
         ...mockStyleAnalysisRequest,
-        documentNameWithExtension: 'suggestions-document.txt',
+        documentNameWithExtension: "suggestions-document.txt",
       };
 
       const result = await styleSuggestions(requestWithDocumentName, mockConfig);
@@ -372,12 +384,12 @@ describe('Style API Unit Tests', () => {
       expect(result.original.issues).toBeDefined();
     });
 
-    it('should perform style rewrite with polling and custom document name', async () => {
+    it("should perform style rewrite with polling and custom document name", async () => {
       server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
 
       const requestWithDocumentName = {
         ...mockStyleAnalysisRequest,
-        documentNameWithExtension: 'rewrite-document.txt',
+        documentNameWithExtension: "rewrite-document.txt",
       };
 
       const result = await styleRewrite(requestWithDocumentName, mockConfig);
@@ -389,14 +401,16 @@ describe('Style API Unit Tests', () => {
       expect(result.rewrite.text).toBeDefined();
     });
 
-    it('should perform style check with polling using File content', async () => {
+    it("should perform style check with polling using File content", async () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
-      const file = new File(['test file content for polling'], 'polling-test.txt', { type: 'text/plain' });
-      const fileDescriptor = { file, mimeType: 'text/plain' };
+      const file = new File(["test file content for polling"], "polling-test.txt", {
+        type: "text/plain",
+      });
+      const fileDescriptor = { file, mimeType: "text/plain" };
       const requestWithFile = {
         content: fileDescriptor,
-        style_guide: 'ap',
+        style_guide: "ap",
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.technical,
       };
@@ -409,14 +423,18 @@ describe('Style API Unit Tests', () => {
       expect(result.original.issues).toBeDefined();
     });
 
-    it('should perform style check with polling using Buffer content', async () => {
+    it("should perform style check with polling using Buffer content", async () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
-      const buffer = Buffer.from('test buffer content for polling', 'utf8');
-      const bufferDescriptor = { buffer, mimeType: 'text/plain', documentNameWithExtension: 'polling-buffer.txt' };
+      const buffer = Buffer.from("test buffer content for polling", "utf8");
+      const bufferDescriptor = {
+        buffer,
+        mimeType: "text/plain",
+        documentNameWithExtension: "polling-buffer.txt",
+      };
       const requestWithBuffer = {
         content: bufferDescriptor,
-        style_guide: 'ap',
+        style_guide: "ap",
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.technical,
       };
@@ -430,8 +448,8 @@ describe('Style API Unit Tests', () => {
     });
   });
 
-  describe('Style Check Results', () => {
-    it('should get style check results by workflow ID', async () => {
+  describe("Style Check Results", () => {
+    it("should get style check results by workflow ID", async () => {
       server.use(apiHandlers.style.checks.poll);
 
       const result = await getStyleCheck(mockWorkflowId, mockConfig);
@@ -443,21 +461,21 @@ describe('Style API Unit Tests', () => {
       expect(typedResult.original.issues).toBeDefined();
     });
 
-    it('should include terminology scores in style check results', async () => {
+    it("should include terminology scores in style check results", async () => {
       server.use(apiHandlers.style.checks.poll);
 
       const result = await getStyleCheck(mockWorkflowId, mockConfig);
       const typedResult = result as StyleAnalysisSuccessResp;
       expect(typedResult.original.scores.quality.terminology).toBeDefined();
-      expect(typeof typedResult.original.scores.quality.terminology.score).toBe('number');
-      expect(typeof typedResult.original.scores.quality.terminology.issues).toBe('number');
+      expect(typeof typedResult.original.scores.quality.terminology.score).toBe("number");
+      expect(typeof typedResult.original.scores.quality.terminology.issues).toBe("number");
       expect(typedResult.original.scores.quality.terminology.score).toBe(85);
       expect(typedResult.original.scores.quality.terminology.issues).toBe(0);
     });
   });
 
-  describe('Style Suggestion and Rewrite Results', () => {
-    it('should get style suggestion results by workflow ID', async () => {
+  describe("Style Suggestion and Rewrite Results", () => {
+    it("should get style suggestion results by workflow ID", async () => {
       server.use(apiHandlers.style.suggestions.poll);
 
       const result = await getStyleSuggestion(mockWorkflowId, mockConfig);
@@ -471,11 +489,11 @@ describe('Style API Unit Tests', () => {
       if (typedResult.original.issues && typedResult.original.issues.length > 0) {
         const issue = typedResult.original.issues[0];
         expect(issue.suggestion).toBeDefined();
-        expect(typeof issue.suggestion).toBe('string');
+        expect(typeof issue.suggestion).toBe("string");
       }
     });
 
-    it('should get style rewrite results by workflow ID', async () => {
+    it("should get style rewrite results by workflow ID", async () => {
       server.use(apiHandlers.style.rewrites.poll);
 
       const result = await getStyleRewrite(mockWorkflowId, mockConfig);
@@ -485,7 +503,7 @@ describe('Style API Unit Tests', () => {
       expect(typedResult.original.scores).toBeDefined();
       expect(typedResult.original.issues).toBeDefined();
       expect(typedResult.rewrite.text).toBeDefined();
-      expect(typeof typedResult.rewrite.text).toBe('string');
+      expect(typeof typedResult.rewrite.text).toBe("string");
       expect(typedResult.rewrite.scores.quality).toBeDefined();
       expect(typedResult.rewrite.scores.analysis).toBeDefined();
       expect(typedResult.rewrite.scores.analysis.clarity).toBeDefined();
@@ -493,36 +511,36 @@ describe('Style API Unit Tests', () => {
       expect(typedResult.rewrite.scores.quality.consistency).toBeDefined();
       expect(
         typedResult.rewrite.scores.analysis.tone === null ||
-          typeof typedResult.rewrite.scores.analysis.tone === 'object',
+          typeof typedResult.rewrite.scores.analysis.tone === "object",
       ).toBe(true);
       expect(typedResult.rewrite.scores.quality.terminology).toBeDefined();
       // Check for suggestion in issues
       if (typedResult.original.issues && typedResult.original.issues.length > 0) {
         const issue = typedResult.original.issues[0];
         expect(issue.suggestion).toBeDefined();
-        expect(typeof issue.suggestion).toBe('string');
+        expect(typeof issue.suggestion).toBe("string");
       }
     });
   });
 
-  describe('Batch Processing API', () => {
+  describe("Batch Processing API", () => {
     const mockBatchRequests: StyleAnalysisReq[] = [
       {
-        content: 'test content 1',
-        style_guide: 'ap',
+        content: "test content 1",
+        style_guide: "ap",
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.technical,
       },
       {
-        content: 'test content 2',
-        style_guide: 'chicago',
+        content: "test content 2",
+        style_guide: "chicago",
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.professional,
       },
     ];
 
-    describe('styleBatchCheckRequests', () => {
-      it('should create batch check response', () => {
+    describe("styleBatchCheckRequests", () => {
+      it("should create batch check response", () => {
         const batchResponse = styleBatchCheckRequests(mockBatchRequests, mockConfig);
 
         expect(batchResponse.progress.total).toBe(2);
@@ -532,10 +550,10 @@ describe('Style API Unit Tests', () => {
         expect(batchResponse.progress.inProgress + batchResponse.progress.pending).toBe(2);
         expect(batchResponse.progress.results).toHaveLength(2);
         expect(batchResponse.promise).toBeInstanceOf(Promise);
-        expect(typeof batchResponse.cancel).toBe('function');
+        expect(typeof batchResponse.cancel).toBe("function");
       });
 
-      it('should process batch check requests successfully', async () => {
+      it("should process batch check requests successfully", async () => {
         // Mock the underlying API calls
         server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
@@ -544,11 +562,11 @@ describe('Style API Unit Tests', () => {
 
         expect(result.completed).toBe(2);
         expect(result.failed).toBe(0);
-        expect(result.results[0].status).toBe('completed');
-        expect(result.results[1].status).toBe('completed');
+        expect(result.results[0].status).toBe("completed");
+        expect(result.results[1].status).toBe("completed");
       });
 
-      it('should handle batch check with custom options', () => {
+      it("should handle batch check with custom options", () => {
         server.use(apiHandlers.style.checks.success);
 
         const batchResponse = styleBatchCheckRequests(mockBatchRequests, mockConfig, {
@@ -562,8 +580,8 @@ describe('Style API Unit Tests', () => {
       });
     });
 
-    describe('styleBatchSuggestions', () => {
-      it('should create batch suggestions response', () => {
+    describe("styleBatchSuggestions", () => {
+      it("should create batch suggestions response", () => {
         server.use(apiHandlers.style.suggestions.success);
 
         const batchResponse = styleBatchSuggestions(mockBatchRequests, mockConfig);
@@ -575,10 +593,10 @@ describe('Style API Unit Tests', () => {
         expect(batchResponse.progress.inProgress + batchResponse.progress.pending).toBe(2);
         expect(batchResponse.progress.results).toHaveLength(2);
         expect(batchResponse.promise).toBeInstanceOf(Promise);
-        expect(typeof batchResponse.cancel).toBe('function');
+        expect(typeof batchResponse.cancel).toBe("function");
       });
 
-      it('should process batch suggestions successfully', async () => {
+      it("should process batch suggestions successfully", async () => {
         server.use(apiHandlers.style.suggestions.success, apiHandlers.style.suggestions.poll);
 
         const batchResponse = styleBatchSuggestions(mockBatchRequests, mockConfig);
@@ -586,13 +604,13 @@ describe('Style API Unit Tests', () => {
 
         expect(result.completed).toBe(2);
         expect(result.failed).toBe(0);
-        expect(result.results[0].status).toBe('completed');
-        expect(result.results[1].status).toBe('completed');
+        expect(result.results[0].status).toBe("completed");
+        expect(result.results[1].status).toBe("completed");
       });
     });
 
-    describe('styleBatchRewrites', () => {
-      it('should create batch rewrites response', () => {
+    describe("styleBatchRewrites", () => {
+      it("should create batch rewrites response", () => {
         server.use(apiHandlers.style.rewrites.success);
 
         const batchResponse = styleBatchRewrites(mockBatchRequests, mockConfig);
@@ -604,10 +622,10 @@ describe('Style API Unit Tests', () => {
         expect(batchResponse.progress.inProgress + batchResponse.progress.pending).toBe(2);
         expect(batchResponse.progress.results).toHaveLength(2);
         expect(batchResponse.promise).toBeInstanceOf(Promise);
-        expect(typeof batchResponse.cancel).toBe('function');
+        expect(typeof batchResponse.cancel).toBe("function");
       });
 
-      it('should process batch rewrites successfully', async () => {
+      it("should process batch rewrites successfully", async () => {
         server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
 
         const batchResponse = styleBatchRewrites(mockBatchRequests, mockConfig);
@@ -615,58 +633,68 @@ describe('Style API Unit Tests', () => {
 
         expect(result.completed).toBe(2);
         expect(result.failed).toBe(0);
-        expect(result.results[0].status).toBe('completed');
-        expect(result.results[1].status).toBe('completed');
+        expect(result.results[0].status).toBe("completed");
+        expect(result.results[1].status).toBe("completed");
       });
     });
 
-    describe('styleBatchOperation', () => {
-      it('should handle check operation type', () => {
+    describe("styleBatchOperation", () => {
+      it("should handle check operation type", () => {
         server.use(apiHandlers.style.checks.success);
 
-        const batchResponse = styleBatchOperation<StyleAnalysisSuccessResp>(mockBatchRequests, mockConfig, {}, 'check');
+        const batchResponse = styleBatchOperation<StyleAnalysisSuccessResp>(
+          mockBatchRequests,
+          mockConfig,
+          {},
+          "check",
+        );
 
         expect(batchResponse.progress.total).toBe(2);
         expect(batchResponse.promise).toBeInstanceOf(Promise);
       });
 
-      it('should handle suggestions operation type', () => {
+      it("should handle suggestions operation type", () => {
         server.use(apiHandlers.style.suggestions.success);
 
         const batchResponse = styleBatchOperation<StyleAnalysisSuggestionResp>(
           mockBatchRequests,
           mockConfig,
           {},
-          'suggestions',
+          "suggestions",
         );
 
         expect(batchResponse.progress.total).toBe(2);
         expect(batchResponse.promise).toBeInstanceOf(Promise);
       });
 
-      it('should handle rewrite operation type', () => {
+      it("should handle rewrite operation type", () => {
         server.use(apiHandlers.style.rewrites.success);
 
         const batchResponse = styleBatchOperation<StyleAnalysisRewriteResp>(
           mockBatchRequests,
           mockConfig,
           {},
-          'rewrite',
+          "rewrite",
         );
 
         expect(batchResponse.progress.total).toBe(2);
         expect(batchResponse.promise).toBeInstanceOf(Promise);
       });
 
-      it('should throw error for invalid operation type', () => {
+      it("should throw error for invalid operation type", () => {
         expect(() =>
-          styleBatchOperation(mockBatchRequests, mockConfig, {}, 'invalid' as 'check' | 'suggestions' | 'rewrite'),
-        ).toThrow('Invalid operation type: invalid');
+          styleBatchOperation(
+            mockBatchRequests,
+            mockConfig,
+            {},
+            "invalid" as "check" | "suggestions" | "rewrite",
+          ),
+        ).toThrow("Invalid operation type: invalid");
       });
     });
 
-    describe('Batch cancellation', () => {
-      it('should support cancellation for batch check', async () => {
+    describe("Batch cancellation", () => {
+      it("should support cancellation for batch check", async () => {
         server.use(apiHandlers.style.checks.success);
 
         const batchResponse = styleBatchCheckRequests(mockBatchRequests, mockConfig);
@@ -674,32 +702,32 @@ describe('Style API Unit Tests', () => {
         // Cancel immediately
         batchResponse.cancel();
 
-        await expect(batchResponse.promise).rejects.toThrow('Batch operation cancelled');
+        await expect(batchResponse.promise).rejects.toThrow("Batch operation cancelled");
       });
 
-      it('should support cancellation for batch suggestions', async () => {
+      it("should support cancellation for batch suggestions", async () => {
         server.use(apiHandlers.style.suggestions.success);
 
         const batchResponse = styleBatchSuggestions(mockBatchRequests, mockConfig);
 
         batchResponse.cancel();
 
-        await expect(batchResponse.promise).rejects.toThrow('Batch operation cancelled');
+        await expect(batchResponse.promise).rejects.toThrow("Batch operation cancelled");
       });
 
-      it('should support cancellation for batch rewrites', async () => {
+      it("should support cancellation for batch rewrites", async () => {
         server.use(apiHandlers.style.rewrites.success);
 
         const batchResponse = styleBatchRewrites(mockBatchRequests, mockConfig);
 
         batchResponse.cancel();
 
-        await expect(batchResponse.promise).rejects.toThrow('Batch operation cancelled');
+        await expect(batchResponse.promise).rejects.toThrow("Batch operation cancelled");
       });
     });
 
-    describe('Batch error handling', () => {
-      it('should handle API errors gracefully in batch check', async () => {
+    describe("Batch error handling", () => {
+      it("should handle API errors gracefully in batch check", async () => {
         server.use(apiHandlers.style.checks.error);
 
         const batchResponse = styleBatchCheckRequests(mockBatchRequests, mockConfig);
@@ -707,13 +735,13 @@ describe('Style API Unit Tests', () => {
 
         expect(result.completed).toBe(0);
         expect(result.failed).toBe(2);
-        expect(result.results[0].status).toBe('failed');
-        expect(result.results[1].status).toBe('failed');
+        expect(result.results[0].status).toBe("failed");
+        expect(result.results[1].status).toBe("failed");
         expect(result.results[0].error).toBeInstanceOf(Error);
         expect(result.results[1].error).toBeInstanceOf(Error);
       });
 
-      it('should handle partial failures in batch', async () => {
+      it("should handle partial failures in batch", async () => {
         // Use the standard handlers for this test
         server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
@@ -723,8 +751,8 @@ describe('Style API Unit Tests', () => {
         // Verify the batch processing works correctly
         expect(result.completed).toBe(2);
         expect(result.failed).toBe(0);
-        expect(result.results[0].status).toBe('completed');
-        expect(result.results[1].status).toBe('completed');
+        expect(result.results[0].status).toBe("completed");
+        expect(result.results[1].status).toBe("completed");
       });
     });
   });

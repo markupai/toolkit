@@ -1,4 +1,4 @@
-import { IssueCategory, type Issue } from '../api/style/style.api.types';
+import { IssueCategory, type Issue } from "../api/style/style.api.types";
 
 /**
  * Base interface for categorized issues

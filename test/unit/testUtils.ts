@@ -1,8 +1,11 @@
-import { fail } from 'node:assert';
-import { ErrorType } from '../../src/utils/errors';
-import { expect, vi } from 'vitest';
+import { fail } from "node:assert";
+import { ErrorType } from "../../src/utils/errors";
+import { expect, vi } from "vitest";
 
-export const testTimeout = async (pollingFunction: () => Promise<unknown>, timeoutMillis: number) => {
+export const testTimeout = async (
+  pollingFunction: () => Promise<unknown>,
+  timeoutMillis: number,
+) => {
   let success = false;
   try {
     const promise = pollingFunction();
@@ -12,10 +15,10 @@ export const testTimeout = async (pollingFunction: () => Promise<unknown>, timeo
   } catch (error) {
     expect(error).toBeDefined();
     expect(error.type).toBe(ErrorType.TIMEOUT_ERROR);
-    expect(error.message).toContain('Workflow timed out');
-    expect(error.message).toContain('ms');
+    expect(error.message).toContain("Workflow timed out");
+    expect(error.message).toContain("ms");
   }
   if (success) {
-    fail('Expected timeout error');
+    fail("Expected timeout error");
   }
 };

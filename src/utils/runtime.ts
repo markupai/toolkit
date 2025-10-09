@@ -6,7 +6,7 @@
 export function isNodeEnvironment(): boolean {
   // Narrow process with a local type to avoid 'any'
   type ProcessLike = { versions?: { node?: string } };
-  const proc = typeof process === 'undefined' ? undefined : (process as unknown as ProcessLike);
+  const proc = typeof process === "undefined" ? undefined : (process as unknown as ProcessLike);
   return !!proc?.versions?.node;
 }
 
@@ -16,7 +16,7 @@ export function isNodeEnvironment(): boolean {
  * - In Node.js, dynamically imports Blob from 'buffer' at runtime
  */
 export async function getBlobCtor(): Promise<typeof Blob> {
-  if (typeof Blob !== 'undefined') return Blob;
-  const { Blob: NodeBlob } = (await import('node:buffer')) as typeof import('node:buffer');
+  if (typeof Blob !== "undefined") return Blob;
+  const { Blob: NodeBlob } = (await import("node:buffer")) as typeof import("node:buffer");
   return (NodeBlob as unknown as typeof Blob) ?? Blob;
 }

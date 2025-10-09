@@ -1,11 +1,11 @@
-import { MarkupAIClient } from '@markupai/api';
-import { Environment, PlatformType } from './api.types';
-import type { Config } from './api.types';
-import { ApiError, ErrorType } from './errors';
+import { MarkupAIClient } from "@markupai/api";
+import { Environment, PlatformType } from "./api.types";
+import type { Config } from "./api.types";
+import { ApiError, ErrorType } from "./errors";
 
-export const DEFAULT_PLATFORM_URL_PROD = 'https://api.markup.ai';
-export const DEFAULT_PLATFORM_URL_STAGE = 'https://api.stg.markup.ai';
-export const DEFAULT_PLATFORM_URL_DEV = 'https://api.dev.markup.ai';
+export const DEFAULT_PLATFORM_URL_PROD = "https://api.markup.ai";
+export const DEFAULT_PLATFORM_URL_STAGE = "https://api.stg.markup.ai";
+export const DEFAULT_PLATFORM_URL_DEV = "https://api.dev.markup.ai";
 
 function getCommonHeaders(apiKey: string): HeadersInit {
   return {
@@ -43,20 +43,22 @@ export function getCurrentPlatformUrl(config: Config): string {
 
 // Helper function to build the full URL with proper slash handling
 function buildFullUrl(platformUrl: string, endpoint: string): string {
-  const baseUrl = platformUrl.endsWith('/') ? platformUrl.slice(0, -1) : platformUrl;
-  const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const baseUrl = platformUrl.endsWith("/") ? platformUrl.slice(0, -1) : platformUrl;
+  const normalizedEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
   return `${baseUrl}${normalizedEndpoint}`;
 }
 
 // Helper function to verify platform URL is reachable
-export async function verifyPlatformUrl(config: Config): Promise<{ success: boolean; url: string; error?: string }> {
+export async function verifyPlatformUrl(
+  config: Config,
+): Promise<{ success: boolean; url: string; error?: string }> {
   const platformUrl = getPlatformUrl(config);
   try {
     // TODO: This is a temporary fix to verify the platform URL is reachable.
     // We should use a health check endpoint instead.
-    const fullUrl = buildFullUrl(platformUrl, '/v1/style-guides');
+    const fullUrl = buildFullUrl(platformUrl, "/v1/style-guides");
     const response = await fetch(fullUrl, {
-      method: 'GET',
+      method: "GET",
       headers: getCommonHeaders(config.apiKey),
     });
     return {
@@ -68,7 +70,7 @@ export async function verifyPlatformUrl(config: Config): Promise<{ success: bool
     return {
       success: false,
       url: platformUrl,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : "Unknown error",
     };
   }
 }
@@ -103,7 +105,8 @@ export async function withRateLimitRetry<T>(
       };
       const error = err as RateLimitLike | Error;
 
-      const status = (error as RateLimitLike)?.statusCode ?? (error as RateLimitLike)?.status ?? undefined;
+      const status =
+        (error as RateLimitLike)?.statusCode ?? (error as RateLimitLike)?.status ?? undefined;
       const isRateLimit = status === 429;
 
       if (!isRateLimit) {
@@ -113,37 +116,53 @@ export async function withRateLimitRetry<T>(
 
       if (attempt >= maxRetries) {
         // Convert into our ApiError with rate limit type
-        if ('statusCode' in (error as RateLimitLike)) {
+        if ("statusCode" in (error as RateLimitLike)) {
           const errBody = ((error as RateLimitLike).body as Record<string, unknown>) ?? {
-            detail: 'Rate limit exceeded',
+            detail: "Rate limit exceeded",
           };
           const apiErr = ApiError.fromResponse(429, errBody);
           // Attach original error as cause for debugging/transparency
-          throw new ApiError(apiErr.message, apiErr.type, apiErr.statusCode, apiErr.rawErrorData, err as Error);
+          throw new ApiError(
+            apiErr.message,
+            apiErr.type,
+            apiErr.statusCode,
+            apiErr.rawErrorData,
+            err as Error,
+          );
         }
-        throw new ApiError('Rate limit exceeded', ErrorType.RATE_LIMIT_ERROR, 429, {}, err as Error);
+        throw new ApiError(
+          "Rate limit exceeded",
+          ErrorType.RATE_LIMIT_ERROR,
+          429,
+          {},
+          err as Error,
+        );
       }
 
       // Respect Retry-After header if available
       let delayMs: number | undefined;
       const headers = (error as RateLimitLike)?.headers;
-      const retryAfterHeader = (headers?.['Retry-After'] ?? headers?.['retry-after'] ?? headers?.['retry_after']) as
-        | string
-        | number
-        | undefined;
+      const retryAfterHeader = (headers?.["Retry-After"] ??
+        headers?.["retry-after"] ??
+        headers?.["retry_after"]) as string | number | undefined;
 
       if (retryAfterHeader !== undefined) {
         const retryAfterSec =
-          typeof retryAfterHeader === 'string' ? Number.parseFloat(retryAfterHeader) : Number(retryAfterHeader);
+          typeof retryAfterHeader === "string"
+            ? Number.parseFloat(retryAfterHeader)
+            : Number(retryAfterHeader);
         if (!Number.isNaN(retryAfterSec) && Number.isFinite(retryAfterSec)) {
           delayMs = Math.max(0, Math.floor(retryAfterSec * 1_000));
         }
       }
 
       // If X-RateLimit-Reset is present (epoch seconds), compute until reset
-      if (!delayMs && headers && (headers['X-RateLimit-Reset'] || headers['x-ratelimit-reset'])) {
-        const reset = (headers['X-RateLimit-Reset'] ?? headers['x-ratelimit-reset']) as string | number;
-        const resetEpochSec = typeof reset === 'string' ? Number.parseInt(reset, 10) : Number(reset);
+      if (!delayMs && headers && (headers["X-RateLimit-Reset"] || headers["x-ratelimit-reset"])) {
+        const reset = (headers["X-RateLimit-Reset"] ?? headers["x-ratelimit-reset"]) as
+          | string
+          | number;
+        const resetEpochSec =
+          typeof reset === "string" ? Number.parseInt(reset, 10) : Number(reset);
         if (!Number.isNaN(resetEpochSec)) {
           const msUntilReset = resetEpochSec * 1_000 - Date.now();
           if (Number.isFinite(msUntilReset)) {
@@ -158,9 +177,9 @@ export async function withRateLimitRetry<T>(
         delayMs = jitter ? Math.floor(backoff / 2 + Math.random() * (backoff / 2)) : backoff;
       }
 
-      if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV !== 'test') {
+      if (typeof process !== "undefined" && process.env && process.env.NODE_ENV !== "test") {
         console.warn(
-          `[RateLimit] ${operationLabel ?? 'operation'} attempt ${attempt + 1} hit 429. Retrying in ${delayMs} ms...`,
+          `[RateLimit] ${operationLabel ?? "operation"} attempt ${attempt + 1} hit 429. Retrying in ${delayMs} ms...`,
         );
       }
 
@@ -172,11 +191,15 @@ export async function withRateLimitRetry<T>(
 }
 
 // Deep Proxy wrapper to apply rate limit retry to all SDK method calls
-function wrapClientWithRateLimit<T extends object>(client: T, config: Config, path: string = 'client'): T {
+function wrapClientWithRateLimit<T extends object>(
+  client: T,
+  config: Config,
+  path: string = "client",
+): T {
   const proxyCache = new WeakMap<object, object>();
 
   const makeProxy = <U extends object>(target: U, currentPath: string): U => {
-    if (typeof target !== 'object' || target === null) return target;
+    if (typeof target !== "object" || target === null) return target;
     const cached = proxyCache.get(target);
     if (cached) return cached as U;
 
@@ -185,15 +208,16 @@ function wrapClientWithRateLimit<T extends object>(client: T, config: Config, pa
         const value = Reflect.get(t as Record<string | symbol, unknown>, prop, receiver as object);
 
         // If value is a function, return a wrapped function that retries on 429
-        if (typeof value === 'function') {
+        if (typeof value === "function") {
           const methodLabel = `${currentPath}.${String(prop)}`;
           type AnyAsyncMethod = (...methodArgs: unknown[]) => Promise<unknown>;
           const original = value as AnyAsyncMethod;
-          return (...args: unknown[]) => withRateLimitRetry(() => original.apply(t, args), config, methodLabel);
+          return (...args: unknown[]) =>
+            withRateLimitRetry(() => original.apply(t, args), config, methodLabel);
         }
 
         // If value is an object, recursively proxy it
-        if (typeof value === 'object' && value !== null) {
+        if (typeof value === "object" && value !== null) {
           return makeProxy(value, `${currentPath}.${String(prop)}`);
         }
 

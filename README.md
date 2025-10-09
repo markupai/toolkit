@@ -27,47 +27,47 @@ import {
   getStyleCheck,
   getStyleSuggestion,
   getStyleRewrite,
-} from '@markupai/toolkit';
+} from "@markupai/toolkit";
 
 // Using string content
 const stringRequest = {
-  content: 'This is a sample text for style analysis.',
-  style_guide: 'ap',
-  dialect: 'american_english',
-  tone: 'formal',
+  content: "This is a sample text for style analysis.",
+  style_guide: "ap",
+  dialect: "american_english",
+  tone: "formal",
 };
 
 // Using HTML string content (auto-detected as text/html)
 const htmlStringRequest = {
-  content: '<!doctype html><html><body><p>Hello</p></body></html>',
-  style_guide: 'ap',
-  dialect: 'american_english',
-  tone: 'formal',
+  content: "<!doctype html><html><body><p>Hello</p></body></html>",
+  style_guide: "ap",
+  dialect: "american_english",
+  tone: "formal",
   // Optional: provide a filename to enforce MIME type
-  documentNameWithExtension: 'page.html',
+  documentNameWithExtension: "page.html",
 };
 
 // Using File object (browser environments)
-const file = new File(['This is content from a file.'], 'document.txt', { type: 'text/plain' });
+const file = new File(["This is content from a file."], "document.txt", { type: "text/plain" });
 const fileRequest = {
   content: { file }, // FileDescriptor (optionally add mimeType)
-  style_guide: 'chicago',
-  dialect: 'american_english',
-  tone: 'academic',
+  style_guide: "chicago",
+  dialect: "american_english",
+  tone: "academic",
 };
 
 // Using BufferDescriptor (Node.js environments) - BINARY FILES SUPPORTED
-const fs = require('fs');
-const pdfBuffer = fs.readFileSync('technical-report.pdf');
+const fs = require("fs");
+const pdfBuffer = fs.readFileSync("technical-report.pdf");
 const bufferRequest = {
   content: {
     buffer: pdfBuffer,
-    mimeType: 'application/pdf',
-    documentNameWithExtension: 'technical-report.pdf',
+    mimeType: "application/pdf",
+    documentNameWithExtension: "technical-report.pdf",
   },
-  style_guide: 'ap',
-  dialect: 'american_english',
-  tone: 'academic',
+  style_guide: "ap",
+  dialect: "american_english",
+  tone: "academic",
 };
 
 // Perform style analysis with polling (convenience)
@@ -88,11 +88,25 @@ const rewriteResult = await styleRewrite(stringRequest, config);
 For processing multiple documents efficiently, the toolkit provides batch operations:
 
 ```typescript
-import { styleBatchCheckRequests, styleBatchSuggestions, styleBatchRewrites } from '@markupai/toolkit';
+import {
+  styleBatchCheckRequests,
+  styleBatchSuggestions,
+  styleBatchRewrites,
+} from "@markupai/toolkit";
 
 const requests = [
-  { content: 'First document content', style_guide: 'ap', dialect: 'american_english', tone: 'formal' },
-  { content: 'Second document content', style_guide: 'chicago', dialect: 'american_english', tone: 'academic' },
+  {
+    content: "First document content",
+    style_guide: "ap",
+    dialect: "american_english",
+    tone: "formal",
+  },
+  {
+    content: "Second document content",
+    style_guide: "chicago",
+    dialect: "american_english",
+    tone: "academic",
+  },
   // ... more requests
 ];
 
@@ -108,7 +122,9 @@ const batchCheck = styleBatchCheckRequests(requests, config, {
 console.log(`Started: total ${batchCheck.progress.total}`);
 const interval = setInterval(() => {
   const p = batchCheck.progress;
-  console.log(`Progress: ${p.completed}/${p.total} completed, ${p.inProgress} in-progress, ${p.failed} failed`);
+  console.log(
+    `Progress: ${p.completed}/${p.total} completed, ${p.inProgress} in-progress, ${p.failed} failed`,
+  );
   if (p.completed + p.failed === p.total) clearInterval(interval);
 }, 1_000);
 
@@ -118,9 +134,9 @@ batchCheck.promise.then((finalProgress) => {
   console.log(`Failed: ${finalProgress.failed}`);
 
   for (const [index, result] of finalProgress.results.entries()) {
-    if (result.status === 'completed') {
+    if (result.status === "completed") {
       console.log(`Request ${index}: ${result.result?.original.scores.quality.score}`);
-    } else if (result.status === 'failed') {
+    } else if (result.status === "failed") {
       console.log(`Request ${index} failed: ${result.error?.message}`);
     }
   }
@@ -148,7 +164,7 @@ import type {
   StyleScores,
   Issue,
   IssueWithSuggestion,
-} from '@markupai/toolkit';
+} from "@markupai/toolkit";
 
 // Style check response
 const checkResult: StyleAnalysisSuccessResp = await styleCheck(request, config);
@@ -172,11 +188,11 @@ console.log(`Rewrite quality score: ${rewriteResult.rewrite.scores.quality.score
 The toolkit requires a configuration object with your API key and platform settings:
 
 ```typescript
-import { Config, Environment, PlatformType } from '@markupai/toolkit';
+import { Config, Environment, PlatformType } from "@markupai/toolkit";
 
 // Using environment-based configuration
 const config: Config = {
-  apiKey: 'your-api-key-here',
+  apiKey: "your-api-key-here",
   platform: {
     type: PlatformType.Environment,
     value: Environment.Prod, // or Environment.Stage, Environment.Dev
@@ -185,10 +201,10 @@ const config: Config = {
 
 // Using custom URL configuration
 const configWithUrl: Config = {
-  apiKey: 'your-api-key-here',
+  apiKey: "your-api-key-here",
   platform: {
     type: PlatformType.Url,
-    value: 'https://api.dev.markup.ai',
+    value: "https://api.dev.markup.ai",
   },
 };
 ```

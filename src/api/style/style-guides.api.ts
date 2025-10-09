@@ -1,8 +1,13 @@
-import type { StyleGuides, StyleGuide, CreateStyleGuideReq, StyleGuideUpdateReq } from './style.api.types';
-import type { Config } from '../../utils/api.types';
-import { initEndpoint } from '../../utils/api';
-import { MarkupAIError } from '@markupai/api';
-import { ApiError } from '../../utils/errors';
+import type {
+  StyleGuides,
+  StyleGuide,
+  CreateStyleGuideReq,
+  StyleGuideUpdateReq,
+} from "./style.api.types";
+import type { Config } from "../../utils/api.types";
+import { initEndpoint } from "../../utils/api";
+import { MarkupAIError } from "@markupai/api";
+import { ApiError } from "../../utils/errors";
 
 // List all style guides
 export async function listStyleGuides(config: Config): Promise<StyleGuides> {
@@ -31,11 +36,14 @@ export async function getStyleGuide(styleGuideId: string, config: Config): Promi
 }
 
 // Create a new style guide from a File object
-export async function createStyleGuide(request: CreateStyleGuideReq, config: Config): Promise<StyleGuide> {
+export async function createStyleGuide(
+  request: CreateStyleGuideReq,
+  config: Config,
+): Promise<StyleGuide> {
   const { file, name } = request;
   // Validate file type - only PDF files are supported
-  const fileExtension = file.name.split('.').pop()?.toLowerCase();
-  if (!fileExtension || fileExtension !== 'pdf') {
+  const fileExtension = file.name.split(".").pop()?.toLowerCase();
+  if (!fileExtension || fileExtension !== "pdf") {
     throw new Error(`Unsupported file type: ${fileExtension}. Only .pdf files are supported.`);
   }
 
@@ -94,7 +102,7 @@ export async function validateToken(config: Config): Promise<boolean> {
     await listStyleGuides(config);
     return true;
   } catch (error) {
-    console.error('Token validation failed:', error);
+    console.error("Token validation failed:", error);
     return false;
   }
 }

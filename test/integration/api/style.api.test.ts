@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll } from "vitest";
 import {
   submitStyleCheck,
   submitStyleSuggestion,
@@ -11,41 +11,45 @@ import {
   styleBatchCheckRequests,
   styleBatchSuggestions,
   styleBatchRewrites,
-} from '../../../src/api/style/style.api';
-import type { StyleAnalysisReq, StyleAnalysisSuccessResp, BatchProgress } from '../../../src/api/style/style.api.types';
-import { STYLE_DEFAULTS } from '../../../src/api/style/style.api.defaults';
-import { PlatformType } from '../../../src/utils/api.types';
-import type { Config } from '../../../src/utils/api.types';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { ApiError } from '../../../src/utils/errors';
-import { BufferDescriptor } from '../../../src/api/style/style.api.types';
+} from "../../../src/api/style/style.api";
+import type {
+  StyleAnalysisReq,
+  StyleAnalysisSuccessResp,
+  BatchProgress,
+} from "../../../src/api/style/style.api.types";
+import { STYLE_DEFAULTS } from "../../../src/api/style/style.api.defaults";
+import { PlatformType } from "../../../src/utils/api.types";
+import type { Config } from "../../../src/utils/api.types";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { ApiError } from "../../../src/utils/errors";
+import { BufferDescriptor } from "../../../src/api/style/style.api.types";
 
 // Helper function to create a BufferDescriptor from the batteries.pdf
 async function createTestPdfBuffer(): Promise<BufferDescriptor> {
-  const pdfPath = join(__dirname, '../test-data/batteries.pdf');
+  const pdfPath = join(__dirname, "../test-data/batteries.pdf");
   const buffer = readFileSync(pdfPath);
-  return { buffer, mimeType: 'application/pdf', documentNameWithExtension: 'batteries.pdf' };
+  return { buffer, mimeType: "application/pdf", documentNameWithExtension: "batteries.pdf" };
 }
 
 // Helper function to create a File object from the batteries.pdf
 async function createTestFile(): Promise<File> {
-  const pdfPath = join(__dirname, '../test-data/batteries.pdf');
+  const pdfPath = join(__dirname, "../test-data/batteries.pdf");
   const pdfBuffer = readFileSync(pdfPath);
-  return new File([pdfBuffer], 'batteries.pdf', { type: 'application/pdf' });
+  return new File([pdfBuffer], "batteries.pdf", { type: "application/pdf" });
 }
 
 // Helper function to create a Buffer object from text content
 function createTestBuffer(content: string): Buffer {
-  return Buffer.from(content, 'utf8');
+  return Buffer.from(content, "utf8");
 }
 
-describe('Style API Integration Tests', () => {
+describe("Style API Integration Tests", () => {
   let config: Config;
   beforeAll(() => {
-    const apiKey = process.env.API_KEY || '';
+    const apiKey = process.env.API_KEY || "";
     if (!apiKey) {
-      throw new Error('API_KEY environment variable is required for integration tests');
+      throw new Error("API_KEY environment variable is required for integration tests");
     }
     config = {
       apiKey,
@@ -54,10 +58,10 @@ describe('Style API Integration Tests', () => {
     };
   });
 
-  describe('Style Operations', () => {
-    const testContent = 'This is a test content for style operations.';
+  describe("Style Operations", () => {
+    const testContent = "This is a test content for style operations.";
     const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft;
-    it('should submit a style check', async () => {
+    it("should submit a style check", async () => {
       const response = await submitStyleCheck(
         {
           content: testContent,
@@ -72,7 +76,7 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
-    it('should submit a style check without tone', async () => {
+    it("should submit a style check without tone", async () => {
       const response = await submitStyleCheck(
         {
           content: testContent,
@@ -86,14 +90,14 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
-    it('should submit a style check with custom document name', async () => {
+    it("should submit a style check with custom document name", async () => {
       const response = await submitStyleCheck(
         {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentNameWithExtension: 'integration-test-document.txt',
+          documentNameWithExtension: "integration-test-document.txt",
         },
         config,
       );
@@ -102,22 +106,22 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
-    it('should submit a style check with incorrect options', async () => {
+    it("should submit a style check with incorrect options", async () => {
       expect(
         async () =>
           await submitStyleCheck(
             {
-              content: 'This is a test content for style operations.',
-              style_guide: 'invalid-style-guide-id',
-              dialect: 'invalid-dialect',
-              tone: 'invalid-tone',
+              content: "This is a test content for style operations.",
+              style_guide: "invalid-style-guide-id",
+              dialect: "invalid-dialect",
+              tone: "invalid-tone",
             },
             config,
           ),
       ).rejects.toThrow(ApiError);
     });
 
-    it('should submit a style check with invalid api key', async () => {
+    it("should submit a style check with invalid api key", async () => {
       expect(
         async () =>
           await submitStyleCheck(
@@ -126,16 +130,16 @@ describe('Style API Integration Tests', () => {
               style_guide: styleGuideId,
               dialect: STYLE_DEFAULTS.dialects.americanEnglish,
               tone: STYLE_DEFAULTS.tones.technical,
-              documentNameWithExtension: 'integration-test-document.txt',
+              documentNameWithExtension: "integration-test-document.txt",
             },
             {
-              apiKey: 'invalid-api-key',
+              apiKey: "invalid-api-key",
             },
           ),
       ).rejects.toThrow(ApiError);
     });
 
-    it('should submit a style suggestion', async () => {
+    it("should submit a style suggestion", async () => {
       const response = await submitStyleSuggestion(
         {
           content: testContent,
@@ -150,14 +154,14 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
-    it('should submit a style suggestion with custom document name', async () => {
+    it("should submit a style suggestion with custom document name", async () => {
       const response = await submitStyleSuggestion(
         {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentNameWithExtension: 'suggestions-test-document.txt',
+          documentNameWithExtension: "suggestions-test-document.txt",
         },
         config,
       );
@@ -166,7 +170,7 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
-    it('should submit a style rewrite', async () => {
+    it("should submit a style rewrite", async () => {
       const response = await submitStyleRewrite(
         {
           content: testContent,
@@ -181,14 +185,14 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
-    it('should submit a style rewrite with custom document name', async () => {
+    it("should submit a style rewrite with custom document name", async () => {
       const response = await submitStyleRewrite(
         {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentNameWithExtension: 'rewrite-test-document.txt',
+          documentNameWithExtension: "rewrite-test-document.txt",
         },
         config,
       );
@@ -197,7 +201,7 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
-    it('should submit a style check and get result', async () => {
+    it("should submit a style check and get result", async () => {
       const response = await styleCheck(
         {
           content: testContent,
@@ -212,13 +216,13 @@ describe('Style API Integration Tests', () => {
       // New response structure assertions
       expect(response.workflow).toBeDefined();
       expect(response.workflow.id).toBeDefined();
-      expect(typeof response.workflow.id).toBe('string');
+      expect(typeof response.workflow.id).toBe("string");
       expect(response.workflow.status).toBeDefined();
       expect(response.config).toBeDefined();
       expect(response.config.style_guide.style_guide_type).toBeDefined();
       expect(response.config.style_guide.style_guide_id).toBeDefined();
-      expect(typeof response.config.style_guide.style_guide_type).toBe('string');
-      expect(typeof response.config.style_guide.style_guide_id).toBe('string');
+      expect(typeof response.config.style_guide.style_guide_type).toBe("string");
+      expect(typeof response.config.style_guide.style_guide_id).toBe("string");
       expect(response.config.style_guide.style_guide_id).toMatch(
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
       );
@@ -229,45 +233,47 @@ describe('Style API Integration Tests', () => {
       expect(response.original).toBeDefined();
       expect(response.original.scores).toBeDefined();
       expect(response.original.scores.quality).toBeDefined();
-      expect(typeof response.original.scores.quality.score).toBe('number');
+      expect(typeof response.original.scores.quality.score).toBe("number");
 
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
-      expect(typeof response.original.scores.analysis.clarity.score).toBe('number');
-      expect(typeof response.original.scores.analysis.clarity.word_count).toBe('number');
-      expect(typeof response.original.scores.analysis.clarity.sentence_count).toBe('number');
-      expect(typeof response.original.scores.analysis.clarity.average_sentence_length).toBe('number');
-      expect(typeof response.original.scores.analysis.clarity.flesch_reading_ease).toBe('number');
-      expect(typeof response.original.scores.analysis.clarity.vocabulary_complexity).toBe('number');
-      expect(typeof response.original.scores.analysis.clarity.sentence_complexity).toBe('number');
+      expect(typeof response.original.scores.analysis.clarity.score).toBe("number");
+      expect(typeof response.original.scores.analysis.clarity.word_count).toBe("number");
+      expect(typeof response.original.scores.analysis.clarity.sentence_count).toBe("number");
+      expect(typeof response.original.scores.analysis.clarity.average_sentence_length).toBe(
+        "number",
+      );
+      expect(typeof response.original.scores.analysis.clarity.flesch_reading_ease).toBe("number");
+      expect(typeof response.original.scores.analysis.clarity.vocabulary_complexity).toBe("number");
+      expect(typeof response.original.scores.analysis.clarity.sentence_complexity).toBe("number");
 
       expect(response.original.scores.quality.grammar).toBeDefined();
-      expect(typeof response.original.scores.quality.grammar.score).toBe('number');
-      expect(typeof response.original.scores.quality.grammar.issues).toBe('number');
+      expect(typeof response.original.scores.quality.grammar.score).toBe("number");
+      expect(typeof response.original.scores.quality.grammar.issues).toBe("number");
 
       expect(response.original.scores.quality.consistency).toBeDefined();
-      expect(typeof response.original.scores.quality.consistency.score).toBe('number');
-      expect(typeof response.original.scores.quality.consistency.issues).toBe('number');
+      expect(typeof response.original.scores.quality.consistency.score).toBe("number");
+      expect(typeof response.original.scores.quality.consistency.issues).toBe("number");
 
       if (response.original.scores.analysis.tone !== null) {
-        expect(typeof response.original.scores.analysis.tone.score).toBe('number');
-        expect(typeof response.original.scores.analysis.tone.informality).toBe('number');
-        expect(typeof response.original.scores.analysis.tone.liveliness).toBe('number');
+        expect(typeof response.original.scores.analysis.tone.score).toBe("number");
+        expect(typeof response.original.scores.analysis.tone.informality).toBe("number");
+        expect(typeof response.original.scores.analysis.tone.liveliness).toBe("number");
       }
 
       expect(response.original.scores.quality.terminology).toBeDefined();
-      expect(typeof response.original.scores.quality.terminology.score).toBe('number');
-      expect(typeof response.original.scores.quality.terminology.issues).toBe('number');
+      expect(typeof response.original.scores.quality.terminology.score).toBe("number");
+      expect(typeof response.original.scores.quality.terminology.issues).toBe("number");
     });
 
-    it('should submit a style check with custom document name and get result', async () => {
+    it("should submit a style check with custom document name and get result", async () => {
       const response = await styleCheck(
         {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentNameWithExtension: 'custom-check-document.txt',
+          documentNameWithExtension: "custom-check-document.txt",
         },
         config,
       );
@@ -275,7 +281,7 @@ describe('Style API Integration Tests', () => {
       expect(response).toBeDefined();
       expect(response.workflow).toBeDefined();
       expect(response.workflow.id).toBeDefined();
-      expect(typeof response.workflow.id).toBe('string');
+      expect(typeof response.workflow.id).toBe("string");
       expect(response.config).toBeDefined();
       expect(response.original.scores).toBeDefined();
       expect(response.original.scores.quality).toBeDefined();
@@ -284,13 +290,14 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.quality.grammar).toBeDefined();
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
-        response.original.scores.analysis.tone === null || typeof response.original.scores.analysis.tone === 'object',
+        response.original.scores.analysis.tone === null ||
+          typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
     });
 
     // The style suggestions endpoint is currently throwing errors
-    it('should submit a style suggestion and get result', async () => {
+    it("should submit a style suggestion and get result", async () => {
       const response = await styleSuggestions(
         {
           content: testContent,
@@ -304,7 +311,7 @@ describe('Style API Integration Tests', () => {
       expect(response).toBeDefined();
       expect(response.workflow).toBeDefined();
       expect(response.workflow.id).toBeDefined();
-      expect(typeof response.workflow.id).toBe('string');
+      expect(typeof response.workflow.id).toBe("string");
       expect(response.original.scores).toBeDefined();
       expect(response.original.scores.quality).toBeDefined();
       expect(response.original.scores.analysis).toBeDefined();
@@ -312,25 +319,26 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.quality.grammar).toBeDefined();
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
-        response.original.scores.analysis.tone === null || typeof response.original.scores.analysis.tone === 'object',
+        response.original.scores.analysis.tone === null ||
+          typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
 
       if (response.original.issues && response.original.issues.length > 0) {
         const issue = response.original.issues[0];
         expect(issue.suggestion).toBeDefined();
-        expect(typeof issue.suggestion).toBe('string');
+        expect(typeof issue.suggestion).toBe("string");
       }
     });
 
-    it('should submit a style suggestion with custom document name and get result', async () => {
+    it("should submit a style suggestion with custom document name and get result", async () => {
       const response = await styleSuggestions(
         {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentNameWithExtension: 'custom-suggestions-document.txt',
+          documentNameWithExtension: "custom-suggestions-document.txt",
         },
         config,
       );
@@ -338,7 +346,7 @@ describe('Style API Integration Tests', () => {
       expect(response).toBeDefined();
       expect(response.workflow).toBeDefined();
       expect(response.workflow.id).toBeDefined();
-      expect(typeof response.workflow.id).toBe('string');
+      expect(typeof response.workflow.id).toBe("string");
       expect(response.original.scores).toBeDefined();
       expect(response.original.scores.quality).toBeDefined();
       expect(response.original.scores.analysis).toBeDefined();
@@ -346,22 +354,23 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.quality.grammar).toBeDefined();
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
-        response.original.scores.analysis.tone === null || typeof response.original.scores.analysis.tone === 'object',
+        response.original.scores.analysis.tone === null ||
+          typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
 
       if (response.original.issues && response.original.issues.length > 0) {
         const issue = response.original.issues[0];
         expect(issue.suggestion).toBeDefined();
-        expect(typeof issue.suggestion).toBe('string');
+        expect(typeof issue.suggestion).toBe("string");
       }
     });
 
-    it('should submit a style rewrite and get result', async () => {
+    it("should submit a style rewrite and get result", async () => {
       const response = await styleRewrite(
         {
           content: testContent,
-          style_guide: '01971e03-dd27-75ee-9044-b48e654848cf',
+          style_guide: "01971e03-dd27-75ee-9044-b48e654848cf",
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
         },
@@ -371,7 +380,7 @@ describe('Style API Integration Tests', () => {
       expect(response).toBeDefined();
       expect(response.workflow).toBeDefined();
       expect(response.workflow.id).toBeDefined();
-      expect(typeof response.workflow.id).toBe('string');
+      expect(typeof response.workflow.id).toBe("string");
       expect(response.original.scores).toBeDefined();
       expect(response.original.scores.quality).toBeDefined();
       expect(response.original.scores.analysis).toBeDefined();
@@ -379,36 +388,37 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.quality.grammar).toBeDefined();
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
-        response.original.scores.analysis.tone === null || typeof response.original.scores.analysis.tone === 'object',
+        response.original.scores.analysis.tone === null ||
+          typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
 
       // Test rewrite
       expect(response.rewrite).toBeDefined();
-      expect(typeof response.rewrite.text).toBe('string');
+      expect(typeof response.rewrite.text).toBe("string");
 
       if (response.original.issues && response.original.issues.length > 0) {
         const issue = response.original.issues[0];
         expect(issue.suggestion).toBeDefined();
-        expect(typeof issue.suggestion).toBe('string');
+        expect(typeof issue.suggestion).toBe("string");
       }
     });
 
-    it('should submit a style rewrite with custom document name and get result', async () => {
+    it("should submit a style rewrite with custom document name and get result", async () => {
       const response = await styleRewrite(
         {
           content: testContent,
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentNameWithExtension: 'custom-rewrite-document.txt',
+          documentNameWithExtension: "custom-rewrite-document.txt",
         },
         config,
       );
 
       expect(response).toBeDefined();
       expect(response.workflow).toBeDefined();
-      expect(typeof response.workflow.id).toBe('string');
+      expect(typeof response.workflow.id).toBe("string");
       expect(response.original.scores).toBeDefined();
       expect(response.original.scores.quality).toBeDefined();
       expect(response.original.scores.analysis).toBeDefined();
@@ -416,22 +426,23 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.quality.grammar).toBeDefined();
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
-        response.original.scores.analysis.tone === null || typeof response.original.scores.analysis.tone === 'object',
+        response.original.scores.analysis.tone === null ||
+          typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
 
       // Test rewrite
       expect(response.rewrite).toBeDefined();
-      expect(typeof response.rewrite.text).toBe('string');
+      expect(typeof response.rewrite.text).toBe("string");
     });
   });
 
-  describe('Style Operations with File Content', () => {
+  describe("Style Operations with File Content", () => {
     const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft;
 
-    it('should submit a style check with File content', async () => {
+    it("should submit a style check with File content", async () => {
       const testFile = await createTestFile();
-      const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
+      const fileDescriptor = { file: testFile, mimeType: "application/pdf" };
 
       const response = await submitStyleCheck(
         {
@@ -447,9 +458,9 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
-    it('should submit a style suggestion with File content', async () => {
+    it("should submit a style suggestion with File content", async () => {
       const testFile = await createTestFile();
-      const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
+      const fileDescriptor = { file: testFile, mimeType: "application/pdf" };
 
       const response = await submitStyleSuggestion(
         {
@@ -465,9 +476,9 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
-    it('should submit a style check with File content and get result', async () => {
+    it("should submit a style check with File content and get result", async () => {
       const testFile = await createTestFile();
-      const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
+      const fileDescriptor = { file: testFile, mimeType: "application/pdf" };
 
       const response = await styleCheck(
         {
@@ -481,7 +492,7 @@ describe('Style API Integration Tests', () => {
 
       expect(response).toBeDefined();
       expect(response.workflow).toBeDefined();
-      expect(typeof response.workflow.id).toBe('string');
+      expect(typeof response.workflow.id).toBe("string");
       expect(response.config.style_guide.style_guide_id).toMatch(
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
       );
@@ -491,20 +502,21 @@ describe('Style API Integration Tests', () => {
       // Test scores structure
       expect(response.original.scores).toBeDefined();
       expect(response.original.scores.quality).toBeDefined();
-      expect(typeof response.original.scores.quality.score).toBe('number');
+      expect(typeof response.original.scores.quality.score).toBe("number");
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
-        response.original.scores.analysis.tone === null || typeof response.original.scores.analysis.tone === 'object',
+        response.original.scores.analysis.tone === null ||
+          typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
     });
 
-    it('should submit a style suggestion with File content and get result', async () => {
+    it("should submit a style suggestion with File content and get result", async () => {
       const testFile = await createTestFile();
-      const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
+      const fileDescriptor = { file: testFile, mimeType: "application/pdf" };
 
       const response = await styleSuggestions(
         {
@@ -518,7 +530,7 @@ describe('Style API Integration Tests', () => {
 
       expect(response).toBeDefined();
       expect(response.workflow).toBeDefined();
-      expect(typeof response.workflow.id).toBe('string');
+      expect(typeof response.workflow.id).toBe("string");
       expect(response.original.scores).toBeDefined();
       expect(response.original.scores.quality).toBeDefined();
       expect(response.original.scores.analysis).toBeDefined();
@@ -526,20 +538,21 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.quality.grammar).toBeDefined();
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
-        response.original.scores.analysis.tone === null || typeof response.original.scores.analysis.tone === 'object',
+        response.original.scores.analysis.tone === null ||
+          typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
 
       if (response.original.issues && response.original.issues.length > 0) {
         const issue = response.original.issues[0];
         expect(issue.suggestion).toBeDefined();
-        expect(typeof issue.suggestion).toBe('string');
+        expect(typeof issue.suggestion).toBe("string");
       }
     });
 
-    it('should handle File content without custom document name', async () => {
+    it("should handle File content without custom document name", async () => {
       const testFile = await createTestFile();
-      const fileDescriptor = { file: testFile, mimeType: 'application/pdf' };
+      const fileDescriptor = { file: testFile, mimeType: "application/pdf" };
 
       const response = await styleCheck(
         {
@@ -554,7 +567,7 @@ describe('Style API Integration Tests', () => {
 
       expect(response).toBeDefined();
       expect(response.workflow).toBeDefined();
-      expect(typeof response.workflow.id).toBe('string');
+      expect(typeof response.workflow.id).toBe("string");
       expect(response.original.scores).toBeDefined();
       expect(response.original.scores.quality).toBeDefined();
       expect(response.original.scores.analysis).toBeDefined();
@@ -566,15 +579,15 @@ describe('Style API Integration Tests', () => {
     });
   });
 
-  describe('Style Operations with Buffer Content', () => {
+  describe("Style Operations with Buffer Content", () => {
     const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft;
 
-    it('should submit a style check with Buffer content', async () => {
-      const testBuffer = createTestBuffer('This is a test content for Buffer style operations.');
+    it("should submit a style check with Buffer content", async () => {
+      const testBuffer = createTestBuffer("This is a test content for Buffer style operations.");
       const bufferDescriptor = {
         buffer: testBuffer,
-        mimeType: 'text/plain',
-        documentNameWithExtension: 'buffer-integration-test.txt',
+        mimeType: "text/plain",
+        documentNameWithExtension: "buffer-integration-test.txt",
       };
 
       const response = await submitStyleCheck(
@@ -591,12 +604,12 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
-    it('should submit a style suggestion with Buffer content', async () => {
-      const testBuffer = createTestBuffer('This is a test content for Buffer style suggestions.');
+    it("should submit a style suggestion with Buffer content", async () => {
+      const testBuffer = createTestBuffer("This is a test content for Buffer style suggestions.");
       const bufferDescriptor = {
         buffer: testBuffer,
-        mimeType: 'text/plain',
-        documentNameWithExtension: 'buffer-suggestions-test.txt',
+        mimeType: "text/plain",
+        documentNameWithExtension: "buffer-suggestions-test.txt",
       };
 
       const response = await submitStyleSuggestion(
@@ -613,12 +626,12 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
-    it('should submit a style rewrite with Buffer content', async () => {
-      const testBuffer = createTestBuffer('This is a test content for Buffer style rewrites.');
+    it("should submit a style rewrite with Buffer content", async () => {
+      const testBuffer = createTestBuffer("This is a test content for Buffer style rewrites.");
       const bufferDescriptor = {
         buffer: testBuffer,
-        mimeType: 'text/plain',
-        documentNameWithExtension: 'buffer-rewrite-test.txt',
+        mimeType: "text/plain",
+        documentNameWithExtension: "buffer-rewrite-test.txt",
       };
 
       const response = await submitStyleRewrite(
@@ -635,12 +648,14 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
-    it('should submit a style check with Buffer content and get result', async () => {
-      const testBuffer = createTestBuffer('This is a test content for Buffer style check with results.');
+    it("should submit a style check with Buffer content and get result", async () => {
+      const testBuffer = createTestBuffer(
+        "This is a test content for Buffer style check with results.",
+      );
       const bufferDescriptor = {
         buffer: testBuffer,
-        mimeType: 'text/plain',
-        documentNameWithExtension: 'buffer-check-result-test.txt',
+        mimeType: "text/plain",
+        documentNameWithExtension: "buffer-check-result-test.txt",
       };
 
       const response = await styleCheck(
@@ -655,7 +670,7 @@ describe('Style API Integration Tests', () => {
 
       expect(response).toBeDefined();
       expect(response.workflow).toBeDefined();
-      expect(typeof response.workflow.id).toBe('string');
+      expect(typeof response.workflow.id).toBe("string");
       expect(response.config.style_guide.style_guide_id).toMatch(
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
       );
@@ -665,7 +680,7 @@ describe('Style API Integration Tests', () => {
       // Test scores structure
       expect(response.original.scores).toBeDefined();
       expect(response.original.scores.quality).toBeDefined();
-      expect(typeof response.original.scores.quality.score).toBe('number');
+      expect(typeof response.original.scores.quality.score).toBe("number");
       expect(response.original.scores.analysis).toBeDefined();
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
@@ -674,12 +689,14 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.quality.terminology).toBeDefined();
     });
 
-    it('should submit a style suggestion with Buffer content and get result', async () => {
-      const testBuffer = createTestBuffer('This is a test content for Buffer style suggestions with results.');
+    it("should submit a style suggestion with Buffer content and get result", async () => {
+      const testBuffer = createTestBuffer(
+        "This is a test content for Buffer style suggestions with results.",
+      );
       const bufferDescriptor = {
         buffer: testBuffer,
-        mimeType: 'text/plain',
-        documentNameWithExtension: 'buffer-suggestions-result-test.txt',
+        mimeType: "text/plain",
+        documentNameWithExtension: "buffer-suggestions-result-test.txt",
       };
 
       const response = await styleSuggestions(
@@ -694,7 +711,7 @@ describe('Style API Integration Tests', () => {
 
       expect(response).toBeDefined();
       expect(response.workflow).toBeDefined();
-      expect(typeof response.workflow.id).toBe('string');
+      expect(typeof response.workflow.id).toBe("string");
       expect(response.original.scores).toBeDefined();
       expect(response.original.scores.quality).toBeDefined();
       expect(response.original.scores.analysis).toBeDefined();
@@ -707,16 +724,18 @@ describe('Style API Integration Tests', () => {
       if (response.original.issues && response.original.issues.length > 0) {
         const issue = response.original.issues[0];
         expect(issue.suggestion).toBeDefined();
-        expect(typeof issue.suggestion).toBe('string');
+        expect(typeof issue.suggestion).toBe("string");
       }
     });
 
-    it('should submit a style rewrite with Buffer content and get result', async () => {
-      const testBuffer = createTestBuffer('This is a test content for Buffer style rewrites with results.');
+    it("should submit a style rewrite with Buffer content and get result", async () => {
+      const testBuffer = createTestBuffer(
+        "This is a test content for Buffer style rewrites with results.",
+      );
       const bufferDescriptor = {
         buffer: testBuffer,
-        mimeType: 'text/plain',
-        documentNameWithExtension: 'buffer-rewrite-result-test.txt',
+        mimeType: "text/plain",
+        documentNameWithExtension: "buffer-rewrite-result-test.txt",
       };
 
       const response = await styleRewrite(
@@ -731,7 +750,7 @@ describe('Style API Integration Tests', () => {
 
       expect(response).toBeDefined();
       expect(response.workflow).toBeDefined();
-      expect(typeof response.workflow.id).toBe('string');
+      expect(typeof response.workflow.id).toBe("string");
       expect(response.original.scores).toBeDefined();
       expect(response.original.scores.quality).toBeDefined();
       expect(response.original.scores.analysis).toBeDefined();
@@ -743,7 +762,7 @@ describe('Style API Integration Tests', () => {
 
       // Test rewrite and rewrite_scores
       expect(response.rewrite).toBeDefined();
-      expect(typeof response.rewrite.text).toBe('string');
+      expect(typeof response.rewrite.text).toBe("string");
 
       expect(response.rewrite.scores).toBeDefined();
       expect(response.rewrite.scores.quality).toBeDefined();
@@ -752,23 +771,26 @@ describe('Style API Integration Tests', () => {
       expect(response.rewrite.scores.quality.grammar).toBeDefined();
       expect(response.rewrite.scores.quality.consistency).toBeDefined();
       expect(
-        response.rewrite.scores.analysis.tone === null || typeof response.rewrite.scores.analysis.tone === 'object',
+        response.rewrite.scores.analysis.tone === null ||
+          typeof response.rewrite.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.rewrite.scores.quality.terminology).toBeDefined();
 
       if (response.original.issues && response.original.issues.length > 0) {
         const issue = response.original.issues[0];
         expect(issue.suggestion).toBeDefined();
-        expect(typeof issue.suggestion).toBe('string');
+        expect(typeof issue.suggestion).toBe("string");
       }
     });
 
-    it('should handle Buffer content without custom document name', async () => {
-      const testBuffer = createTestBuffer('This is a test content for Buffer without custom document name.');
+    it("should handle Buffer content without custom document name", async () => {
+      const testBuffer = createTestBuffer(
+        "This is a test content for Buffer without custom document name.",
+      );
       const bufferDescriptor = {
         buffer: testBuffer,
-        mimeType: 'text/plain',
-        documentNameWithExtension: 'buffer-default.txt',
+        mimeType: "text/plain",
+        documentNameWithExtension: "buffer-default.txt",
       };
 
       const response = await styleCheck(
@@ -784,7 +806,7 @@ describe('Style API Integration Tests', () => {
 
       expect(response).toBeDefined();
       expect(response.workflow.id).toBeDefined();
-      expect(typeof response.workflow.id).toBe('string');
+      expect(typeof response.workflow.id).toBe("string");
       expect(response.original.scores).toBeDefined();
       expect(response.original.scores.quality).toBeDefined();
       expect(response.original.scores.analysis).toBeDefined();
@@ -792,12 +814,13 @@ describe('Style API Integration Tests', () => {
       expect(response.original.scores.quality.grammar).toBeDefined();
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
-        response.original.scores.analysis.tone === null || typeof response.original.scores.analysis.tone === 'object',
+        response.original.scores.analysis.tone === null ||
+          typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
     });
 
-    it('should handle PDF Buffer content', async () => {
+    it("should handle PDF Buffer content", async () => {
       const testPdfBuffer = await createTestPdfBuffer();
 
       const response = await submitStyleCheck(
@@ -806,7 +829,7 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentNameWithExtension: 'buffer-pdf-test.pdf',
+          documentNameWithExtension: "buffer-pdf-test.pdf",
         },
         config,
       );
@@ -815,10 +838,10 @@ describe('Style API Integration Tests', () => {
       expect(response.workflow_id).toBeDefined();
     });
 
-    it.skip('should download text file from URL and perform style check with Buffer', async () => {
+    it.skip("should download text file from URL and perform style check with Buffer", async () => {
       // URL for the text file
       const textFileUrl =
-        'https://zapier-dev-files.s3.amazonaws.com/cli-platform/20280/2P4LX4UFUwS9SwPN3kdCsLI0HZIS6fjgkF-dej4QtK5RQ_o8brwHHGhdNR_EB7dBSUke2Z30XLu42BJmS4MVAq2tN8d6R3xx_4dBhfNDhfWf8paGIJguziMkWu-cBsf-_PWgFvjS95FXgxtlqAO67cROPp8oTIV46TOfgJbWlfo';
+        "https://zapier-dev-files.s3.amazonaws.com/cli-platform/20280/2P4LX4UFUwS9SwPN3kdCsLI0HZIS6fjgkF-dej4QtK5RQ_o8brwHHGhdNR_EB7dBSUke2Z30XLu42BJmS4MVAq2tN8d6R3xx_4dBhfNDhfWf8paGIJguziMkWu-cBsf-_PWgFvjS95FXgxtlqAO67cROPp8oTIV46TOfgJbWlfo";
 
       // Download the file
       const response = await fetch(textFileUrl);
@@ -838,7 +861,11 @@ describe('Style API Integration Tests', () => {
       // Perform style check with the downloaded content
       const styleCheckResponse = await styleRewrite(
         {
-          content: { buffer: fileBuffer, mimeType: 'text/plain', documentNameWithExtension: 'downloaded-file.txt' },
+          content: {
+            buffer: fileBuffer,
+            mimeType: "text/plain",
+            documentNameWithExtension: "downloaded-file.txt",
+          },
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
@@ -849,13 +876,13 @@ describe('Style API Integration Tests', () => {
       // Validate the style check response
       expect(styleCheckResponse).toBeDefined();
       expect(styleCheckResponse.workflow.id).toBeDefined();
-      expect(typeof styleCheckResponse.workflow.id).toBe('string');
+      expect(typeof styleCheckResponse.workflow.id).toBe("string");
       expect(styleCheckResponse.config).toBeDefined();
       expect(styleCheckResponse.config.style_guide).toBeDefined();
       expect(styleCheckResponse.config.style_guide.style_guide_type).toBeDefined();
       expect(styleCheckResponse.config.style_guide.style_guide_id).toBeDefined();
-      expect(typeof styleCheckResponse.config.style_guide.style_guide_type).toBe('string');
-      expect(typeof styleCheckResponse.config.style_guide.style_guide_id).toBe('string');
+      expect(typeof styleCheckResponse.config.style_guide.style_guide_type).toBe("string");
+      expect(typeof styleCheckResponse.config.style_guide.style_guide_id).toBe("string");
       expect(styleCheckResponse.config.style_guide.style_guide_id).toMatch(
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
       );
@@ -865,14 +892,14 @@ describe('Style API Integration Tests', () => {
       // Test scores structure
       expect(styleCheckResponse.original.scores).toBeDefined();
       expect(styleCheckResponse.original.scores.quality).toBeDefined();
-      expect(typeof styleCheckResponse.original.scores.quality.score).toBe('number');
+      expect(typeof styleCheckResponse.original.scores.quality.score).toBe("number");
       expect(styleCheckResponse.original.scores.analysis).toBeDefined();
       expect(styleCheckResponse.original.scores.analysis.clarity).toBeDefined();
       expect(styleCheckResponse.original.scores.quality.grammar).toBeDefined();
       expect(styleCheckResponse.original.scores.quality.consistency).toBeDefined();
       expect(
         styleCheckResponse.original.scores.analysis.tone === null ||
-          typeof styleCheckResponse.original.scores.analysis.tone === 'object',
+          typeof styleCheckResponse.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(styleCheckResponse.original.scores.quality.terminology).toBeDefined();
 
@@ -884,14 +911,14 @@ describe('Style API Integration Tests', () => {
     });
   });
 
-  describe('Style Operations Get Results', () => {
+  describe("Style Operations Get Results", () => {
     const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft;
 
-    it('should get style suggestion results by workflow ID', async () => {
+    it("should get style suggestion results by workflow ID", async () => {
       // Submit a style suggestion to get a workflow ID
       const suggestionResp = await submitStyleSuggestion(
         {
-          content: 'Integration test for getStyleSuggestion',
+          content: "Integration test for getStyleSuggestion",
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
@@ -906,11 +933,11 @@ describe('Style API Integration Tests', () => {
       expect(result).toBeDefined();
     });
 
-    it('should get style rewrite results by workflow ID', async () => {
+    it("should get style rewrite results by workflow ID", async () => {
       // Submit a style rewrite to get a workflow ID
       const rewriteResp = await submitStyleRewrite(
         {
-          content: 'Integration test for getStyleRewrite',
+          content: "Integration test for getStyleRewrite",
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
@@ -926,34 +953,38 @@ describe('Style API Integration Tests', () => {
     });
   });
 
-  describe('Batch Processing Integration', () => {
+  describe("Batch Processing Integration", () => {
     const mockBatchRequests: StyleAnalysisReq[] = [
       {
-        content: 'This is a test document for style checking. It contains multiple sentences to analyze.',
-        style_guide: 'ap',
+        content:
+          "This is a test document for style checking. It contains multiple sentences to analyze.",
+        style_guide: "ap",
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.technical,
-        documentNameWithExtension: 'test-document-1.txt',
+        documentNameWithExtension: "test-document-1.txt",
       },
       {
-        content: 'Another test document with different content. This should be processed separately.',
-        style_guide: 'chicago',
+        content:
+          "Another test document with different content. This should be processed separately.",
+        style_guide: "chicago",
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.technical,
-        documentNameWithExtension: 'test-document-2.txt',
+        documentNameWithExtension: "test-document-2.txt",
       },
       {
-        content: 'A third document for comprehensive testing of the batch processing system.',
-        style_guide: 'microsoft',
+        content: "A third document for comprehensive testing of the batch processing system.",
+        style_guide: "microsoft",
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.technical,
-        documentNameWithExtension: 'test-document-3.txt',
+        documentNameWithExtension: "test-document-3.txt",
       },
     ];
 
-    describe('styleBatchCheckRequests Integration', () => {
-      it('should process multiple style check requests with limited concurrency', async () => {
-        const batchResponse = styleBatchCheckRequests(mockBatchRequests, config, { maxConcurrent: 2 });
+    describe("styleBatchCheckRequests Integration", () => {
+      it("should process multiple style check requests with limited concurrency", async () => {
+        const batchResponse = styleBatchCheckRequests(mockBatchRequests, config, {
+          maxConcurrent: 2,
+        });
 
         // Verify initial state
         expect(batchResponse.progress.total).toBe(3);
@@ -969,17 +1000,17 @@ describe('Style API Integration Tests', () => {
 
         // Verify individual results
         for (const [index, batchResult] of result.results.entries()) {
-          expect(batchResult.status).toBe('completed');
+          expect(batchResult.status).toBe("completed");
           expect(batchResult.result).toBeDefined();
           expect(batchResult.result!.workflow).toBeDefined();
-          expect(batchResult.result!.workflow.status).toBe('completed');
+          expect(batchResult.result!.workflow.status).toBe("completed");
           expect(batchResult.result!.original.scores).toBeDefined();
           expect(batchResult.index).toBe(index);
           expect(batchResult.request).toEqual(mockBatchRequests[index]);
         }
       });
 
-      it('should respect maxConcurrent limit', async () => {
+      it("should respect maxConcurrent limit", async () => {
         const batchResponse = styleBatchCheckRequests(mockBatchRequests, config, {
           maxConcurrent: 1,
         });
@@ -994,12 +1025,12 @@ describe('Style API Integration Tests', () => {
         expect(result.failed).toBe(0);
       });
 
-      it('should handle mixed success and failure scenarios', async () => {
+      it("should handle mixed success and failure scenarios", async () => {
         const mixedRequests = [
           mockBatchRequests[0], // Should succeed
           {
-            content: '', // Empty content should fail
-            style_guide: 'ap',
+            content: "", // Empty content should fail
+            style_guide: "ap",
             dialect: STYLE_DEFAULTS.dialects.americanEnglish,
             tone: STYLE_DEFAULTS.tones.technical,
           },
@@ -1011,15 +1042,17 @@ describe('Style API Integration Tests', () => {
 
         expect(result.completed).toBe(2);
         expect(result.failed).toBe(1);
-        expect(result.results[0].status).toBe('completed');
-        expect(result.results[1].status).toBe('failed');
-        expect(result.results[2].status).toBe('completed');
+        expect(result.results[0].status).toBe("completed");
+        expect(result.results[1].status).toBe("failed");
+        expect(result.results[2].status).toBe("completed");
       });
     });
 
-    describe('styleBatchSuggestions Integration', () => {
-      it('should process multiple style suggestion requests', async () => {
-        const batchResponse = styleBatchSuggestions(mockBatchRequests, config, { maxConcurrent: 2 });
+    describe("styleBatchSuggestions Integration", () => {
+      it("should process multiple style suggestion requests", async () => {
+        const batchResponse = styleBatchSuggestions(mockBatchRequests, config, {
+          maxConcurrent: 2,
+        });
 
         const result = await batchResponse.promise;
 
@@ -1027,10 +1060,10 @@ describe('Style API Integration Tests', () => {
         expect(result.failed).toBe(0);
 
         for (const batchResult of result.results) {
-          expect(batchResult.status).toBe('completed');
+          expect(batchResult.status).toBe("completed");
           expect(batchResult.result).toBeDefined();
           expect(batchResult.result!.workflow.id).toBeDefined();
-          expect(batchResult.result!.workflow.status).toBe('completed');
+          expect(batchResult.result!.workflow.status).toBe("completed");
           expect(batchResult.result!.original.scores).toBeDefined();
           // Suggestions should have issues with suggestions
           expect(Array.isArray(batchResult.result!.original.issues)).toBe(true);
@@ -1038,8 +1071,8 @@ describe('Style API Integration Tests', () => {
       });
     });
 
-    describe('styleBatchRewrites Integration', () => {
-      it('should process multiple style rewrite requests', async () => {
+    describe("styleBatchRewrites Integration", () => {
+      it("should process multiple style rewrite requests", async () => {
         const batchResponse = styleBatchRewrites(mockBatchRequests, config, { maxConcurrent: 2 });
 
         const result = await batchResponse.promise;
@@ -1048,10 +1081,10 @@ describe('Style API Integration Tests', () => {
         expect(result.failed).toBe(0);
 
         for (const batchResult of result.results) {
-          expect(batchResult.status).toBe('completed');
+          expect(batchResult.status).toBe("completed");
           expect(batchResult.result).toBeDefined();
           expect(batchResult.result!.workflow.id).toBeDefined();
-          expect(batchResult.result!.workflow.status).toBe('completed');
+          expect(batchResult.result!.workflow.status).toBe("completed");
           expect(batchResult.result!.original.scores).toBeDefined();
           expect(batchResult.result!.rewrite).toBeDefined();
           expect(batchResult.result!.rewrite.scores).toBeDefined();
@@ -1059,8 +1092,8 @@ describe('Style API Integration Tests', () => {
       });
     });
 
-    describe('Batch Progress Tracking', () => {
-      it('should provide accurate progress updates', async () => {
+    describe("Batch Progress Tracking", () => {
+      it("should provide accurate progress updates", async () => {
         const progressUpdates: BatchProgress<StyleAnalysisSuccessResp>[] = [];
 
         const batchResponse = styleBatchCheckRequests(mockBatchRequests, config, {
@@ -1089,7 +1122,9 @@ describe('Style API Integration Tests', () => {
           // Progress should be monotonic (completed should only increase)
           expect(progress.completed).toBeGreaterThanOrEqual(lastCompleted);
           expect(progress.total).toBe(3);
-          expect(progress.completed + progress.failed + progress.inProgress + progress.pending).toBe(3);
+          expect(
+            progress.completed + progress.failed + progress.inProgress + progress.pending,
+          ).toBe(3);
 
           // Update our tracking
           lastCompleted = progress.completed;
@@ -1106,17 +1141,17 @@ describe('Style API Integration Tests', () => {
       });
     });
 
-    describe('Batch Cancellation Integration', () => {
-      it('should support cancellation during processing', async () => {
+    describe("Batch Cancellation Integration", () => {
+      it("should support cancellation during processing", async () => {
         const batchResponse = styleBatchCheckRequests(mockBatchRequests, config);
 
         // Cancel immediately
         batchResponse.cancel();
 
-        await expect(batchResponse.promise).rejects.toThrow('Batch operation cancelled');
+        await expect(batchResponse.promise).rejects.toThrow("Batch operation cancelled");
       });
 
-      it('should allow cancellation after some progress', async () => {
+      it("should allow cancellation after some progress", async () => {
         const batchResponse = styleBatchCheckRequests(mockBatchRequests, config, {
           maxConcurrent: 1, // Force sequential processing
         });
@@ -1127,17 +1162,17 @@ describe('Style API Integration Tests', () => {
         // Cancel
         batchResponse.cancel();
 
-        await expect(batchResponse.promise).rejects.toThrow('Batch operation cancelled');
+        await expect(batchResponse.promise).rejects.toThrow("Batch operation cancelled");
       });
     });
 
-    describe('Batch Error Recovery', () => {
-      it('should continue processing after individual failures', async () => {
+    describe("Batch Error Recovery", () => {
+      it("should continue processing after individual failures", async () => {
         const requestsWithErrors = [
           mockBatchRequests[0], // Should succeed
           {
-            content: 'Invalid content that might cause issues',
-            style_guide: 'invalid_style_guide', // Invalid style guide
+            content: "Invalid content that might cause issues",
+            style_guide: "invalid_style_guide", // Invalid style guide
             dialect: STYLE_DEFAULTS.dialects.americanEnglish,
             tone: STYLE_DEFAULTS.tones.technical,
           },
@@ -1149,17 +1184,17 @@ describe('Style API Integration Tests', () => {
 
         // Should have some successes and some failures
         expect(result.completed + result.failed).toBe(3);
-        expect(result.results.some((r) => r.status === 'completed')).toBe(true);
-        expect(result.results.some((r) => r.status === 'failed')).toBe(true);
+        expect(result.results.some((r) => r.status === "completed")).toBe(true);
+        expect(result.results.some((r) => r.status === "failed")).toBe(true);
       });
     });
 
-    describe('Large Batch Processing', () => {
-      it('should handle larger batches efficiently', async () => {
+    describe("Large Batch Processing", () => {
+      it("should handle larger batches efficiently", async () => {
         // Create a larger batch (but not too large for testing)
         const largeBatch = new Array(10).fill(null).map((_, index) => ({
           content: `Test document ${index + 1} for large batch processing.`,
-          style_guide: 'ap',
+          style_guide: "ap",
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
           documentName: `test-document-${index + 1}.txt`,
@@ -1177,12 +1212,12 @@ describe('Style API Integration Tests', () => {
       }, 60_000); // Longer timeout for larger batch
     });
 
-    describe('Reactive Progress Updates', () => {
-      it('should provide real-time progress updates with 25 requests', async () => {
+    describe("Reactive Progress Updates", () => {
+      it("should provide real-time progress updates with 25 requests", async () => {
         // Create 25 test requests
         const largeBatch = new Array(25).fill(null).map((_, index) => ({
           content: `Test document ${index + 1} for reactive progress testing. This document contains multiple sentences to ensure proper processing time. Document ${index + 1} has unique content for comprehensive testing.`,
-          style_guide: 'ap',
+          style_guide: "ap",
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
           documentName: `test-document-${index + 1}.txt`,
@@ -1238,7 +1273,9 @@ describe('Style API Integration Tests', () => {
           expect(progress.total).toBe(25);
 
           // Sum of all statuses should equal total
-          expect(progress.completed + progress.failed + progress.inProgress + progress.pending).toBe(25);
+          expect(
+            progress.completed + progress.failed + progress.inProgress + progress.pending,
+          ).toBe(25);
 
           // Update our tracking
           lastCompleted = progress.completed;
@@ -1258,10 +1295,10 @@ describe('Style API Integration Tests', () => {
 
         // Verify individual results for completed requests
         for (const [index, batchResult] of result.results.entries()) {
-          if (batchResult.status === 'completed') {
+          if (batchResult.status === "completed") {
             expect(batchResult.result).toBeDefined();
             expect(batchResult.result!.workflow).toBeDefined();
-            expect(batchResult.result!.workflow.status).toBe('completed');
+            expect(batchResult.result!.workflow.status).toBe("completed");
             expect(batchResult.result!.original.scores).toBeDefined();
             expect(batchResult.index).toBe(index);
             expect(batchResult.request).toEqual(largeBatch[index]);
