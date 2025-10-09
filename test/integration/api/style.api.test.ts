@@ -25,7 +25,7 @@ import { BufferDescriptor } from '../../../src/api/style/style.api.types';
 async function createTestPdfBuffer(): Promise<BufferDescriptor> {
   const pdfPath = join(__dirname, '../test-data/batteries.pdf');
   const buffer = readFileSync(pdfPath);
-  return { buffer, mimeType: 'application/pdf' };
+  return { buffer, mimeType: 'application/pdf', documentNameWithExtension: 'batteries.pdf' };
 }
 
 // Helper function to create a File object from the batteries.pdf
@@ -93,7 +93,7 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'integration-test-document.txt',
+          documentNameWithExtension: 'integration-test-document.txt',
         },
         config,
       );
@@ -126,7 +126,7 @@ describe('Style API Integration Tests', () => {
               style_guide: styleGuideId,
               dialect: STYLE_DEFAULTS.dialects.americanEnglish,
               tone: STYLE_DEFAULTS.tones.technical,
-              documentName: 'integration-test-document.txt',
+              documentNameWithExtension: 'integration-test-document.txt',
             },
             {
               apiKey: 'invalid-api-key',
@@ -157,7 +157,7 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'suggestions-test-document.txt',
+          documentNameWithExtension: 'suggestions-test-document.txt',
         },
         config,
       );
@@ -188,7 +188,7 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'rewrite-test-document.txt',
+          documentNameWithExtension: 'rewrite-test-document.txt',
         },
         config,
       );
@@ -267,7 +267,7 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'custom-check-document.txt',
+          documentNameWithExtension: 'custom-check-document.txt',
         },
         config,
       );
@@ -330,7 +330,7 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'custom-suggestions-document.txt',
+          documentNameWithExtension: 'custom-suggestions-document.txt',
         },
         config,
       );
@@ -401,7 +401,7 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'custom-rewrite-document.txt',
+          documentNameWithExtension: 'custom-rewrite-document.txt',
         },
         config,
       );
@@ -439,7 +439,6 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'batteries-integration-test.pdf',
         },
         config,
       );
@@ -458,7 +457,6 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'batteries-suggestions-test.pdf',
         },
         config,
       );
@@ -477,7 +475,6 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'batteries-check-result-test.pdf',
         },
         config,
       );
@@ -515,7 +512,6 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'batteries-suggestions-result-test.pdf',
         },
         config,
       );
@@ -575,7 +571,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style check with Buffer content', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer style operations.');
-      const bufferDescriptor = { buffer: testBuffer, mimeType: 'text/plain' };
+      const bufferDescriptor = {
+        buffer: testBuffer,
+        mimeType: 'text/plain',
+        documentNameWithExtension: 'buffer-integration-test.txt',
+      };
 
       const response = await submitStyleCheck(
         {
@@ -583,7 +583,6 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'buffer-integration-test.txt',
         },
         config,
       );
@@ -594,7 +593,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style suggestion with Buffer content', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer style suggestions.');
-      const bufferDescriptor = { buffer: testBuffer, mimeType: 'text/plain' };
+      const bufferDescriptor = {
+        buffer: testBuffer,
+        mimeType: 'text/plain',
+        documentNameWithExtension: 'buffer-suggestions-test.txt',
+      };
 
       const response = await submitStyleSuggestion(
         {
@@ -602,7 +605,6 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'buffer-suggestions-test.txt',
         },
         config,
       );
@@ -613,7 +615,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style rewrite with Buffer content', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer style rewrites.');
-      const bufferDescriptor = { buffer: testBuffer, mimeType: 'text/plain' };
+      const bufferDescriptor = {
+        buffer: testBuffer,
+        mimeType: 'text/plain',
+        documentNameWithExtension: 'buffer-rewrite-test.txt',
+      };
 
       const response = await submitStyleRewrite(
         {
@@ -621,7 +627,6 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'buffer-rewrite-test.txt',
         },
         config,
       );
@@ -632,7 +637,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style check with Buffer content and get result', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer style check with results.');
-      const bufferDescriptor = { buffer: testBuffer, mimeType: 'text/plain' };
+      const bufferDescriptor = {
+        buffer: testBuffer,
+        mimeType: 'text/plain',
+        documentNameWithExtension: 'buffer-check-result-test.txt',
+      };
 
       const response = await styleCheck(
         {
@@ -640,7 +649,6 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'buffer-check-result-test.txt',
         },
         config,
       );
@@ -668,7 +676,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style suggestion with Buffer content and get result', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer style suggestions with results.');
-      const bufferDescriptor = { buffer: testBuffer, mimeType: 'text/plain' };
+      const bufferDescriptor = {
+        buffer: testBuffer,
+        mimeType: 'text/plain',
+        documentNameWithExtension: 'buffer-suggestions-result-test.txt',
+      };
 
       const response = await styleSuggestions(
         {
@@ -676,7 +688,6 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'buffer-suggestions-result-test.txt',
         },
         config,
       );
@@ -702,7 +713,11 @@ describe('Style API Integration Tests', () => {
 
     it('should submit a style rewrite with Buffer content and get result', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer style rewrites with results.');
-      const bufferDescriptor = { buffer: testBuffer, mimeType: 'text/plain' };
+      const bufferDescriptor = {
+        buffer: testBuffer,
+        mimeType: 'text/plain',
+        documentNameWithExtension: 'buffer-rewrite-result-test.txt',
+      };
 
       const response = await styleRewrite(
         {
@@ -710,7 +725,6 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'buffer-rewrite-result-test.txt',
         },
         config,
       );
@@ -751,7 +765,11 @@ describe('Style API Integration Tests', () => {
 
     it('should handle Buffer content without custom document name', async () => {
       const testBuffer = createTestBuffer('This is a test content for Buffer without custom document name.');
-      const bufferDescriptor = { buffer: testBuffer, mimeType: 'text/plain' };
+      const bufferDescriptor = {
+        buffer: testBuffer,
+        mimeType: 'text/plain',
+        documentNameWithExtension: 'buffer-default.txt',
+      };
 
       const response = await styleCheck(
         {
@@ -788,7 +806,7 @@ describe('Style API Integration Tests', () => {
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'buffer-pdf-test.pdf',
+          documentNameWithExtension: 'buffer-pdf-test.pdf',
         },
         config,
       );
@@ -820,11 +838,10 @@ describe('Style API Integration Tests', () => {
       // Perform style check with the downloaded content
       const styleCheckResponse = await styleRewrite(
         {
-          content: { buffer: fileBuffer, mimeType: 'text/plain' },
+          content: { buffer: fileBuffer, mimeType: 'text/plain', documentNameWithExtension: 'downloaded-file.txt' },
           style_guide: styleGuideId,
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: 'downloaded-file.txt',
         },
         config,
       );
@@ -916,21 +933,21 @@ describe('Style API Integration Tests', () => {
         style_guide: 'ap',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.technical,
-        documentName: 'test-document-1.txt',
+        documentNameWithExtension: 'test-document-1.txt',
       },
       {
         content: 'Another test document with different content. This should be processed separately.',
         style_guide: 'chicago',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.technical,
-        documentName: 'test-document-2.txt',
+        documentNameWithExtension: 'test-document-2.txt',
       },
       {
         content: 'A third document for comprehensive testing of the batch processing system.',
         style_guide: 'microsoft',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.technical,
-        documentName: 'test-document-3.txt',
+        documentNameWithExtension: 'test-document-3.txt',
       },
     ];
 

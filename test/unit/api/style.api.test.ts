@@ -112,7 +112,7 @@ describe('Style API Unit Tests', () => {
 
       const requestWithDocumentName = {
         ...mockStyleAnalysisRequest,
-        documentName: 'custom-document.txt',
+        documentNameWithExtension: 'custom-document.txt',
       };
 
       const result = await submitStyleCheck(requestWithDocumentName, mockConfig);
@@ -144,7 +144,7 @@ describe('Style API Unit Tests', () => {
         style_guide: 'ap',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.technical,
-        documentName: 'custom-file.txt',
+        documentNameWithExtension: 'custom-file.txt',
       };
 
       const result = await submitStyleCheck(requestWithFile, mockConfig);
@@ -159,13 +159,12 @@ describe('Style API Unit Tests', () => {
       server.use(apiHandlers.style.checks.success);
 
       const buffer = Buffer.from('test buffer content', 'utf8');
-      const bufferDescriptor = { buffer, mimeType: 'text/plain' };
+      const bufferDescriptor = { buffer, mimeType: 'text/plain', documentNameWithExtension: 'custom-buffer.txt' };
       const requestWithBuffer = {
         content: bufferDescriptor,
         style_guide: 'ap',
         dialect: STYLE_DEFAULTS.dialects.americanEnglish,
         tone: STYLE_DEFAULTS.tones.technical,
-        documentName: 'custom-buffer.txt',
       };
 
       const result = await submitStyleCheck(requestWithBuffer, mockConfig);
@@ -346,7 +345,7 @@ describe('Style API Unit Tests', () => {
 
       const requestWithDocumentName = {
         ...mockStyleAnalysisRequest,
-        documentName: 'test-document.txt',
+        documentNameWithExtension: 'test-document.txt',
       };
 
       const result = await styleCheck(requestWithDocumentName, mockConfig);
@@ -362,7 +361,7 @@ describe('Style API Unit Tests', () => {
 
       const requestWithDocumentName = {
         ...mockStyleAnalysisRequest,
-        documentName: 'suggestions-document.txt',
+        documentNameWithExtension: 'suggestions-document.txt',
       };
 
       const result = await styleSuggestions(requestWithDocumentName, mockConfig);
@@ -378,7 +377,7 @@ describe('Style API Unit Tests', () => {
 
       const requestWithDocumentName = {
         ...mockStyleAnalysisRequest,
-        documentName: 'rewrite-document.txt',
+        documentNameWithExtension: 'rewrite-document.txt',
       };
 
       const result = await styleRewrite(requestWithDocumentName, mockConfig);
@@ -414,7 +413,7 @@ describe('Style API Unit Tests', () => {
       server.use(apiHandlers.style.checks.success, apiHandlers.style.checks.poll);
 
       const buffer = Buffer.from('test buffer content for polling', 'utf8');
-      const bufferDescriptor = { buffer, mimeType: 'text/plain' };
+      const bufferDescriptor = { buffer, mimeType: 'text/plain', documentNameWithExtension: 'polling-buffer.txt' };
       const requestWithBuffer = {
         content: bufferDescriptor,
         style_guide: 'ap',

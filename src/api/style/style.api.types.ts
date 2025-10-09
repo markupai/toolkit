@@ -33,9 +33,8 @@ export interface FileDescriptor {
  */
 export interface BufferDescriptor {
   buffer: Buffer;
-  mimeType?: string;
-  /** Optional original filename hint for MIME and extension preservation */
-  filename?: string;
+  mimeType: string;
+  documentNameWithExtension: string;
 }
 
 /**
@@ -147,14 +146,27 @@ export interface StyleAnalysisErrorResp extends ResponseBase {
   error_message: string;
 }
 
-export interface StyleAnalysisReq {
-  content: string | FileDescriptor | BufferDescriptor;
+export interface StyleAnalysisReqBase {
   style_guide: string; // Can be style guide ID or name (e.g. 'ap', 'chicago', 'microsoft')
   dialect: string;
   tone?: string;
-  documentName?: string; // Optional document name for the file upload
   webhook_url?: string; // Optional webhook URL for async processing
 }
+
+export interface StyleAnalysisReqString extends StyleAnalysisReqBase {
+  content: string;
+  documentNameWithExtension?: string; // Optional document name for the file upload
+}
+
+export interface StyleAnalysisReqFile extends StyleAnalysisReqBase {
+  content: FileDescriptor;
+}
+
+export interface StyleAnalysisReqBuffer extends StyleAnalysisReqBase {
+  content: BufferDescriptor;
+}
+
+export type StyleAnalysisReq = StyleAnalysisReqString | StyleAnalysisReqFile | StyleAnalysisReqBuffer;
 
 export interface StyleGuide {
   id: string;
