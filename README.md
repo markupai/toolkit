@@ -44,7 +44,7 @@ const htmlStringRequest = {
   dialect: 'american_english',
   tone: 'formal',
   // Optional: provide a filename to enforce MIME type
-  documentName: 'page.html',
+  documentNameWithExtension: 'page.html',
 };
 
 // Using File object (browser environments)
@@ -54,7 +54,6 @@ const fileRequest = {
   style_guide: 'chicago',
   dialect: 'american_english',
   tone: 'academic',
-  documentName: 'my-document.txt', // Optional custom filename
 };
 
 // Using BufferDescriptor (Node.js environments) - BINARY FILES SUPPORTED
@@ -64,11 +63,11 @@ const bufferRequest = {
   content: {
     buffer: pdfBuffer,
     mimeType: 'application/pdf',
+    documentNameWithExtension: 'technical-report.pdf',
   },
   style_guide: 'ap',
   dialect: 'american_english',
   tone: 'academic',
-  documentName: 'technical-report.pdf', // Optional custom filename
 };
 
 // Perform style analysis with polling (convenience)
