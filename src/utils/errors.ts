@@ -1,20 +1,20 @@
 // Error type enums to avoid string repetition
 export enum ErrorType {
   // API Error Types (from server responses)
-  VALIDATION_ERROR = 'VALIDATION_ERROR',
-  UNKNOWN_ERROR = 'UNKNOWN_ERROR',
-  WORKFLOW_NOT_FOUND = 'workflowNotFound',
-  UNAUTHORIZED_ERROR = 'UNAUTHORIZED_ERROR',
-  PAYLOAD_TOO_LARGE_ERROR = 'PAYLOAD_TOO_LARGE_ERROR',
-  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
+  VALIDATION_ERROR = "VALIDATION_ERROR",
+  UNKNOWN_ERROR = "UNKNOWN_ERROR",
+  WORKFLOW_NOT_FOUND = "workflowNotFound",
+  UNAUTHORIZED_ERROR = "UNAUTHORIZED_ERROR",
+  PAYLOAD_TOO_LARGE_ERROR = "PAYLOAD_TOO_LARGE_ERROR",
+  INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR",
 
   // Toolkit Error Types (for non-API errors)
-  NETWORK_ERROR = 'NETWORK_ERROR',
-  TIMEOUT_ERROR = 'TIMEOUT_ERROR',
-  WORKFLOW_FAILED = 'WORKFLOW_FAILED',
-  UNEXPECTED_STATUS = 'UNEXPECTED_STATUS',
-  POLLING_ERROR = 'POLLING_ERROR',
-  RATE_LIMIT_ERROR = 'RATE_LIMIT_ERROR',
+  NETWORK_ERROR = "NETWORK_ERROR",
+  TIMEOUT_ERROR = "TIMEOUT_ERROR",
+  WORKFLOW_FAILED = "WORKFLOW_FAILED",
+  UNEXPECTED_STATUS = "UNEXPECTED_STATUS",
+  POLLING_ERROR = "POLLING_ERROR",
+  RATE_LIMIT_ERROR = "RATE_LIMIT_ERROR",
 }
 
 // Error types for different API error formats
@@ -81,10 +81,11 @@ export class ApiError extends Error {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore - TS supports ErrorOptions in lib, but to be safe we ignore if not present
     super(message, cause === undefined ? undefined : { cause });
-    this.name = 'ApiError';
+    this.name = "ApiError";
     this.statusCode = statusCode;
     this.type = type;
-    this.rawErrorData = cause instanceof Error ? { ...rawErrorData, originalError: cause } : rawErrorData;
+    this.rawErrorData =
+      cause instanceof Error ? { ...rawErrorData, originalError: cause } : rawErrorData;
 
     // This is needed to make instanceof work correctly
     Object.setPrototypeOf(this, ApiError.prototype);
@@ -120,8 +121,8 @@ export class ApiError extends Error {
    * Handle 400 Bad Request errors
    */
   private static handle400Error(errorData: Record<string, unknown>, statusCode: number): ApiError {
-    const message = typeof errorData.message === 'string' ? errorData.message : undefined;
-    const detail = typeof errorData.detail === 'string' ? errorData.detail : undefined;
+    const message = typeof errorData.message === "string" ? errorData.message : undefined;
+    const detail = typeof errorData.detail === "string" ? errorData.detail : undefined;
     const errorMessage = message || detail || `Bad Request (${statusCode})`;
 
     return new ApiError(errorMessage, ErrorType.UNKNOWN_ERROR, statusCode, errorData);
@@ -147,7 +148,7 @@ export class ApiError extends Error {
     }
 
     // Fallback for other 401 formats
-    const detail = typeof errorData.detail === 'string' ? errorData.detail : undefined;
+    const detail = typeof errorData.detail === "string" ? errorData.detail : undefined;
     const message = detail || `Unauthorized (${statusCode})`;
 
     return new ApiError(message, ErrorType.UNAUTHORIZED_ERROR, statusCode, errorData);
@@ -167,7 +168,7 @@ export class ApiError extends Error {
     }
 
     // Handle standard 404 format
-    const detail = typeof errorData.detail === 'string' ? errorData.detail : undefined;
+    const detail = typeof errorData.detail === "string" ? errorData.detail : undefined;
     const message = detail || `Not Found (${statusCode})`;
 
     return new ApiError(message, ErrorType.WORKFLOW_NOT_FOUND, statusCode, errorData);
@@ -186,7 +187,7 @@ export class ApiError extends Error {
     }
 
     // Fallback for other 413 formats
-    const detail = typeof errorData.detail === 'string' ? errorData.detail : undefined;
+    const detail = typeof errorData.detail === "string" ? errorData.detail : undefined;
     const message = detail || `Payload Too Large (${statusCode})`;
 
     return new ApiError(message, ErrorType.PAYLOAD_TOO_LARGE_ERROR, statusCode, errorData);
@@ -197,7 +198,7 @@ export class ApiError extends Error {
    */
   private static handle429Error(errorData: Record<string, unknown>, statusCode: number): ApiError {
     const std = errorData as Partial<StandardErrorResponse>;
-    const detail = typeof std.detail === 'string' ? std.detail : undefined;
+    const detail = typeof std.detail === "string" ? std.detail : undefined;
     const message = detail || `Rate limit exceeded (${statusCode})`;
 
     return new ApiError(message, ErrorType.RATE_LIMIT_ERROR, statusCode, errorData);
@@ -210,7 +211,7 @@ export class ApiError extends Error {
     // Handle the specific 422 format with errors array
     if (this.isValidationErrorResponse422(errorData)) {
       const { errors } = errorData as ValidationErrorResponse422;
-      const validationMessages = errors.map((e) => e.msg).join('; ');
+      const validationMessages = errors.map((e) => e.msg).join("; ");
       const message = `Validation failed: ${validationMessages}`;
 
       return new ApiError(message, ErrorType.VALIDATION_ERROR, statusCode, errorData);
@@ -219,14 +220,14 @@ export class ApiError extends Error {
     // Handle legacy validation format
     if (this.isValidationErrorResponse(errorData)) {
       const { detail } = errorData as ValidationErrorResponse;
-      const validationMessages = detail.map((d) => d.msg).join('; ');
+      const validationMessages = detail.map((d) => d.msg).join("; ");
       const message = `Validation failed: ${validationMessages}`;
 
       return new ApiError(message, ErrorType.VALIDATION_ERROR, statusCode, errorData);
     }
 
     // Fallback for other 422 formats
-    const detail = typeof errorData.detail === 'string' ? errorData.detail : undefined;
+    const detail = typeof errorData.detail === "string" ? errorData.detail : undefined;
     const message = detail || `Validation Error (${statusCode})`;
 
     return new ApiError(message, ErrorType.VALIDATION_ERROR, statusCode, errorData);
@@ -236,8 +237,8 @@ export class ApiError extends Error {
    * Handle 500 Internal Server errors
    */
   private static handle500Error(errorData: Record<string, unknown>, statusCode: number): ApiError {
-    const message = typeof errorData.message === 'string' ? errorData.message : undefined;
-    const detail = typeof errorData.detail === 'string' ? errorData.detail : undefined;
+    const message = typeof errorData.message === "string" ? errorData.message : undefined;
+    const detail = typeof errorData.detail === "string" ? errorData.detail : undefined;
     const errorMessage = message || detail || `Internal Server Error (${statusCode})`;
 
     return new ApiError(errorMessage, ErrorType.INTERNAL_SERVER_ERROR, statusCode, errorData);
@@ -246,15 +247,23 @@ export class ApiError extends Error {
   /**
    * Handle unknown status codes
    */
-  private static handleUnknownError(errorData: Record<string, unknown>, statusCode: number): ApiError {
-    if (!errorData || typeof errorData !== 'object') {
-      return new ApiError(`HTTP error! status: ${statusCode}`, ErrorType.UNKNOWN_ERROR, statusCode, errorData);
+  private static handleUnknownError(
+    errorData: Record<string, unknown>,
+    statusCode: number,
+  ): ApiError {
+    if (!errorData || typeof errorData !== "object") {
+      return new ApiError(
+        `HTTP error! status: ${statusCode}`,
+        ErrorType.UNKNOWN_ERROR,
+        statusCode,
+        errorData,
+      );
     }
 
     // Extract error message with fallback chain
     const errorMessage =
-      (typeof errorData.message === 'string' && errorData.message) ||
-      (typeof errorData.detail === 'string' && errorData.detail) ||
+      (typeof errorData.message === "string" && errorData.message) ||
+      (typeof errorData.detail === "string" && errorData.detail) ||
       `HTTP error! status: ${statusCode}`;
 
     return new ApiError(errorMessage, ErrorType.UNKNOWN_ERROR, statusCode, errorData);
@@ -274,15 +283,15 @@ export class ApiError extends Error {
     errorData: Record<string, unknown>,
   ): errorData is Record<string, unknown> & ApiErrorResponse {
     return (
-      typeof errorData === 'object' &&
+      typeof errorData === "object" &&
       errorData !== null &&
-      'error' in errorData &&
-      typeof errorData.error === 'object' &&
+      "error" in errorData &&
+      typeof errorData.error === "object" &&
       errorData.error !== null &&
-      'code' in errorData.error &&
-      'message' in errorData.error &&
-      typeof errorData.error.code === 'string' &&
-      typeof errorData.error.message === 'string'
+      "code" in errorData.error &&
+      "message" in errorData.error &&
+      typeof errorData.error.code === "string" &&
+      typeof errorData.error.message === "string"
     );
   }
 
@@ -291,14 +300,18 @@ export class ApiError extends Error {
    */
   private static isDirectApiErrorResponse(
     errorData: Record<string, unknown>,
-  ): errorData is Record<string, unknown> & { code: string; message: string; description?: string } {
+  ): errorData is Record<string, unknown> & {
+    code: string;
+    message: string;
+    description?: string;
+  } {
     return (
-      typeof errorData === 'object' &&
+      typeof errorData === "object" &&
       errorData !== null &&
-      'code' in errorData &&
-      'message' in errorData &&
-      typeof errorData.code === 'string' &&
-      typeof errorData.message === 'string'
+      "code" in errorData &&
+      "message" in errorData &&
+      typeof errorData.code === "string" &&
+      typeof errorData.message === "string"
     );
   }
 
@@ -309,21 +322,21 @@ export class ApiError extends Error {
     errorData: Record<string, unknown>,
   ): errorData is Record<string, unknown> & ValidationErrorResponse {
     return (
-      typeof errorData === 'object' &&
+      typeof errorData === "object" &&
       errorData !== null &&
-      'detail' in errorData &&
+      "detail" in errorData &&
       Array.isArray(errorData.detail) &&
       errorData.detail.length > 0 &&
       errorData.detail.every(
         (item) =>
-          typeof item === 'object' &&
+          typeof item === "object" &&
           item !== null &&
-          'loc' in item &&
-          'msg' in item &&
-          'type' in item &&
+          "loc" in item &&
+          "msg" in item &&
+          "type" in item &&
           Array.isArray(item.loc) &&
-          typeof item.msg === 'string' &&
-          typeof item.type === 'string',
+          typeof item.msg === "string" &&
+          typeof item.type === "string",
       )
     );
   }
@@ -335,24 +348,24 @@ export class ApiError extends Error {
     errorData: Record<string, unknown>,
   ): errorData is Record<string, unknown> & ValidationErrorResponse422 {
     return (
-      typeof errorData === 'object' &&
+      typeof errorData === "object" &&
       errorData !== null &&
-      'detail' in errorData &&
-      'status' in errorData &&
-      'request_id' in errorData &&
-      'errors' in errorData &&
+      "detail" in errorData &&
+      "status" in errorData &&
+      "request_id" in errorData &&
+      "errors" in errorData &&
       Array.isArray(errorData.errors) &&
       errorData.errors.length > 0 &&
       errorData.errors.every(
         (item) =>
-          typeof item === 'object' &&
+          typeof item === "object" &&
           item !== null &&
-          'loc' in item &&
-          'msg' in item &&
-          'type' in item &&
+          "loc" in item &&
+          "msg" in item &&
+          "type" in item &&
           Array.isArray(item.loc) &&
-          typeof item.msg === 'string' &&
-          typeof item.type === 'string',
+          typeof item.msg === "string" &&
+          typeof item.type === "string",
       )
     );
   }
@@ -364,15 +377,15 @@ export class ApiError extends Error {
     errorData: Record<string, unknown>,
   ): errorData is Record<string, unknown> & PayloadTooLargeErrorResponse {
     return (
-      typeof errorData === 'object' &&
+      typeof errorData === "object" &&
       errorData !== null &&
-      'summary' in errorData &&
-      'value' in errorData &&
-      typeof errorData.value === 'object' &&
+      "summary" in errorData &&
+      "value" in errorData &&
+      typeof errorData.value === "object" &&
       errorData.value !== null &&
-      'detail' in errorData.value &&
-      'status' in errorData.value &&
-      'request_id' in errorData.value
+      "detail" in errorData.value &&
+      "status" in errorData.value &&
+      "request_id" in errorData.value
     );
   }
 
@@ -452,7 +465,7 @@ export class ApiError extends Error {
       const errors: Record<string, string[]> = {};
 
       for (const error of this.rawErrorData.errors as ValidationErrorDetail[]) {
-        const field = error.loc.join('.');
+        const field = error.loc.join(".");
         if (!errors[field]) {
           errors[field] = [];
         }
@@ -467,7 +480,7 @@ export class ApiError extends Error {
       const errors: Record<string, string[]> = {};
 
       for (const error of this.rawErrorData.detail as ValidationErrorDetail[]) {
-        const field = error.loc.join('.');
+        const field = error.loc.join(".");
         if (!errors[field]) {
           errors[field] = [];
         }

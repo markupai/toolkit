@@ -6,21 +6,21 @@ export interface ResponseBase {
 export type StyleAnalysisPollResp = ResponseBase;
 
 export enum Status {
-  Queued = 'queued',
-  Running = 'running',
-  Completed = 'completed',
-  Failed = 'failed',
+  Queued = "queued",
+  Running = "running",
+  Completed = "completed",
+  Failed = "failed",
 }
 
 export enum Environment {
-  Stage = 'stage',
-  Dev = 'dev',
-  Prod = 'prod',
+  Stage = "stage",
+  Dev = "dev",
+  Prod = "prod",
 }
 
 export enum PlatformType {
-  Environment = 'environment',
-  Url = 'url',
+  Environment = "environment",
+  Url = "url",
 }
 
 // Discriminated union for platform configuration

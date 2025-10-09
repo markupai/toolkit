@@ -1,6 +1,6 @@
-import { setupServer } from 'msw/node';
-import { beforeAll, afterAll, afterEach } from 'vitest';
-import { DEFAULT_PLATFORM_URL_DEV } from '../../src/utils/api';
+import { setupServer } from "msw/node";
+import { beforeAll, afterAll, afterEach } from "vitest";
+import { DEFAULT_PLATFORM_URL_DEV } from "../../src/utils/api";
 
 // Create MSW server instance
 export const server = setupServer();
@@ -10,7 +10,7 @@ beforeAll(() => {
   // Set TEST_PLATFORM_URL for unit tests to use DEFAULT_PLATFORM_URL_DEV
   process.env.TEST_PLATFORM_URL = DEFAULT_PLATFORM_URL_DEV;
 
-  server.listen({ onUnhandledRequest: 'error' });
+  server.listen({ onUnhandledRequest: "error" });
 });
 
 // Reset handlers after each test
@@ -20,4 +20,4 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 // Export handlers from centralized location
-export { apiHandlers as handlers } from './mocks/api.handlers';
+export { apiHandlers as handlers } from "./mocks/api.handlers";

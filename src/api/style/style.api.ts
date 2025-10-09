@@ -8,17 +8,17 @@ import {
   type BatchResponse,
   type StyleAnalysisResponseType,
   StyleOperationType,
-} from './style.api.types';
-import type { Config, StyleAnalysisPollResp } from '../../utils/api.types';
+} from "./style.api.types";
+import type { Config, StyleAnalysisPollResp } from "../../utils/api.types";
 
-import { createContentObject, type WorkflowConfig } from './style.api.utils';
-import { submitAndPollStyleAnalysis, styleBatchCheck } from './style.api.utils';
-import { MarkupAI, MarkupAIError } from '@markupai/api';
-import { ApiError } from '../../utils/errors';
-import { initEndpoint } from '../../utils/api';
+import { createContentObject, type WorkflowConfig } from "./style.api.utils";
+import { submitAndPollStyleAnalysis, styleBatchCheck } from "./style.api.utils";
+import { MarkupAI, MarkupAIError } from "@markupai/api";
+import { ApiError } from "../../utils/errors";
+import { initEndpoint } from "../../utils/api";
 
 // Export utility functions for Node.js environments
-export { createStyleGuideReqFromUrl, createStyleGuideReqFromPath } from './style.api.utils';
+export { createStyleGuideReqFromUrl, createStyleGuideReqFromPath } from "./style.api.utils";
 
 // Style Check Operations
 export async function submitStyleCheck(
@@ -98,7 +98,11 @@ export async function styleCheck(
   styleAnalysisRequest: StyleAnalysisReq,
   config: WorkflowConfig,
 ): Promise<StyleAnalysisSuccessResp> {
-  return submitAndPollStyleAnalysis<StyleAnalysisSuccessResp>(StyleOperationType.Check, styleAnalysisRequest, config);
+  return submitAndPollStyleAnalysis<StyleAnalysisSuccessResp>(
+    StyleOperationType.Check,
+    styleAnalysisRequest,
+    config,
+  );
 }
 
 export async function styleSuggestions(
@@ -116,7 +120,11 @@ export async function styleRewrite(
   styleAnalysisRequest: StyleAnalysisReq,
   config: WorkflowConfig,
 ): Promise<StyleAnalysisRewriteResp> {
-  return submitAndPollStyleAnalysis<StyleAnalysisRewriteResp>(StyleOperationType.Rewrite, styleAnalysisRequest, config);
+  return submitAndPollStyleAnalysis<StyleAnalysisRewriteResp>(
+    StyleOperationType.Rewrite,
+    styleAnalysisRequest,
+    config,
+  );
 }
 
 // Get style check results by workflow ID
@@ -126,7 +134,9 @@ export async function getStyleCheck(
 ): Promise<StyleAnalysisSuccessResp | StyleAnalysisPollResp> {
   const client = initEndpoint(config);
   // TODO: Remove the unknown as cast once the SDK API is updated
-  return (await client.styleChecks.getStyleCheck(workflowId)) as unknown as StyleAnalysisSuccessResp;
+  return (await client.styleChecks.getStyleCheck(
+    workflowId,
+  )) as unknown as StyleAnalysisSuccessResp;
 }
 
 // Get style suggestion results by workflow ID
@@ -142,7 +152,9 @@ export async function getStyleSuggestion(
 ): Promise<StyleAnalysisSuggestionResp | StyleAnalysisPollResp> {
   const client = initEndpoint(config);
   // TODO: Remove the unknown as cast once the SDK API is updated
-  return (await client.styleSuggestions.getStyleSuggestion(workflowId)) as unknown as StyleAnalysisSuggestionResp;
+  return (await client.styleSuggestions.getStyleSuggestion(
+    workflowId,
+  )) as unknown as StyleAnalysisSuggestionResp;
 }
 
 /**
@@ -157,7 +169,9 @@ export async function getStyleRewrite(
 ): Promise<StyleAnalysisRewriteResp | StyleAnalysisPollResp> {
   const client = initEndpoint(config);
   // TODO: Remove the unknown as cast once the SDK API is updated
-  return (await client.styleRewrites.getStyleRewrite(workflowId)) as unknown as StyleAnalysisRewriteResp;
+  return (await client.styleRewrites.getStyleRewrite(
+    workflowId,
+  )) as unknown as StyleAnalysisRewriteResp;
 }
 
 // Batch processing functions
@@ -226,14 +240,14 @@ export function styleBatchOperation<T extends StyleAnalysisResponseType>(
   requests: StyleAnalysisReq[],
   config: Config,
   options: BatchOptions = {},
-  operationType: 'check' | 'suggestions' | 'rewrite',
+  operationType: "check" | "suggestions" | "rewrite",
 ): BatchResponse<T> {
   switch (operationType) {
-    case 'check':
+    case "check":
       return styleBatchCheckRequests(requests, config, options) as BatchResponse<T>;
-    case 'suggestions':
+    case "suggestions":
       return styleBatchSuggestions(requests, config, options) as BatchResponse<T>;
-    case 'rewrite':
+    case "rewrite":
       return styleBatchRewrites(requests, config, options) as BatchResponse<T>;
     default:
       throw new Error(`Invalid operation type: ${operationType}`);

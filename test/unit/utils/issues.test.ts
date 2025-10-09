@@ -1,77 +1,81 @@
-import { describe, it, expect } from 'vitest';
-import { categorizeIssues, type CategorizedIssues } from '../../../src/utils/issues';
-import { IssueCategory, type Issue, type IssueWithSuggestion } from '../../../src/api/style/style.api.types';
+import { describe, it, expect } from "vitest";
+import { categorizeIssues, type CategorizedIssues } from "../../../src/utils/issues";
+import {
+  IssueCategory,
+  type Issue,
+  type IssueWithSuggestion,
+} from "../../../src/api/style/style.api.types";
 
-describe('Issues Utils', () => {
+describe("Issues Utils", () => {
   const mockIssues: Issue[] = [
     {
-      original: 'grammar error',
+      original: "grammar error",
       position: {
         start_index: 0,
       },
-      subcategory: 'spelling',
+      subcategory: "spelling",
       category: IssueCategory.Grammar,
     },
     {
-      original: 'simple word',
+      original: "simple word",
       position: {
         start_index: 10,
       },
-      subcategory: 'basic',
+      subcategory: "basic",
       category: IssueCategory.Clarity,
     },
     {
-      original: 'complex sentence structure',
+      original: "complex sentence structure",
       position: {
         start_index: 20,
       },
-      subcategory: 'fragment',
+      subcategory: "fragment",
       category: IssueCategory.Consistency,
     },
     {
-      original: 'very long sentence',
+      original: "very long sentence",
       position: {
         start_index: 30,
       },
-      subcategory: 'length',
+      subcategory: "length",
       category: IssueCategory.Terminology,
     },
     {
-      original: 'informal tone',
+      original: "informal tone",
       position: {
         start_index: 40,
       },
-      subcategory: 'casual',
+      subcategory: "casual",
       category: IssueCategory.Tone,
     },
     {
-      original: 'style guide violation',
+      original: "style guide violation",
       position: {
         start_index: 50,
       },
-      subcategory: 'formatting',
+      subcategory: "formatting",
       category: IssueCategory.Consistency,
     },
     {
-      original: 'technical term',
+      original: "technical term",
       position: {
         start_index: 60,
       },
-      subcategory: 'jargon',
+      subcategory: "jargon",
       category: IssueCategory.Terminology,
     },
     {
-      original: 'another grammar issue',
+      original: "another grammar issue",
       position: {
         start_index: 70,
       },
-      subcategory: 'punctuation',
+      subcategory: "punctuation",
       category: IssueCategory.Grammar,
     },
   ];
 
-  describe('categorizeIssues', () => {
-    it('should categorize issues by their category', () => {
+  describe("categorizeIssues", () => {
+    it("should categorize issues by their category", () => {
       const result = categorizeIssues(mockIssues);
 
       expect(result.grammar).toHaveLength(2);
@@ -81,12 +85,12 @@ describe('Issues Utils', () => {
       expect(result.terminology).toHaveLength(2);
 
       // Check specific issues are in correct categories
-      expect(result.grammar[0].original).toBe('grammar error');
-      expect(result.grammar[1].original).toBe('another grammar issue');
-      expect(result.clarity[0].original).toBe('simple word');
+      expect(result.grammar[0].original).toBe("grammar error");
+      expect(result.grammar[1].original).toBe("another grammar issue");
+      expect(result.clarity[0].original).toBe("simple word");
     });
 
-    it('should return empty arrays for categories with no issues', () => {
+    it("should return empty arrays for categories with no issues", () => {
       const emptyIssues: Issue[] = [];
       const result = categorizeIssues(emptyIssues);
 
@@ -99,23 +103,23 @@ describe('Issues Utils', () => {
       expect(result.terminology).toEqual([]);
     });
 
-    it('should handle issues with suggestions and preserve type safety', () => {
+    it("should handle issues with suggestions and preserve type safety", () => {
       const issuesWithSuggestions: IssueWithSuggestion[] = [
         {
-          original: 'grammar error',
+          original: "grammar error",
           position: {
             start_index: 0,
           },
-          subcategory: 'spelling',
+          subcategory: "spelling",
           category: IssueCategory.Grammar,
-          suggestion: 'grammar correction',
+          suggestion: "grammar correction",
         },
       ];
 
       const result = categorizeIssues(issuesWithSuggestions);
 
       // TypeScript should know that suggestion exists
-      expect(result.grammar[0].suggestion).toBe('grammar correction');
+      expect(result.grammar[0].suggestion).toBe("grammar correction");
 
       // Verify the return type is correctly typed
       const _test: CategorizedIssues<IssueWithSuggestion> = result;

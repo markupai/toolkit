@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, afterEach } from "vitest";
 import {
   verifyPlatformUrl,
   getCurrentPlatformUrl,
@@ -6,13 +6,13 @@ import {
   DEFAULT_PLATFORM_URL_PROD,
   DEFAULT_PLATFORM_URL_STAGE,
   DEFAULT_PLATFORM_URL_DEV,
-} from '../../../src/utils/api';
-import { PlatformType, Environment } from '../../../src/utils/api.types';
-import type { Config } from '../../../src/utils/api.types';
-import { server } from '../setup';
-import { http, HttpResponse } from 'msw';
+} from "../../../src/utils/api";
+import { PlatformType, Environment } from "../../../src/utils/api.types";
+import type { Config } from "../../../src/utils/api.types";
+import { server } from "../setup";
+import { http, HttpResponse } from "msw";
 
-const mockApiKey = 'test-api-key';
+const mockApiKey = "test-api-key";
 
 const mockBaseConfig: Config = {
   apiKey: mockApiKey,
@@ -25,56 +25,56 @@ afterEach(() => {
 });
 afterAll(() => server.close());
 
-describe('API Utilities Unit Tests', () => {
-  describe('Platform URL Functions', () => {
-    it('should return correct platform URL for Dev environment', () => {
+describe("API Utilities Unit Tests", () => {
+  describe("Platform URL Functions", () => {
+    it("should return correct platform URL for Dev environment", () => {
       const config: Config = {
-        apiKey: 'test-key',
+        apiKey: "test-key",
         platform: { type: PlatformType.Environment, value: Environment.Dev },
       };
       const result = getPlatformUrl(config);
       expect(result).toBe(DEFAULT_PLATFORM_URL_DEV);
     });
 
-    it('should return correct platform URL for Stage environment', () => {
+    it("should return correct platform URL for Stage environment", () => {
       const config: Config = {
-        apiKey: 'test-key',
+        apiKey: "test-key",
         platform: { type: PlatformType.Environment, value: Environment.Stage },
       };
       const result = getPlatformUrl(config);
       expect(result).toBe(DEFAULT_PLATFORM_URL_STAGE);
     });
 
-    it('should return correct platform URL for Prod environment', () => {
+    it("should return correct platform URL for Prod environment", () => {
       const config: Config = {
-        apiKey: 'test-key',
+        apiKey: "test-key",
         platform: { type: PlatformType.Environment, value: Environment.Prod },
       };
       const result = getPlatformUrl(config);
       expect(result).toBe(DEFAULT_PLATFORM_URL_PROD);
     });
 
-    it('should return custom platform URL when provided', () => {
-      const customUrl = 'https://custom.markup.ai';
+    it("should return custom platform URL when provided", () => {
+      const customUrl = "https://custom.markup.ai";
       const config: Config = {
-        apiKey: 'test-key',
+        apiKey: "test-key",
         platform: { type: PlatformType.Url, value: customUrl },
       };
       const result = getPlatformUrl(config);
       expect(result).toBe(customUrl);
     });
 
-    it('should default to Prod URL when no platform is specified', () => {
+    it("should default to Prod URL when no platform is specified", () => {
       const config: Config = {
-        apiKey: 'test-key',
+        apiKey: "test-key",
       };
       const result = getPlatformUrl(config);
       expect(result).toBe(DEFAULT_PLATFORM_URL_PROD);
     });
 
-    it('should return current platform URL', () => {
+    it("should return current platform URL", () => {
       const config: Config = {
-        apiKey: 'test-key',
+        apiKey: "test-key",
         platform: { type: PlatformType.Environment, value: Environment.Dev },
       };
       const result = getCurrentPlatformUrl(config);
@@ -82,11 +82,11 @@ describe('API Utilities Unit Tests', () => {
     });
   });
 
-  describe('Platform URL Verification', () => {
-    it('should verify platform URL successfully', async () => {
+  describe("Platform URL Verification", () => {
+    it("should verify platform URL successfully", async () => {
       server.use(
-        http.get('*/v1/style-guides', () => {
-          return HttpResponse.json({ data: 'test' }, { status: 200 });
+        http.get("*/v1/style-guides", () => {
+          return HttpResponse.json({ data: "test" }, { status: 200 });
         }),
       );
 
@@ -96,22 +96,22 @@ describe('API Utilities Unit Tests', () => {
       expect(result.error).toBeUndefined();
     });
 
-    it('should handle platform URL verification failure', async () => {
+    it("should handle platform URL verification failure", async () => {
       server.use(
-        http.get('*/v1/style-guides', () => {
-          return HttpResponse.json({ error: 'Not found' }, { status: 404 });
+        http.get("*/v1/style-guides", () => {
+          return HttpResponse.json({ error: "Not found" }, { status: 404 });
         }),
       );
 
       const result = await verifyPlatformUrl(mockBaseConfig);
       expect(result.success).toBe(false);
       expect(result.url).toBe(DEFAULT_PLATFORM_URL_DEV);
-      expect(result.error).toContain('HTTP 404');
+      expect(result.error).toContain("HTTP 404");
     });
 
-    it('should handle network errors during verification', async () => {
+    it("should handle network errors during verification", async () => {
       server.use(
-        http.get('*/v1/style-guides', () => {
+        http.get("*/v1/style-guides", () => {
           return HttpResponse.error();
         }),
       );

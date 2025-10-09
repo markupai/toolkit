@@ -1,5 +1,5 @@
-import { http, HttpResponse, HttpHandler } from 'msw';
-import { Status } from '../../../src/utils/api.types';
+import { http, HttpResponse, HttpHandler } from "msw";
+import { Status } from "../../../src/utils/api.types";
 
 // Type definitions for handlers
 type ApiHandlers = {
@@ -49,31 +49,31 @@ type ApiHandlers = {
 // Internal API handlers
 const internalHandlers = {
   constants: {
-    success: http.get('*/v1/internal/constants', () => {
+    success: http.get("*/v1/internal/constants", () => {
       return HttpResponse.json({
-        dialects: ['american_english', 'british_english'],
-        tones: ['formal', 'casual'],
+        dialects: ["american_english", "british_english"],
+        tones: ["formal", "casual"],
         style_guides: {
-          'style-1': 'ap',
-          'style-2': 'chicago',
+          "style-1": "ap",
+          "style-2": "chicago",
         },
         colors: {
-          green: { value: 'rgb(120, 253, 134)', min_score: 80 },
-          yellow: { value: 'rgb(246, 240, 104)', min_score: 60 },
-          red: { value: 'rgb(235, 94, 94)', min_score: 0 },
+          green: { value: "rgb(120, 253, 134)", min_score: 80 },
+          yellow: { value: "rgb(246, 240, 104)", min_score: 60 },
+          red: { value: "rgb(235, 94, 94)", min_score: 0 },
         },
       });
     }),
-    error: http.get('*/v1/internal/constants', () => {
-      return HttpResponse.json({ message: 'Failed to get admin constants' }, { status: 500 });
+    error: http.get("*/v1/internal/constants", () => {
+      return HttpResponse.json({ message: "Failed to get admin constants" }, { status: 500 });
     }),
   },
   feedback: {
-    success: http.post('*/v1/internal/demo-feedback', () => {
+    success: http.post("*/v1/internal/demo-feedback", () => {
       return HttpResponse.json({ success: true });
     }),
-    error: http.post('*/v1/internal/demo-feedback', () => {
-      return HttpResponse.json({ message: 'Failed to submit feedback' }, { status: 500 });
+    error: http.post("*/v1/internal/demo-feedback", () => {
+      return HttpResponse.json({ message: "Failed to submit feedback" }, { status: 500 });
     }),
   },
 };
@@ -81,153 +81,156 @@ const internalHandlers = {
 // Style API handlers
 const styleHandlers = {
   guides: {
-    success: http.get('*/v1/style-guides', () => {
+    success: http.get("*/v1/style-guides", () => {
       return HttpResponse.json([
         {
-          id: 'test-style-guide-id',
-          name: 'Test Style Guide',
-          created_at: '2025-06-20T11:46:30.537Z',
-          created_by: 'test-user',
-          status: 'running',
+          id: "test-style-guide-id",
+          name: "Test Style Guide",
+          created_at: "2025-06-20T11:46:30.537Z",
+          created_by: "test-user",
+          status: "running",
         },
       ]);
     }),
-    error: http.get('*/v1/style-guides', () => {
-      return HttpResponse.json({ message: 'Failed to list style guides' }, { status: 500 });
+    error: http.get("*/v1/style-guides", () => {
+      return HttpResponse.json({ message: "Failed to list style guides" }, { status: 500 });
     }),
-    getSuccess: http.get('*/v1/style-guides/:styleGuideId', () => {
+    getSuccess: http.get("*/v1/style-guides/:styleGuideId", () => {
       return HttpResponse.json({
-        id: 'test-style-guide-id',
-        name: 'Test Style Guide',
-        created_at: '2025-06-20T11:46:30.537Z',
-        created_by: 'test-user',
-        status: 'running',
+        id: "test-style-guide-id",
+        name: "Test Style Guide",
+        created_at: "2025-06-20T11:46:30.537Z",
+        created_by: "test-user",
+        status: "running",
       });
     }),
-    getError: http.get('*/v1/style-guides/:styleGuideId', () => {
-      return HttpResponse.json({ message: 'Style guide not found' }, { status: 404 });
+    getError: http.get("*/v1/style-guides/:styleGuideId", () => {
+      return HttpResponse.json({ message: "Style guide not found" }, { status: 404 });
     }),
-    createSuccess: http.post('*/v1/style-guides', async ({ request }) => {
+    createSuccess: http.post("*/v1/style-guides", async ({ request }) => {
       // Verify that the request contains FormData with file_upload and name
       const formData = await request.formData();
-      const file = formData.get('file_upload') as File;
-      const name = formData.get('name') as string;
+      const file = formData.get("file_upload") as File;
+      const name = formData.get("name") as string;
 
       if (!file || !name) {
-        return HttpResponse.json({ message: 'Missing required fields: file_upload and name' }, { status: 400 });
+        return HttpResponse.json(
+          { message: "Missing required fields: file_upload and name" },
+          { status: 400 },
+        );
       }
 
       return HttpResponse.json({
-        id: 'new-style-guide-id',
+        id: "new-style-guide-id",
         name: name,
-        created_at: '2025-06-20T11:46:30.537Z',
-        created_by: 'test-user',
-        status: 'running',
+        created_at: "2025-06-20T11:46:30.537Z",
+        created_by: "test-user",
+        status: "running",
       });
     }),
-    createError: http.post('*/v1/style-guides', () => {
-      return HttpResponse.json({ message: 'Failed to create style guide' }, { status: 400 });
+    createError: http.post("*/v1/style-guides", () => {
+      return HttpResponse.json({ message: "Failed to create style guide" }, { status: 400 });
     }),
-    updateSuccess: http.patch('*/v1/style-guides/:styleGuideId', async ({ request, params }) => {
+    updateSuccess: http.patch("*/v1/style-guides/:styleGuideId", async ({ request, params }) => {
       // Verify that the request contains JSON with name
       const body = (await request.json()) as { name?: string };
 
       if (!body?.name) {
-        return HttpResponse.json({ message: 'Missing required field: name' }, { status: 400 });
+        return HttpResponse.json({ message: "Missing required field: name" }, { status: 400 });
       }
 
       return HttpResponse.json({
         id: params.styleGuideId,
         name: body.name,
-        created_at: '2025-06-20T11:46:30.537Z',
-        created_by: 'test-user',
-        status: 'running',
+        created_at: "2025-06-20T11:46:30.537Z",
+        created_by: "test-user",
+        status: "running",
       });
     }),
-    updateError: http.patch('*/v1/style-guides/:styleGuideId', () => {
-      return HttpResponse.json({ message: 'Failed to update style guide' }, { status: 400 });
+    updateError: http.patch("*/v1/style-guides/:styleGuideId", () => {
+      return HttpResponse.json({ message: "Failed to update style guide" }, { status: 400 });
     }),
-    deleteSuccess: http.delete('*/v1/style-guides/:styleGuideId', () => {
+    deleteSuccess: http.delete("*/v1/style-guides/:styleGuideId", () => {
       return new HttpResponse(null, { status: 204 });
     }),
-    deleteError: http.delete('*/v1/style-guides/:styleGuideId', () => {
-      return HttpResponse.json({ message: 'Failed to delete style guide' }, { status: 404 });
+    deleteError: http.delete("*/v1/style-guides/:styleGuideId", () => {
+      return HttpResponse.json({ message: "Failed to delete style guide" }, { status: 404 });
     }),
   },
   checks: {
-    success: http.post('*/v1/style/checks', () => {
+    success: http.post("*/v1/style/checks", () => {
       return HttpResponse.json({
         status: Status.Running,
-        workflow_id: 'test-workflow-id',
-        message: 'Style check workflow started successfully.',
+        workflow_id: "test-workflow-id",
+        message: "Style check workflow started successfully.",
       });
     }),
-    error: http.post('*/v1/style/checks', () => {
-      return HttpResponse.json({ message: 'Could not validate credentials' }, { status: 401 });
+    error: http.post("*/v1/style/checks", () => {
+      return HttpResponse.json({ message: "Could not validate credentials" }, { status: 401 });
     }),
     rateLimitOnce: (() => {
       let called = false;
-      return http.post('*/v1/style/checks', () => {
+      return http.post("*/v1/style/checks", () => {
         if (!called) {
           called = true;
           return HttpResponse.json(
-            { detail: 'Rate limit exceeded', status: 429, request_id: 'req-rate-limit-once' },
+            { detail: "Rate limit exceeded", status: 429, request_id: "req-rate-limit-once" },
             {
               status: 429,
               headers: {
-                'Retry-After': '0',
-                'X-RateLimit-Limit': '10',
-                'X-RateLimit-Remaining': '0',
-                'X-RateLimit-Reset': `${Math.floor(Date.now() / 1_000)}`,
+                "Retry-After": "0",
+                "X-RateLimit-Limit": "10",
+                "X-RateLimit-Remaining": "0",
+                "X-RateLimit-Reset": `${Math.floor(Date.now() / 1_000)}`,
               },
             },
           );
         }
         return HttpResponse.json({
           status: Status.Running,
-          workflow_id: 'test-workflow-id',
-          message: 'Style check workflow started successfully.',
+          workflow_id: "test-workflow-id",
+          message: "Style check workflow started successfully.",
         });
       });
     })(),
-    rateLimitAlways: http.post('*/v1/style/checks', () => {
+    rateLimitAlways: http.post("*/v1/style/checks", () => {
       return HttpResponse.json(
-        { detail: 'Rate limit exceeded', status: 429, request_id: 'req-rate-limit-always' },
+        { detail: "Rate limit exceeded", status: 429, request_id: "req-rate-limit-always" },
         {
           status: 429,
           headers: {
-            'Retry-After': '0',
-            'X-RateLimit-Limit': '10',
-            'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': `${Math.floor(Date.now() / 1_000)}`,
+            "Retry-After": "0",
+            "X-RateLimit-Limit": "10",
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": `${Math.floor(Date.now() / 1_000)}`,
           },
         },
       );
     }),
-    poll: http.get('*/v1/style/checks/:workflowId', () => {
+    poll: http.get("*/v1/style/checks/:workflowId", () => {
       return HttpResponse.json({
         workflow: {
-          id: 'test-workflow-id',
-          type: 'checks',
-          api_version: '1.0.0',
-          generated_at: '2025-01-15T14:22:33Z',
+          id: "test-workflow-id",
+          type: "checks",
+          api_version: "1.0.0",
+          generated_at: "2025-01-15T14:22:33Z",
           status: Status.Completed,
         },
         config: {
-          dialect: 'american_english',
+          dialect: "american_english",
           style_guide: {
-            style_guide_type: 'ap',
-            style_guide_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+            style_guide_type: "ap",
+            style_guide_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           },
-          tone: 'academic',
+          tone: "academic",
         },
         original: {
           issues: [
             {
-              original: 'This is a test sentence.',
+              original: "This is a test sentence.",
               position: { start_index: 0 },
-              subcategory: 'passive_voice',
-              category: 'grammar',
+              subcategory: "passive_voice",
+              category: "grammar",
             },
           ],
           scores: {
@@ -255,41 +258,41 @@ const styleHandlers = {
     }),
   },
   suggestions: {
-    success: http.post('*/v1/style/suggestions', () => {
+    success: http.post("*/v1/style/suggestions", () => {
       return HttpResponse.json({
         status: Status.Running,
-        workflow_id: 'test-workflow-id',
-        message: 'Style suggestions workflow started successfully.',
+        workflow_id: "test-workflow-id",
+        message: "Style suggestions workflow started successfully.",
       });
     }),
-    error: http.post('*/v1/style/suggestions', () => {
-      return HttpResponse.json({ message: 'Could not validate credentials' }, { status: 401 });
+    error: http.post("*/v1/style/suggestions", () => {
+      return HttpResponse.json({ message: "Could not validate credentials" }, { status: 401 });
     }),
-    poll: http.get('*/v1/style/suggestions/:workflowId', () => {
+    poll: http.get("*/v1/style/suggestions/:workflowId", () => {
       return HttpResponse.json({
         workflow: {
-          id: 'test-workflow-id',
-          type: 'suggestions',
-          api_version: '1.0.0',
-          generated_at: '2025-01-15T14:45:12Z',
+          id: "test-workflow-id",
+          type: "suggestions",
+          api_version: "1.0.0",
+          generated_at: "2025-01-15T14:45:12Z",
           status: Status.Completed,
         },
         config: {
-          dialect: 'american_english',
+          dialect: "american_english",
           style_guide: {
-            style_guide_type: 'ap',
-            style_guide_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+            style_guide_type: "ap",
+            style_guide_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           },
-          tone: 'academic',
+          tone: "academic",
         },
         original: {
           issues: [
             {
-              original: 'This is a test sentence.',
+              original: "This is a test sentence.",
               position: { start_index: 0 },
-              subcategory: 'passive_voice',
-              category: 'grammar',
-              suggestion: 'This sentence should be rewritten.',
+              subcategory: "passive_voice",
+              category: "grammar",
+              suggestion: "This sentence should be rewritten.",
             },
           ],
           scores: {
@@ -323,41 +326,41 @@ const styleHandlers = {
     }),
   },
   rewrites: {
-    success: http.post('*/v1/style/rewrites', () => {
+    success: http.post("*/v1/style/rewrites", () => {
       return HttpResponse.json({
         status: Status.Running,
-        workflow_id: 'test-workflow-id',
-        message: 'Style rewrite workflow started successfully.',
+        workflow_id: "test-workflow-id",
+        message: "Style rewrite workflow started successfully.",
       });
     }),
-    error: http.post('*/v1/style/rewrites', () => {
-      return HttpResponse.json({ message: 'Could not validate credentials' }, { status: 401 });
+    error: http.post("*/v1/style/rewrites", () => {
+      return HttpResponse.json({ message: "Could not validate credentials" }, { status: 401 });
     }),
-    poll: http.get('*/v1/style/rewrites/:workflowId', () => {
+    poll: http.get("*/v1/style/rewrites/:workflowId", () => {
       return HttpResponse.json({
         workflow: {
-          id: 'test-workflow-id',
-          type: 'rewrites',
-          api_version: '1.0.0',
-          generated_at: '2025-01-15T15:12:45Z',
+          id: "test-workflow-id",
+          type: "rewrites",
+          api_version: "1.0.0",
+          generated_at: "2025-01-15T15:12:45Z",
           status: Status.Completed,
         },
         config: {
-          dialect: 'american_english',
+          dialect: "american_english",
           style_guide: {
-            style_guide_type: 'ap',
-            style_guide_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+            style_guide_type: "ap",
+            style_guide_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           },
-          tone: 'academic',
+          tone: "academic",
         },
         original: {
           issues: [
             {
-              original: 'This is a test sentence.',
+              original: "This is a test sentence.",
               position: { start_index: 0 },
-              subcategory: 'passive_voice',
-              category: 'grammar',
-              suggestion: 'This sentence should be rewritten.',
+              subcategory: "passive_voice",
+              category: "grammar",
+              suggestion: "This sentence should be rewritten.",
             },
           ],
           scores: {
@@ -388,7 +391,7 @@ const styleHandlers = {
           },
         },
         rewrite: {
-          text: 'This is an improved test sentence.',
+          text: "This is an improved test sentence.",
           scores: {
             quality: {
               score: 85,

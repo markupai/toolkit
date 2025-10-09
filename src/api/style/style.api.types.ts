@@ -1,4 +1,4 @@
-import type { ResponseBase, Status } from '../../utils/api.types';
+import type { ResponseBase, Status } from "../../utils/api.types";
 
 // Enums
 export interface StyleAnalysisSubmitResp {
@@ -7,17 +7,17 @@ export interface StyleAnalysisSubmitResp {
 }
 
 export enum StyleOperationType {
-  Check = 'check',
-  Suggestions = 'suggestions',
-  Rewrite = 'rewrite',
+  Check = "check",
+  Suggestions = "suggestions",
+  Rewrite = "rewrite",
 }
 
 export enum IssueCategory {
-  Grammar = 'grammar',
-  Clarity = 'clarity',
-  Tone = 'tone',
-  Consistency = 'consistency',
-  Terminology = 'terminology',
+  Grammar = "grammar",
+  Clarity = "clarity",
+  Tone = "tone",
+  Consistency = "consistency",
+  Terminology = "terminology",
 }
 
 /**
@@ -166,7 +166,10 @@ export interface StyleAnalysisReqBuffer extends StyleAnalysisReqBase {
   content: BufferDescriptor;
 }
 
-export type StyleAnalysisReq = StyleAnalysisReqString | StyleAnalysisReqFile | StyleAnalysisReqBuffer;
+export type StyleAnalysisReq =
+  | StyleAnalysisReqString
+  | StyleAnalysisReqFile
+  | StyleAnalysisReqBuffer;
 
 export interface StyleGuide {
   id: string;
@@ -202,7 +205,7 @@ export interface BatchOptions {
 export interface BatchResult<T = StyleAnalysisResponseType> {
   index: number;
   request: StyleAnalysisReq;
-  status: 'pending' | 'in-progress' | 'completed' | 'failed';
+  status: "pending" | "in-progress" | "completed" | "failed";
   result?: T;
   error?: Error;
   workflowId?: string;

@@ -1,6 +1,6 @@
-import { initEndpoint } from '../../utils/api';
-import type { Config } from '../../utils/api.types';
-import { Status } from '../../utils/api.types';
+import { initEndpoint } from "../../utils/api";
+import type { Config } from "../../utils/api.types";
+import { Status } from "../../utils/api.types";
 import {
   StyleOperationType,
   type BatchOptions,
@@ -18,11 +18,11 @@ import {
   type StyleAnalysisSubmitResp,
   type StyleAnalysisSuccessResp,
   type StyleAnalysisSuggestionResp,
-} from './style.api.types';
+} from "./style.api.types";
 // Batch processing utilities
-import { MarkupAI, MarkupAIError } from '@markupai/api';
-import { ApiError, ErrorType } from '../../utils/errors';
-import { getBlobCtor, isNodeEnvironment } from '../../utils/runtime';
+import { MarkupAI, MarkupAIError } from "@markupai/api";
+import { ApiError, ErrorType } from "../../utils/errors";
+import { getBlobCtor, isNodeEnvironment } from "../../utils/runtime";
 
 /**
  * Creates a CreateStyleGuideReq from a file URL in Node.js environments.
@@ -33,33 +33,38 @@ import { getBlobCtor, isNodeEnvironment } from '../../utils/runtime';
  * @returns Promise<CreateStyleGuideReq> - The request object ready for createStyleGuide
  * @throws Error if not in Node.js environment or if file cannot be read
  */
-export async function createStyleGuideReqFromUrl(fileUrl: string | URL, name?: string): Promise<CreateStyleGuideReq> {
+export async function createStyleGuideReqFromUrl(
+  fileUrl: string | URL,
+  name?: string,
+): Promise<CreateStyleGuideReq> {
   // Check if we're in a Node.js environment
   if (!isNodeEnvironment()) {
     throw new Error(
-      'createStyleGuideReqFromUrl is only available in Node.js environments. In browser environments, use createStyleGuide directly with a File object.',
+      "createStyleGuideReqFromUrl is only available in Node.js environments. In browser environments, use createStyleGuide directly with a File object.",
     );
   }
 
   try {
     // Dynamic imports to avoid browser bundling issues
-    const { readFileSync } = await import('node:fs');
-    const { basename } = await import('node:path');
-    const { fileURLToPath } = await import('node:url');
+    const { readFileSync } = await import("node:fs");
+    const { basename } = await import("node:path");
+    const { fileURLToPath } = await import("node:url");
 
     // Convert URL to path if it's a file:// URL
     let filePath: string;
-    if (typeof fileUrl === 'string') {
-      if (fileUrl.startsWith('file://')) {
+    if (typeof fileUrl === "string") {
+      if (fileUrl.startsWith("file://")) {
         filePath = fileURLToPath(fileUrl);
       } else {
         filePath = fileUrl;
       }
-    } else if (fileUrl.protocol === 'file:') {
+    } else if (fileUrl.protocol === "file:") {
       // URL object
       filePath = fileURLToPath(fileUrl);
     } else {
-      throw new Error('Only file:// URLs are supported. Please provide a local file path or file:// URL.');
+      throw new Error(
+        "Only file:// URLs are supported. Please provide a local file path or file:// URL.",
+      );
     }
 
     // Read the file
@@ -69,18 +74,18 @@ export async function createStyleGuideReqFromUrl(fileUrl: string | URL, name?: s
     const filename = basename(filePath);
 
     // Validate file extension
-    const fileExtension = filename.split('.').pop()?.toLowerCase();
-    if (!fileExtension || fileExtension !== 'pdf') {
+    const fileExtension = filename.split(".").pop()?.toLowerCase();
+    if (!fileExtension || fileExtension !== "pdf") {
       throw new Error(`Unsupported file type: ${fileExtension}. Only .pdf files are supported.`);
     }
 
     // Create File object from buffer
     const file = new File([fileBuffer], filename, {
-      type: 'application/pdf',
+      type: "application/pdf",
     });
 
     // Use provided name or fall back to filename (without extension)
-    const styleGuideName = name || filename.replace(/\.pdf$/i, '');
+    const styleGuideName = name || filename.replace(/\.pdf$/i, "");
 
     return {
       file,
@@ -90,7 +95,7 @@ export async function createStyleGuideReqFromUrl(fileUrl: string | URL, name?: s
     if (error instanceof Error) {
       throw new Error(`Failed to create style guide request from URL: ${error.message}`);
     }
-    throw new Error('Failed to create style guide request from URL: Unknown error');
+    throw new Error("Failed to create style guide request from URL: Unknown error");
   }
 }
 
@@ -103,40 +108,43 @@ export async function createStyleGuideReqFromUrl(fileUrl: string | URL, name?: s
  * @returns Promise<CreateStyleGuideReq> - The request object ready for createStyleGuide
  * @throws Error if not in Node.js environment or if file cannot be read
  */
-export async function createStyleGuideReqFromPath(filePath: string, name?: string): Promise<CreateStyleGuideReq> {
+export async function createStyleGuideReqFromPath(
+  filePath: string,
+  name?: string,
+): Promise<CreateStyleGuideReq> {
   return createStyleGuideReqFromUrl(filePath, name);
 }
 
 // Helper function to get MIME type from filename
 export function getMimeTypeFromFilename(filename: string): string {
-  const extension = filename.split('.').pop()?.toLowerCase();
+  const extension = filename.split(".").pop()?.toLowerCase();
   switch (extension) {
-    case 'pdf':
-      return 'application/pdf';
-    case 'txt':
-      return 'text/plain';
-    case 'md':
-      return 'text/markdown';
-    case 'markdown':
-      return 'text/markdown';
-    case 'mdown':
-      return 'text/markdown';
-    case 'mkd':
-      return 'text/markdown';
-    case 'mdx':
-      return 'text/markdown';
-    case 'htm':
-      return 'text/html';
-    case 'html':
-      return 'text/html';
+    case "pdf":
+      return "application/pdf";
+    case "txt":
+      return "text/plain";
+    case "md":
+      return "text/markdown";
+    case "markdown":
+      return "text/markdown";
+    case "mdown":
+      return "text/markdown";
+    case "mkd":
+      return "text/markdown";
+    case "mdx":
+      return "text/markdown";
+    case "htm":
+      return "text/html";
+    case "html":
+      return "text/html";
     default:
-      return 'application/octet-stream';
+      return "application/octet-stream";
   }
 }
 
 // Helper function to check if an object is a Buffer
 export function isBuffer(obj: unknown): obj is Buffer {
-  if (typeof Buffer !== 'undefined') {
+  if (typeof Buffer !== "undefined") {
     return Buffer.isBuffer(obj);
   }
   return false;
@@ -147,34 +155,40 @@ async function prepareUploadContent(
   request: StyleAnalysisReq,
   bestFilename: string,
 ): Promise<{ parts: Array<BlobPart>; type: string; filename: string; file?: File }> {
-  if (typeof request.content === 'string') {
+  if (typeof request.content === "string") {
     const nameDerived = getMimeTypeFromFilename(bestFilename);
     const type = getStringContentType(nameDerived, request.content);
     return { parts: [request.content], type, filename: bestFilename };
   }
 
   if (
-    typeof File !== 'undefined' &&
-    typeof request.content !== 'string' &&
+    typeof File !== "undefined" &&
+    typeof request.content !== "string" &&
     request.content !== null &&
-    'file' in request.content &&
+    "file" in request.content &&
     request.content.file instanceof File
   ) {
     const fileDescriptor = request.content;
     const arrayBuffer = await fileDescriptor.file.arrayBuffer();
-    const type = fileDescriptor.mimeType || fileDescriptor.file.type || 'application/octet-stream';
-    return { parts: [arrayBuffer], type, filename: fileDescriptor.file.name, file: fileDescriptor.file };
+    const type = fileDescriptor.mimeType || fileDescriptor.file.type || "application/octet-stream";
+    return {
+      parts: [arrayBuffer],
+      type,
+      filename: fileDescriptor.file.name,
+      file: fileDescriptor.file,
+    };
   }
 
   if (
-    typeof request.content !== 'string' &&
+    typeof request.content !== "string" &&
     request.content !== null &&
-    'buffer' in request.content &&
+    "buffer" in request.content &&
     isBuffer(request.content.buffer)
   ) {
     const bufferDescriptor = request.content;
     const mimeType =
-      bufferDescriptor.mimeType || getMimeTypeFromFilename(bufferDescriptor.documentNameWithExtension || bestFilename);
+      bufferDescriptor.mimeType ||
+      getMimeTypeFromFilename(bufferDescriptor.documentNameWithExtension || bestFilename);
     const arrayBuffer = bufferDescriptor.buffer.buffer.slice(
       bufferDescriptor.buffer.byteOffset,
       bufferDescriptor.buffer.byteOffset + bufferDescriptor.buffer.byteLength,
@@ -182,7 +196,7 @@ async function prepareUploadContent(
     return { parts: [arrayBuffer], type: mimeType, filename: bestFilename };
   }
 
-  throw new Error('Invalid content type. Expected string, FileDescriptor, or BufferDescriptor.');
+  throw new Error("Invalid content type. Expected string, FileDescriptor, or BufferDescriptor.");
 }
 
 export async function createBlob(request: StyleAnalysisReq): Promise<Blob> {
@@ -196,10 +210,10 @@ export async function createFile(request: StyleAnalysisReq): Promise<File> {
   const filename = resolveFilename(request);
 
   if (
-    typeof File !== 'undefined' &&
-    typeof request.content !== 'string' &&
+    typeof File !== "undefined" &&
+    typeof request.content !== "string" &&
     request.content !== null &&
-    'file' in request.content &&
+    "file" in request.content &&
     request.content.file instanceof File
   ) {
     const fileDescriptor = request.content;
@@ -223,7 +237,7 @@ export async function createContentObject(request: StyleAnalysisReq): Promise<Fi
 // Simple and fast heuristic to detect likely HTML content in a string
 function isLikelyHtmlString(content: string): boolean {
   const sample = content.trimStart().slice(0, 256).toLowerCase();
-  if (sample.startsWith('<!doctype html') || sample.startsWith('<html')) return true;
+  if (sample.startsWith("<!doctype html") || sample.startsWith("<html")) return true;
   // Common HTML tags early in documents
   return /<(head|body|title|div|span|p|h1|h2|h3|h4|h5|h6)\b/.test(sample);
 }
@@ -246,10 +260,10 @@ function isLikelyMarkdownString(content: string): boolean {
 
 // Helper function to determine MIME type for string content
 function getStringContentType(nameDerived: string, content: string): string {
-  if (nameDerived === 'application/octet-stream') {
-    if (isLikelyMarkdownString(content)) return 'text/markdown';
-    if (isLikelyHtmlString(content)) return 'text/html';
-    return 'text/plain';
+  if (nameDerived === "application/octet-stream") {
+    if (isLikelyMarkdownString(content)) return "text/markdown";
+    if (isLikelyHtmlString(content)) return "text/html";
+    return "text/plain";
   }
   return nameDerived;
 }
@@ -257,21 +271,21 @@ function getStringContentType(nameDerived: string, content: string): string {
 // Determine best filename: prefer explicit documentName/filename, then derive from content heuristics
 function resolveFilename(request: StyleAnalysisReq): string {
   // Check if it's a StyleAnalysisReqString
-  if ('content' in request && typeof request.content === 'string') {
+  if ("content" in request && typeof request.content === "string") {
     const stringReq = request as StyleAnalysisReqString;
     if (stringReq.documentNameWithExtension) return stringReq.documentNameWithExtension;
     // If looks like HTML, default to .html to satisfy backend validation
-    if (isLikelyHtmlString(stringReq.content)) return 'unknown.html';
-    if (isLikelyMarkdownString(stringReq.content)) return 'unknown.md';
-    return 'unknown.txt';
+    if (isLikelyHtmlString(stringReq.content)) return "unknown.html";
+    if (isLikelyMarkdownString(stringReq.content)) return "unknown.md";
+    return "unknown.txt";
   }
 
   // Check if it's a StyleAnalysisReqBuffer
   if (
-    'content' in request &&
+    "content" in request &&
     request.content !== null &&
-    typeof request.content === 'object' &&
-    'buffer' in request.content
+    typeof request.content === "object" &&
+    "buffer" in request.content
   ) {
     const bufferReq = request as StyleAnalysisReqBuffer;
     return bufferReq.content.documentNameWithExtension;
@@ -279,16 +293,16 @@ function resolveFilename(request: StyleAnalysisReq): string {
 
   // Check if it's a StyleAnalysisReqFile
   if (
-    'content' in request &&
+    "content" in request &&
     request.content !== null &&
-    typeof request.content === 'object' &&
-    'file' in request.content
+    typeof request.content === "object" &&
+    "file" in request.content
   ) {
     const fileReq = request as StyleAnalysisReqFile;
     return fileReq.content.file.name;
   }
 
-  return 'unknown.txt';
+  return "unknown.txt";
 }
 
 export const defaultWorkflowTimeoutMillis = 300_000;
@@ -303,7 +317,11 @@ export interface WorkflowConfig extends Config {
 // Helper function to handle style analysis submission and polling, has a default timeout of 5 minutes
 export async function submitAndPollStyleAnalysis<
   T extends StyleAnalysisSuccessResp | StyleAnalysisSuggestionResp | StyleAnalysisRewriteResp,
->(operationType: StyleOperationType, request: StyleAnalysisReq, config: WorkflowConfig): Promise<T> {
+>(
+  operationType: StyleOperationType,
+  request: StyleAnalysisReq,
+  config: WorkflowConfig,
+): Promise<T> {
   const startTime = Date.now();
   const client = initEndpoint(config);
   const contentObject = await createContentObject(request);
@@ -352,7 +370,12 @@ export async function submitAndPollStyleAnalysis<
     throw new Error(`No workflow_id received from initial ${operationType} request`);
   }
 
-  const polledResponse = await pollWorkflowForResult<T>(initialResponse.workflow_id, config, operationType, startTime);
+  const polledResponse = await pollWorkflowForResult<T>(
+    initialResponse.workflow_id,
+    config,
+    operationType,
+    startTime,
+  );
 
   if (polledResponse.workflow.status === Status.Completed) {
     return polledResponse;
@@ -395,15 +418,15 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
     this.results = this.requests.map((request, index) => ({
       index,
       request,
-      status: 'pending' as const,
+      status: "pending" as const,
     }));
   }
 
   private getProgress(): BatchProgress<T> {
-    const completed = this.results.filter((r) => r.status === 'completed').length;
-    const failed = this.results.filter((r) => r.status === 'failed').length;
-    const inProgress = this.results.filter((r) => r.status === 'in-progress').length;
-    const pending = this.results.filter((r) => r.status === 'pending').length;
+    const completed = this.results.filter((r) => r.status === "completed").length;
+    const failed = this.results.filter((r) => r.status === "failed").length;
+    const inProgress = this.results.filter((r) => r.status === "in-progress").length;
+    const pending = this.results.filter((r) => r.status === "pending").length;
 
     return {
       total: this.requests.length,
@@ -429,7 +452,7 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
       // Update status to in-progress
       this.results[index] = {
         ...this.results[index],
-        status: 'in-progress',
+        status: "in-progress",
         startTime: Date.now(),
       };
       this.updateProgress();
@@ -441,15 +464,15 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
       if (result === undefined) {
         this.results[index] = {
           ...this.results[index],
-          status: 'failed',
-          error: new Error('Batch operation returned undefined result'),
+          status: "failed",
+          error: new Error("Batch operation returned undefined result"),
           endTime: Date.now(),
         };
       } else {
         // Update with success
         this.results[index] = {
           ...this.results[index],
-          status: 'completed',
+          status: "completed",
           result,
           endTime: Date.now(),
         };
@@ -458,7 +481,7 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
       // Update with failure
       this.results[index] = {
         ...this.results[index],
-        status: 'failed',
+        status: "failed",
         error: error instanceof Error ? error : new Error(String(error)),
         endTime: Date.now(),
       };
@@ -499,13 +522,13 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
   private shouldNotRetry(error: Error): boolean {
     // Don't retry on authentication, authorization, validation, or rate limit errors
     const nonRetryableErrors = [
-      'authentication',
-      'authorization',
-      'validation',
-      'invalid',
-      'unauthorized',
-      'forbidden',
-      'rate limit',
+      "authentication",
+      "authorization",
+      "validation",
+      "invalid",
+      "unauthorized",
+      "forbidden",
+      "rate limit",
     ];
     if (nonRetryableErrors.some((keyword) => error.message.toLowerCase().includes(keyword))) {
       return true;
@@ -524,7 +547,7 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
     if (this.cancelled) return;
 
     // Find next pending request
-    const nextRequest = this.results.find((r) => r.status === 'pending');
+    const nextRequest = this.results.find((r) => r.status === "pending");
     if (!nextRequest) {
       // No more pending requests, check if we're done
       if (this.inProgress.size === 0) {
@@ -560,7 +583,7 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
 
   public cancel(): void {
     this.cancelled = true;
-    this.rejectPromise?.(new Error('Batch operation cancelled'));
+    this.rejectPromise?.(new Error("Batch operation cancelled"));
   }
 }
 
@@ -573,11 +596,11 @@ export function styleBatchCheck<T extends StyleAnalysisResponseType>(
 ): BatchResponse<T> {
   // Validate inputs
   if (!requests || requests.length === 0) {
-    throw new Error('Requests array cannot be empty');
+    throw new Error("Requests array cannot be empty");
   }
 
   if (requests.length > 1_000) {
-    throw new Error('Maximum 1000 requests allowed per batch');
+    throw new Error("Maximum 1000 requests allowed per batch");
   }
 
   // Set default options
@@ -595,11 +618,11 @@ export function styleBatchCheck<T extends StyleAnalysisResponseType>(
 
   // Validate options
   if (finalOptions.maxConcurrent < 1 || finalOptions.maxConcurrent > 100) {
-    throw new Error('maxConcurrent must be between 1 and 100');
+    throw new Error("maxConcurrent must be between 1 and 100");
   }
 
   if (finalOptions.retryAttempts < 0 || finalOptions.retryAttempts > 5) {
-    throw new Error('retryAttempts must be between 0 and 5');
+    throw new Error("retryAttempts must be between 0 and 5");
   }
 
   // Create queue and start processing
@@ -613,16 +636,16 @@ export function styleBatchCheck<T extends StyleAnalysisResponseType>(
       return requests.length;
     },
     get completed() {
-      return queue.results.filter((r) => r.status === 'completed').length;
+      return queue.results.filter((r) => r.status === "completed").length;
     },
     get failed() {
-      return queue.results.filter((r) => r.status === 'failed').length;
+      return queue.results.filter((r) => r.status === "failed").length;
     },
     get inProgress() {
-      return queue.results.filter((r) => r.status === 'in-progress').length;
+      return queue.results.filter((r) => r.status === "in-progress").length;
     },
     get pending() {
-      return queue.results.filter((r) => r.status === 'pending').length;
+      return queue.results.filter((r) => r.status === "pending").length;
     },
     get results() {
       return [...queue.results];
@@ -667,7 +690,9 @@ export async function pollWorkflowForResult<T>(
       // TODO: Remove the unknown as cast once the SDK API is updated
       switch (styleOperation) {
         case StyleOperationType.Check:
-          response = (await client.styleChecks.getStyleCheck(workflowId)) as unknown as StyleAnalysisResponseBase;
+          response = (await client.styleChecks.getStyleCheck(
+            workflowId,
+          )) as unknown as StyleAnalysisResponseBase;
           break;
         case StyleOperationType.Suggestions:
           response = (await client.styleSuggestions.getStyleSuggestion(
@@ -675,14 +700,19 @@ export async function pollWorkflowForResult<T>(
           )) as unknown as StyleAnalysisResponseBase;
           break;
         case StyleOperationType.Rewrite:
-          response = (await client.styleRewrites.getStyleRewrite(workflowId)) as unknown as StyleAnalysisResponseBase;
+          response = (await client.styleRewrites.getStyleRewrite(
+            workflowId,
+          )) as unknown as StyleAnalysisResponseBase;
           break;
       }
 
       const currentStatus = response.workflow.status;
 
       if (currentStatus === Status.Failed) {
-        throw new ApiError(`Workflow failed with status: ${Status.Failed}`, ErrorType.WORKFLOW_FAILED);
+        throw new ApiError(
+          `Workflow failed with status: ${Status.Failed}`,
+          ErrorType.WORKFLOW_FAILED,
+        );
       }
 
       if (currentStatus === Status.Completed) {
@@ -695,14 +725,17 @@ export async function pollWorkflowForResult<T>(
         return poll();
       }
 
-      throw new ApiError(`Unexpected workflow status: ${currentStatus}`, ErrorType.UNEXPECTED_STATUS);
+      throw new ApiError(
+        `Unexpected workflow status: ${currentStatus}`,
+        ErrorType.UNEXPECTED_STATUS,
+      );
     } catch (error) {
       if (error instanceof MarkupAIError) {
         throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
       }
       console.error(`Unknown polling error (attempt ${attempts + 1}/${maxAttempts}):`, error);
       throw ApiError.fromError(
-        error instanceof Error ? error : new Error('Unknown error occurred'),
+        error instanceof Error ? error : new Error("Unknown error occurred"),
         ErrorType.POLLING_ERROR,
       );
     }
