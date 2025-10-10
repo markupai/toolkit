@@ -838,6 +838,49 @@ describe("Style API Integration Tests", () => {
       expect(response.workflow_id).toBeDefined();
     });
 
+    it("should handle HTML file content and get result", async () => {
+      const htmlPath = join(__dirname, "../test-data/html/sample-data-1.htm");
+      const htmlBuffer = readFileSync(htmlPath);
+      const htmlBufferDescriptor: BufferDescriptor = {
+        buffer: htmlBuffer,
+        mimeType: "text/html",
+        documentNameWithExtension: "sample-data-1.htm",
+      };
+
+      const response = await styleCheck(
+        {
+          content: htmlBufferDescriptor,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.technical,
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.workflow).toBeDefined();
+      expect(typeof response.workflow.id).toBe("string");
+      expect(response.config.style_guide.style_guide_id).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      );
+      expect(response.config.dialect).toBe(STYLE_DEFAULTS.dialects.americanEnglish);
+      expect(response.config.tone).toBe(STYLE_DEFAULTS.tones.technical);
+
+      // Test scores structure
+      expect(response.original.scores).toBeDefined();
+      expect(response.original.scores.quality).toBeDefined();
+      expect(typeof response.original.scores.quality.score).toBe("number");
+      expect(response.original.scores.analysis).toBeDefined();
+      expect(response.original.scores.analysis.clarity).toBeDefined();
+      expect(response.original.scores.quality.grammar).toBeDefined();
+      expect(response.original.scores.quality.consistency).toBeDefined();
+      expect(
+        response.original.scores.analysis.tone === null ||
+          typeof response.original.scores.analysis.tone === "object",
+      ).toBe(true);
+      expect(response.original.scores.quality.terminology).toBeDefined();
+    });
+
     it.skip("should download text file from URL and perform style check with Buffer", async () => {
       // URL for the text file
       const textFileUrl =
