@@ -22,7 +22,7 @@ import {
 // Batch processing utilities
 import { MarkupAI, MarkupAIError } from "@markupai/api";
 import { ApiError, ErrorType } from "../../utils/errors";
-import { getBlobCtor, isNodeEnvironment } from "../../utils/runtime";
+import { isNodeEnvironment } from "../../utils/runtime";
 
 /**
  * Creates a CreateStyleGuideReq from a file URL in Node.js environments.
@@ -199,11 +199,22 @@ async function prepareUploadContent(
   throw new Error("Invalid content type. Expected string, FileDescriptor, or BufferDescriptor.");
 }
 
+// FileMock class that extends Blob to simulate File-like behavior in Node.js
+class FileMock extends Blob {
+  name: string;
+  lastModified: number;
+
+  constructor(blobParts: BlobPart[], fileName: string, options: BlobPropertyBag & { lastModified?: number } = {}) {
+    super(blobParts, options);
+    this.name = fileName;
+    this.lastModified = options.lastModified || Date.now();
+  }
+}
+
 export async function createBlob(request: StyleAnalysisReq): Promise<Blob> {
   const filename = resolveFilename(request);
   const { parts, type } = await prepareUploadContent(request, filename);
-  const BlobCtor = await getBlobCtor();
-  return new BlobCtor(parts, { type });
+  return new FileMock(parts, filename, { type });
 }
 
 export async function createFile(request: StyleAnalysisReq): Promise<File> {
