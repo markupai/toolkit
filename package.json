@@ -1,10 +1,10 @@
 {
   "name": "@markupai/toolkit",
   "version": "2.0.1",
-  "homepage": "https://github.com/markupai/toolkit-ts",
+  "homepage": "https://github.com/markupai/toolkit",
   "repository": {
     "type": "git",
-    "url": "git@github.com:markupai/toolkit-ts.git"
+    "url": "git@github.com:markupai/toolkit.git"
   },
   "license": "Apache-2.0",
   "author": "Markup AI",
