@@ -221,8 +221,8 @@ const configWithUrl: Config = {
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/markupai/toolkit-ts
-cd toolkit-ts
+git clone https://github.com/markupai/toolkit
+cd toolkit
 ```
 
 2. Install dependencies:
