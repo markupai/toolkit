@@ -572,12 +572,9 @@ describe("Batch Processing", () => {
     it("should create batch response with correct initial progress", () => {
       const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
 
-      const batchResponse = styleBatchCheck(
-        mockRequests,
-        mockConfig,
-        { maxConcurrent: 2 },
-        mockStyleFunction,
-      );
+      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+        maxConcurrent: 2,
+      });
 
       // With reactive progress, the initial state should reflect that some requests are already in progress
       expect(batchResponse.progress.total).toBe(3);
@@ -596,39 +593,39 @@ describe("Batch Processing", () => {
       const mockStyleFunction = vi.fn();
 
       // Test empty requests array
-      expect(() => styleBatchCheck([], mockConfig, {}, mockStyleFunction)).toThrow(
+      expect(() => styleBatchCheck([], mockConfig, mockStyleFunction, {})).toThrow(
         "Requests array cannot be empty",
       );
 
       // Test too many requests
       const tooManyRequests = new Array(1001).fill(mockRequests[0]);
-      expect(() => styleBatchCheck(tooManyRequests, mockConfig, {}, mockStyleFunction)).toThrow(
+      expect(() => styleBatchCheck(tooManyRequests, mockConfig, mockStyleFunction, {})).toThrow(
         "Maximum 1000 requests allowed per batch",
       );
 
       // Test invalid maxConcurrent
       expect(() =>
-        styleBatchCheck(mockRequests, mockConfig, { maxConcurrent: 0 }, mockStyleFunction),
+        styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { maxConcurrent: 0 }),
       ).toThrow("maxConcurrent must be between 1 and 100");
 
       expect(() =>
-        styleBatchCheck(mockRequests, mockConfig, { maxConcurrent: 101 }, mockStyleFunction),
+        styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { maxConcurrent: 101 }),
       ).toThrow("maxConcurrent must be between 1 and 100");
 
       // Test invalid retryAttempts
       expect(() =>
-        styleBatchCheck(mockRequests, mockConfig, { retryAttempts: -1 }, mockStyleFunction),
+        styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { retryAttempts: -1 }),
       ).toThrow("retryAttempts must be between 0 and 5");
 
       expect(() =>
-        styleBatchCheck(mockRequests, mockConfig, { retryAttempts: 6 }, mockStyleFunction),
+        styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { retryAttempts: 6 }),
       ).toThrow("retryAttempts must be between 0 and 5");
     });
 
     it("should process requests with default options", async () => {
       const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
 
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, {}, mockStyleFunction);
+      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
 
       const result = await batchResponse.promise;
 
@@ -654,12 +651,9 @@ describe("Batch Processing", () => {
         return mockStyleCheckResponse;
       });
 
-      const batchResponse = styleBatchCheck(
-        mockRequests,
-        mockConfig,
-        { maxConcurrent: 1 },
-        mockStyleFunction,
-      );
+      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+        maxConcurrent: 1,
+      });
 
       // Check initial state - should start with 1 in progress
       expect(batchResponse.progress.inProgress).toBe(1);
@@ -676,7 +670,7 @@ describe("Batch Processing", () => {
         .mockRejectedValueOnce(new Error("API Error")) // Second request fails
         .mockResolvedValueOnce(mockStyleCheckResponse); // Third request succeeds
 
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, {}, mockStyleFunction);
+      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
 
       const result = await batchResponse.promise;
 
@@ -718,8 +712,8 @@ describe("Batch Processing", () => {
       const batchResponse = styleBatchCheck(
         [mockRequests[0]], // Single request
         mockConfig,
-        { retryAttempts: 2, retryDelay: 10 },
         mockStyleFunction,
+        { retryAttempts: 2, retryDelay: 10 },
       );
 
       const result = await batchResponse.promise;
@@ -732,12 +726,9 @@ describe("Batch Processing", () => {
     it("should not retry on non-retryable errors", async () => {
       const mockStyleFunction = vi.fn().mockRejectedValue(new Error("authentication failed"));
 
-      const batchResponse = styleBatchCheck(
-        [mockRequests[0]],
-        mockConfig,
-        { retryAttempts: 3 },
-        mockStyleFunction,
-      );
+      const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {
+        retryAttempts: 3,
+      });
 
       const result = await batchResponse.promise;
 
@@ -752,7 +743,7 @@ describe("Batch Processing", () => {
         return mockStyleCheckResponse;
       });
 
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, {}, mockStyleFunction);
+      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
 
       // Cancel immediately
       batchResponse.cancel();
@@ -763,7 +754,7 @@ describe("Batch Processing", () => {
     it("should track timing information", async () => {
       const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
 
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, {}, mockStyleFunction);
+      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
 
       const result = await batchResponse.promise;
 
@@ -778,7 +769,7 @@ describe("Batch Processing", () => {
     it("should handle edge case with single request", async () => {
       const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
 
-      const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, {}, mockStyleFunction);
+      const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {});
 
       const result = await batchResponse.promise;
 
@@ -792,12 +783,9 @@ describe("Batch Processing", () => {
     it("should handle edge case with maxConcurrent equal to request count", async () => {
       const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
 
-      const batchResponse = styleBatchCheck(
-        mockRequests,
-        mockConfig,
-        { maxConcurrent: 3 },
-        mockStyleFunction,
-      );
+      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+        maxConcurrent: 3,
+      });
 
       const result = await batchResponse.promise;
 
@@ -813,12 +801,9 @@ describe("Batch Processing", () => {
         .mockResolvedValueOnce(mockStyleCheckResponse)
         .mockResolvedValueOnce(mockStyleCheckResponse);
 
-      const batchResponse = styleBatchCheck(
-        mockRequests,
-        mockConfig,
-        { retryAttempts: 2 },
-        mockStyleFunction,
-      );
+      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+        retryAttempts: 2,
+      });
       const result = await batchResponse.promise;
 
       expect(result.completed + result.failed).toBe(3);

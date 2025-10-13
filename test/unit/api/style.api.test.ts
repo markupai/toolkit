@@ -645,8 +645,8 @@ describe("Style API Unit Tests", () => {
         const batchResponse = styleBatchOperation<StyleAnalysisSuccessResp>(
           mockBatchRequests,
           mockConfig,
-          {},
           "check",
+          {},
         );
 
         expect(batchResponse.progress.total).toBe(2);
@@ -659,8 +659,8 @@ describe("Style API Unit Tests", () => {
         const batchResponse = styleBatchOperation<StyleAnalysisSuggestionResp>(
           mockBatchRequests,
           mockConfig,
-          {},
           "suggestions",
+          {},
         );
 
         expect(batchResponse.progress.total).toBe(2);
@@ -673,8 +673,8 @@ describe("Style API Unit Tests", () => {
         const batchResponse = styleBatchOperation<StyleAnalysisRewriteResp>(
           mockBatchRequests,
           mockConfig,
-          {},
           "rewrite",
+          {},
         );
 
         expect(batchResponse.progress.total).toBe(2);
@@ -686,8 +686,8 @@ describe("Style API Unit Tests", () => {
           styleBatchOperation(
             mockBatchRequests,
             mockConfig,
-            {},
             "invalid" as "check" | "suggestions" | "rewrite",
+            {},
           ),
         ).toThrow("Invalid operation type: invalid");
       });

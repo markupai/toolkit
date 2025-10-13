@@ -298,9 +298,10 @@ export class ApiError extends Error {
   /**
    * Check if the error data matches the direct API error format (code, message, description at root level)
    */
-  private static isDirectApiErrorResponse(
-    errorData: Record<string, unknown>,
-  ): errorData is Record<string, unknown> & {
+  private static isDirectApiErrorResponse(errorData: Record<string, unknown>): errorData is Record<
+    string,
+    unknown
+  > & {
     code: string;
     message: string;
     description?: string;
