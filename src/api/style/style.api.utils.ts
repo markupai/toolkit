@@ -204,7 +204,11 @@ class FileMock extends Blob {
   name: string;
   lastModified: number;
 
-  constructor(blobParts: BlobPart[], fileName: string, options: BlobPropertyBag & { lastModified?: number } = {}) {
+  constructor(
+    blobParts: BlobPart[],
+    fileName: string,
+    options: BlobPropertyBag & { lastModified?: number } = {},
+  ) {
     super(blobParts, options);
     this.name = fileName;
     this.lastModified = options.lastModified || Date.now();
@@ -602,8 +606,8 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
 export function styleBatchCheck<T extends StyleAnalysisResponseType>(
   requests: StyleAnalysisReq[],
   config: Config,
-  options: BatchOptions = {},
   styleFunction: StyleFunction<T>,
+  options: BatchOptions = {},
 ): BatchResponse<T> {
   // Validate inputs
   if (!requests || requests.length === 0) {

@@ -189,7 +189,7 @@ export function styleBatchCheckRequests(
   config: Config,
   options: BatchOptions = {},
 ): BatchResponse<StyleAnalysisSuccessResp> {
-  return styleBatchCheck<StyleAnalysisSuccessResp>(requests, config, options, styleCheck);
+  return styleBatchCheck<StyleAnalysisSuccessResp>(requests, config, styleCheck, options);
 }
 
 /**
@@ -206,7 +206,7 @@ export function styleBatchSuggestions(
   config: Config,
   options: BatchOptions = {},
 ): BatchResponse<StyleAnalysisSuggestionResp> {
-  return styleBatchCheck<StyleAnalysisSuggestionResp>(requests, config, options, styleSuggestions);
+  return styleBatchCheck<StyleAnalysisSuggestionResp>(requests, config, styleSuggestions, options);
 }
 
 /**
@@ -223,7 +223,7 @@ export function styleBatchRewrites(
   config: Config,
   options: BatchOptions = {},
 ): BatchResponse<StyleAnalysisRewriteResp> {
-  return styleBatchCheck<StyleAnalysisRewriteResp>(requests, config, options, styleRewrite);
+  return styleBatchCheck<StyleAnalysisRewriteResp>(requests, config, styleRewrite, options);
 }
 
 /**
@@ -232,15 +232,15 @@ export function styleBatchRewrites(
  *
  * @param requests - Array of style analysis requests
  * @param config - API configuration
- * @param options - Batch processing options
  * @param operationType - Type of operation ('check', 'suggestions', 'rewrite')
+ * @param options - Batch processing options
  * @returns BatchResponse with appropriate response type
  */
 export function styleBatchOperation<T extends StyleAnalysisResponseType>(
   requests: StyleAnalysisReq[],
   config: Config,
-  options: BatchOptions = {},
   operationType: "check" | "suggestions" | "rewrite",
+  options: BatchOptions = {},
 ): BatchResponse<T> {
   switch (operationType) {
     case "check":
