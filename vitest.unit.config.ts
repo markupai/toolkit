@@ -8,7 +8,7 @@ export default defineConfig({
     setupFiles: ["test/unit/setup.ts"],
     coverage: {
       provider: "v8",
-      reporter: ["text", "json", "html", "lcov"],
+      reporter: ["text", "html", "lcov"],
       exclude: [
         "node_modules/**",
         "test/**",
