@@ -702,22 +702,21 @@ export async function pollWorkflowForResult<T>(
       const client = initEndpoint(config);
       let response: StyleAnalysisResponseBase;
 
-      // TODO: Remove the unknown as cast once the SDK API is updated
       switch (styleOperation) {
         case StyleOperationType.Check:
           response = (await client.styleChecks.getStyleCheck(
             workflowId,
-          )) as unknown as StyleAnalysisResponseBase;
+          )) as StyleAnalysisResponseBase;
           break;
         case StyleOperationType.Suggestions:
           response = (await client.styleSuggestions.getStyleSuggestion(
             workflowId,
-          )) as unknown as StyleAnalysisResponseBase;
+          )) as StyleAnalysisResponseBase;
           break;
         case StyleOperationType.Rewrite:
           response = (await client.styleRewrites.getStyleRewrite(
             workflowId,
-          )) as unknown as StyleAnalysisResponseBase;
+          )) as StyleAnalysisResponseBase;
           break;
       }
 

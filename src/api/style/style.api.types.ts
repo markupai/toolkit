@@ -117,10 +117,10 @@ export interface StyleAnalysisSuccessResp extends StyleAnalysisResponseBase {
   config: {
     dialect: string;
     style_guide: {
-      style_guide_type: string; // TODO: confirmation on this
-      style_guide_id: string; // TODO: confirmation on this
+      style_guide_type: string;
+      style_guide_id: string;
     };
-    tone: string;
+    tone?: string;
   };
   original: {
     issues: Issue[];

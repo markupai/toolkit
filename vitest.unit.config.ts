@@ -16,6 +16,8 @@ export default defineConfig({
         "**/*.test.ts",
         "**/*.config.ts",
         "**/types.ts",
+        "dist/**",
+        "**/*.js",
       ],
     },
   },
