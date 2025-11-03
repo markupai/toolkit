@@ -274,16 +274,15 @@ const createAndValidateDitaBlob = async (request: StyleAnalysisReq) => {
 };
 
 // Markdown-specific convenience helpers
-const markdownMimeType = "text/markdown";
 const validateMarkdownBlob = async (request: StyleAnalysisReq) => {
-  await validateBlobType(request, markdownMimeType);
+  await validateBlobType(request, "text/markdown");
 };
 
 const validateMarkdownBlobAndFileName = async (
   request: StyleAnalysisReq,
   expectedFileName: string = "unknown.md",
 ) => {
-  await validateBlobAndFileName(request, markdownMimeType, expectedFileName);
+  await validateBlobAndFileName(request, "text/markdown", expectedFileName);
 };
 
 const createDitaRequest = (
@@ -294,6 +293,20 @@ const createDitaRequest = (
   style_guide: "ap",
   dialect: "american_english",
   ...(documentNameWithExtension ? { documentNameWithExtension } : {}),
+});
+
+const createBufferRequest = (
+  bufferContent: string,
+  documentNameWithExtension: string,
+  mimeType: string,
+): StyleAnalysisReq => ({
+  content: {
+    buffer: Buffer.from(bufferContent, "utf8"),
+    documentNameWithExtension,
+    mimeType,
+  },
+  style_guide: "ap",
+  dialect: "american_english",
 });
 
 describe("Style API Utils", () => {
@@ -712,11 +725,11 @@ describe("Style API Utils", () => {
       });
 
       it("should return text/markdown for markdown extensions", () => {
-        expect(getMimeTypeFromFilename("readme.md")).toBe(markdownMimeType);
-        expect(getMimeTypeFromFilename("readme.markdown")).toBe(markdownMimeType);
-        expect(getMimeTypeFromFilename("readme.mdown")).toBe(markdownMimeType);
-        expect(getMimeTypeFromFilename("readme.mkd")).toBe(markdownMimeType);
-        expect(getMimeTypeFromFilename("readme.mdx")).toBe(markdownMimeType);
+        expect(getMimeTypeFromFilename("readme.md")).toBe("text/markdown");
+        expect(getMimeTypeFromFilename("readme.markdown")).toBe("text/markdown");
+        expect(getMimeTypeFromFilename("readme.mdown")).toBe("text/markdown");
+        expect(getMimeTypeFromFilename("readme.mkd")).toBe("text/markdown");
+        expect(getMimeTypeFromFilename("readme.mdx")).toBe("text/markdown");
       });
 
       it("should return application/pdf for .pdf extension", () => {
@@ -753,96 +766,49 @@ describe("Style API Utils", () => {
 
   describe("Buffer descriptor handling", () => {
     it("should use buffer descriptor with documentNameWithExtension", async () => {
-      const buffer = Buffer.from("<html><body>Content</body></html>", "utf8");
-      const request: StyleAnalysisReq = {
-        content: {
-          buffer,
-          documentNameWithExtension: "page.html",
-          mimeType: "text/html",
-        },
-        style_guide: "ap",
-        dialect: "american_english",
-      };
+      const request = createBufferRequest(
+        "<html><body>Content</body></html>",
+        "page.html",
+        "text/html",
+      );
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("text/html");
-      const file = await createFile(request);
-      expect(file.name).toBe("page.html");
+      await validateFileTypeAndName(request, "text/html", "page.html");
     });
 
     it("should derive mimeType from documentNameWithExtension when mimeType not provided", async () => {
       const buffer = Buffer.from('<topic id="test"><title>Test</title></topic>', "utf8");
-      const request: StyleAnalysisReq = {
+      // Test that mimeType can be derived from filename when not provided
+      const requestWithoutMimeType = {
         content: {
           buffer,
           documentNameWithExtension: "topic.dita",
-          mimeType: applicationDitaXml, // Required by type, but tested for derivation logic
+          mimeType: applicationDitaXml, // Required by type, but mimeType will be derived from filename
         },
         style_guide: "ap",
         dialect: "american_english",
-      };
-
-      // Test that mimeType can be derived from filename when not provided
-      // Create a request with mimeType derived from filename
-      const requestWithoutMimeType = {
-        ...request,
-        content: {
-          buffer,
-          documentNameWithExtension: "topic.dita",
-          // mimeType will be derived from filename in prepareUploadContent
-        },
       } as StyleAnalysisReq;
 
-      const blob = await createBlob(requestWithoutMimeType);
-      expect(blob.type).toBe(applicationDitaXml);
-      const file = await createFile(requestWithoutMimeType);
-      expect(file.name).toBe("topic.dita");
+      await validateFileTypeAndName(requestWithoutMimeType, applicationDitaXml, "topic.dita");
     });
 
     it("should use buffer descriptor mimeType when provided", async () => {
-      const buffer = Buffer.from("plain text", "utf8");
-      const request: StyleAnalysisReq = {
-        content: {
-          buffer,
-          documentNameWithExtension: "document.txt",
-          mimeType: "text/plain",
-        },
-        style_guide: "ap",
-        dialect: "american_english",
-      };
+      const request = createBufferRequest("plain text", "document.txt", "text/plain");
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("text/plain");
+      await validateBlobType(request, "text/plain");
     });
 
     it("should handle buffer descriptor with minimal fields", async () => {
-      const buffer = Buffer.from("some content", "utf8");
-      const request: StyleAnalysisReq = {
-        content: {
-          buffer,
-          documentNameWithExtension: "unknown.txt",
-          mimeType: "application/octet-stream",
-        },
-        style_guide: "ap",
-        dialect: "american_english",
-      };
+      const request = createBufferRequest(
+        "some content",
+        "unknown.txt",
+        "application/octet-stream",
+      );
 
-      // Should use provided mimeType
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("application/octet-stream");
+      await validateBlobType(request, "application/octet-stream");
     });
 
     it("should prioritize mimeType over documentNameWithExtension for buffer descriptors", async () => {
-      const buffer = Buffer.from("<html>Content</html>", "utf8");
-      const request: StyleAnalysisReq = {
-        content: {
-          buffer,
-          documentNameWithExtension: "file.txt",
-          mimeType: "text/html",
-        },
-        style_guide: "ap",
-        dialect: "american_english",
-      };
+      const request = createBufferRequest("<html>Content</html>", "file.txt", "text/html");
 
       const blob = await createBlob(request);
       expect(blob.type).toBe("text/html");
@@ -1067,93 +1033,49 @@ describe("Style API Utils", () => {
     });
 
     it("should handle empty string content", async () => {
-      const request: StyleAnalysisReq = {
-        content: "",
-        style_guide: "ap",
-        dialect: "american_english",
-      };
+      const request = createDitaRequest("");
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("text/plain");
-      const file = await createFile(request);
-      expect(file.name).toBe("unknown.txt");
+      await validateBlobAndFileName(request, "text/plain", "unknown.txt");
     });
 
     it("should handle string with only whitespace", async () => {
-      const request: StyleAnalysisReq = {
-        content: "   \n\t  ",
-        style_guide: "ap",
-        dialect: "american_english",
-      };
+      const request = createDitaRequest("   \n\t  ");
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("text/plain");
+      await validateBlobType(request, "text/plain");
     });
 
     it("should handle very long string content", async () => {
-      const longContent = "x".repeat(10000);
-      const request: StyleAnalysisReq = {
-        content: longContent,
-        style_guide: "ap",
-        dialect: "american_english",
-      };
+      const request = createDitaRequest("x".repeat(10000));
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("text/plain");
+      await validateBlobType(request, "text/plain");
     });
   });
 
   describe("MIME type priority and detection", () => {
     it("should prioritize filename extension over content heuristics for strings", async () => {
       // This looks like HTML but has .txt extension
-      const request: StyleAnalysisReq = {
-        content: "<html><body>Content</body></html>",
-        style_guide: "ap",
-        dialect: "american_english",
-        documentNameWithExtension: "file.txt",
-      };
+      const request = createDitaRequest("<html><body>Content</body></html>", "file.txt");
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("text/plain");
+      await validateBlobType(request, "text/plain");
     });
 
     it("should use content heuristics when filename extension is unknown", async () => {
-      const request: StyleAnalysisReq = {
-        content: "<html><body>Content</body></html>",
-        style_guide: "ap",
-        dialect: "american_english",
-        documentNameWithExtension: "file.xyz",
-      };
+      const request = createDitaRequest("<html><body>Content</body></html>", "file.xyz");
 
       // Unknown extension triggers heuristic detection
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("text/html");
+      await validateBlobType(request, "text/html");
     });
 
     it("should detect HTML even with minimal tags", async () => {
-      const request: StyleAnalysisReq = {
-        content: "<div>Hello</div>",
-        style_guide: "ap",
-        dialect: "american_english",
-      };
+      const request = createDitaRequest("<div>Hello</div>");
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("text/html");
-      const file = await createFile(request);
-      expect(file.name).toBe("unknown.html");
+      await validateBlobAndFileName(request, "text/html", "unknown.html");
     });
 
     it("should detect markdown with minimal markers", async () => {
-      const request: StyleAnalysisReq = {
-        content: "# Title",
-        style_guide: "ap",
-        dialect: "american_english",
-      };
+      const request = createDitaRequest("# Title");
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe(markdownMimeType);
-      const file = await createFile(request);
-      expect(file.name).toBe("unknown.md");
+      await validateBlobAndFileName(request, "text/markdown", "unknown.md");
     });
   });
 
