@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   IssueCategory,
-  StyleAnalysisReq,
-  StyleAnalysisSuccessResp,
+  type StyleAnalysisReq,
+  type StyleAnalysisSuccessResp,
 } from "../../../src/api/style/style.api.types";
 import {
   createBlob,
@@ -17,7 +17,7 @@ import {
   styleBatchCheck,
 } from "../../../src/api/style/style.api.utils";
 import * as runtime from "../../../src/utils/runtime";
-import { Config, Environment, PlatformType, Status } from "../../../src/utils/api.types";
+import { type Config, Environment, PlatformType, Status } from "../../../src/utils/api.types";
 
 // Mock Node.js modules
 vi.mock("fs");
@@ -344,7 +344,172 @@ describe("Style API Utils", () => {
         spy.mockRestore();
       }
     });
+  });
 
+  describe("DITA content handling", () => {
+    it("should detect application/dita+xml by heuristic when DOCTYPE with DITA identifiers", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<!DOCTYPE topic PUBLIC "-//OASIS//DTD DITA Topic//EN" "topic.dtd"><topic id="test">Content</topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/dita+xml");
+      const file = await createFile(request);
+      expect(file.name).toBe("unknown.dita");
+    });
+
+    it("should detect application/dita+xml by heuristic when DOCTYPE references DTD file", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<!DOCTYPE concept SYSTEM "concept.dtd"><concept id="test">Content</concept>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/dita+xml");
+      const file = await createFile(request);
+      expect(file.name).toBe("unknown.dita");
+    });
+
+    it("should detect application/dita+xml by heuristic when root element is topic", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<?xml version="1.0"?><topic id="test"><title>Title</title><body>Content</body></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/dita+xml");
+      const file = await createFile(request);
+      expect(file.name).toBe("unknown.dita");
+    });
+
+    it("should detect application/dita+xml by heuristic when root element is concept", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<concept id="test"><title>Concept Title</title><conbody>Content</conbody></concept>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/dita+xml");
+    });
+
+    it("should detect application/dita+xml by heuristic when root element is task", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<task id="test"><title>Task Title</title><taskbody>Steps</taskbody></task>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/dita+xml");
+    });
+
+    it("should detect application/dita+xml by heuristic when root element is reference", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<reference id="test"><title>Reference</title><refbody>Info</refbody></reference>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/dita+xml");
+    });
+
+    it("should detect application/dita+xml by heuristic when root element is map", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<map id="test"><title>Map Title</title><topicref href="topic.dita"/></map>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/dita+xml");
+    });
+
+    it("should detect application/dita+xml by heuristic when root element is bookmap", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<bookmap id="test"><booktitle><mainbooktitle>Book</mainbooktitle></booktitle></bookmap>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/dita+xml");
+    });
+
+    it("should detect application/dita+xml by heuristic when class attribute contains topic/topic", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<div class="- topic/topic "><div class="- topic/title ">Title</div><div class="- topic/body ">Body</div></div>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/dita+xml");
+      const file = await createFile(request);
+      expect(file.name).toBe("unknown.dita");
+    });
+
+    it("should auto-assign unknown.dita when string looks like DITA and no filename provided", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<topic id="auto-dita"><title>Auto DITA</title><body>Content</body></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const file = await createFile(request);
+      expect(file.name).toBe("unknown.dita");
+      expect(file.type).toBe("application/dita+xml");
+    });
+
+    it("should use request.documentNameWithExtension to set name and MIME for DITA string", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<topic id="test"><title>Test</title><body>Content</body></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+        documentNameWithExtension: "sample.dita",
+      };
+
+      const file = await createFile(request);
+      expect(file.name).toBe("sample.dita");
+      expect(file.type).toBe("application/dita+xml");
+    });
+
+    it("should create Blob with application/dita+xml for DITA string content when documentNameWithExtension indicates dita", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<topic id="test"><title>Test</title><body>Content</body></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+        documentNameWithExtension: "document.dita",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/dita+xml");
+    });
+
+    it("should prioritize DITA detection over plain text when no filename provided", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<topic id="test">This looks like DITA content</topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/dita+xml");
+      expect(blob.type).not.toBe("text/plain");
+    });
+  });
+
+  describe("Markdown content handling", () => {
     it("should detect text/markdown for markdown filenames", async () => {
       const request: StyleAnalysisReq = {
         content: "# Title\n\nSome text with a [link](https://example.com).",

@@ -137,6 +137,8 @@ export function getMimeTypeFromFilename(filename: string): string {
       return "text/html";
     case "html":
       return "text/html";
+    case "dita":
+      return "application/dita+xml";
     default:
       return "application/octet-stream";
   }
@@ -257,6 +259,37 @@ function isLikelyHtmlString(content: string): boolean {
   return /<(head|body|title|div|span|p|h1|h2|h3|h4|h5|h6)\b/.test(sample);
 }
 
+// Heuristic to detect likely DITA XML content in a string
+function isLikelyDitaString(content: string): boolean {
+  const sample = content.trimStart().slice(0, 512).toLowerCase();
+  // Common DITA root element names (topics and maps)
+  const rootNames = "topic|concept|task|reference|map|bookmap|glossentry|subjectScheme";
+
+  // DOCTYPE with DITA identifiers
+  if (new RegExp(String.raw`<!DOCTYPE\s+(?:${rootNames})\b\/.*\/DITA`, "is").test(sample)) {
+    return true;
+  }
+
+  // DOCTYPE declaration referencing a DTD file (any name) for known DITA root elements
+  if (
+    new RegExp(String.raw`<!DOCTYPE\s+(?:${rootNames})\b.*?["'][^"']*\.dtd["']`, "is").test(sample)
+  ) {
+    return true;
+  }
+
+  // Root element check following optional XML declaration
+  // Check for XML declaration followed by root element, or just root element at start
+  if (
+    new RegExp(String.raw`^\s*<\?xml[^>]*\?>\s*<(?:${rootNames})\b`, "is").test(sample) ||
+    new RegExp(String.raw`^\s*<(?:${rootNames})\b`, "i").test(sample)
+  ) {
+    return true;
+  }
+
+  // DITA class attribute hallmark (e.g., class="- topic/topic ")
+  return /\bclass="[^"]*\btopic\/topic\b/i.test(sample);
+}
+
 // Heuristic to detect likely Markdown content in a string
 function isLikelyMarkdownString(content: string): boolean {
   const sample = content.trimStart().slice(0, 512);
@@ -277,6 +310,7 @@ function isLikelyMarkdownString(content: string): boolean {
 function getStringContentType(nameDerived: string, content: string): string {
   if (nameDerived === "application/octet-stream") {
     if (isLikelyMarkdownString(content)) return "text/markdown";
+    if (isLikelyDitaString(content)) return "application/dita+xml";
     if (isLikelyHtmlString(content)) return "text/html";
     return "text/plain";
   }
@@ -289,6 +323,8 @@ function resolveFilename(request: StyleAnalysisReq): string {
   if ("content" in request && typeof request.content === "string") {
     const stringReq = request as StyleAnalysisReqString;
     if (stringReq.documentNameWithExtension) return stringReq.documentNameWithExtension;
+    // Check DITA before HTML since DITA detection is more specific
+    if (isLikelyDitaString(stringReq.content)) return "unknown.dita";
     // If looks like HTML, default to .html to satisfy backend validation
     if (isLikelyHtmlString(stringReq.content)) return "unknown.html";
     if (isLikelyMarkdownString(stringReq.content)) return "unknown.md";
