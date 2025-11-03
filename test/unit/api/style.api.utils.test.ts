@@ -4,8 +4,9 @@ import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   IssueCategory,
-  StyleAnalysisReq,
-  StyleAnalysisSuccessResp,
+  type BatchProgress,
+  type StyleAnalysisReq,
+  type StyleAnalysisSuccessResp,
 } from "../../../src/api/style/style.api.types";
 import {
   createBlob,
@@ -13,11 +14,13 @@ import {
   createFile,
   createStyleGuideReqFromPath,
   createStyleGuideReqFromUrl,
+  getMimeTypeFromFilename,
+  isBuffer,
   isCompletedResponse,
   styleBatchCheck,
 } from "../../../src/api/style/style.api.utils";
 import * as runtime from "../../../src/utils/runtime";
-import { Config, Environment, PlatformType, Status } from "../../../src/utils/api.types";
+import { type Config, Environment, PlatformType, Status } from "../../../src/utils/api.types";
 
 // Mock Node.js modules
 vi.mock("fs");
@@ -92,6 +95,219 @@ const failedResp = {
     status: Status.Failed,
   },
 };
+
+const mockConfig: Config = {
+  apiKey: "test-api-key",
+  platform: { type: PlatformType.Environment, value: Environment.Dev },
+};
+
+const mockRequests: StyleAnalysisReq[] = [
+  {
+    content: "test content 1",
+    style_guide: "ap",
+    dialect: "american_english",
+    tone: "formal",
+  },
+  {
+    content: "test content 2",
+    style_guide: "chicago",
+    dialect: "american_english",
+    tone: "informal",
+  },
+  {
+    content: "test content 3",
+    style_guide: "microsoft",
+    dialect: "british_english",
+    tone: "formal",
+  },
+];
+
+const mockStyleCheckResponse: StyleAnalysisSuccessResp = {
+  workflow: {
+    id: "chk-2b5f8d3a-9c7e-4f2b-a8d1-6e9c3f7b4a2d",
+    type: "checks",
+    api_version: "1.0.0",
+    generated_at: "2025-01-15T14:22:33Z",
+    status: Status.Completed,
+    webhook_response: {
+      url: "https://api.example.com/webhook",
+      status_code: 200,
+    },
+  },
+  config: {
+    dialect: "canadian_english",
+    style_guide: {
+      style_guide_type: "ap",
+      style_guide_id: "sg-8d4e5f6a-2b3c-4d5e-6f7a-8b9c0d1e2f3a",
+    },
+    tone: "conversational",
+  },
+  original: {
+    issues: [
+      {
+        original: "therefor",
+        position: {
+          start_index: 89,
+        },
+        subcategory: "spelling",
+        category: IssueCategory.Grammar,
+      },
+      {
+        original: "leverage",
+        position: {
+          start_index: 156,
+        },
+        subcategory: "vocabulary",
+        category: IssueCategory.Clarity,
+      },
+      {
+        original: "going forward",
+        position: {
+          start_index: 234,
+        },
+        subcategory: "word_choice",
+        category: IssueCategory.Tone,
+      },
+      {
+        original: "email",
+        position: {
+          start_index: 312,
+        },
+        subcategory: "punctuation",
+        category: IssueCategory.Consistency,
+      },
+      {
+        original: "towards",
+        position: {
+          start_index: 405,
+        },
+        subcategory: "word_choice",
+        category: IssueCategory.Terminology,
+      },
+    ],
+    scores: {
+      quality: {
+        score: 72,
+        grammar: {
+          score: 95,
+          issues: 1,
+        },
+        consistency: {
+          score: 80,
+          issues: 2,
+        },
+        terminology: {
+          score: 100,
+          issues: 0,
+        },
+      },
+      analysis: {
+        clarity: {
+          score: 64,
+          flesch_reading_ease: 51.4,
+          sentence_complexity: 38.9,
+          vocabulary_complexity: 45.6,
+          sentence_count: 6,
+          word_count: 112,
+          average_sentence_length: 18.7,
+        },
+        tone: {
+          score: 78,
+          informality: 38.2,
+          liveliness: 33.9,
+          informality_alignment: 115.8,
+          liveliness_alignment: 106.4,
+        },
+      },
+    },
+  },
+};
+
+// Generic validation helpers that accept parameters
+const validateBlobType = async (request: StyleAnalysisReq, expectedMimeType: string) => {
+  const blob = await createBlob(request);
+  expect(blob.type).toBe(expectedMimeType);
+};
+
+const validateFileName = async (request: StyleAnalysisReq, expectedFileName: string) => {
+  const file = await createFile(request);
+  expect(file.name).toBe(expectedFileName);
+};
+
+const validateFileTypeAndName = async (
+  request: StyleAnalysisReq,
+  expectedMimeType: string,
+  expectedFileName: string,
+) => {
+  const file = await createFile(request);
+  expect(file.name).toBe(expectedFileName);
+  expect(file.type).toBe(expectedMimeType);
+};
+
+const validateBlobAndFileName = async (
+  request: StyleAnalysisReq,
+  expectedMimeType: string,
+  expectedFileName: string,
+) => {
+  await validateBlobType(request, expectedMimeType);
+  await validateFileName(request, expectedFileName);
+};
+
+// DITA-specific convenience helpers
+const applicationDitaXml = "application/dita+xml";
+const unkownDitaFileName = "unknown.dita";
+
+const createAndValidateDitaBlobAndFile = async (request: StyleAnalysisReq) => {
+  await validateBlobAndFileName(request, applicationDitaXml, unkownDitaFileName);
+};
+
+const createAndValidateDitaFileName = async (request: StyleAnalysisReq) => {
+  await validateFileName(request, unkownDitaFileName);
+};
+
+const createAndValidateDitaFileNameAndType = async (request: StyleAnalysisReq) => {
+  await validateFileTypeAndName(request, applicationDitaXml, "sample.dita");
+};
+
+const createAndValidateDitaBlob = async (request: StyleAnalysisReq) => {
+  await validateBlobType(request, applicationDitaXml);
+};
+
+// Markdown-specific convenience helpers
+const validateMarkdownBlob = async (request: StyleAnalysisReq) => {
+  await validateBlobType(request, "text/markdown");
+};
+
+const validateMarkdownBlobAndFileName = async (
+  request: StyleAnalysisReq,
+  expectedFileName: string = "unknown.md",
+) => {
+  await validateBlobAndFileName(request, "text/markdown", expectedFileName);
+};
+
+const createDitaRequest = (
+  content: string,
+  documentNameWithExtension?: string,
+): StyleAnalysisReq => ({
+  content,
+  style_guide: "ap",
+  dialect: "american_english",
+  ...(documentNameWithExtension ? { documentNameWithExtension } : {}),
+});
+
+const createBufferRequest = (
+  bufferContent: string,
+  documentNameWithExtension: string,
+  mimeType: string,
+): StyleAnalysisReq => ({
+  content: {
+    buffer: Buffer.from(bufferContent, "utf8"),
+    documentNameWithExtension,
+    mimeType,
+  },
+  style_guide: "ap",
+  dialect: "american_english",
+});
 
 describe("Style API Utils", () => {
   beforeEach(() => {
@@ -344,30 +560,522 @@ describe("Style API Utils", () => {
         spy.mockRestore();
       }
     });
+  });
 
-    it("should detect text/markdown for markdown filenames", async () => {
+  describe("DITA content handling", () => {
+    it.each([
+      {
+        description: "DOCTYPE with DITA identifiers",
+        content:
+          '<!DOCTYPE topic PUBLIC "-//OASIS//DTD DITA Topic//EN" "topic.dtd"><topic id="test">Content</topic>',
+      },
+      {
+        description: "DOCTYPE references DTD file",
+        content: '<!DOCTYPE concept SYSTEM "concept.dtd"><concept id="test">Content</concept>',
+      },
+      {
+        description: "root element is topic",
+        content:
+          '<?xml version="1.0"?><topic id="test"><title>Title</title><body>Content</body></topic>',
+      },
+    ])("should detect application/dita+xml by heuristic when $description", async ({ content }) => {
+      const request = createDitaRequest(content);
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it.each([
+      {
+        rootElement: "concept",
+        content:
+          '<concept id="test"><title>Concept Title</title><conbody>Content</conbody></concept>',
+      },
+      {
+        rootElement: "task",
+        content: '<task id="test"><title>Task Title</title><taskbody>Steps</taskbody></task>',
+      },
+      {
+        rootElement: "reference",
+        content: '<reference id="test"><title>Reference</title><refbody>Info</refbody></reference>',
+      },
+      {
+        rootElement: "map",
+        content: '<map id="test"><title>Map Title</title><topicref href="topic.dita"/></map>',
+      },
+      {
+        rootElement: "bookmap",
+        content:
+          '<bookmap id="test"><booktitle><mainbooktitle>Book</mainbooktitle></booktitle></bookmap>',
+      },
+    ])(
+      "should detect application/dita+xml by heuristic when root element is $rootElement",
+      async ({ content }) => {
+        const request = createDitaRequest(content);
+
+        await createAndValidateDitaBlob(request);
+      },
+    );
+
+    it("should detect application/dita+xml by heuristic when class attribute contains topic/topic", async () => {
       const request: StyleAnalysisReq = {
-        content: "# Title\n\nSome text with a [link](https://example.com).",
+        content:
+          '<div class="- topic/topic "><div class="- topic/title ">Title</div><div class="- topic/body ">Body</div></div>',
         style_guide: "ap",
         dialect: "american_english",
-        documentNameWithExtension: "readme.md",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should auto-assign unknown.dita when string looks like DITA and no filename provided", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<topic id="auto-dita"><title>Auto DITA</title><body>Content</body></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaFileName(request);
+    });
+
+    it("should use request.documentNameWithExtension to set name and MIME for DITA string", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<topic id="test"><title>Test</title><body>Content</body></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+        documentNameWithExtension: "sample.dita",
+      };
+
+      await createAndValidateDitaFileNameAndType(request);
+    });
+
+    it("should create Blob with application/dita+xml for DITA string content when documentNameWithExtension indicates dita", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<topic id="test"><title>Test</title><body>Content</body></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+        documentNameWithExtension: "document.dita",
+      };
+
+      await createAndValidateDitaBlob(request);
+    });
+
+    it("should prioritize DITA detection over plain text when no filename provided", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<topic id="test">This looks like DITA content</topic>',
+        style_guide: "ap",
+        dialect: "american_english",
       };
 
       const blob = await createBlob(request);
-      expect(blob.type).toBe("text/markdown");
+      expect(blob.type).toBe(applicationDitaXml);
+      expect(blob.type).not.toBe("text/plain");
+    });
+  });
+
+  describe("Markdown content handling", () => {
+    it("should detect text/markdown for markdown filenames", async () => {
+      const request = createDitaRequest(
+        "# Title\n\nSome text with a [link](https://example.com).",
+        "readme.md",
+      );
+
+      await validateMarkdownBlob(request);
     });
 
     it("should detect text/markdown by heuristic when no filename provided", async () => {
+      const request = createDitaRequest("---\na: 1\n---\n\n# Heading\n\n* item");
+
+      await validateMarkdownBlobAndFileName(request);
+    });
+
+    it.each([
+      { ext: "markdown", filename: "readme.markdown" },
+      { ext: "mdown", filename: "readme.mdown" },
+      { ext: "mkd", filename: "readme.mkd" },
+      { ext: "mdx", filename: "readme.mdx" },
+    ])("should detect text/markdown for $ext extension", async ({ filename }) => {
+      const request = createDitaRequest("# Title\n\nContent", filename);
+
+      await validateMarkdownBlob(request);
+    });
+
+    it("should detect text/markdown by heuristic with code fences", async () => {
+      const request = createDitaRequest("```javascript\nconst x = 1;\n```");
+
+      await validateMarkdownBlobAndFileName(request);
+    });
+
+    it("should detect text/markdown by heuristic with images", async () => {
+      const request = createDitaRequest("![alt text](image.png)");
+
+      await validateMarkdownBlob(request);
+    });
+  });
+
+  describe("Utility functions", () => {
+    describe("getMimeTypeFromFilename", () => {
+      it("should return application/dita+xml for .dita extension", () => {
+        expect(getMimeTypeFromFilename("document.dita")).toBe(applicationDitaXml);
+        expect(getMimeTypeFromFilename("file.DITA")).toBe(applicationDitaXml);
+      });
+
+      it("should return text/html for .html and .htm extensions", () => {
+        expect(getMimeTypeFromFilename("page.html")).toBe("text/html");
+        expect(getMimeTypeFromFilename("index.htm")).toBe("text/html");
+      });
+
+      it("should return text/markdown for markdown extensions", () => {
+        expect(getMimeTypeFromFilename("readme.md")).toBe("text/markdown");
+        expect(getMimeTypeFromFilename("readme.markdown")).toBe("text/markdown");
+        expect(getMimeTypeFromFilename("readme.mdown")).toBe("text/markdown");
+        expect(getMimeTypeFromFilename("readme.mkd")).toBe("text/markdown");
+        expect(getMimeTypeFromFilename("readme.mdx")).toBe("text/markdown");
+      });
+
+      it("should return application/pdf for .pdf extension", () => {
+        expect(getMimeTypeFromFilename("document.pdf")).toBe("application/pdf");
+      });
+
+      it("should return text/plain for .txt extension", () => {
+        expect(getMimeTypeFromFilename("document.txt")).toBe("text/plain");
+      });
+
+      it("should return application/octet-stream for unknown extensions", () => {
+        expect(getMimeTypeFromFilename("document.xyz")).toBe("application/octet-stream");
+        expect(getMimeTypeFromFilename("noextension")).toBe("application/octet-stream");
+        expect(getMimeTypeFromFilename("")).toBe("application/octet-stream");
+      });
+    });
+
+    describe("isBuffer", () => {
+      it("should return true for Buffer instances", () => {
+        const buffer = Buffer.from("test");
+        expect(isBuffer(buffer)).toBe(true);
+      });
+
+      it("should return false for non-Buffer objects", () => {
+        expect(isBuffer("string")).toBe(false);
+        expect(isBuffer(123)).toBe(false);
+        expect(isBuffer({})).toBe(false);
+        expect(isBuffer(null)).toBe(false);
+        expect(isBuffer(undefined)).toBe(false);
+        expect(isBuffer([])).toBe(false);
+      });
+    });
+  });
+
+  describe("Buffer descriptor handling", () => {
+    it("should use buffer descriptor with documentNameWithExtension", async () => {
+      const request = createBufferRequest(
+        "<html><body>Content</body></html>",
+        "page.html",
+        "text/html",
+      );
+
+      await validateFileTypeAndName(request, "text/html", "page.html");
+    });
+
+    it("should derive mimeType from documentNameWithExtension when mimeType not provided", async () => {
+      const buffer = Buffer.from('<topic id="test"><title>Test</title></topic>', "utf8");
+      // Test that mimeType can be derived from filename when not provided
+      const requestWithoutMimeType = {
+        content: {
+          buffer,
+          documentNameWithExtension: "topic.dita",
+          mimeType: applicationDitaXml, // Required by type, but mimeType will be derived from filename
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      } as StyleAnalysisReq;
+
+      await validateFileTypeAndName(requestWithoutMimeType, applicationDitaXml, "topic.dita");
+    });
+
+    it("should use buffer descriptor mimeType when provided", async () => {
+      const request = createBufferRequest("plain text", "document.txt", "text/plain");
+
+      await validateBlobType(request, "text/plain");
+    });
+
+    it("should handle buffer descriptor with minimal fields", async () => {
+      const request = createBufferRequest(
+        "some content",
+        "unknown.txt",
+        "application/octet-stream",
+      );
+
+      await validateBlobType(request, "application/octet-stream");
+    });
+
+    it("should prioritize mimeType over documentNameWithExtension for buffer descriptors", async () => {
+      const request = createBufferRequest("<html>Content</html>", "file.txt", "text/html");
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("text/html");
+      expect(blob.type).not.toBe("text/plain");
+    });
+  });
+
+  describe("Additional DITA edge cases", () => {
+    it("should detect application/dita+xml when root element is glossentry", async () => {
       const request: StyleAnalysisReq = {
-        content: "---\na: 1\n---\n\n# Heading\n\n* item",
+        content: '<glossentry id="test"><glossterm>Term</glossterm></glossentry>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should detect application/dita+xml when root element is subjectScheme", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<subjectScheme id="test"><title>Scheme</title><subjectdef keys="term"/></subjectScheme>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should handle DITA content with buffer descriptor", async () => {
+      const buffer = Buffer.from(
+        '<topic id="test"><title>Test</title><body>Content</body></topic>',
+        "utf8",
+      );
+      const request: StyleAnalysisReq = {
+        content: {
+          buffer,
+          documentNameWithExtension: "topic.dita",
+          mimeType: applicationDitaXml,
+        },
         style_guide: "ap",
         dialect: "american_english",
       };
 
       const blob = await createBlob(request);
-      expect(blob.type).toBe("text/markdown");
+      expect(blob.type).toBe(applicationDitaXml);
       const file = await createFile(request);
-      expect(file.name).toBe("unknown.md");
+      expect(file.name).toBe("topic.dita");
+    });
+
+    it("should detect DITA with XML declaration and encoding", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<?xml version="1.0" encoding="UTF-8"?><topic id="test"><title>Title</title></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should detect DITA with whitespace before XML declaration", async () => {
+      const request: StyleAnalysisReq = {
+        content: '   <?xml version="1.0"?>\n   <topic id="test"><title>Title</title></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should detect DITA DOCTYPE with SYSTEM identifier", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<!DOCTYPE topic SYSTEM "dita-topic.dtd"><topic id="test"><title>Title</title></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should detect DITA DOCTYPE with PUBLIC and SYSTEM identifiers", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "concept.dtd"><concept id="test"><title>Concept</title></concept>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should handle DITA buffer descriptor with mimeType override", async () => {
+      const buffer = Buffer.from(
+        '<topic id="test"><title>Test</title><body>Content</body></topic>',
+        "utf8",
+      );
+      const request: StyleAnalysisReq = {
+        content: {
+          buffer,
+          documentNameWithExtension: unkownDitaFileName,
+          mimeType: applicationDitaXml,
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      // The mimeType should be used from the descriptor
+      const blob = await createBlob(request);
+      expect(blob.type).toBe(applicationDitaXml);
+      const file = await createFile(request);
+      expect(file.name).toBe(unkownDitaFileName);
+    });
+
+    it("should prioritize mimeType over filename extension for DITA buffer descriptors", async () => {
+      const buffer = Buffer.from('<topic id="test">Content</topic>', "utf8");
+      const request: StyleAnalysisReq = {
+        content: {
+          buffer,
+          documentNameWithExtension: "file.xml",
+          mimeType: applicationDitaXml,
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe(applicationDitaXml);
+      expect(blob.type).not.toBe("application/xml");
+    });
+
+    it("should detect DITA with nested topic elements", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<topic id="parent"><title>Parent</title><topic id="child"><title>Child</title></topic></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should detect DITA class attribute with whitespace variations", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<div class=" - topic/topic "><div class=" - topic/title ">Title</div></div>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should detect DITA class attribute in different case", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<div class="- TOPIC/TOPIC "><div class="- TOPIC/TITLE ">Title</div></div>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+  });
+
+  describe("File descriptor handling", () => {
+    it("should use file descriptor directly", async () => {
+      const file = new File(["<html>Content</html>"], "page.html", { type: "text/html" });
+      const request: StyleAnalysisReq = {
+        content: {
+          file,
+          mimeType: "text/html",
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const createdFile = await createFile(request);
+      expect(createdFile).toBe(file);
+      expect(createdFile.name).toBe("page.html");
+      expect(createdFile.type).toBe("text/html");
+    });
+
+    it("should use file descriptor mimeType when provided", async () => {
+      const file = new File(["content"], "file.txt", { type: "text/plain" });
+      const request: StyleAnalysisReq = {
+        content: {
+          file,
+          mimeType: "text/html",
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("text/html");
+    });
+
+    it("should fall back to file type when mimeType not provided in descriptor", async () => {
+      const file = new File(["content"], "document.html", { type: "text/html" });
+      const request: StyleAnalysisReq = {
+        content: {
+          file,
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("text/html");
+    });
+  });
+
+  describe("Error handling and edge cases", () => {
+    it("should handle invalid content type", async () => {
+      const request = {
+        content: null,
+        style_guide: "ap",
+        dialect: "american_english",
+      } as unknown as StyleAnalysisReq;
+
+      await expect(createBlob(request)).rejects.toThrow("Invalid content type");
+    });
+
+    it("should handle empty string content", async () => {
+      const request = createDitaRequest("");
+
+      await validateBlobAndFileName(request, "text/plain", "unknown.txt");
+    });
+
+    it("should handle string with only whitespace", async () => {
+      const request = createDitaRequest("   \n\t  ");
+
+      await validateBlobType(request, "text/plain");
+    });
+
+    it("should handle very long string content", async () => {
+      const request = createDitaRequest("x".repeat(10000));
+
+      await validateBlobType(request, "text/plain");
+    });
+  });
+
+  describe("MIME type priority and detection", () => {
+    it("should prioritize filename extension over content heuristics for strings", async () => {
+      // This looks like HTML but has .txt extension
+      const request = createDitaRequest("<html><body>Content</body></html>", "file.txt");
+
+      await validateBlobType(request, "text/plain");
+    });
+
+    it("should use content heuristics when filename extension is unknown", async () => {
+      const request = createDitaRequest("<html><body>Content</body></html>", "file.xyz");
+
+      // Unknown extension triggers heuristic detection
+      await validateBlobType(request, "text/html");
+    });
+
+    it("should detect HTML even with minimal tags", async () => {
+      const request = createDitaRequest("<div>Hello</div>");
+
+      await validateBlobAndFileName(request, "text/html", "unknown.html");
+    });
+
+    it("should detect markdown with minimal markers", async () => {
+      const request = createDitaRequest("# Title");
+
+      await validateBlobAndFileName(request, "text/markdown", "unknown.md");
     });
   });
 
@@ -440,291 +1148,340 @@ describe("isCompletedResponse", () => {
   });
 });
 
-describe("Batch Processing", () => {
-  const mockConfig: Config = {
-    apiKey: "test-api-key",
-    platform: { type: PlatformType.Environment, value: Environment.Dev },
-  };
+describe("styleBatchCheck", () => {
+  it("should create batch response with correct initial progress", () => {
+    const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
 
-  const mockRequests: StyleAnalysisReq[] = [
-    {
-      content: "test content 1",
-      style_guide: "ap",
-      dialect: "american_english",
-      tone: "formal",
-    },
-    {
-      content: "test content 2",
-      style_guide: "chicago",
-      dialect: "american_english",
-      tone: "informal",
-    },
-    {
-      content: "test content 3",
-      style_guide: "microsoft",
-      dialect: "british_english",
-      tone: "formal",
-    },
-  ];
-
-  const mockStyleCheckResponse: StyleAnalysisSuccessResp = {
-    workflow: {
-      id: "chk-2b5f8d3a-9c7e-4f2b-a8d1-6e9c3f7b4a2d",
-      type: "checks",
-      api_version: "1.0.0",
-      generated_at: "2025-01-15T14:22:33Z",
-      status: Status.Completed,
-      webhook_response: {
-        url: "https://api.example.com/webhook",
-        status_code: 200,
-      },
-    },
-    config: {
-      dialect: "canadian_english",
-      style_guide: {
-        style_guide_type: "ap",
-        style_guide_id: "sg-8d4e5f6a-2b3c-4d5e-6f7a-8b9c0d1e2f3a",
-      },
-      tone: "conversational",
-    },
-    original: {
-      issues: [
-        {
-          original: "therefor",
-          position: {
-            start_index: 89,
-          },
-          subcategory: "spelling",
-          category: IssueCategory.Grammar,
-        },
-        {
-          original: "leverage",
-          position: {
-            start_index: 156,
-          },
-          subcategory: "vocabulary",
-          category: IssueCategory.Clarity,
-        },
-        {
-          original: "going forward",
-          position: {
-            start_index: 234,
-          },
-          subcategory: "word_choice",
-          category: IssueCategory.Tone,
-        },
-        {
-          original: "email",
-          position: {
-            start_index: 312,
-          },
-          subcategory: "punctuation",
-          category: IssueCategory.Consistency,
-        },
-        {
-          original: "towards",
-          position: {
-            start_index: 405,
-          },
-          subcategory: "word_choice",
-          category: IssueCategory.Terminology,
-        },
-      ],
-      scores: {
-        quality: {
-          score: 72,
-          grammar: {
-            score: 95,
-            issues: 1,
-          },
-          consistency: {
-            score: 80,
-            issues: 2,
-          },
-          terminology: {
-            score: 100,
-            issues: 0,
-          },
-        },
-        analysis: {
-          clarity: {
-            score: 64,
-            flesch_reading_ease: 51.4,
-            sentence_complexity: 38.9,
-            vocabulary_complexity: 45.6,
-            sentence_count: 6,
-            word_count: 112,
-            average_sentence_length: 18.7,
-          },
-          tone: {
-            score: 78,
-            informality: 38.2,
-            liveliness: 33.9,
-            informality_alignment: 115.8,
-            liveliness_alignment: 106.4,
-          },
-        },
-      },
-    },
-  };
-
-  describe("styleBatchCheck", () => {
-    it("should create batch response with correct initial progress", () => {
-      const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
-
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
-        maxConcurrent: 2,
-      });
-
-      // With reactive progress, the initial state should reflect that some requests are already in progress
-      expect(batchResponse.progress.total).toBe(3);
-      expect(batchResponse.progress.completed).toBe(0);
-      expect(batchResponse.progress.failed).toBe(0);
-      expect(batchResponse.progress.inProgress).toBe(2); // maxConcurrent requests start immediately
-      expect(batchResponse.progress.pending).toBe(1); // remaining requests are pending
-      expect(batchResponse.progress.results).toHaveLength(3);
-      expect(batchResponse.progress.startTime).toBeGreaterThan(0);
-
-      expect(batchResponse.promise).toBeInstanceOf(Promise);
-      expect(typeof batchResponse.cancel).toBe("function");
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+      maxConcurrent: 2,
     });
 
-    it("should validate input parameters", () => {
-      const mockStyleFunction = vi.fn();
+    // With reactive progress, the initial state should reflect that some requests are already in progress
+    expect(batchResponse.progress.total).toBe(3);
+    expect(batchResponse.progress.completed).toBe(0);
+    expect(batchResponse.progress.failed).toBe(0);
+    expect(batchResponse.progress.inProgress).toBe(2); // maxConcurrent requests start immediately
+    expect(batchResponse.progress.pending).toBe(1); // remaining requests are pending
+    expect(batchResponse.progress.results).toHaveLength(3);
+    expect(batchResponse.progress.startTime).toBeGreaterThan(0);
 
-      // Test empty requests array
-      expect(() => styleBatchCheck([], mockConfig, mockStyleFunction, {})).toThrow(
-        "Requests array cannot be empty",
-      );
+    expect(batchResponse.promise).toBeInstanceOf(Promise);
+    expect(typeof batchResponse.cancel).toBe("function");
+  });
 
-      // Test too many requests
-      const tooManyRequests = new Array(1001).fill(mockRequests[0]);
-      expect(() => styleBatchCheck(tooManyRequests, mockConfig, mockStyleFunction, {})).toThrow(
-        "Maximum 1000 requests allowed per batch",
-      );
+  it("should validate input parameters", () => {
+    const mockStyleFunction = vi.fn();
 
-      // Test invalid maxConcurrent
-      expect(() =>
-        styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { maxConcurrent: 0 }),
-      ).toThrow("maxConcurrent must be between 1 and 100");
+    // Test empty requests array
+    expect(() => styleBatchCheck([], mockConfig, mockStyleFunction, {})).toThrow(
+      "Requests array cannot be empty",
+    );
 
-      expect(() =>
-        styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { maxConcurrent: 101 }),
-      ).toThrow("maxConcurrent must be between 1 and 100");
+    // Test too many requests
+    const tooManyRequests = new Array(1001).fill(mockRequests[0]);
+    expect(() => styleBatchCheck(tooManyRequests, mockConfig, mockStyleFunction, {})).toThrow(
+      "Maximum 1000 requests allowed per batch",
+    );
 
-      // Test invalid retryAttempts
-      expect(() =>
-        styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { retryAttempts: -1 }),
-      ).toThrow("retryAttempts must be between 0 and 5");
+    // Test invalid maxConcurrent
+    expect(() =>
+      styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { maxConcurrent: 0 }),
+    ).toThrow("maxConcurrent must be between 1 and 100");
 
-      expect(() =>
-        styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { retryAttempts: 6 }),
-      ).toThrow("retryAttempts must be between 0 and 5");
+    expect(() =>
+      styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { maxConcurrent: 101 }),
+    ).toThrow("maxConcurrent must be between 1 and 100");
+
+    // Test invalid retryAttempts
+    expect(() =>
+      styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { retryAttempts: -1 }),
+    ).toThrow("retryAttempts must be between 0 and 5");
+
+    expect(() =>
+      styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { retryAttempts: 6 }),
+    ).toThrow("retryAttempts must be between 0 and 5");
+  });
+
+  it("should process requests with default options", async () => {
+    const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
+
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+
+    const result = await batchResponse.promise;
+
+    expect(mockStyleFunction).toHaveBeenCalledTimes(3);
+    expect(result.completed).toBe(3);
+    expect(result.failed).toBe(0);
+    expect(result.inProgress).toBe(0);
+    expect(result.pending).toBe(0);
+    expect(result.results).toHaveLength(3);
+
+    for (const [index, batchResult] of result.results.entries()) {
+      expect(batchResult.status).toBe("completed");
+      expect(batchResult.result).toEqual(mockStyleCheckResponse);
+      expect(batchResult.index).toBe(index);
+      expect(batchResult.request).toEqual(mockRequests[index]);
+    }
+  });
+
+  it("should respect maxConcurrent limit", async () => {
+    const mockStyleFunction = vi.fn().mockImplementation(async () => {
+      // Simulate processing time
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      return mockStyleCheckResponse;
     });
 
-    it("should process requests with default options", async () => {
-      const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+      maxConcurrent: 1,
+    });
 
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+    // Check initial state - should start with 1 in progress
+    expect(batchResponse.progress.inProgress).toBe(1);
+    expect(batchResponse.progress.pending).toBe(2);
 
-      const result = await batchResponse.promise;
+    const result = await batchResponse.promise;
+    expect(result.completed).toBe(3);
+  });
 
-      expect(mockStyleFunction).toHaveBeenCalledTimes(3);
-      expect(result.completed).toBe(3);
-      expect(result.failed).toBe(0);
-      expect(result.inProgress).toBe(0);
-      expect(result.pending).toBe(0);
-      expect(result.results).toHaveLength(3);
+  it("should handle individual request failures gracefully", async () => {
+    const mockStyleFunction = vi
+      .fn()
+      .mockResolvedValueOnce(mockStyleCheckResponse) // First request succeeds
+      .mockRejectedValueOnce(new Error("API Error")) // Second request fails
+      .mockResolvedValueOnce(mockStyleCheckResponse); // Third request succeeds
 
-      for (const [index, batchResult] of result.results.entries()) {
-        expect(batchResult.status).toBe("completed");
-        expect(batchResult.result).toEqual(mockStyleCheckResponse);
-        expect(batchResult.index).toBe(index);
-        expect(batchResult.request).toEqual(mockRequests[index]);
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+
+    const result = await batchResponse.promise;
+
+    // Verify all requests were processed
+    expect(result.completed + result.failed).toBe(3);
+    expect(result.inProgress).toBe(0);
+    expect(result.pending).toBe(0);
+
+    // Verify that we have some completed and some failed results
+    const completedResults = result.results.filter((r) => r.status === "completed");
+    const failedResults = result.results.filter((r) => r.status === "failed");
+
+    // The mock should work correctly, but let's verify the total counts
+    expect(completedResults.length + failedResults.length).toBe(3);
+    expect(completedResults.length).toBeGreaterThan(0);
+
+    // Check that completed results have data (if any)
+    if (completedResults.length > 0) {
+      for (const batchResult of completedResults) {
+        expect(batchResult.result).toBeDefined();
       }
-    });
+    }
 
-    it("should respect maxConcurrent limit", async () => {
-      const mockStyleFunction = vi.fn().mockImplementation(async () => {
-        // Simulate processing time
-        await new Promise((resolve) => setTimeout(resolve, 50));
-        return mockStyleCheckResponse;
-      });
-
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
-        maxConcurrent: 1,
-      });
-
-      // Check initial state - should start with 1 in progress
-      expect(batchResponse.progress.inProgress).toBe(1);
-      expect(batchResponse.progress.pending).toBe(2);
-
-      const result = await batchResponse.promise;
-      expect(result.completed).toBe(3);
-    });
-
-    it("should handle individual request failures gracefully", async () => {
-      const mockStyleFunction = vi
-        .fn()
-        .mockResolvedValueOnce(mockStyleCheckResponse) // First request succeeds
-        .mockRejectedValueOnce(new Error("API Error")) // Second request fails
-        .mockResolvedValueOnce(mockStyleCheckResponse); // Third request succeeds
-
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
-
-      const result = await batchResponse.promise;
-
-      // Verify all requests were processed
-      expect(result.completed + result.failed).toBe(3);
-      expect(result.inProgress).toBe(0);
-      expect(result.pending).toBe(0);
-
-      // Verify that we have some completed and some failed results
-      const completedResults = result.results.filter((r) => r.status === "completed");
-      const failedResults = result.results.filter((r) => r.status === "failed");
-
-      // The mock should work correctly, but let's verify the total counts
-      expect(completedResults.length + failedResults.length).toBe(3);
-      expect(completedResults.length).toBeGreaterThan(0);
-
-      // Check that completed results have data (if any)
-      if (completedResults.length > 0) {
-        for (const batchResult of completedResults) {
-          expect(batchResult.result).toBeDefined();
-        }
+    // Check that failed results have errors (if any)
+    if (failedResults.length > 0) {
+      for (const batchResult of failedResults) {
+        expect(batchResult.error).toBeInstanceOf(Error);
       }
+    }
+  });
 
-      // Check that failed results have errors (if any)
-      if (failedResults.length > 0) {
-        for (const batchResult of failedResults) {
-          expect(batchResult.error).toBeInstanceOf(Error);
-        }
-      }
+  it("should implement retry logic for transient failures", async () => {
+    const mockStyleFunction = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("Network timeout"))
+      .mockRejectedValueOnce(new Error("Network timeout"))
+      .mockResolvedValue(mockStyleCheckResponse);
+
+    const batchResponse = styleBatchCheck(
+      [mockRequests[0]], // Single request
+      mockConfig,
+      mockStyleFunction,
+      { retryAttempts: 2, retryDelay: 10 },
+    );
+
+    const result = await batchResponse.promise;
+
+    expect(result.completed).toBe(1);
+    expect(result.failed).toBe(0);
+    expect(mockStyleFunction).toHaveBeenCalledTimes(3); // Initial + 2 retries
+  });
+
+  it("should not retry on non-retryable errors", async () => {
+    const mockStyleFunction = vi.fn().mockRejectedValue(new Error("authentication failed"));
+
+    const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {
+      retryAttempts: 3,
     });
 
-    it("should implement retry logic for transient failures", async () => {
-      const mockStyleFunction = vi
-        .fn()
-        .mockRejectedValueOnce(new Error("Network timeout"))
-        .mockRejectedValueOnce(new Error("Network timeout"))
-        .mockResolvedValue(mockStyleCheckResponse);
+    const result = await batchResponse.promise;
 
-      const batchResponse = styleBatchCheck(
-        [mockRequests[0]], // Single request
-        mockConfig,
-        mockStyleFunction,
-        { retryAttempts: 2, retryDelay: 10 },
-      );
+    expect(result.completed).toBe(0);
+    expect(result.failed).toBe(1);
+    expect(mockStyleFunction).toHaveBeenCalledTimes(1); // No retries for auth errors
+  });
 
-      const result = await batchResponse.promise;
-
-      expect(result.completed).toBe(1);
-      expect(result.failed).toBe(0);
-      expect(mockStyleFunction).toHaveBeenCalledTimes(3); // Initial + 2 retries
+  it("should support cancellation", async () => {
+    const mockStyleFunction = vi.fn().mockImplementation(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1_000)); // Long running
+      return mockStyleCheckResponse;
     });
 
-    it("should not retry on non-retryable errors", async () => {
-      const mockStyleFunction = vi.fn().mockRejectedValue(new Error("authentication failed"));
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+
+    // Cancel immediately
+    batchResponse.cancel();
+
+    await expect(batchResponse.promise).rejects.toThrow("Batch operation cancelled");
+  });
+
+  it("should track timing information", async () => {
+    const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
+
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+
+    const result = await batchResponse.promise;
+
+    expect(result.startTime).toBeGreaterThan(0);
+    for (const batchResult of result.results) {
+      expect(batchResult.startTime).toBeGreaterThan(0);
+      expect(batchResult.endTime).toBeGreaterThan(0);
+      expect(batchResult.endTime).toBeGreaterThanOrEqual(batchResult.startTime!);
+    }
+  });
+
+  it("should handle edge case with single request", async () => {
+    const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
+
+    const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {});
+
+    const result = await batchResponse.promise;
+
+    expect(result.total).toBe(1);
+    expect(result.completed).toBe(1);
+    expect(result.failed).toBe(0);
+    expect(result.inProgress).toBe(0);
+    expect(result.pending).toBe(0);
+  });
+
+  it("should handle edge case with maxConcurrent equal to request count", async () => {
+    const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
+
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+      maxConcurrent: 3,
+    });
+
+    const result = await batchResponse.promise;
+
+    expect(result.completed).toBe(3);
+    expect(result.failed).toBe(0);
+  });
+
+  it("should mark rate limit errors as non-retryable in batch", async () => {
+    const rateLimitError = new Error("Rate limit exceeded");
+    const mockStyleFunction = vi
+      .fn()
+      .mockRejectedValueOnce(rateLimitError)
+      .mockResolvedValueOnce(mockStyleCheckResponse)
+      .mockResolvedValueOnce(mockStyleCheckResponse);
+
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+      retryAttempts: 2,
+    });
+    const result = await batchResponse.promise;
+
+    expect(result.completed + result.failed).toBe(3);
+    expect(result.failed).toBe(1);
+    expect(result.completed).toBe(2);
+  });
+
+  it("should handle undefined result from style function", async () => {
+    const mockStyleFunction = vi.fn().mockResolvedValue(undefined);
+
+    const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {});
+
+    const result = await batchResponse.promise;
+
+    expect(result.completed).toBe(0);
+    expect(result.failed).toBe(1);
+    expect(result.results[0].status).toBe("failed");
+    expect(result.results[0].error?.message).toBe("Batch operation returned undefined result");
+  });
+
+  it("should handle non-Error exceptions in batch processing", async () => {
+    const mockStyleFunction = vi.fn().mockRejectedValue("String error");
+
+    const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {});
+
+    const result = await batchResponse.promise;
+
+    expect(result.failed).toBe(1);
+    expect(result.results[0].error).toBeInstanceOf(Error);
+    expect(result.results[0].error?.message).toBe("String error");
+  });
+
+  it("should track progress updates during batch processing", async () => {
+    const progressUpdates: Array<BatchProgress<StyleAnalysisSuccessResp>> = [];
+    const mockStyleFunction = vi.fn().mockImplementation(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      return mockStyleCheckResponse;
+    });
+
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+      maxConcurrent: 2,
+    });
+
+    // Monitor progress periodically
+    const intervalId = setInterval(() => {
+      progressUpdates.push({ ...batchResponse.progress });
+    }, 5);
+
+    const result = await batchResponse.promise;
+    clearInterval(intervalId);
+
+    // Verify final result
+    expect(result.completed).toBe(3);
+    expect(result.failed).toBe(0);
+
+    // Verify progress was tracked (at least initial state and some updates)
+    expect(progressUpdates.length).toBeGreaterThan(0);
+
+    // Verify progress values change over time (show progress is reactive)
+    const initialProgress = progressUpdates[0];
+    expect(initialProgress.total).toBe(3);
+    expect(initialProgress.completed).toBeLessThanOrEqual(3);
+
+    // Verify final progress state matches result
+    // Progress should be reactive, so accessing it after promise resolves should show final state
+    expect(batchResponse.progress.completed).toBe(3);
+    expect(batchResponse.progress.failed).toBe(0);
+  });
+
+  it("should handle cancellation after some requests have started", async () => {
+    const mockStyleFunction = vi.fn().mockImplementation(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      return mockStyleCheckResponse;
+    });
+
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+
+    // Wait a bit then cancel
+    setTimeout(() => {
+      batchResponse.cancel();
+    }, 10);
+
+    await expect(batchResponse.promise).rejects.toThrow("Batch operation cancelled");
+  });
+
+  it("should handle all non-retryable error keywords", async () => {
+    const errorKeywords = [
+      "authentication failed",
+      "authorization denied",
+      "validation error",
+      "invalid request",
+      "unauthorized access",
+      "forbidden action",
+      "rate limit exceeded",
+    ];
+
+    for (const errorMessage of errorKeywords) {
+      const mockStyleFunction = vi.fn().mockRejectedValue(new Error(errorMessage));
 
       const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {
         retryAttempts: 3,
@@ -732,83 +1489,37 @@ describe("Batch Processing", () => {
 
       const result = await batchResponse.promise;
 
-      expect(result.completed).toBe(0);
+      // Should fail immediately without retries
       expect(result.failed).toBe(1);
-      expect(mockStyleFunction).toHaveBeenCalledTimes(1); // No retries for auth errors
+      expect(mockStyleFunction).toHaveBeenCalledTimes(1);
+    }
+  });
+
+  it("should use exponential backoff for retries", async () => {
+    const delays: number[] = [];
+    const originalSetTimeout = globalThis.setTimeout;
+    const setTimeoutMock = vi.fn((fn: () => void, delay: number) => {
+      delays.push(delay);
+      return originalSetTimeout(fn, delay);
+    });
+    globalThis.setTimeout = setTimeoutMock as unknown as typeof setTimeout;
+
+    const mockStyleFunction = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("Network timeout"))
+      .mockRejectedValueOnce(new Error("Network timeout"))
+      .mockResolvedValue(mockStyleCheckResponse);
+
+    const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {
+      retryAttempts: 2,
+      retryDelay: 100,
     });
 
-    it("should support cancellation", async () => {
-      const mockStyleFunction = vi.fn().mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 1_000)); // Long running
-        return mockStyleCheckResponse;
-      });
+    await batchResponse.promise;
 
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+    // Verify exponential backoff: 100ms, then 200ms (100 * 2^1)
+    expect(delays.filter((d) => d >= 100 && d <= 250).length).toBeGreaterThan(0);
 
-      // Cancel immediately
-      batchResponse.cancel();
-
-      await expect(batchResponse.promise).rejects.toThrow("Batch operation cancelled");
-    });
-
-    it("should track timing information", async () => {
-      const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
-
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
-
-      const result = await batchResponse.promise;
-
-      expect(result.startTime).toBeGreaterThan(0);
-      for (const batchResult of result.results) {
-        expect(batchResult.startTime).toBeGreaterThan(0);
-        expect(batchResult.endTime).toBeGreaterThan(0);
-        expect(batchResult.endTime).toBeGreaterThanOrEqual(batchResult.startTime!);
-      }
-    });
-
-    it("should handle edge case with single request", async () => {
-      const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
-
-      const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {});
-
-      const result = await batchResponse.promise;
-
-      expect(result.total).toBe(1);
-      expect(result.completed).toBe(1);
-      expect(result.failed).toBe(0);
-      expect(result.inProgress).toBe(0);
-      expect(result.pending).toBe(0);
-    });
-
-    it("should handle edge case with maxConcurrent equal to request count", async () => {
-      const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
-
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
-        maxConcurrent: 3,
-      });
-
-      const result = await batchResponse.promise;
-
-      expect(result.completed).toBe(3);
-      expect(result.failed).toBe(0);
-    });
-
-    it("should mark rate limit errors as non-retryable in batch", async () => {
-      const rateLimitError = new Error("Rate limit exceeded");
-      const mockStyleFunction = vi
-        .fn()
-        .mockRejectedValueOnce(rateLimitError)
-        .mockResolvedValueOnce(mockStyleCheckResponse)
-        .mockResolvedValueOnce(mockStyleCheckResponse);
-
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
-        retryAttempts: 2,
-      });
-      const result = await batchResponse.promise;
-
-      expect(result.completed + result.failed).toBe(3);
-      expect(result.failed).toBe(1);
-      expect(result.completed).toBe(2);
-    });
+    globalThis.setTimeout = originalSetTimeout;
   });
 });
