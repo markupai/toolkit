@@ -126,14 +126,10 @@ export function getMimeTypeFromFilename(filename: string): string {
     case "html":
       return "text/html";
     case "markdown":
-      return "text/markdown";
     case "md":
-      return "text/markdown";
     case "mdown":
-      return "text/markdown";
-    case "mkd":
-      return "text/markdown";
     case "mdx":
+    case "mkd":
       return "text/markdown";
     case "pdf":
       return "application/pdf";
