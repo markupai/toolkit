@@ -122,7 +122,6 @@ export function getMimeTypeFromFilename(filename: string): string {
     case "dita":
       return "application/dita+xml";
     case "htm":
-      return "text/html";
     case "html":
       return "text/html";
     case "markdown":

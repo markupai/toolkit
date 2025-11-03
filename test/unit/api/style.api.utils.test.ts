@@ -409,34 +409,33 @@ describe("Style API Utils", () => {
   });
 
   describe("DITA content handling", () => {
-    it("should detect application/dita+xml by heuristic when DOCTYPE with DITA identifiers", async () => {
-      const request: StyleAnalysisReq = {
+    const createDitaRequest = (
+      content: string,
+      documentNameWithExtension?: string,
+    ): StyleAnalysisReq => ({
+      content,
+      style_guide: "ap",
+      dialect: "american_english",
+      ...(documentNameWithExtension ? { documentNameWithExtension } : {}),
+    });
+
+    it.each([
+      {
+        description: "DOCTYPE with DITA identifiers",
         content:
           '<!DOCTYPE topic PUBLIC "-//OASIS//DTD DITA Topic//EN" "topic.dtd"><topic id="test">Content</topic>',
-        style_guide: "ap",
-        dialect: "american_english",
-      };
-
-      await createAndValidateDitaBlobAndFile(request);
-    });
-
-    it("should detect application/dita+xml by heuristic when DOCTYPE references DTD file", async () => {
-      const request: StyleAnalysisReq = {
+      },
+      {
+        description: "DOCTYPE references DTD file",
         content: '<!DOCTYPE concept SYSTEM "concept.dtd"><concept id="test">Content</concept>',
-        style_guide: "ap",
-        dialect: "american_english",
-      };
-
-      await createAndValidateDitaBlobAndFile(request);
-    });
-
-    it("should detect application/dita+xml by heuristic when root element is topic", async () => {
-      const request: StyleAnalysisReq = {
+      },
+      {
+        description: "root element is topic",
         content:
           '<?xml version="1.0"?><topic id="test"><title>Title</title><body>Content</body></topic>',
-        style_guide: "ap",
-        dialect: "american_english",
-      };
+      },
+    ])("should detect application/dita+xml by heuristic when $description", async ({ content }) => {
+      const request = createDitaRequest(content);
 
       await createAndValidateDitaBlobAndFile(request);
     });
@@ -467,11 +466,7 @@ describe("Style API Utils", () => {
     ])(
       "should detect application/dita+xml by heuristic when root element is $rootElement",
       async ({ content }) => {
-        const request: StyleAnalysisReq = {
-          content,
-          style_guide: "ap",
-          dialect: "american_english",
-        };
+        const request = createDitaRequest(content);
 
         await createAndValidateDitaBlob(request);
       },
