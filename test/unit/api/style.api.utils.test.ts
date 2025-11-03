@@ -96,10 +96,10 @@ const failedResp = {
 const createAndValidateDitaBlobAndFile = async (request: StyleAnalysisReq) => {
   await createAndValidateDitaBlob(request);
 
-  await createAndValidateDitaFile(request);
+  await createAndValidateDitaFileName(request);
 };
 
-const createAndValidateDitaFile = async (request: StyleAnalysisReq) => {
+const createAndValidateDitaFileName = async (request: StyleAnalysisReq) => {
   const file = await createFile(request);
   expect(file.name).toBe("unknown.dita");
 };
@@ -455,7 +455,7 @@ describe("Style API Utils", () => {
         dialect: "american_english",
       };
 
-      await createAndValidateDitaFile(request);
+      await createAndValidateDitaFileName(request);
     });
 
     it("should use request.documentNameWithExtension to set name and MIME for DITA string", async () => {

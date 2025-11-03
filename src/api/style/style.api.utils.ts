@@ -119,10 +119,12 @@ export async function createStyleGuideReqFromPath(
 export function getMimeTypeFromFilename(filename: string): string {
   const extension = filename.split(".").pop()?.toLowerCase();
   switch (extension) {
-    case "pdf":
-      return "application/pdf";
-    case "txt":
-      return "text/plain";
+    case "dita":
+      return "application/dita+xml";
+    case "htm":
+      return "text/html";
+    case "html":
+      return "text/html";
     case "md":
       return "text/markdown";
     case "markdown":
@@ -133,12 +135,10 @@ export function getMimeTypeFromFilename(filename: string): string {
       return "text/markdown";
     case "mdx":
       return "text/markdown";
-    case "htm":
-      return "text/html";
-    case "html":
-      return "text/html";
-    case "dita":
-      return "application/dita+xml";
+    case "pdf":
+      return "application/pdf";
+    case "txt":
+      return "text/plain";
     default:
       return "application/octet-stream";
   }
@@ -279,10 +279,7 @@ function isLikelyDitaString(content: string): boolean {
 
   // Root element check following optional XML declaration
   // Check for XML declaration followed by root element, or just root element at start
-  if (
-    new RegExp(String.raw`^\s*<\?xml[^>]*\?>\s*<(?:${rootNames})\b`, "is").test(sample) ||
-    new RegExp(String.raw`^\s*<(?:${rootNames})\b`, "i").test(sample)
-  ) {
+  if (new RegExp(String.raw`^(?:\s*<\?xml[^>]*\?>)?\s*<(?:${rootNames})\b`, "is").test(sample)) {
     return true;
   }
 
