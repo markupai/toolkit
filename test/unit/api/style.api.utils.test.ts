@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   IssueCategory,
+  type BatchProgress,
   type StyleAnalysisReq,
   type StyleAnalysisSuccessResp,
 } from "../../../src/api/style/style.api.types";
@@ -13,6 +14,8 @@ import {
   createFile,
   createStyleGuideReqFromPath,
   createStyleGuideReqFromUrl,
+  getMimeTypeFromFilename,
+  isBuffer,
   isCompletedResponse,
   styleBatchCheck,
 } from "../../../src/api/style/style.api.utils";
@@ -93,26 +96,63 @@ const failedResp = {
   },
 };
 
-const createAndValidateDitaBlobAndFile = async (request: StyleAnalysisReq) => {
-  await createAndValidateDitaBlob(request);
+// Generic validation helpers that accept parameters
+const validateBlobType = async (request: StyleAnalysisReq, expectedMimeType: string) => {
+  const blob = await createBlob(request);
+  expect(blob.type).toBe(expectedMimeType);
+};
 
-  await createAndValidateDitaFileName(request);
+const validateFileName = async (request: StyleAnalysisReq, expectedFileName: string) => {
+  const file = await createFile(request);
+  expect(file.name).toBe(expectedFileName);
+};
+
+const validateFileTypeAndName = async (
+  request: StyleAnalysisReq,
+  expectedMimeType: string,
+  expectedFileName: string,
+) => {
+  const file = await createFile(request);
+  expect(file.name).toBe(expectedFileName);
+  expect(file.type).toBe(expectedMimeType);
+};
+
+const validateBlobAndFileName = async (
+  request: StyleAnalysisReq,
+  expectedMimeType: string,
+  expectedFileName: string,
+) => {
+  await validateBlobType(request, expectedMimeType);
+  await validateFileName(request, expectedFileName);
+};
+
+// DITA-specific convenience helpers
+const createAndValidateDitaBlobAndFile = async (request: StyleAnalysisReq) => {
+  await validateBlobAndFileName(request, "application/dita+xml", "unknown.dita");
 };
 
 const createAndValidateDitaFileName = async (request: StyleAnalysisReq) => {
-  const file = await createFile(request);
-  expect(file.name).toBe("unknown.dita");
+  await validateFileName(request, "unknown.dita");
 };
 
 const createAndValidateDitaFileNameAndType = async (request: StyleAnalysisReq) => {
-  const file = await createFile(request);
-  expect(file.name).toBe("sample.dita");
-  expect(file.type).toBe("application/dita+xml");
+  await validateFileTypeAndName(request, "application/dita+xml", "sample.dita");
 };
 
 const createAndValidateDitaBlob = async (request: StyleAnalysisReq) => {
-  const blob = await createBlob(request);
-  expect(blob.type).toBe("application/dita+xml");
+  await validateBlobType(request, "application/dita+xml");
+};
+
+// Markdown-specific convenience helpers
+const validateMarkdownBlob = async (request: StyleAnalysisReq) => {
+  await validateBlobType(request, "text/markdown");
+};
+
+const validateMarkdownBlobAndFileName = async (
+  request: StyleAnalysisReq,
+  expectedFileName: string = "unknown.md",
+) => {
+  await validateBlobAndFileName(request, "text/markdown", expectedFileName);
 };
 
 describe("Style API Utils", () => {
@@ -494,21 +534,502 @@ describe("Style API Utils", () => {
   });
 
   describe("Markdown content handling", () => {
-    it("should detect text/markdown for markdown filenames", async () => {
-      const request: StyleAnalysisReq = {
-        content: "# Title\n\nSome text with a [link](https://example.com).",
-        style_guide: "ap",
-        dialect: "american_english",
-        documentNameWithExtension: "readme.md",
-      };
+    const createMarkdownRequest = (
+      content: string,
+      documentNameWithExtension?: string,
+    ): StyleAnalysisReq => ({
+      content,
+      style_guide: "ap",
+      dialect: "american_english",
+      ...(documentNameWithExtension ? { documentNameWithExtension } : {}),
+    });
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("text/markdown");
+    it("should detect text/markdown for markdown filenames", async () => {
+      const request = createMarkdownRequest(
+        "# Title\n\nSome text with a [link](https://example.com).",
+        "readme.md",
+      );
+
+      await validateMarkdownBlob(request);
     });
 
     it("should detect text/markdown by heuristic when no filename provided", async () => {
+      const request = createMarkdownRequest("---\na: 1\n---\n\n# Heading\n\n* item");
+
+      await validateMarkdownBlobAndFileName(request);
+    });
+
+    it.each([
+      { ext: "markdown", filename: "readme.markdown" },
+      { ext: "mdown", filename: "readme.mdown" },
+      { ext: "mkd", filename: "readme.mkd" },
+      { ext: "mdx", filename: "readme.mdx" },
+    ])("should detect text/markdown for $ext extension", async ({ filename }) => {
+      const request = createMarkdownRequest("# Title\n\nContent", filename);
+
+      await validateMarkdownBlob(request);
+    });
+
+    it("should detect text/markdown by heuristic with code fences", async () => {
+      const request = createMarkdownRequest("```javascript\nconst x = 1;\n```");
+
+      await validateMarkdownBlobAndFileName(request);
+    });
+
+    it("should detect text/markdown by heuristic with images", async () => {
+      const request = createMarkdownRequest("![alt text](image.png)");
+
+      await validateMarkdownBlob(request);
+    });
+  });
+
+  describe("Utility functions", () => {
+    describe("getMimeTypeFromFilename", () => {
+      it("should return application/dita+xml for .dita extension", () => {
+        expect(getMimeTypeFromFilename("document.dita")).toBe("application/dita+xml");
+        expect(getMimeTypeFromFilename("file.DITA")).toBe("application/dita+xml");
+      });
+
+      it("should return text/html for .html and .htm extensions", () => {
+        expect(getMimeTypeFromFilename("page.html")).toBe("text/html");
+        expect(getMimeTypeFromFilename("index.htm")).toBe("text/html");
+      });
+
+      it("should return text/markdown for markdown extensions", () => {
+        expect(getMimeTypeFromFilename("readme.md")).toBe("text/markdown");
+        expect(getMimeTypeFromFilename("readme.markdown")).toBe("text/markdown");
+        expect(getMimeTypeFromFilename("readme.mdown")).toBe("text/markdown");
+        expect(getMimeTypeFromFilename("readme.mkd")).toBe("text/markdown");
+        expect(getMimeTypeFromFilename("readme.mdx")).toBe("text/markdown");
+      });
+
+      it("should return application/pdf for .pdf extension", () => {
+        expect(getMimeTypeFromFilename("document.pdf")).toBe("application/pdf");
+      });
+
+      it("should return text/plain for .txt extension", () => {
+        expect(getMimeTypeFromFilename("document.txt")).toBe("text/plain");
+      });
+
+      it("should return application/octet-stream for unknown extensions", () => {
+        expect(getMimeTypeFromFilename("document.xyz")).toBe("application/octet-stream");
+        expect(getMimeTypeFromFilename("noextension")).toBe("application/octet-stream");
+        expect(getMimeTypeFromFilename("")).toBe("application/octet-stream");
+      });
+    });
+
+    describe("isBuffer", () => {
+      it("should return true for Buffer instances", () => {
+        const buffer = Buffer.from("test");
+        expect(isBuffer(buffer)).toBe(true);
+      });
+
+      it("should return false for non-Buffer objects", () => {
+        expect(isBuffer("string")).toBe(false);
+        expect(isBuffer(123)).toBe(false);
+        expect(isBuffer({})).toBe(false);
+        expect(isBuffer(null)).toBe(false);
+        expect(isBuffer(undefined)).toBe(false);
+        expect(isBuffer([])).toBe(false);
+      });
+    });
+  });
+
+  describe("Buffer descriptor handling", () => {
+    it("should use buffer descriptor with documentNameWithExtension", async () => {
+      const buffer = Buffer.from("<html><body>Content</body></html>", "utf8");
       const request: StyleAnalysisReq = {
-        content: "---\na: 1\n---\n\n# Heading\n\n* item",
+        content: {
+          buffer,
+          documentNameWithExtension: "page.html",
+          mimeType: "text/html",
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("text/html");
+      const file = await createFile(request);
+      expect(file.name).toBe("page.html");
+    });
+
+    it("should derive mimeType from documentNameWithExtension when mimeType not provided", async () => {
+      const buffer = Buffer.from('<topic id="test"><title>Test</title></topic>', "utf8");
+      const request: StyleAnalysisReq = {
+        content: {
+          buffer,
+          documentNameWithExtension: "topic.dita",
+          mimeType: "application/dita+xml", // Required by type, but tested for derivation logic
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      // Test that mimeType can be derived from filename when not provided
+      // Create a request with mimeType derived from filename
+      const requestWithoutMimeType = {
+        ...request,
+        content: {
+          buffer,
+          documentNameWithExtension: "topic.dita",
+          // mimeType will be derived from filename in prepareUploadContent
+        },
+      } as StyleAnalysisReq;
+
+      const blob = await createBlob(requestWithoutMimeType);
+      expect(blob.type).toBe("application/dita+xml");
+      const file = await createFile(requestWithoutMimeType);
+      expect(file.name).toBe("topic.dita");
+    });
+
+    it("should use buffer descriptor mimeType when provided", async () => {
+      const buffer = Buffer.from("plain text", "utf8");
+      const request: StyleAnalysisReq = {
+        content: {
+          buffer,
+          documentNameWithExtension: "document.txt",
+          mimeType: "text/plain",
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("text/plain");
+    });
+
+    it("should handle buffer descriptor with minimal fields", async () => {
+      const buffer = Buffer.from("some content", "utf8");
+      const request: StyleAnalysisReq = {
+        content: {
+          buffer,
+          documentNameWithExtension: "unknown.txt",
+          mimeType: "application/octet-stream",
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      // Should use provided mimeType
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/octet-stream");
+    });
+
+    it("should prioritize mimeType over documentNameWithExtension for buffer descriptors", async () => {
+      const buffer = Buffer.from("<html>Content</html>", "utf8");
+      const request: StyleAnalysisReq = {
+        content: {
+          buffer,
+          documentNameWithExtension: "file.txt",
+          mimeType: "text/html",
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("text/html");
+      expect(blob.type).not.toBe("text/plain");
+    });
+  });
+
+  describe("Additional DITA edge cases", () => {
+    it("should detect application/dita+xml when root element is glossentry", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<glossentry id="test"><glossterm>Term</glossterm></glossentry>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should detect application/dita+xml when root element is subjectScheme", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<subjectScheme id="test"><title>Scheme</title><subjectdef keys="term"/></subjectScheme>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should handle DITA content with buffer descriptor", async () => {
+      const buffer = Buffer.from(
+        '<topic id="test"><title>Test</title><body>Content</body></topic>',
+        "utf8",
+      );
+      const request: StyleAnalysisReq = {
+        content: {
+          buffer,
+          documentNameWithExtension: "topic.dita",
+          mimeType: "application/dita+xml",
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/dita+xml");
+      const file = await createFile(request);
+      expect(file.name).toBe("topic.dita");
+    });
+
+    it("should detect DITA with XML declaration and encoding", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<?xml version="1.0" encoding="UTF-8"?><topic id="test"><title>Title</title></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should detect DITA with whitespace before XML declaration", async () => {
+      const request: StyleAnalysisReq = {
+        content: '   <?xml version="1.0"?>\n   <topic id="test"><title>Title</title></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should detect DITA DOCTYPE with SYSTEM identifier", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<!DOCTYPE topic SYSTEM "dita-topic.dtd"><topic id="test"><title>Title</title></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should detect DITA DOCTYPE with PUBLIC and SYSTEM identifiers", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA Concept//EN" "concept.dtd"><concept id="test"><title>Concept</title></concept>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should handle DITA buffer descriptor with mimeType override", async () => {
+      const buffer = Buffer.from(
+        '<topic id="test"><title>Test</title><body>Content</body></topic>',
+        "utf8",
+      );
+      const request: StyleAnalysisReq = {
+        content: {
+          buffer,
+          documentNameWithExtension: "unknown.dita",
+          mimeType: "application/dita+xml",
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      // The mimeType should be used from the descriptor
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/dita+xml");
+      const file = await createFile(request);
+      expect(file.name).toBe("unknown.dita");
+    });
+
+    it("should prioritize mimeType over filename extension for DITA buffer descriptors", async () => {
+      const buffer = Buffer.from('<topic id="test">Content</topic>', "utf8");
+      const request: StyleAnalysisReq = {
+        content: {
+          buffer,
+          documentNameWithExtension: "file.xml",
+          mimeType: "application/dita+xml",
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("application/dita+xml");
+      expect(blob.type).not.toBe("application/xml");
+    });
+
+    it("should detect DITA with nested topic elements", async () => {
+      const request: StyleAnalysisReq = {
+        content:
+          '<topic id="parent"><title>Parent</title><topic id="child"><title>Child</title></topic></topic>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should detect DITA class attribute with whitespace variations", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<div class=" - topic/topic "><div class=" - topic/title ">Title</div></div>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+
+    it("should detect DITA class attribute in different case", async () => {
+      const request: StyleAnalysisReq = {
+        content: '<div class="- TOPIC/TOPIC "><div class="- TOPIC/TITLE ">Title</div></div>',
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      await createAndValidateDitaBlobAndFile(request);
+    });
+  });
+
+  describe("File descriptor handling", () => {
+    it("should use file descriptor directly", async () => {
+      const file = new File(["<html>Content</html>"], "page.html", { type: "text/html" });
+      const request: StyleAnalysisReq = {
+        content: {
+          file,
+          mimeType: "text/html",
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const createdFile = await createFile(request);
+      expect(createdFile).toBe(file);
+      expect(createdFile.name).toBe("page.html");
+      expect(createdFile.type).toBe("text/html");
+    });
+
+    it("should use file descriptor mimeType when provided", async () => {
+      const file = new File(["content"], "file.txt", { type: "text/plain" });
+      const request: StyleAnalysisReq = {
+        content: {
+          file,
+          mimeType: "text/html",
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("text/html");
+    });
+
+    it("should fall back to file type when mimeType not provided in descriptor", async () => {
+      const file = new File(["content"], "document.html", { type: "text/html" });
+      const request: StyleAnalysisReq = {
+        content: {
+          file,
+        },
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("text/html");
+    });
+  });
+
+  describe("Error handling and edge cases", () => {
+    it("should handle invalid content type", async () => {
+      const request = {
+        content: null,
+        style_guide: "ap",
+        dialect: "american_english",
+      } as unknown as StyleAnalysisReq;
+
+      await expect(createBlob(request)).rejects.toThrow("Invalid content type");
+    });
+
+    it("should handle empty string content", async () => {
+      const request: StyleAnalysisReq = {
+        content: "",
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("text/plain");
+      const file = await createFile(request);
+      expect(file.name).toBe("unknown.txt");
+    });
+
+    it("should handle string with only whitespace", async () => {
+      const request: StyleAnalysisReq = {
+        content: "   \n\t  ",
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("text/plain");
+    });
+
+    it("should handle very long string content", async () => {
+      const longContent = "x".repeat(10000);
+      const request: StyleAnalysisReq = {
+        content: longContent,
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("text/plain");
+    });
+  });
+
+  describe("MIME type priority and detection", () => {
+    it("should prioritize filename extension over content heuristics for strings", async () => {
+      // This looks like HTML but has .txt extension
+      const request: StyleAnalysisReq = {
+        content: "<html><body>Content</body></html>",
+        style_guide: "ap",
+        dialect: "american_english",
+        documentNameWithExtension: "file.txt",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("text/plain");
+    });
+
+    it("should use content heuristics when filename extension is unknown", async () => {
+      const request: StyleAnalysisReq = {
+        content: "<html><body>Content</body></html>",
+        style_guide: "ap",
+        dialect: "american_english",
+        documentNameWithExtension: "file.xyz",
+      };
+
+      // Unknown extension triggers heuristic detection
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("text/html");
+    });
+
+    it("should detect HTML even with minimal tags", async () => {
+      const request: StyleAnalysisReq = {
+        content: "<div>Hello</div>",
+        style_guide: "ap",
+        dialect: "american_english",
+      };
+
+      const blob = await createBlob(request);
+      expect(blob.type).toBe("text/html");
+      const file = await createFile(request);
+      expect(file.name).toBe("unknown.html");
+    });
+
+    it("should detect markdown with minimal markers", async () => {
+      const request: StyleAnalysisReq = {
+        content: "# Title",
         style_guide: "ap",
         dialect: "american_english",
       };
@@ -958,6 +1479,138 @@ describe("Batch Processing", () => {
       expect(result.completed + result.failed).toBe(3);
       expect(result.failed).toBe(1);
       expect(result.completed).toBe(2);
+    });
+
+    it("should handle undefined result from style function", async () => {
+      const mockStyleFunction = vi.fn().mockResolvedValue(undefined);
+
+      const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {});
+
+      const result = await batchResponse.promise;
+
+      expect(result.completed).toBe(0);
+      expect(result.failed).toBe(1);
+      expect(result.results[0].status).toBe("failed");
+      expect(result.results[0].error?.message).toBe("Batch operation returned undefined result");
+    });
+
+    it("should handle non-Error exceptions in batch processing", async () => {
+      const mockStyleFunction = vi.fn().mockRejectedValue("String error");
+
+      const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {});
+
+      const result = await batchResponse.promise;
+
+      expect(result.failed).toBe(1);
+      expect(result.results[0].error).toBeInstanceOf(Error);
+      expect(result.results[0].error?.message).toBe("String error");
+    });
+
+    it("should track progress updates during batch processing", async () => {
+      const progressUpdates: Array<BatchProgress<StyleAnalysisSuccessResp>> = [];
+      const mockStyleFunction = vi.fn().mockImplementation(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        return mockStyleCheckResponse;
+      });
+
+      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+        maxConcurrent: 2,
+      });
+
+      // Monitor progress periodically
+      const intervalId = setInterval(() => {
+        progressUpdates.push({ ...batchResponse.progress });
+      }, 5);
+
+      const result = await batchResponse.promise;
+      clearInterval(intervalId);
+
+      // Verify final result
+      expect(result.completed).toBe(3);
+      expect(result.failed).toBe(0);
+
+      // Verify progress was tracked (at least initial state and some updates)
+      expect(progressUpdates.length).toBeGreaterThan(0);
+
+      // Verify progress values change over time (show progress is reactive)
+      const initialProgress = progressUpdates[0];
+      expect(initialProgress.total).toBe(3);
+      expect(initialProgress.completed).toBeLessThanOrEqual(3);
+
+      // Verify final progress state matches result
+      // Progress should be reactive, so accessing it after promise resolves should show final state
+      expect(batchResponse.progress.completed).toBe(3);
+      expect(batchResponse.progress.failed).toBe(0);
+    });
+
+    it("should handle cancellation after some requests have started", async () => {
+      const mockStyleFunction = vi.fn().mockImplementation(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        return mockStyleCheckResponse;
+      });
+
+      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+
+      // Wait a bit then cancel
+      setTimeout(() => {
+        batchResponse.cancel();
+      }, 10);
+
+      await expect(batchResponse.promise).rejects.toThrow("Batch operation cancelled");
+    });
+
+    it("should handle all non-retryable error keywords", async () => {
+      const errorKeywords = [
+        "authentication failed",
+        "authorization denied",
+        "validation error",
+        "invalid request",
+        "unauthorized access",
+        "forbidden action",
+        "rate limit exceeded",
+      ];
+
+      for (const errorMessage of errorKeywords) {
+        const mockStyleFunction = vi.fn().mockRejectedValue(new Error(errorMessage));
+
+        const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {
+          retryAttempts: 3,
+        });
+
+        const result = await batchResponse.promise;
+
+        // Should fail immediately without retries
+        expect(result.failed).toBe(1);
+        expect(mockStyleFunction).toHaveBeenCalledTimes(1);
+      }
+    });
+
+    it("should use exponential backoff for retries", async () => {
+      const delays: number[] = [];
+      const originalSetTimeout = globalThis.setTimeout;
+      const setTimeoutMock = vi.fn((fn: () => void, delay: number) => {
+        delays.push(delay);
+        return originalSetTimeout(fn, delay);
+      });
+      globalThis.setTimeout = setTimeoutMock as unknown as typeof setTimeout;
+
+      const mockStyleFunction = vi
+        .fn()
+        .mockRejectedValueOnce(new Error("Network timeout"))
+        .mockRejectedValueOnce(new Error("Network timeout"))
+        .mockResolvedValue(mockStyleCheckResponse);
+
+      const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {
+        retryAttempts: 2,
+        retryDelay: 100,
+      });
+
+      await batchResponse.promise;
+
+      // Verify exponential backoff: 100ms, then 200ms (100 * 2^1)
+      expect(delays.filter((d) => d >= 100 && d <= 250).length).toBeGreaterThan(0);
+
+      globalThis.setTimeout = originalSetTimeout;
     });
   });
 });

@@ -125,9 +125,9 @@ export function getMimeTypeFromFilename(filename: string): string {
       return "text/html";
     case "html":
       return "text/html";
-    case "md":
-      return "text/markdown";
     case "markdown":
+      return "text/markdown";
+    case "md":
       return "text/markdown";
     case "mdown":
       return "text/markdown";
