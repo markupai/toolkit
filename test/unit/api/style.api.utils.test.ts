@@ -93,6 +93,28 @@ const failedResp = {
   },
 };
 
+const createAndValidateDitaBlobAndFile = async (request: StyleAnalysisReq) => {
+  await createAndValidateDitaBlob(request);
+
+  await createAndValidateDitaFile(request);
+};
+
+const createAndValidateDitaFile = async (request: StyleAnalysisReq) => {
+  const file = await createFile(request);
+  expect(file.name).toBe("unknown.dita");
+};
+
+const createAndValidateDitaFileNameAndType = async (request: StyleAnalysisReq) => {
+  const file = await createFile(request);
+  expect(file.name).toBe("sample.dita");
+  expect(file.type).toBe("application/dita+xml");
+};
+
+const createAndValidateDitaBlob = async (request: StyleAnalysisReq) => {
+  const blob = await createBlob(request);
+  expect(blob.type).toBe("application/dita+xml");
+};
+
 describe("Style API Utils", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -355,10 +377,7 @@ describe("Style API Utils", () => {
         dialect: "american_english",
       };
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("application/dita+xml");
-      const file = await createFile(request);
-      expect(file.name).toBe("unknown.dita");
+      await createAndValidateDitaBlobAndFile(request);
     });
 
     it("should detect application/dita+xml by heuristic when DOCTYPE references DTD file", async () => {
@@ -368,10 +387,7 @@ describe("Style API Utils", () => {
         dialect: "american_english",
       };
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("application/dita+xml");
-      const file = await createFile(request);
-      expect(file.name).toBe("unknown.dita");
+      await createAndValidateDitaBlobAndFile(request);
     });
 
     it("should detect application/dita+xml by heuristic when root element is topic", async () => {
@@ -382,10 +398,7 @@ describe("Style API Utils", () => {
         dialect: "american_english",
       };
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("application/dita+xml");
-      const file = await createFile(request);
-      expect(file.name).toBe("unknown.dita");
+      await createAndValidateDitaBlobAndFile(request);
     });
 
     it("should detect application/dita+xml by heuristic when root element is concept", async () => {
@@ -396,8 +409,7 @@ describe("Style API Utils", () => {
         dialect: "american_english",
       };
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("application/dita+xml");
+      await createAndValidateDitaBlob(request);
     });
 
     it("should detect application/dita+xml by heuristic when root element is task", async () => {
@@ -407,8 +419,7 @@ describe("Style API Utils", () => {
         dialect: "american_english",
       };
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("application/dita+xml");
+      await createAndValidateDitaBlob(request);
     });
 
     it("should detect application/dita+xml by heuristic when root element is reference", async () => {
@@ -418,8 +429,7 @@ describe("Style API Utils", () => {
         dialect: "american_english",
       };
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("application/dita+xml");
+      await createAndValidateDitaBlob(request);
     });
 
     it("should detect application/dita+xml by heuristic when root element is map", async () => {
@@ -429,8 +439,7 @@ describe("Style API Utils", () => {
         dialect: "american_english",
       };
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("application/dita+xml");
+      await createAndValidateDitaBlob(request);
     });
 
     it("should detect application/dita+xml by heuristic when root element is bookmap", async () => {
@@ -441,8 +450,7 @@ describe("Style API Utils", () => {
         dialect: "american_english",
       };
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("application/dita+xml");
+      await createAndValidateDitaBlob(request);
     });
 
     it("should detect application/dita+xml by heuristic when class attribute contains topic/topic", async () => {
@@ -453,10 +461,7 @@ describe("Style API Utils", () => {
         dialect: "american_english",
       };
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("application/dita+xml");
-      const file = await createFile(request);
-      expect(file.name).toBe("unknown.dita");
+      await createAndValidateDitaBlobAndFile(request);
     });
 
     it("should auto-assign unknown.dita when string looks like DITA and no filename provided", async () => {
@@ -466,9 +471,7 @@ describe("Style API Utils", () => {
         dialect: "american_english",
       };
 
-      const file = await createFile(request);
-      expect(file.name).toBe("unknown.dita");
-      expect(file.type).toBe("application/dita+xml");
+      await createAndValidateDitaFile(request);
     });
 
     it("should use request.documentNameWithExtension to set name and MIME for DITA string", async () => {
@@ -479,9 +482,7 @@ describe("Style API Utils", () => {
         documentNameWithExtension: "sample.dita",
       };
 
-      const file = await createFile(request);
-      expect(file.name).toBe("sample.dita");
-      expect(file.type).toBe("application/dita+xml");
+      await createAndValidateDitaFileNameAndType(request);
     });
 
     it("should create Blob with application/dita+xml for DITA string content when documentNameWithExtension indicates dita", async () => {
@@ -492,8 +493,7 @@ describe("Style API Utils", () => {
         documentNameWithExtension: "document.dita",
       };
 
-      const blob = await createBlob(request);
-      expect(blob.type).toBe("application/dita+xml");
+      await createAndValidateDitaBlob(request);
     });
 
     it("should prioritize DITA detection over plain text when no filename provided", async () => {
