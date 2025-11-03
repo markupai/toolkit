@@ -254,32 +254,36 @@ const validateBlobAndFileName = async (
 };
 
 // DITA-specific convenience helpers
+const applicationDitaXml = "application/dita+xml";
+const unkownDitaFileName = "unknown.dita";
+
 const createAndValidateDitaBlobAndFile = async (request: StyleAnalysisReq) => {
-  await validateBlobAndFileName(request, "application/dita+xml", "unknown.dita");
+  await validateBlobAndFileName(request, applicationDitaXml, unkownDitaFileName);
 };
 
 const createAndValidateDitaFileName = async (request: StyleAnalysisReq) => {
-  await validateFileName(request, "unknown.dita");
+  await validateFileName(request, unkownDitaFileName);
 };
 
 const createAndValidateDitaFileNameAndType = async (request: StyleAnalysisReq) => {
-  await validateFileTypeAndName(request, "application/dita+xml", "sample.dita");
+  await validateFileTypeAndName(request, applicationDitaXml, "sample.dita");
 };
 
 const createAndValidateDitaBlob = async (request: StyleAnalysisReq) => {
-  await validateBlobType(request, "application/dita+xml");
+  await validateBlobType(request, applicationDitaXml);
 };
 
 // Markdown-specific convenience helpers
+const markdownMimeType = "text/markdown";
 const validateMarkdownBlob = async (request: StyleAnalysisReq) => {
-  await validateBlobType(request, "text/markdown");
+  await validateBlobType(request, markdownMimeType);
 };
 
 const validateMarkdownBlobAndFileName = async (
   request: StyleAnalysisReq,
   expectedFileName: string = "unknown.md",
 ) => {
-  await validateBlobAndFileName(request, "text/markdown", expectedFileName);
+  await validateBlobAndFileName(request, markdownMimeType, expectedFileName);
 };
 
 const createDitaRequest = (
@@ -650,7 +654,7 @@ describe("Style API Utils", () => {
       };
 
       const blob = await createBlob(request);
-      expect(blob.type).toBe("application/dita+xml");
+      expect(blob.type).toBe(applicationDitaXml);
       expect(blob.type).not.toBe("text/plain");
     });
   });
@@ -698,8 +702,8 @@ describe("Style API Utils", () => {
   describe("Utility functions", () => {
     describe("getMimeTypeFromFilename", () => {
       it("should return application/dita+xml for .dita extension", () => {
-        expect(getMimeTypeFromFilename("document.dita")).toBe("application/dita+xml");
-        expect(getMimeTypeFromFilename("file.DITA")).toBe("application/dita+xml");
+        expect(getMimeTypeFromFilename("document.dita")).toBe(applicationDitaXml);
+        expect(getMimeTypeFromFilename("file.DITA")).toBe(applicationDitaXml);
       });
 
       it("should return text/html for .html and .htm extensions", () => {
@@ -708,11 +712,11 @@ describe("Style API Utils", () => {
       });
 
       it("should return text/markdown for markdown extensions", () => {
-        expect(getMimeTypeFromFilename("readme.md")).toBe("text/markdown");
-        expect(getMimeTypeFromFilename("readme.markdown")).toBe("text/markdown");
-        expect(getMimeTypeFromFilename("readme.mdown")).toBe("text/markdown");
-        expect(getMimeTypeFromFilename("readme.mkd")).toBe("text/markdown");
-        expect(getMimeTypeFromFilename("readme.mdx")).toBe("text/markdown");
+        expect(getMimeTypeFromFilename("readme.md")).toBe(markdownMimeType);
+        expect(getMimeTypeFromFilename("readme.markdown")).toBe(markdownMimeType);
+        expect(getMimeTypeFromFilename("readme.mdown")).toBe(markdownMimeType);
+        expect(getMimeTypeFromFilename("readme.mkd")).toBe(markdownMimeType);
+        expect(getMimeTypeFromFilename("readme.mdx")).toBe(markdownMimeType);
       });
 
       it("should return application/pdf for .pdf extension", () => {
@@ -772,7 +776,7 @@ describe("Style API Utils", () => {
         content: {
           buffer,
           documentNameWithExtension: "topic.dita",
-          mimeType: "application/dita+xml", // Required by type, but tested for derivation logic
+          mimeType: applicationDitaXml, // Required by type, but tested for derivation logic
         },
         style_guide: "ap",
         dialect: "american_english",
@@ -790,7 +794,7 @@ describe("Style API Utils", () => {
       } as StyleAnalysisReq;
 
       const blob = await createBlob(requestWithoutMimeType);
-      expect(blob.type).toBe("application/dita+xml");
+      expect(blob.type).toBe(applicationDitaXml);
       const file = await createFile(requestWithoutMimeType);
       expect(file.name).toBe("topic.dita");
     });
@@ -877,14 +881,14 @@ describe("Style API Utils", () => {
         content: {
           buffer,
           documentNameWithExtension: "topic.dita",
-          mimeType: "application/dita+xml",
+          mimeType: applicationDitaXml,
         },
         style_guide: "ap",
         dialect: "american_english",
       };
 
       const blob = await createBlob(request);
-      expect(blob.type).toBe("application/dita+xml");
+      expect(blob.type).toBe(applicationDitaXml);
       const file = await createFile(request);
       expect(file.name).toBe("topic.dita");
     });
@@ -940,8 +944,8 @@ describe("Style API Utils", () => {
       const request: StyleAnalysisReq = {
         content: {
           buffer,
-          documentNameWithExtension: "unknown.dita",
-          mimeType: "application/dita+xml",
+          documentNameWithExtension: unkownDitaFileName,
+          mimeType: applicationDitaXml,
         },
         style_guide: "ap",
         dialect: "american_english",
@@ -949,9 +953,9 @@ describe("Style API Utils", () => {
 
       // The mimeType should be used from the descriptor
       const blob = await createBlob(request);
-      expect(blob.type).toBe("application/dita+xml");
+      expect(blob.type).toBe(applicationDitaXml);
       const file = await createFile(request);
-      expect(file.name).toBe("unknown.dita");
+      expect(file.name).toBe(unkownDitaFileName);
     });
 
     it("should prioritize mimeType over filename extension for DITA buffer descriptors", async () => {
@@ -960,14 +964,14 @@ describe("Style API Utils", () => {
         content: {
           buffer,
           documentNameWithExtension: "file.xml",
-          mimeType: "application/dita+xml",
+          mimeType: applicationDitaXml,
         },
         style_guide: "ap",
         dialect: "american_english",
       };
 
       const blob = await createBlob(request);
-      expect(blob.type).toBe("application/dita+xml");
+      expect(blob.type).toBe(applicationDitaXml);
       expect(blob.type).not.toBe("application/xml");
     });
 
@@ -1147,7 +1151,7 @@ describe("Style API Utils", () => {
       };
 
       const blob = await createBlob(request);
-      expect(blob.type).toBe("text/markdown");
+      expect(blob.type).toBe(markdownMimeType);
       const file = await createFile(request);
       expect(file.name).toBe("unknown.md");
     });
