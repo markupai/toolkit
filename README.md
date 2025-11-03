@@ -275,14 +275,14 @@ npm run test:integration
 The project includes linting and formatting tools:
 
 ```bash
-# Lint the code
-npm run lint
+# Check for linting issues
+npm run lint:check
 
 # Fix linting issues
 npm run lint:fix
 
 # Format code with Prettier
-npm run format
+npm run format:fix
 ```
 
 ## License
