@@ -401,57 +401,41 @@ describe("Style API Utils", () => {
       await createAndValidateDitaBlobAndFile(request);
     });
 
-    it("should detect application/dita+xml by heuristic when root element is concept", async () => {
-      const request: StyleAnalysisReq = {
+    it.each([
+      {
+        rootElement: "concept",
         content:
           '<concept id="test"><title>Concept Title</title><conbody>Content</conbody></concept>',
-        style_guide: "ap",
-        dialect: "american_english",
-      };
-
-      await createAndValidateDitaBlob(request);
-    });
-
-    it("should detect application/dita+xml by heuristic when root element is task", async () => {
-      const request: StyleAnalysisReq = {
+      },
+      {
+        rootElement: "task",
         content: '<task id="test"><title>Task Title</title><taskbody>Steps</taskbody></task>',
-        style_guide: "ap",
-        dialect: "american_english",
-      };
-
-      await createAndValidateDitaBlob(request);
-    });
-
-    it("should detect application/dita+xml by heuristic when root element is reference", async () => {
-      const request: StyleAnalysisReq = {
+      },
+      {
+        rootElement: "reference",
         content: '<reference id="test"><title>Reference</title><refbody>Info</refbody></reference>',
-        style_guide: "ap",
-        dialect: "american_english",
-      };
-
-      await createAndValidateDitaBlob(request);
-    });
-
-    it("should detect application/dita+xml by heuristic when root element is map", async () => {
-      const request: StyleAnalysisReq = {
+      },
+      {
+        rootElement: "map",
         content: '<map id="test"><title>Map Title</title><topicref href="topic.dita"/></map>',
-        style_guide: "ap",
-        dialect: "american_english",
-      };
-
-      await createAndValidateDitaBlob(request);
-    });
-
-    it("should detect application/dita+xml by heuristic when root element is bookmap", async () => {
-      const request: StyleAnalysisReq = {
+      },
+      {
+        rootElement: "bookmap",
         content:
           '<bookmap id="test"><booktitle><mainbooktitle>Book</mainbooktitle></booktitle></bookmap>',
-        style_guide: "ap",
-        dialect: "american_english",
-      };
+      },
+    ])(
+      "should detect application/dita+xml by heuristic when root element is $rootElement",
+      async ({ content }) => {
+        const request: StyleAnalysisReq = {
+          content,
+          style_guide: "ap",
+          dialect: "american_english",
+        };
 
-      await createAndValidateDitaBlob(request);
-    });
+        await createAndValidateDitaBlob(request);
+      },
+    );
 
     it("should detect application/dita+xml by heuristic when class attribute contains topic/topic", async () => {
       const request: StyleAnalysisReq = {
