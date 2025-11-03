@@ -96,6 +96,133 @@ const failedResp = {
   },
 };
 
+const mockConfig: Config = {
+  apiKey: "test-api-key",
+  platform: { type: PlatformType.Environment, value: Environment.Dev },
+};
+
+const mockRequests: StyleAnalysisReq[] = [
+  {
+    content: "test content 1",
+    style_guide: "ap",
+    dialect: "american_english",
+    tone: "formal",
+  },
+  {
+    content: "test content 2",
+    style_guide: "chicago",
+    dialect: "american_english",
+    tone: "informal",
+  },
+  {
+    content: "test content 3",
+    style_guide: "microsoft",
+    dialect: "british_english",
+    tone: "formal",
+  },
+];
+
+const mockStyleCheckResponse: StyleAnalysisSuccessResp = {
+  workflow: {
+    id: "chk-2b5f8d3a-9c7e-4f2b-a8d1-6e9c3f7b4a2d",
+    type: "checks",
+    api_version: "1.0.0",
+    generated_at: "2025-01-15T14:22:33Z",
+    status: Status.Completed,
+    webhook_response: {
+      url: "https://api.example.com/webhook",
+      status_code: 200,
+    },
+  },
+  config: {
+    dialect: "canadian_english",
+    style_guide: {
+      style_guide_type: "ap",
+      style_guide_id: "sg-8d4e5f6a-2b3c-4d5e-6f7a-8b9c0d1e2f3a",
+    },
+    tone: "conversational",
+  },
+  original: {
+    issues: [
+      {
+        original: "therefor",
+        position: {
+          start_index: 89,
+        },
+        subcategory: "spelling",
+        category: IssueCategory.Grammar,
+      },
+      {
+        original: "leverage",
+        position: {
+          start_index: 156,
+        },
+        subcategory: "vocabulary",
+        category: IssueCategory.Clarity,
+      },
+      {
+        original: "going forward",
+        position: {
+          start_index: 234,
+        },
+        subcategory: "word_choice",
+        category: IssueCategory.Tone,
+      },
+      {
+        original: "email",
+        position: {
+          start_index: 312,
+        },
+        subcategory: "punctuation",
+        category: IssueCategory.Consistency,
+      },
+      {
+        original: "towards",
+        position: {
+          start_index: 405,
+        },
+        subcategory: "word_choice",
+        category: IssueCategory.Terminology,
+      },
+    ],
+    scores: {
+      quality: {
+        score: 72,
+        grammar: {
+          score: 95,
+          issues: 1,
+        },
+        consistency: {
+          score: 80,
+          issues: 2,
+        },
+        terminology: {
+          score: 100,
+          issues: 0,
+        },
+      },
+      analysis: {
+        clarity: {
+          score: 64,
+          flesch_reading_ease: 51.4,
+          sentence_complexity: 38.9,
+          vocabulary_complexity: 45.6,
+          sentence_count: 6,
+          word_count: 112,
+          average_sentence_length: 18.7,
+        },
+        tone: {
+          score: 78,
+          informality: 38.2,
+          liveliness: 33.9,
+          informality_alignment: 115.8,
+          liveliness_alignment: 106.4,
+        },
+      },
+    },
+  },
+};
+
 // Generic validation helpers that accept parameters
 const validateBlobType = async (request: StyleAnalysisReq, expectedMimeType: string) => {
   const blob = await createBlob(request);
@@ -154,6 +281,16 @@ const validateMarkdownBlobAndFileName = async (
 ) => {
   await validateBlobAndFileName(request, "text/markdown", expectedFileName);
 };
+
+const createDitaRequest = (
+  content: string,
+  documentNameWithExtension?: string,
+): StyleAnalysisReq => ({
+  content,
+  style_guide: "ap",
+  dialect: "american_english",
+  ...(documentNameWithExtension ? { documentNameWithExtension } : {}),
+});
 
 describe("Style API Utils", () => {
   beforeEach(() => {
@@ -409,16 +546,6 @@ describe("Style API Utils", () => {
   });
 
   describe("DITA content handling", () => {
-    const createDitaRequest = (
-      content: string,
-      documentNameWithExtension?: string,
-    ): StyleAnalysisReq => ({
-      content,
-      style_guide: "ap",
-      dialect: "american_english",
-      ...(documentNameWithExtension ? { documentNameWithExtension } : {}),
-    });
-
     it.each([
       {
         description: "DOCTYPE with DITA identifiers",
@@ -529,18 +656,8 @@ describe("Style API Utils", () => {
   });
 
   describe("Markdown content handling", () => {
-    const createMarkdownRequest = (
-      content: string,
-      documentNameWithExtension?: string,
-    ): StyleAnalysisReq => ({
-      content,
-      style_guide: "ap",
-      dialect: "american_english",
-      ...(documentNameWithExtension ? { documentNameWithExtension } : {}),
-    });
-
     it("should detect text/markdown for markdown filenames", async () => {
-      const request = createMarkdownRequest(
+      const request = createDitaRequest(
         "# Title\n\nSome text with a [link](https://example.com).",
         "readme.md",
       );
@@ -549,7 +666,7 @@ describe("Style API Utils", () => {
     });
 
     it("should detect text/markdown by heuristic when no filename provided", async () => {
-      const request = createMarkdownRequest("---\na: 1\n---\n\n# Heading\n\n* item");
+      const request = createDitaRequest("---\na: 1\n---\n\n# Heading\n\n* item");
 
       await validateMarkdownBlobAndFileName(request);
     });
@@ -560,19 +677,19 @@ describe("Style API Utils", () => {
       { ext: "mkd", filename: "readme.mkd" },
       { ext: "mdx", filename: "readme.mdx" },
     ])("should detect text/markdown for $ext extension", async ({ filename }) => {
-      const request = createMarkdownRequest("# Title\n\nContent", filename);
+      const request = createDitaRequest("# Title\n\nContent", filename);
 
       await validateMarkdownBlob(request);
     });
 
     it("should detect text/markdown by heuristic with code fences", async () => {
-      const request = createMarkdownRequest("```javascript\nconst x = 1;\n```");
+      const request = createDitaRequest("```javascript\nconst x = 1;\n```");
 
       await validateMarkdownBlobAndFileName(request);
     });
 
     it("should detect text/markdown by heuristic with images", async () => {
-      const request = createMarkdownRequest("![alt text](image.png)");
+      const request = createDitaRequest("![alt text](image.png)");
 
       await validateMarkdownBlob(request);
     });
@@ -1105,291 +1222,340 @@ describe("isCompletedResponse", () => {
   });
 });
 
-describe("Batch Processing", () => {
-  const mockConfig: Config = {
-    apiKey: "test-api-key",
-    platform: { type: PlatformType.Environment, value: Environment.Dev },
-  };
+describe("styleBatchCheck", () => {
+  it("should create batch response with correct initial progress", () => {
+    const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
 
-  const mockRequests: StyleAnalysisReq[] = [
-    {
-      content: "test content 1",
-      style_guide: "ap",
-      dialect: "american_english",
-      tone: "formal",
-    },
-    {
-      content: "test content 2",
-      style_guide: "chicago",
-      dialect: "american_english",
-      tone: "informal",
-    },
-    {
-      content: "test content 3",
-      style_guide: "microsoft",
-      dialect: "british_english",
-      tone: "formal",
-    },
-  ];
-
-  const mockStyleCheckResponse: StyleAnalysisSuccessResp = {
-    workflow: {
-      id: "chk-2b5f8d3a-9c7e-4f2b-a8d1-6e9c3f7b4a2d",
-      type: "checks",
-      api_version: "1.0.0",
-      generated_at: "2025-01-15T14:22:33Z",
-      status: Status.Completed,
-      webhook_response: {
-        url: "https://api.example.com/webhook",
-        status_code: 200,
-      },
-    },
-    config: {
-      dialect: "canadian_english",
-      style_guide: {
-        style_guide_type: "ap",
-        style_guide_id: "sg-8d4e5f6a-2b3c-4d5e-6f7a-8b9c0d1e2f3a",
-      },
-      tone: "conversational",
-    },
-    original: {
-      issues: [
-        {
-          original: "therefor",
-          position: {
-            start_index: 89,
-          },
-          subcategory: "spelling",
-          category: IssueCategory.Grammar,
-        },
-        {
-          original: "leverage",
-          position: {
-            start_index: 156,
-          },
-          subcategory: "vocabulary",
-          category: IssueCategory.Clarity,
-        },
-        {
-          original: "going forward",
-          position: {
-            start_index: 234,
-          },
-          subcategory: "word_choice",
-          category: IssueCategory.Tone,
-        },
-        {
-          original: "email",
-          position: {
-            start_index: 312,
-          },
-          subcategory: "punctuation",
-          category: IssueCategory.Consistency,
-        },
-        {
-          original: "towards",
-          position: {
-            start_index: 405,
-          },
-          subcategory: "word_choice",
-          category: IssueCategory.Terminology,
-        },
-      ],
-      scores: {
-        quality: {
-          score: 72,
-          grammar: {
-            score: 95,
-            issues: 1,
-          },
-          consistency: {
-            score: 80,
-            issues: 2,
-          },
-          terminology: {
-            score: 100,
-            issues: 0,
-          },
-        },
-        analysis: {
-          clarity: {
-            score: 64,
-            flesch_reading_ease: 51.4,
-            sentence_complexity: 38.9,
-            vocabulary_complexity: 45.6,
-            sentence_count: 6,
-            word_count: 112,
-            average_sentence_length: 18.7,
-          },
-          tone: {
-            score: 78,
-            informality: 38.2,
-            liveliness: 33.9,
-            informality_alignment: 115.8,
-            liveliness_alignment: 106.4,
-          },
-        },
-      },
-    },
-  };
-
-  describe("styleBatchCheck", () => {
-    it("should create batch response with correct initial progress", () => {
-      const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
-
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
-        maxConcurrent: 2,
-      });
-
-      // With reactive progress, the initial state should reflect that some requests are already in progress
-      expect(batchResponse.progress.total).toBe(3);
-      expect(batchResponse.progress.completed).toBe(0);
-      expect(batchResponse.progress.failed).toBe(0);
-      expect(batchResponse.progress.inProgress).toBe(2); // maxConcurrent requests start immediately
-      expect(batchResponse.progress.pending).toBe(1); // remaining requests are pending
-      expect(batchResponse.progress.results).toHaveLength(3);
-      expect(batchResponse.progress.startTime).toBeGreaterThan(0);
-
-      expect(batchResponse.promise).toBeInstanceOf(Promise);
-      expect(typeof batchResponse.cancel).toBe("function");
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+      maxConcurrent: 2,
     });
 
-    it("should validate input parameters", () => {
-      const mockStyleFunction = vi.fn();
+    // With reactive progress, the initial state should reflect that some requests are already in progress
+    expect(batchResponse.progress.total).toBe(3);
+    expect(batchResponse.progress.completed).toBe(0);
+    expect(batchResponse.progress.failed).toBe(0);
+    expect(batchResponse.progress.inProgress).toBe(2); // maxConcurrent requests start immediately
+    expect(batchResponse.progress.pending).toBe(1); // remaining requests are pending
+    expect(batchResponse.progress.results).toHaveLength(3);
+    expect(batchResponse.progress.startTime).toBeGreaterThan(0);
 
-      // Test empty requests array
-      expect(() => styleBatchCheck([], mockConfig, mockStyleFunction, {})).toThrow(
-        "Requests array cannot be empty",
-      );
+    expect(batchResponse.promise).toBeInstanceOf(Promise);
+    expect(typeof batchResponse.cancel).toBe("function");
+  });
 
-      // Test too many requests
-      const tooManyRequests = new Array(1001).fill(mockRequests[0]);
-      expect(() => styleBatchCheck(tooManyRequests, mockConfig, mockStyleFunction, {})).toThrow(
-        "Maximum 1000 requests allowed per batch",
-      );
+  it("should validate input parameters", () => {
+    const mockStyleFunction = vi.fn();
 
-      // Test invalid maxConcurrent
-      expect(() =>
-        styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { maxConcurrent: 0 }),
-      ).toThrow("maxConcurrent must be between 1 and 100");
+    // Test empty requests array
+    expect(() => styleBatchCheck([], mockConfig, mockStyleFunction, {})).toThrow(
+      "Requests array cannot be empty",
+    );
 
-      expect(() =>
-        styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { maxConcurrent: 101 }),
-      ).toThrow("maxConcurrent must be between 1 and 100");
+    // Test too many requests
+    const tooManyRequests = new Array(1001).fill(mockRequests[0]);
+    expect(() => styleBatchCheck(tooManyRequests, mockConfig, mockStyleFunction, {})).toThrow(
+      "Maximum 1000 requests allowed per batch",
+    );
 
-      // Test invalid retryAttempts
-      expect(() =>
-        styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { retryAttempts: -1 }),
-      ).toThrow("retryAttempts must be between 0 and 5");
+    // Test invalid maxConcurrent
+    expect(() =>
+      styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { maxConcurrent: 0 }),
+    ).toThrow("maxConcurrent must be between 1 and 100");
 
-      expect(() =>
-        styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { retryAttempts: 6 }),
-      ).toThrow("retryAttempts must be between 0 and 5");
+    expect(() =>
+      styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { maxConcurrent: 101 }),
+    ).toThrow("maxConcurrent must be between 1 and 100");
+
+    // Test invalid retryAttempts
+    expect(() =>
+      styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { retryAttempts: -1 }),
+    ).toThrow("retryAttempts must be between 0 and 5");
+
+    expect(() =>
+      styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, { retryAttempts: 6 }),
+    ).toThrow("retryAttempts must be between 0 and 5");
+  });
+
+  it("should process requests with default options", async () => {
+    const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
+
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+
+    const result = await batchResponse.promise;
+
+    expect(mockStyleFunction).toHaveBeenCalledTimes(3);
+    expect(result.completed).toBe(3);
+    expect(result.failed).toBe(0);
+    expect(result.inProgress).toBe(0);
+    expect(result.pending).toBe(0);
+    expect(result.results).toHaveLength(3);
+
+    for (const [index, batchResult] of result.results.entries()) {
+      expect(batchResult.status).toBe("completed");
+      expect(batchResult.result).toEqual(mockStyleCheckResponse);
+      expect(batchResult.index).toBe(index);
+      expect(batchResult.request).toEqual(mockRequests[index]);
+    }
+  });
+
+  it("should respect maxConcurrent limit", async () => {
+    const mockStyleFunction = vi.fn().mockImplementation(async () => {
+      // Simulate processing time
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      return mockStyleCheckResponse;
     });
 
-    it("should process requests with default options", async () => {
-      const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+      maxConcurrent: 1,
+    });
 
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+    // Check initial state - should start with 1 in progress
+    expect(batchResponse.progress.inProgress).toBe(1);
+    expect(batchResponse.progress.pending).toBe(2);
 
-      const result = await batchResponse.promise;
+    const result = await batchResponse.promise;
+    expect(result.completed).toBe(3);
+  });
 
-      expect(mockStyleFunction).toHaveBeenCalledTimes(3);
-      expect(result.completed).toBe(3);
-      expect(result.failed).toBe(0);
-      expect(result.inProgress).toBe(0);
-      expect(result.pending).toBe(0);
-      expect(result.results).toHaveLength(3);
+  it("should handle individual request failures gracefully", async () => {
+    const mockStyleFunction = vi
+      .fn()
+      .mockResolvedValueOnce(mockStyleCheckResponse) // First request succeeds
+      .mockRejectedValueOnce(new Error("API Error")) // Second request fails
+      .mockResolvedValueOnce(mockStyleCheckResponse); // Third request succeeds
 
-      for (const [index, batchResult] of result.results.entries()) {
-        expect(batchResult.status).toBe("completed");
-        expect(batchResult.result).toEqual(mockStyleCheckResponse);
-        expect(batchResult.index).toBe(index);
-        expect(batchResult.request).toEqual(mockRequests[index]);
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+
+    const result = await batchResponse.promise;
+
+    // Verify all requests were processed
+    expect(result.completed + result.failed).toBe(3);
+    expect(result.inProgress).toBe(0);
+    expect(result.pending).toBe(0);
+
+    // Verify that we have some completed and some failed results
+    const completedResults = result.results.filter((r) => r.status === "completed");
+    const failedResults = result.results.filter((r) => r.status === "failed");
+
+    // The mock should work correctly, but let's verify the total counts
+    expect(completedResults.length + failedResults.length).toBe(3);
+    expect(completedResults.length).toBeGreaterThan(0);
+
+    // Check that completed results have data (if any)
+    if (completedResults.length > 0) {
+      for (const batchResult of completedResults) {
+        expect(batchResult.result).toBeDefined();
       }
-    });
+    }
 
-    it("should respect maxConcurrent limit", async () => {
-      const mockStyleFunction = vi.fn().mockImplementation(async () => {
-        // Simulate processing time
-        await new Promise((resolve) => setTimeout(resolve, 50));
-        return mockStyleCheckResponse;
-      });
-
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
-        maxConcurrent: 1,
-      });
-
-      // Check initial state - should start with 1 in progress
-      expect(batchResponse.progress.inProgress).toBe(1);
-      expect(batchResponse.progress.pending).toBe(2);
-
-      const result = await batchResponse.promise;
-      expect(result.completed).toBe(3);
-    });
-
-    it("should handle individual request failures gracefully", async () => {
-      const mockStyleFunction = vi
-        .fn()
-        .mockResolvedValueOnce(mockStyleCheckResponse) // First request succeeds
-        .mockRejectedValueOnce(new Error("API Error")) // Second request fails
-        .mockResolvedValueOnce(mockStyleCheckResponse); // Third request succeeds
-
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
-
-      const result = await batchResponse.promise;
-
-      // Verify all requests were processed
-      expect(result.completed + result.failed).toBe(3);
-      expect(result.inProgress).toBe(0);
-      expect(result.pending).toBe(0);
-
-      // Verify that we have some completed and some failed results
-      const completedResults = result.results.filter((r) => r.status === "completed");
-      const failedResults = result.results.filter((r) => r.status === "failed");
-
-      // The mock should work correctly, but let's verify the total counts
-      expect(completedResults.length + failedResults.length).toBe(3);
-      expect(completedResults.length).toBeGreaterThan(0);
-
-      // Check that completed results have data (if any)
-      if (completedResults.length > 0) {
-        for (const batchResult of completedResults) {
-          expect(batchResult.result).toBeDefined();
-        }
+    // Check that failed results have errors (if any)
+    if (failedResults.length > 0) {
+      for (const batchResult of failedResults) {
+        expect(batchResult.error).toBeInstanceOf(Error);
       }
+    }
+  });
 
-      // Check that failed results have errors (if any)
-      if (failedResults.length > 0) {
-        for (const batchResult of failedResults) {
-          expect(batchResult.error).toBeInstanceOf(Error);
-        }
-      }
+  it("should implement retry logic for transient failures", async () => {
+    const mockStyleFunction = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("Network timeout"))
+      .mockRejectedValueOnce(new Error("Network timeout"))
+      .mockResolvedValue(mockStyleCheckResponse);
+
+    const batchResponse = styleBatchCheck(
+      [mockRequests[0]], // Single request
+      mockConfig,
+      mockStyleFunction,
+      { retryAttempts: 2, retryDelay: 10 },
+    );
+
+    const result = await batchResponse.promise;
+
+    expect(result.completed).toBe(1);
+    expect(result.failed).toBe(0);
+    expect(mockStyleFunction).toHaveBeenCalledTimes(3); // Initial + 2 retries
+  });
+
+  it("should not retry on non-retryable errors", async () => {
+    const mockStyleFunction = vi.fn().mockRejectedValue(new Error("authentication failed"));
+
+    const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {
+      retryAttempts: 3,
     });
 
-    it("should implement retry logic for transient failures", async () => {
-      const mockStyleFunction = vi
-        .fn()
-        .mockRejectedValueOnce(new Error("Network timeout"))
-        .mockRejectedValueOnce(new Error("Network timeout"))
-        .mockResolvedValue(mockStyleCheckResponse);
+    const result = await batchResponse.promise;
 
-      const batchResponse = styleBatchCheck(
-        [mockRequests[0]], // Single request
-        mockConfig,
-        mockStyleFunction,
-        { retryAttempts: 2, retryDelay: 10 },
-      );
+    expect(result.completed).toBe(0);
+    expect(result.failed).toBe(1);
+    expect(mockStyleFunction).toHaveBeenCalledTimes(1); // No retries for auth errors
+  });
 
-      const result = await batchResponse.promise;
-
-      expect(result.completed).toBe(1);
-      expect(result.failed).toBe(0);
-      expect(mockStyleFunction).toHaveBeenCalledTimes(3); // Initial + 2 retries
+  it("should support cancellation", async () => {
+    const mockStyleFunction = vi.fn().mockImplementation(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1_000)); // Long running
+      return mockStyleCheckResponse;
     });
 
-    it("should not retry on non-retryable errors", async () => {
-      const mockStyleFunction = vi.fn().mockRejectedValue(new Error("authentication failed"));
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+
+    // Cancel immediately
+    batchResponse.cancel();
+
+    await expect(batchResponse.promise).rejects.toThrow("Batch operation cancelled");
+  });
+
+  it("should track timing information", async () => {
+    const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
+
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+
+    const result = await batchResponse.promise;
+
+    expect(result.startTime).toBeGreaterThan(0);
+    for (const batchResult of result.results) {
+      expect(batchResult.startTime).toBeGreaterThan(0);
+      expect(batchResult.endTime).toBeGreaterThan(0);
+      expect(batchResult.endTime).toBeGreaterThanOrEqual(batchResult.startTime!);
+    }
+  });
+
+  it("should handle edge case with single request", async () => {
+    const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
+
+    const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {});
+
+    const result = await batchResponse.promise;
+
+    expect(result.total).toBe(1);
+    expect(result.completed).toBe(1);
+    expect(result.failed).toBe(0);
+    expect(result.inProgress).toBe(0);
+    expect(result.pending).toBe(0);
+  });
+
+  it("should handle edge case with maxConcurrent equal to request count", async () => {
+    const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
+
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+      maxConcurrent: 3,
+    });
+
+    const result = await batchResponse.promise;
+
+    expect(result.completed).toBe(3);
+    expect(result.failed).toBe(0);
+  });
+
+  it("should mark rate limit errors as non-retryable in batch", async () => {
+    const rateLimitError = new Error("Rate limit exceeded");
+    const mockStyleFunction = vi
+      .fn()
+      .mockRejectedValueOnce(rateLimitError)
+      .mockResolvedValueOnce(mockStyleCheckResponse)
+      .mockResolvedValueOnce(mockStyleCheckResponse);
+
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+      retryAttempts: 2,
+    });
+    const result = await batchResponse.promise;
+
+    expect(result.completed + result.failed).toBe(3);
+    expect(result.failed).toBe(1);
+    expect(result.completed).toBe(2);
+  });
+
+  it("should handle undefined result from style function", async () => {
+    const mockStyleFunction = vi.fn().mockResolvedValue(undefined);
+
+    const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {});
+
+    const result = await batchResponse.promise;
+
+    expect(result.completed).toBe(0);
+    expect(result.failed).toBe(1);
+    expect(result.results[0].status).toBe("failed");
+    expect(result.results[0].error?.message).toBe("Batch operation returned undefined result");
+  });
+
+  it("should handle non-Error exceptions in batch processing", async () => {
+    const mockStyleFunction = vi.fn().mockRejectedValue("String error");
+
+    const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {});
+
+    const result = await batchResponse.promise;
+
+    expect(result.failed).toBe(1);
+    expect(result.results[0].error).toBeInstanceOf(Error);
+    expect(result.results[0].error?.message).toBe("String error");
+  });
+
+  it("should track progress updates during batch processing", async () => {
+    const progressUpdates: Array<BatchProgress<StyleAnalysisSuccessResp>> = [];
+    const mockStyleFunction = vi.fn().mockImplementation(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      return mockStyleCheckResponse;
+    });
+
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
+      maxConcurrent: 2,
+    });
+
+    // Monitor progress periodically
+    const intervalId = setInterval(() => {
+      progressUpdates.push({ ...batchResponse.progress });
+    }, 5);
+
+    const result = await batchResponse.promise;
+    clearInterval(intervalId);
+
+    // Verify final result
+    expect(result.completed).toBe(3);
+    expect(result.failed).toBe(0);
+
+    // Verify progress was tracked (at least initial state and some updates)
+    expect(progressUpdates.length).toBeGreaterThan(0);
+
+    // Verify progress values change over time (show progress is reactive)
+    const initialProgress = progressUpdates[0];
+    expect(initialProgress.total).toBe(3);
+    expect(initialProgress.completed).toBeLessThanOrEqual(3);
+
+    // Verify final progress state matches result
+    // Progress should be reactive, so accessing it after promise resolves should show final state
+    expect(batchResponse.progress.completed).toBe(3);
+    expect(batchResponse.progress.failed).toBe(0);
+  });
+
+  it("should handle cancellation after some requests have started", async () => {
+    const mockStyleFunction = vi.fn().mockImplementation(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      return mockStyleCheckResponse;
+    });
+
+    const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+
+    // Wait a bit then cancel
+    setTimeout(() => {
+      batchResponse.cancel();
+    }, 10);
+
+    await expect(batchResponse.promise).rejects.toThrow("Batch operation cancelled");
+  });
+
+  it("should handle all non-retryable error keywords", async () => {
+    const errorKeywords = [
+      "authentication failed",
+      "authorization denied",
+      "validation error",
+      "invalid request",
+      "unauthorized access",
+      "forbidden action",
+      "rate limit exceeded",
+    ];
+
+    for (const errorMessage of errorKeywords) {
+      const mockStyleFunction = vi.fn().mockRejectedValue(new Error(errorMessage));
 
       const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {
         retryAttempts: 3,
@@ -1397,215 +1563,37 @@ describe("Batch Processing", () => {
 
       const result = await batchResponse.promise;
 
-      expect(result.completed).toBe(0);
+      // Should fail immediately without retries
       expect(result.failed).toBe(1);
-      expect(mockStyleFunction).toHaveBeenCalledTimes(1); // No retries for auth errors
+      expect(mockStyleFunction).toHaveBeenCalledTimes(1);
+    }
+  });
+
+  it("should use exponential backoff for retries", async () => {
+    const delays: number[] = [];
+    const originalSetTimeout = globalThis.setTimeout;
+    const setTimeoutMock = vi.fn((fn: () => void, delay: number) => {
+      delays.push(delay);
+      return originalSetTimeout(fn, delay);
+    });
+    globalThis.setTimeout = setTimeoutMock as unknown as typeof setTimeout;
+
+    const mockStyleFunction = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("Network timeout"))
+      .mockRejectedValueOnce(new Error("Network timeout"))
+      .mockResolvedValue(mockStyleCheckResponse);
+
+    const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {
+      retryAttempts: 2,
+      retryDelay: 100,
     });
 
-    it("should support cancellation", async () => {
-      const mockStyleFunction = vi.fn().mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 1_000)); // Long running
-        return mockStyleCheckResponse;
-      });
+    await batchResponse.promise;
 
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
+    // Verify exponential backoff: 100ms, then 200ms (100 * 2^1)
+    expect(delays.filter((d) => d >= 100 && d <= 250).length).toBeGreaterThan(0);
 
-      // Cancel immediately
-      batchResponse.cancel();
-
-      await expect(batchResponse.promise).rejects.toThrow("Batch operation cancelled");
-    });
-
-    it("should track timing information", async () => {
-      const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
-
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
-
-      const result = await batchResponse.promise;
-
-      expect(result.startTime).toBeGreaterThan(0);
-      for (const batchResult of result.results) {
-        expect(batchResult.startTime).toBeGreaterThan(0);
-        expect(batchResult.endTime).toBeGreaterThan(0);
-        expect(batchResult.endTime).toBeGreaterThanOrEqual(batchResult.startTime!);
-      }
-    });
-
-    it("should handle edge case with single request", async () => {
-      const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
-
-      const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {});
-
-      const result = await batchResponse.promise;
-
-      expect(result.total).toBe(1);
-      expect(result.completed).toBe(1);
-      expect(result.failed).toBe(0);
-      expect(result.inProgress).toBe(0);
-      expect(result.pending).toBe(0);
-    });
-
-    it("should handle edge case with maxConcurrent equal to request count", async () => {
-      const mockStyleFunction = vi.fn().mockResolvedValue(mockStyleCheckResponse);
-
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
-        maxConcurrent: 3,
-      });
-
-      const result = await batchResponse.promise;
-
-      expect(result.completed).toBe(3);
-      expect(result.failed).toBe(0);
-    });
-
-    it("should mark rate limit errors as non-retryable in batch", async () => {
-      const rateLimitError = new Error("Rate limit exceeded");
-      const mockStyleFunction = vi
-        .fn()
-        .mockRejectedValueOnce(rateLimitError)
-        .mockResolvedValueOnce(mockStyleCheckResponse)
-        .mockResolvedValueOnce(mockStyleCheckResponse);
-
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
-        retryAttempts: 2,
-      });
-      const result = await batchResponse.promise;
-
-      expect(result.completed + result.failed).toBe(3);
-      expect(result.failed).toBe(1);
-      expect(result.completed).toBe(2);
-    });
-
-    it("should handle undefined result from style function", async () => {
-      const mockStyleFunction = vi.fn().mockResolvedValue(undefined);
-
-      const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {});
-
-      const result = await batchResponse.promise;
-
-      expect(result.completed).toBe(0);
-      expect(result.failed).toBe(1);
-      expect(result.results[0].status).toBe("failed");
-      expect(result.results[0].error?.message).toBe("Batch operation returned undefined result");
-    });
-
-    it("should handle non-Error exceptions in batch processing", async () => {
-      const mockStyleFunction = vi.fn().mockRejectedValue("String error");
-
-      const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {});
-
-      const result = await batchResponse.promise;
-
-      expect(result.failed).toBe(1);
-      expect(result.results[0].error).toBeInstanceOf(Error);
-      expect(result.results[0].error?.message).toBe("String error");
-    });
-
-    it("should track progress updates during batch processing", async () => {
-      const progressUpdates: Array<BatchProgress<StyleAnalysisSuccessResp>> = [];
-      const mockStyleFunction = vi.fn().mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 10));
-        return mockStyleCheckResponse;
-      });
-
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {
-        maxConcurrent: 2,
-      });
-
-      // Monitor progress periodically
-      const intervalId = setInterval(() => {
-        progressUpdates.push({ ...batchResponse.progress });
-      }, 5);
-
-      const result = await batchResponse.promise;
-      clearInterval(intervalId);
-
-      // Verify final result
-      expect(result.completed).toBe(3);
-      expect(result.failed).toBe(0);
-
-      // Verify progress was tracked (at least initial state and some updates)
-      expect(progressUpdates.length).toBeGreaterThan(0);
-
-      // Verify progress values change over time (show progress is reactive)
-      const initialProgress = progressUpdates[0];
-      expect(initialProgress.total).toBe(3);
-      expect(initialProgress.completed).toBeLessThanOrEqual(3);
-
-      // Verify final progress state matches result
-      // Progress should be reactive, so accessing it after promise resolves should show final state
-      expect(batchResponse.progress.completed).toBe(3);
-      expect(batchResponse.progress.failed).toBe(0);
-    });
-
-    it("should handle cancellation after some requests have started", async () => {
-      const mockStyleFunction = vi.fn().mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        return mockStyleCheckResponse;
-      });
-
-      const batchResponse = styleBatchCheck(mockRequests, mockConfig, mockStyleFunction, {});
-
-      // Wait a bit then cancel
-      setTimeout(() => {
-        batchResponse.cancel();
-      }, 10);
-
-      await expect(batchResponse.promise).rejects.toThrow("Batch operation cancelled");
-    });
-
-    it("should handle all non-retryable error keywords", async () => {
-      const errorKeywords = [
-        "authentication failed",
-        "authorization denied",
-        "validation error",
-        "invalid request",
-        "unauthorized access",
-        "forbidden action",
-        "rate limit exceeded",
-      ];
-
-      for (const errorMessage of errorKeywords) {
-        const mockStyleFunction = vi.fn().mockRejectedValue(new Error(errorMessage));
-
-        const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {
-          retryAttempts: 3,
-        });
-
-        const result = await batchResponse.promise;
-
-        // Should fail immediately without retries
-        expect(result.failed).toBe(1);
-        expect(mockStyleFunction).toHaveBeenCalledTimes(1);
-      }
-    });
-
-    it("should use exponential backoff for retries", async () => {
-      const delays: number[] = [];
-      const originalSetTimeout = globalThis.setTimeout;
-      const setTimeoutMock = vi.fn((fn: () => void, delay: number) => {
-        delays.push(delay);
-        return originalSetTimeout(fn, delay);
-      });
-      globalThis.setTimeout = setTimeoutMock as unknown as typeof setTimeout;
-
-      const mockStyleFunction = vi
-        .fn()
-        .mockRejectedValueOnce(new Error("Network timeout"))
-        .mockRejectedValueOnce(new Error("Network timeout"))
-        .mockResolvedValue(mockStyleCheckResponse);
-
-      const batchResponse = styleBatchCheck([mockRequests[0]], mockConfig, mockStyleFunction, {
-        retryAttempts: 2,
-        retryDelay: 100,
-      });
-
-      await batchResponse.promise;
-
-      // Verify exponential backoff: 100ms, then 200ms (100 * 2^1)
-      expect(delays.filter((d) => d >= 100 && d <= 250).length).toBeGreaterThan(0);
-
-      globalThis.setTimeout = originalSetTimeout;
-    });
+    globalThis.setTimeout = originalSetTimeout;
   });
 });
