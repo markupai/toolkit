@@ -16,6 +16,7 @@ import type {
   StyleAnalysisReq,
   StyleAnalysisSuccessResp,
   BatchProgress,
+  BufferDescriptor,
 } from "../../../src/api/style/style.api.types";
 import { STYLE_DEFAULTS } from "../../../src/api/style/style.api.defaults";
 import { PlatformType } from "../../../src/utils/api.types";
@@ -23,7 +24,6 @@ import type { Config } from "../../../src/utils/api.types";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ApiError } from "../../../src/utils/errors";
-import type { BufferDescriptor } from "../../../src/api/style/style.api.types";
 
 // Helper function to create a BufferDescriptor from the batteries.pdf
 async function createTestPdfBuffer(): Promise<BufferDescriptor> {

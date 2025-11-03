@@ -15,13 +15,13 @@ import {
   submitStyleSuggestion,
 } from "../../../src/api/style/style.api";
 import { STYLE_DEFAULTS } from "../../../src/api/style/style.api.defaults";
-import {
+import type {
   StyleAnalysisReq,
   StyleAnalysisRewriteResp,
   StyleAnalysisSuccessResp,
   StyleAnalysisSuggestionResp,
 } from "../../../src/api/style/style.api.types";
-import { WorkflowConfig } from "../../../src/api/style/style.api.utils";
+import type { WorkflowConfig } from "../../../src/api/style/style.api.utils";
 import type { Config } from "../../../src/utils/api.types";
 import { Environment, PlatformType, Status } from "../../../src/utils/api.types";
 import { apiHandlers } from "../mocks/api.handlers";
