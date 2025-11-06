@@ -247,6 +247,26 @@ function loadResolvedConfig(): LicenseHeaderConfig {
   return loadLicenseHeaderConfig(configFilePath);
 }
 
+function main(): number {
+  const command: string | undefined = process.argv[2];
+
+  switch (command) {
+    case "check":
+      return checkLicenseHeaders(loadResolvedConfig());
+    case "fix":
+      addLicenseHeaders(loadResolvedConfig());
+      return 0;
+    case undefined:
+      console.error("No command provided");
+      printUsage();
+      return 1;
+    default:
+      console.error(`Unknown command: "${command}"`);
+      printUsage();
+      return 1;
+  }
+}
+
 function printUsage(): void {
   console.error(`Usage: ${basename(process.argv[1])} <check|fix> [--config <file>]`);
 }
@@ -270,53 +290,34 @@ function resolveConfigFilePath(): string {
   return hasConfigValue ? process.argv[configFlagIndex + 1] : DEFAULT_CONFIG_FILE_NAME;
 }
 
+function validateFileExtension(fileExtension: string) {
+  if (!/^\.[a-zA-Z0-9]+$/.test(fileExtension)) {
+    throw new Error(`Invalid configuration: bad file extension "${fileExtension}"`);
+  }
+}
+
 function validateFileExtensions(fileExtensions: readonly string[] | undefined): void {
   if (fileExtensions !== undefined) {
     if (fileExtensions.length === 0) {
       throw new Error("Invalid configuration: fileExtensions array must not be empty");
     }
 
-    // Validate that file extensions start with a dot
     for (const fileExtension of fileExtensions) {
-      if (!fileExtension.startsWith(".")) {
-        throw new Error(
-          `Invalid configuration: file extension "${fileExtension}" must start with a dot`,
-        );
-      }
+      validateFileExtension(fileExtension);
     }
   }
 }
 
-function validateUserLicenseHeaderConfig(userLicenseHeaderConfig: UserLicenseHeaderConfig): void {
-  validateFileExtensions(userLicenseHeaderConfig.fileExtensions);
-  validateNotBlank(userLicenseHeaderConfig.headerTemplate, "headerTemplate");
-  validateNotBlank(userLicenseHeaderConfig.author, "author");
-}
-
-function validateNotBlank(value: string | undefined, fieldName: string): void {
+function validateNotBlankString(value: string | undefined, fieldName: string): void {
   if (value !== undefined && isBlank(value)) {
     throw new Error(`Invalid configuration: ${fieldName} string must not be empty`);
   }
 }
 
-function main(): number {
-  const command: string | undefined = process.argv[2];
-
-  switch (command) {
-    case "check":
-      return checkLicenseHeaders(loadResolvedConfig());
-    case "fix":
-      addLicenseHeaders(loadResolvedConfig());
-      return 0;
-    case undefined:
-      console.error("No command provided");
-      printUsage();
-      return 1;
-    default:
-      console.error(`Unknown command: "${command}"`);
-      printUsage();
-      return 1;
-  }
+function validateUserLicenseHeaderConfig(userLicenseHeaderConfig: UserLicenseHeaderConfig): void {
+  validateFileExtensions(userLicenseHeaderConfig.fileExtensions);
+  validateNotBlankString(userLicenseHeaderConfig.headerTemplate, "headerTemplate");
+  validateNotBlankString(userLicenseHeaderConfig.author, "author");
 }
 
 process.exit(main());
