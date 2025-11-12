@@ -1,3 +1,4 @@
+import { fail } from "node:assert";
 import { readFileSync } from "node:fs";
 import { basename } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -1340,9 +1341,13 @@ describe("styleBatchCheck", () => {
 
     expect(result.startTime).toBeGreaterThan(0);
     for (const batchResult of result.results) {
-      expect(batchResult.startTime).toBeGreaterThan(0);
-      expect(batchResult.endTime).toBeGreaterThan(0);
-      expect(batchResult.endTime).toBeGreaterThanOrEqual(batchResult.startTime!);
+      if (batchResult.startTime !== undefined && batchResult.endTime !== undefined) {
+        expect(batchResult.startTime).toBeGreaterThan(0);
+        expect(batchResult.endTime).toBeGreaterThan(0);
+        expect(batchResult.endTime).toBeGreaterThanOrEqual(batchResult.startTime);
+      } else {
+        fail("startTime or endTime is undefined");
+      }
     }
   });
 

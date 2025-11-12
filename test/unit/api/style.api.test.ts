@@ -38,7 +38,7 @@ describe("Style API Unit Tests", () => {
     apiKey: "test-api-key",
     platform: { type: PlatformType.Environment, value: Environment.Dev },
   };
-  const mockWorkflowConfig: WorkflowConfig = {
+  const mockWorkflowConfig: WorkflowConfig & { timeoutMillis: number } = {
     ...mockConfig,
     timeoutMillis: 0,
   };
@@ -245,7 +245,7 @@ describe("Style API Unit Tests", () => {
 
       await testTimeout(
         () => styleCheck(mockStyleAnalysisRequest, mockWorkflowConfig),
-        mockWorkflowConfig.timeoutMillis!,
+        mockWorkflowConfig.timeoutMillis,
       );
     });
 
@@ -272,7 +272,7 @@ describe("Style API Unit Tests", () => {
 
       await testTimeout(
         () => styleSuggestions(mockStyleAnalysisRequest, mockWorkflowConfig),
-        mockWorkflowConfig.timeoutMillis!,
+        mockWorkflowConfig.timeoutMillis,
       );
     });
 
@@ -305,7 +305,7 @@ describe("Style API Unit Tests", () => {
 
       await testTimeout(
         () => styleRewrite(mockStyleAnalysisRequest, mockWorkflowConfig),
-        mockWorkflowConfig.timeoutMillis!,
+        mockWorkflowConfig.timeoutMillis,
       );
     });
 
