@@ -536,7 +536,7 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
   }
 
   private async executeWithRetry(request: StyleAnalysisReq): Promise<T> {
-    let lastError: Error;
+    let lastError: Error | undefined;
 
     for (let attempt = 0; attempt <= this.options.retryAttempts; attempt++) {
       try {
@@ -559,7 +559,7 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
       }
     }
 
-    throw lastError!;
+    throw lastError ?? new Error("Unknown error occurred during retry");
   }
 
   private shouldNotRetry(error: Error): boolean {

@@ -1,3 +1,4 @@
+import { fail } from "node:assert";
 import { describe, it, expect, beforeAll } from "vitest";
 import {
   submitStyleCheck,
@@ -47,13 +48,17 @@ function createTestBuffer(content: string): Buffer {
 describe("Style API Integration Tests", () => {
   let config: Config;
   beforeAll(() => {
-    const apiKey = process.env.API_KEY || "";
+    const apiKey = process.env.API_KEY;
     if (!apiKey) {
       throw new Error("API_KEY environment variable is required for integration tests");
     }
+    const platformUrl = process.env.TEST_PLATFORM_URL;
+    if (!platformUrl) {
+      throw new Error("TEST_PLATFORM_URL environment variable is required for integration tests");
+    }
     config = {
       apiKey,
-      platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
+      platform: { type: PlatformType.Url, value: platformUrl },
       rateLimit: { maxRetries: 3, initialDelayMs: 500, maxDelayMs: 2_000, jitter: true },
     };
   });
@@ -1044,10 +1049,13 @@ describe("Style API Integration Tests", () => {
         // Verify individual results
         for (const [index, batchResult] of result.results.entries()) {
           expect(batchResult.status).toBe("completed");
-          expect(batchResult.result).toBeDefined();
-          expect(batchResult.result!.workflow).toBeDefined();
-          expect(batchResult.result!.workflow.status).toBe("completed");
-          expect(batchResult.result!.original.scores).toBeDefined();
+          if (batchResult.result) {
+            expect(batchResult.result.workflow).toBeDefined();
+            expect(batchResult.result.workflow.status).toBe("completed");
+            expect(batchResult.result.original.scores).toBeDefined();
+          } else {
+            fail("batchResult.result is undefined");
+          }
           expect(batchResult.index).toBe(index);
           expect(batchResult.request).toEqual(mockBatchRequests[index]);
         }
@@ -1104,12 +1112,15 @@ describe("Style API Integration Tests", () => {
 
         for (const batchResult of result.results) {
           expect(batchResult.status).toBe("completed");
-          expect(batchResult.result).toBeDefined();
-          expect(batchResult.result!.workflow.id).toBeDefined();
-          expect(batchResult.result!.workflow.status).toBe("completed");
-          expect(batchResult.result!.original.scores).toBeDefined();
-          // Suggestions should have issues with suggestions
-          expect(Array.isArray(batchResult.result!.original.issues)).toBe(true);
+          if (batchResult.result) {
+            expect(batchResult.result.workflow.id).toBeDefined();
+            expect(batchResult.result.workflow.status).toBe("completed");
+            expect(batchResult.result.original.scores).toBeDefined();
+            // Suggestions should have issues with suggestions
+            expect(Array.isArray(batchResult.result.original.issues)).toBe(true);
+          } else {
+            fail("batchResult.result is undefined");
+          }
         }
       });
     });
@@ -1125,12 +1136,15 @@ describe("Style API Integration Tests", () => {
 
         for (const batchResult of result.results) {
           expect(batchResult.status).toBe("completed");
-          expect(batchResult.result).toBeDefined();
-          expect(batchResult.result!.workflow.id).toBeDefined();
-          expect(batchResult.result!.workflow.status).toBe("completed");
-          expect(batchResult.result!.original.scores).toBeDefined();
-          expect(batchResult.result!.rewrite).toBeDefined();
-          expect(batchResult.result!.rewrite.scores).toBeDefined();
+          if (batchResult.result) {
+            expect(batchResult.result.workflow.id).toBeDefined();
+            expect(batchResult.result.workflow.status).toBe("completed");
+            expect(batchResult.result.original.scores).toBeDefined();
+            expect(batchResult.result.rewrite).toBeDefined();
+            expect(batchResult.result.rewrite.scores).toBeDefined();
+          } else {
+            fail("batchResult.result is undefined");
+          }
         }
       });
     });
@@ -1339,10 +1353,13 @@ describe("Style API Integration Tests", () => {
         // Verify individual results for completed requests
         for (const [index, batchResult] of result.results.entries()) {
           if (batchResult.status === "completed") {
-            expect(batchResult.result).toBeDefined();
-            expect(batchResult.result!.workflow).toBeDefined();
-            expect(batchResult.result!.workflow.status).toBe("completed");
-            expect(batchResult.result!.original.scores).toBeDefined();
+            if (batchResult.result) {
+              expect(batchResult.result.workflow).toBeDefined();
+              expect(batchResult.result.workflow.status).toBe("completed");
+              expect(batchResult.result.original.scores).toBeDefined();
+            } else {
+              fail("batchResult.result is undefined");
+            }
             expect(batchResult.index).toBe(index);
             expect(batchResult.request).toEqual(largeBatch[index]);
           }

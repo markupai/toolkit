@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   verifyPlatformUrl,
   getCurrentPlatformUrl,
@@ -8,18 +8,18 @@ import { PlatformType } from "../../../src/utils/api.types";
 import type { Config } from "../../../src/utils/api.types";
 
 describe("API Utilities Integration Tests", () => {
-  let config: Config;
-
-  beforeAll(() => {
-    const apiKey = process.env.API_KEY || "";
-    if (!apiKey) {
-      throw new Error("API_KEY environment variable is required for integration tests");
-    }
-    config = {
-      apiKey,
-      platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
-    };
-  });
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    throw new Error("API_KEY environment variable is required for integration tests");
+  }
+  const platformUrl = process.env.TEST_PLATFORM_URL;
+  if (!platformUrl) {
+    throw new Error("TEST_PLATFORM_URL environment variable is required for integration tests");
+  }
+  const config: Config = {
+    apiKey,
+    platform: { type: PlatformType.Url, value: platformUrl },
+  };
 
   describe("Platform URL Verification", () => {
     describe("getCurrentPlatformUrl", () => {
@@ -72,7 +72,7 @@ describe("API Utilities Integration Tests", () => {
       it("should handle unauthorized access gracefully", async () => {
         const invalidConfig: Config = {
           apiKey: "invalid-api-key",
-          platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
+          platform: config.platform,
         };
         const result = await verifyPlatformUrl(invalidConfig);
         expect(result.success).toBe(false);

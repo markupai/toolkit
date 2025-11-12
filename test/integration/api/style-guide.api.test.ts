@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   listStyleGuides,
   createStyleGuide,
@@ -12,24 +12,23 @@ import { randomInt } from "node:crypto";
 import { createStyleGuideReqFromPath } from "../../../src/api/style/style.api.utils";
 
 describe("Style Guide Integration Tests", () => {
-  let config: Config;
-  beforeAll(() => {
-    const apiKey = process.env.API_KEY || "";
-    if (!apiKey) {
-      throw new Error("API_KEY environment variable is required for integration tests");
-    }
-    config = {
-      apiKey,
-      platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
-      rateLimit: { maxRetries: 3, initialDelayMs: 500, maxDelayMs: 2_000, jitter: true },
-    };
-  });
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    throw new Error("API_KEY environment variable is required for integration tests");
+  }
+  const platformUrl = process.env.TEST_PLATFORM_URL;
+  if (!platformUrl) {
+    throw new Error("TEST_PLATFORM_URL environment variable is required for integration tests");
+  }
+  const config: Config = {
+    apiKey,
+    platform: { type: PlatformType.Url, value: platformUrl },
+    rateLimit: { maxRetries: 3, initialDelayMs: 500, maxDelayMs: 2_000, jitter: true },
+  };
 
   describe("Style Guide Listing", () => {
     it("should list style guides", async () => {
       const response = await listStyleGuides(config);
-      expect(response).toBeDefined();
-      expect(Array.isArray(response)).toBe(true);
       expect(response.length).toBeGreaterThan(0);
       const firstStyleGuide = response[0];
       expect(firstStyleGuide).toHaveProperty("id");
@@ -49,7 +48,6 @@ describe("Style Guide Integration Tests", () => {
       const randomNumber = randomInt(10_000);
       const styleGuideName = `Integration Test Style Guide ${randomNumber}`;
       const response = await createStyleGuide({ file: pdfFile, name: styleGuideName }, config);
-      expect(response).toBeDefined();
       expect(response.id).toBeDefined();
       expect(response.name).toBe(styleGuideName);
       expect(response.created_at).toBeDefined();
@@ -84,13 +82,11 @@ describe("Style Guide Integration Tests", () => {
       const randomNumber = randomInt(10_000);
       const styleGuideName = `Utility Test Style Guide ${randomNumber}`;
       const request = await createStyleGuideReqFromPath(pdfPath, styleGuideName);
-      expect(request).toBeDefined();
       expect(request.file).toBeInstanceOf(File);
       expect(request.file.name).toBe("batteries.pdf");
       expect(request.file.type).toBe("application/pdf");
       expect(request.name).toBe(styleGuideName);
       const response = await createStyleGuide(request, config);
-      expect(response).toBeDefined();
       expect(response.id).toBeDefined();
       expect(response.name).toBe(styleGuideName);
       expect(response.created_at).toBeDefined();
@@ -102,13 +98,11 @@ describe("Style Guide Integration Tests", () => {
     it("should create style guide using utility function without custom name", async () => {
       const pdfPath2 = join(__dirname, "../test-data/batteries.pdf");
       const request2 = await createStyleGuideReqFromPath(pdfPath2);
-      expect(request2).toBeDefined();
       expect(request2.file).toBeInstanceOf(File);
       expect(request2.file.name).toBe("batteries.pdf");
       expect(request2.file.type).toBe("application/pdf");
       expect(request2.name).toBe("batteries");
       const response = await createStyleGuide(request2, config);
-      expect(response).toBeDefined();
       expect(response.id).toBeDefined();
       expect(response.name).toBe("batteries");
       expect(response.created_at).toBeDefined();
@@ -127,7 +121,7 @@ describe("Style Guide Integration Tests", () => {
     it("should return false for invalid API key", async () => {
       const invalidConfig: Config = {
         apiKey: "invalid-api-key",
-        platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
+        platform: config.platform,
       };
 
       const result = await validateToken(invalidConfig);
@@ -137,7 +131,7 @@ describe("Style Guide Integration Tests", () => {
     it("should return false for empty API key", async () => {
       const emptyConfig: Config = {
         apiKey: "",
-        platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
+        platform: config.platform,
       };
 
       const result = await validateToken(emptyConfig);

@@ -1,6 +1,4 @@
-import { describe, it, expect, beforeAll } from "vitest";
-import { PlatformType } from "../../../src/utils/api.types";
-import type { Config } from "../../../src/utils/api.types";
+import { describe, it, expect } from "vitest";
 
 // Normalize a comma-separated header value into a lowercase list for case-insensitive checks
 function parseHeaderList(value: string | null): string[] {
@@ -11,7 +9,6 @@ function parseHeaderList(value: string | null): string[] {
 }
 
 describe("CORS Integration Tests", () => {
-  let config: Config;
   const STYLE_API_ENDPOINTS = {
     STYLE_CHECKS: "/v1/style/checks",
     STYLE_SUGGESTIONS: "/v1/style/suggestions",
@@ -19,20 +16,17 @@ describe("CORS Integration Tests", () => {
   };
   const STYLE_GUIDES_ENDPOINT = "/v1/style-guides";
 
-  beforeAll(() => {
-    const apiKey = "";
-    config = {
-      apiKey,
-      platform: { type: PlatformType.Url, value: process.env.TEST_PLATFORM_URL! },
-    };
-  });
+  const platformUrl = process.env.TEST_PLATFORM_URL;
+  if (!platformUrl) {
+    throw new Error("TEST_PLATFORM_URL environment variable is required for integration tests");
+  }
 
   const testOrigins = ["https://uuid-2323423.ctfcloud.net", "https://app.contentful.com"];
 
   // Helper function to make OPTIONS request and check CORS headers
   async function testCorsHeaders(endpoint: string, description: string) {
     it(`should return proper CORS headers for ${description}`, async () => {
-      const url = `${config.platform!.value}${endpoint}`;
+      const url = `${platformUrl}${endpoint}`;
 
       for (const origin of testOrigins) {
         const response = await fetch(url, {
@@ -93,7 +87,7 @@ describe("CORS Integration Tests", () => {
     it("should return proper CORS headers for individual style guide endpoint", async () => {
       const styleGuideId = "test-style-guide-id";
       const endpoint = `${STYLE_GUIDES_ENDPOINT}/${styleGuideId}`;
-      const url = `${config.platform!.value}${endpoint}`;
+      const url = `${platformUrl}${endpoint}`;
 
       for (const origin of testOrigins) {
         const response = await fetch(url, {
@@ -137,7 +131,7 @@ describe("CORS Integration Tests", () => {
     it("should return proper CORS headers for individual style check endpoint", async () => {
       const workflowId = "test-workflow-id";
       const endpoint = `/v1/style/checks/${workflowId}`;
-      const url = `${config.platform!.value}${endpoint}`;
+      const url = `${platformUrl}${endpoint}`;
 
       for (const origin of testOrigins) {
         const response = await fetch(url, {
@@ -180,7 +174,7 @@ describe("CORS Integration Tests", () => {
       const origins = [...testOrigins];
 
       for (const origin of origins) {
-        const url = `${config.platform!.value}${STYLE_GUIDES_ENDPOINT}`;
+        const url = `${platformUrl}${STYLE_GUIDES_ENDPOINT}`;
 
         const response = await fetch(url, {
           method: "OPTIONS",
@@ -205,7 +199,7 @@ describe("CORS Integration Tests", () => {
   describe("CORS Headers with Different Request Methods", () => {
     it("should handle different request methods correctly", async () => {
       const methods = ["GET", "POST", "PUT", "DELETE", "PATCH"];
-      const url = `${config.platform!.value}${STYLE_GUIDES_ENDPOINT}`;
+      const url = `${platformUrl}${STYLE_GUIDES_ENDPOINT}`;
 
       for (const method of methods) {
         for (const origin of testOrigins) {
@@ -243,7 +237,7 @@ describe("CORS Integration Tests", () => {
         "Accept, Accept-Language, User-Agent, Authorization, Content-Language, Content-Type, Request-ID, X-Fern-Language, X-Fern-SDK-Name, X-Fern-SDK-Version, X-Integration-ID, X-Metrics-Key",
       ];
 
-      const url = `${config.platform!.value}${STYLE_GUIDES_ENDPOINT}`;
+      const url = `${platformUrl}${STYLE_GUIDES_ENDPOINT}`;
 
       for (const headers of headerCombinations) {
         for (const origin of testOrigins) {
@@ -284,7 +278,7 @@ describe("CORS Integration Tests", () => {
 
   describe("CORS Error Handling", () => {
     it("should handle malformed OPTIONS requests gracefully", async () => {
-      const url = `${config.platform!.value}${STYLE_GUIDES_ENDPOINT}`;
+      const url = `${platformUrl}${STYLE_GUIDES_ENDPOINT}`;
 
       // Test without Origin header
       const response1 = await fetch(url, {
@@ -311,7 +305,7 @@ describe("CORS Integration Tests", () => {
     });
 
     it("should handle invalid endpoints gracefully", async () => {
-      const url = `${config.platform!.value}/invalid-endpoint`;
+      const url = `${platformUrl}/invalid-endpoint`;
 
       const response = await fetch(url, {
         method: "OPTIONS",
