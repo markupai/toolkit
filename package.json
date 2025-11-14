@@ -42,7 +42,7 @@
   "devDependencies": {
     "@eslint/js": "9.39.1",
     "@types/node": "24.10.1",
-    "@vitest/coverage-v8": "4.0.8",
+    "@vitest/coverage-v8": "4.0.9",
     "dotenv": "17.2.3",
     "eslint": "9.39.1",
     "msw": "2.12.1",
