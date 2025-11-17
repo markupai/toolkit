@@ -48,7 +48,6 @@ jobs:
 
   integration-test:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
