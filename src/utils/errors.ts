@@ -77,9 +77,6 @@ export class ApiError extends Error {
     rawErrorData: Record<string, unknown> = {},
     cause?: unknown,
   ) {
-    // Leverage native Error cause when available
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore - TS supports ErrorOptions in lib, but to be safe we ignore if not present
     super(message, cause === undefined ? undefined : { cause });
     this.name = "ApiError";
     this.statusCode = statusCode;
