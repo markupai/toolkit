@@ -40,7 +40,7 @@ export async function submitStyleCheck(
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
-    throw new Error(`Failed to submit style check: ${error}`);
+    throw new Error(`Failed to submit style check: ${String(error)}`);
   }
   return response;
 }
@@ -64,7 +64,7 @@ export async function submitStyleSuggestion(
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
-    throw new Error(`Failed to submit style suggestion: ${error}`);
+    throw new Error(`Failed to submit style suggestion: ${String(error)}`);
   }
   return response;
 }
@@ -88,7 +88,7 @@ export async function submitStyleRewrite(
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
-    throw new Error(`Failed to submit style rewrite: ${error}`);
+    throw new Error(`Failed to submit style rewrite: ${String(error)}`);
   }
   return response;
 }
@@ -243,6 +243,6 @@ export function styleBatchOperation<T extends StyleAnalysisResponseType>(
     case "rewrite":
       return styleBatchRewrites(requests, config, options) as BatchResponse<T>;
     default:
-      throw new Error(`Invalid operation type: ${operationType}`);
+      throw new Error(`Invalid operation type: ${String(operationType)}`);
   }
 }

@@ -64,7 +64,7 @@ export async function verifyPlatformUrl(
     return {
       success: response.ok,
       url: platformUrl,
-      error: response.ok ? undefined : `HTTP ${response.status}: ${response.statusText}`,
+      error: response.ok ? undefined : `HTTP ${String(response.status)}: ${response.statusText}`,
     };
   } catch (error) {
     return {
@@ -105,8 +105,7 @@ export async function withRateLimitRetry<T>(
       };
       const error = err as RateLimitLike | Error;
 
-      const status =
-        (error as RateLimitLike)?.statusCode ?? (error as RateLimitLike)?.status ?? undefined;
+      const status = (error as RateLimitLike).statusCode ?? (error as RateLimitLike).status;
       const isRateLimit = status === 429;
 
       if (!isRateLimit) {
@@ -117,7 +116,7 @@ export async function withRateLimitRetry<T>(
       if (attempt >= maxRetries) {
         // Convert into our ApiError with rate limit type
         if ("statusCode" in (error as RateLimitLike)) {
-          const errBody = ((error as RateLimitLike).body as Record<string, unknown>) ?? {
+          const errBody = (error as RateLimitLike).body ?? {
             detail: "Rate limit exceeded",
           };
           const apiErr = ApiError.fromResponse(429, errBody);
@@ -141,7 +140,7 @@ export async function withRateLimitRetry<T>(
 
       // Respect Retry-After header if available
       let delayMs: number | undefined;
-      const headers = (error as RateLimitLike)?.headers;
+      const headers = (error as RateLimitLike).headers;
       const retryAfterHeader = (headers?.["Retry-After"] ??
         headers?.["retry-after"] ??
         headers?.["retry_after"]) as string | number | undefined;
@@ -150,7 +149,7 @@ export async function withRateLimitRetry<T>(
         const retryAfterSec =
           typeof retryAfterHeader === "string"
             ? Number.parseFloat(retryAfterHeader)
-            : Number(retryAfterHeader);
+            : retryAfterHeader;
         if (!Number.isNaN(retryAfterSec) && Number.isFinite(retryAfterSec)) {
           delayMs = Math.max(0, Math.floor(retryAfterSec * 1_000));
         }
@@ -161,8 +160,7 @@ export async function withRateLimitRetry<T>(
         const reset = (headers["X-RateLimit-Reset"] ?? headers["x-ratelimit-reset"]) as
           | string
           | number;
-        const resetEpochSec =
-          typeof reset === "string" ? Number.parseInt(reset, 10) : Number(reset);
+        const resetEpochSec = typeof reset === "string" ? Number.parseInt(reset, 10) : reset;
         if (!Number.isNaN(resetEpochSec)) {
           const msUntilReset = resetEpochSec * 1_000 - Date.now();
           if (Number.isFinite(msUntilReset)) {
@@ -172,14 +170,14 @@ export async function withRateLimitRetry<T>(
       }
 
       // Fallback to exponential backoff
-      if (!delayMs) {
+      if (delayMs === undefined) {
         const backoff = Math.min(maxDelay, baseDelay * Math.pow(2, attempt));
         delayMs = jitter ? Math.floor(backoff / 2 + Math.random() * (backoff / 2)) : backoff;
       }
 
-      if (typeof process !== "undefined" && process.env && process.env.NODE_ENV !== "test") {
+      if (typeof process !== "undefined" && process.env.NODE_ENV !== "test") {
         console.warn(
-          `[RateLimit] ${operationLabel ?? "operation"} attempt ${attempt + 1} hit 429. Retrying in ${delayMs} ms...`,
+          `[RateLimit] ${operationLabel ?? "operation"} attempt ${String(attempt + 1)} hit 429. Retrying in ${String(delayMs)} ms...`,
         );
       }
 
@@ -199,7 +197,6 @@ function wrapClientWithRateLimit<T extends object>(
   const proxyCache = new WeakMap<object, object>();
 
   const makeProxy = <U extends object>(target: U, currentPath: string): U => {
-    if (typeof target !== "object" || target === null) return target;
     const cached = proxyCache.get(target);
     if (cached) return cached as U;
 

@@ -68,7 +68,7 @@ export function categorizeIssues<T extends Issue>(issues: T[]): CategorizedIssue
         break;
       default:
         // Handle any future categories that might be added
-        console.warn(`Unknown issue category: ${issue.category}`);
+        console.warn(`Unknown issue category: ${String(issue.category)}`);
         break;
     }
   }
