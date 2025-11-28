@@ -47,7 +47,7 @@ export async function createStyleGuideReqFromUrl(
   try {
     // Dynamic imports to avoid browser bundling issues
     const { readFileSync } = await import("node:fs");
-    const { basename } = await import("node:path");
+    const pathModule = await import("node:path");
     const { fileURLToPath } = await import("node:url");
 
     // Convert URL to path if it's a file:// URL
@@ -71,12 +71,14 @@ export async function createStyleGuideReqFromUrl(
     const fileBuffer = readFileSync(filePath);
 
     // Get the filename from the path
-    const filename = basename(filePath);
+    const filename = pathModule.basename(filePath);
 
     // Validate file extension
     const fileExtension = filename.split(".").pop()?.toLowerCase();
     if (!fileExtension || fileExtension !== "pdf") {
-      throw new Error(`Unsupported file type: ${fileExtension}. Only .pdf files are supported.`);
+      throw new Error(
+        `Unsupported file type: ${fileExtension ?? "unknown"}. Only .pdf files are supported.`,
+      );
     }
 
     // Create File object from buffer
@@ -161,7 +163,6 @@ async function prepareUploadContent(
   if (
     typeof File !== "undefined" &&
     typeof request.content !== "string" &&
-    request.content !== null &&
     "file" in request.content &&
     request.content.file instanceof File
   ) {
@@ -178,7 +179,6 @@ async function prepareUploadContent(
 
   if (
     typeof request.content !== "string" &&
-    request.content !== null &&
     "buffer" in request.content &&
     isBuffer(request.content.buffer)
   ) {
@@ -224,7 +224,6 @@ export async function createFile(request: StyleAnalysisReq): Promise<File> {
   if (
     typeof File !== "undefined" &&
     typeof request.content !== "string" &&
-    request.content !== null &&
     "file" in request.content &&
     request.content.file instanceof File
   ) {
@@ -323,24 +322,18 @@ function resolveFilename(request: StyleAnalysisReq): string {
     return "unknown.txt";
   }
 
+  if (!request.content) {
+    throw new Error("Invalid content type. Expected string, FileDescriptor, or BufferDescriptor.");
+  }
+
   // Check if it's a StyleAnalysisReqBuffer
-  if (
-    "content" in request &&
-    request.content !== null &&
-    typeof request.content === "object" &&
-    "buffer" in request.content
-  ) {
+  if ("content" in request && typeof request.content === "object" && "buffer" in request.content) {
     const bufferReq = request as StyleAnalysisReqBuffer;
     return bufferReq.content.documentNameWithExtension;
   }
 
   // Check if it's a StyleAnalysisReqFile
-  if (
-    "content" in request &&
-    request.content !== null &&
-    typeof request.content === "object" &&
-    "file" in request.content
-  ) {
+  if ("content" in request && typeof request.content === "object" && "file" in request.content) {
     const fileReq = request as StyleAnalysisReqFile;
     return fileReq.content.file.name;
   }
@@ -399,14 +392,12 @@ export async function submitAndPollStyleAnalysis<
           ...(request.tone ? { tone: request.tone as MarkupAI.Tones } : {}),
         })) as StyleAnalysisSubmitResp;
         break;
-      default:
-        throw new Error(`Invalid operation type: ${operationType}`);
     }
   } catch (error) {
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
-    throw new Error(`Failed to submit style analysis: ${error}`);
+    throw new Error(`Failed to submit style analysis: ${String(error)}`);
   }
 
   if (!initialResponse.workflow_id) {
@@ -429,7 +420,7 @@ export async function submitAndPollStyleAnalysis<
 // Generic type guard for completed responses
 export function isCompletedResponse<T extends StyleAnalysisResponseBase>(
   resp: T,
-): resp is T & { workflow: { status: Status.Completed } } & StyleAnalysisResponseBase {
+): resp is T & { workflow: { status: Status.Completed } } {
   return resp.workflow.status === Status.Completed;
 }
 
@@ -503,7 +494,8 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
       // Execute the style function with retry logic
       const result = await this.executeWithRetry(request);
 
-      // If result is undefined, treat as failure
+      // If result is undefined, treat as failure (should not happen in normal operation)
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (result === undefined) {
         this.results[index] = {
           ...this.results[index],
@@ -606,7 +598,7 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
 
     // Start processing the next request
     this.inProgress.add(nextRequest.index);
-    this.processRequest(nextRequest.index, nextRequest.request);
+    void this.processRequest(nextRequest.index, nextRequest.request);
   }
 
   public start(): Promise<BatchProgress<T>> {
@@ -619,7 +611,7 @@ class BatchQueue<T extends StyleAnalysisResponseType> {
 
       for (let i = 0; i < initialBatch; i++) {
         this.inProgress.add(i);
-        this.processRequest(i, this.requests[i]);
+        void this.processRequest(i, this.requests[i]);
       }
     });
   }
@@ -638,7 +630,7 @@ export function styleBatchCheck<T extends StyleAnalysisResponseType>(
   options: BatchOptions = {},
 ): BatchResponse<T> {
   // Validate inputs
-  if (!requests || requests.length === 0) {
+  if (requests.length === 0) {
     throw new Error("Requests array cannot be empty");
   }
 
@@ -704,7 +696,9 @@ export function styleBatchCheck<T extends StyleAnalysisResponseType>(
   return {
     progress: progressObject,
     promise,
-    cancel: () => queue.cancel(),
+    cancel: () => {
+      queue.cancel();
+    },
   };
 }
 
@@ -723,7 +717,10 @@ export async function pollWorkflowForResult<T>(
     // Check if we've exceeded the timeout
     const elapsedTime = Date.now() - startTime;
     if (elapsedTime > timeoutMillis) {
-      throw new ApiError(`Workflow timed out after ${elapsedTime}ms`, ErrorType.TIMEOUT_ERROR);
+      throw new ApiError(
+        `Workflow timed out after ${String(elapsedTime)}ms`,
+        ErrorType.TIMEOUT_ERROR,
+      );
     }
 
     try {
@@ -761,21 +758,18 @@ export async function pollWorkflowForResult<T>(
         return response as T;
       }
 
-      if (currentStatus === Status.Running || currentStatus === Status.Queued) {
-        attempts++;
-        await new Promise((resolve) => setTimeout(resolve, pollInterval));
-        return poll();
-      }
-
-      throw new ApiError(
-        `Unexpected workflow status: ${currentStatus}`,
-        ErrorType.UNEXPECTED_STATUS,
-      );
+      // Status is Running or Queued, continue polling
+      attempts++;
+      await new Promise((resolve) => setTimeout(resolve, pollInterval));
+      return await poll();
     } catch (error) {
       if (error instanceof MarkupAIError) {
         throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
       }
-      console.error(`Unknown polling error (attempt ${attempts + 1}/${maxAttempts}):`, error);
+      console.error(
+        `Unknown polling error (attempt ${String(attempts + 1)}/${String(maxAttempts)}):`,
+        error,
+      );
       throw ApiError.fromError(
         error instanceof Error ? error : new Error("Unknown error occurred"),
         ErrorType.POLLING_ERROR,

@@ -1,6 +1,6 @@
 import type { Constants } from "./constants.types";
 
-export async function getAdminConstants(): Promise<Constants> {
+export function getAdminConstants(): Constants {
   return {
     dialects: ["american_english", "british_english", "canadian_english"],
     tones: [

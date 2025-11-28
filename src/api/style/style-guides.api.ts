@@ -18,7 +18,7 @@ export async function listStyleGuides(config: Config): Promise<StyleGuides> {
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
-    throw new Error(`Failed to list style guides: ${error}`);
+    throw new Error(`Failed to list style guides: ${String(error)}`);
   }
 }
 
@@ -31,7 +31,7 @@ export async function getStyleGuide(styleGuideId: string, config: Config): Promi
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
-    throw new Error(`Failed to get style guide: ${error}`);
+    throw new Error(`Failed to get style guide: ${String(error)}`);
   }
 }
 
@@ -44,7 +44,9 @@ export async function createStyleGuide(
   // Validate file type - only PDF files are supported
   const fileExtension = file.name.split(".").pop()?.toLowerCase();
   if (!fileExtension || fileExtension !== "pdf") {
-    throw new Error(`Unsupported file type: ${fileExtension}. Only .pdf files are supported.`);
+    throw new Error(
+      `Unsupported file type: ${fileExtension ?? "unknown"}. Only .pdf files are supported.`,
+    );
   }
 
   try {
@@ -57,7 +59,7 @@ export async function createStyleGuide(
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
-    throw new Error(`Failed to create style guide: ${error}`);
+    throw new Error(`Failed to create style guide: ${String(error)}`);
   }
 }
 
@@ -74,7 +76,7 @@ export async function updateStyleGuide(
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
-    throw new Error(`Failed to update style guide: ${error}`);
+    throw new Error(`Failed to update style guide: ${String(error)}`);
   }
 }
 
@@ -87,7 +89,7 @@ export async function deleteStyleGuide(styleGuideId: string, config: Config): Pr
     if (error instanceof MarkupAIError) {
       throw ApiError.fromResponse(error.statusCode || 0, error.body as Record<string, unknown>);
     }
-    throw new Error(`Failed to delete style guide: ${error}`);
+    throw new Error(`Failed to delete style guide: ${String(error)}`);
   }
 }
 

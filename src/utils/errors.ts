@@ -120,7 +120,7 @@ export class ApiError extends Error {
   private static handle400Error(errorData: Record<string, unknown>, statusCode: number): ApiError {
     const message = typeof errorData.message === "string" ? errorData.message : undefined;
     const detail = typeof errorData.detail === "string" ? errorData.detail : undefined;
-    const errorMessage = message || detail || `Bad Request (${statusCode})`;
+    const errorMessage = message || detail || `Bad Request (${String(statusCode)})`;
 
     return new ApiError(errorMessage, ErrorType.UNKNOWN_ERROR, statusCode, errorData);
   }
@@ -146,7 +146,7 @@ export class ApiError extends Error {
 
     // Fallback for other 401 formats
     const detail = typeof errorData.detail === "string" ? errorData.detail : undefined;
-    const message = detail || `Unauthorized (${statusCode})`;
+    const message = detail || `Unauthorized (${String(statusCode)})`;
 
     return new ApiError(message, ErrorType.UNAUTHORIZED_ERROR, statusCode, errorData);
   }
@@ -166,7 +166,7 @@ export class ApiError extends Error {
 
     // Handle standard 404 format
     const detail = typeof errorData.detail === "string" ? errorData.detail : undefined;
-    const message = detail || `Not Found (${statusCode})`;
+    const message = detail || `Not Found (${String(statusCode)})`;
 
     return new ApiError(message, ErrorType.WORKFLOW_NOT_FOUND, statusCode, errorData);
   }
@@ -178,14 +178,14 @@ export class ApiError extends Error {
     // Handle the specific 413 format with summary and value
     if (this.isPayloadTooLargeErrorResponse(errorData)) {
       const { summary, value } = errorData as PayloadTooLargeErrorResponse;
-      const message = summary || value.detail || `Payload Too Large (${statusCode})`;
+      const message = summary || value.detail || `Payload Too Large (${String(statusCode)})`;
 
       return new ApiError(message, ErrorType.PAYLOAD_TOO_LARGE_ERROR, statusCode, errorData);
     }
 
     // Fallback for other 413 formats
     const detail = typeof errorData.detail === "string" ? errorData.detail : undefined;
-    const message = detail || `Payload Too Large (${statusCode})`;
+    const message = detail || `Payload Too Large (${String(statusCode)})`;
 
     return new ApiError(message, ErrorType.PAYLOAD_TOO_LARGE_ERROR, statusCode, errorData);
   }
@@ -196,7 +196,7 @@ export class ApiError extends Error {
   private static handle429Error(errorData: Record<string, unknown>, statusCode: number): ApiError {
     const std = errorData as Partial<StandardErrorResponse>;
     const detail = typeof std.detail === "string" ? std.detail : undefined;
-    const message = detail || `Rate limit exceeded (${statusCode})`;
+    const message = detail || `Rate limit exceeded (${String(statusCode)})`;
 
     return new ApiError(message, ErrorType.RATE_LIMIT_ERROR, statusCode, errorData);
   }
@@ -225,7 +225,7 @@ export class ApiError extends Error {
 
     // Fallback for other 422 formats
     const detail = typeof errorData.detail === "string" ? errorData.detail : undefined;
-    const message = detail || `Validation Error (${statusCode})`;
+    const message = detail || `Validation Error (${String(statusCode)})`;
 
     return new ApiError(message, ErrorType.VALIDATION_ERROR, statusCode, errorData);
   }
@@ -236,7 +236,7 @@ export class ApiError extends Error {
   private static handle500Error(errorData: Record<string, unknown>, statusCode: number): ApiError {
     const message = typeof errorData.message === "string" ? errorData.message : undefined;
     const detail = typeof errorData.detail === "string" ? errorData.detail : undefined;
-    const errorMessage = message || detail || `Internal Server Error (${statusCode})`;
+    const errorMessage = message || detail || `Internal Server Error (${String(statusCode)})`;
 
     return new ApiError(errorMessage, ErrorType.INTERNAL_SERVER_ERROR, statusCode, errorData);
   }
@@ -248,20 +248,11 @@ export class ApiError extends Error {
     errorData: Record<string, unknown>,
     statusCode: number,
   ): ApiError {
-    if (!errorData || typeof errorData !== "object") {
-      return new ApiError(
-        `HTTP error! status: ${statusCode}`,
-        ErrorType.UNKNOWN_ERROR,
-        statusCode,
-        errorData,
-      );
-    }
-
     // Extract error message with fallback chain
     const errorMessage =
       (typeof errorData.message === "string" && errorData.message) ||
       (typeof errorData.detail === "string" && errorData.detail) ||
-      `HTTP error! status: ${statusCode}`;
+      `HTTP error! status: ${String(statusCode)}`;
 
     return new ApiError(errorMessage, ErrorType.UNKNOWN_ERROR, statusCode, errorData);
   }
@@ -279,17 +270,16 @@ export class ApiError extends Error {
   private static isApiErrorResponse(
     errorData: Record<string, unknown>,
   ): errorData is Record<string, unknown> & ApiErrorResponse {
-    return (
-      typeof errorData === "object" &&
-      errorData !== null &&
-      "error" in errorData &&
-      typeof errorData.error === "object" &&
-      errorData.error !== null &&
-      "code" in errorData.error &&
-      "message" in errorData.error &&
-      typeof errorData.error.code === "string" &&
-      typeof errorData.error.message === "string"
-    );
+    if ("error" in errorData && typeof errorData.error === "object" && errorData.error !== null) {
+      const err = errorData.error as Record<string, unknown>;
+      return (
+        "code" in err &&
+        "message" in err &&
+        typeof err.code === "string" &&
+        typeof err.message === "string"
+      );
+    }
+    return false;
   }
 
   /**
@@ -304,8 +294,6 @@ export class ApiError extends Error {
     description?: string;
   } {
     return (
-      typeof errorData === "object" &&
-      errorData !== null &&
       "code" in errorData &&
       "message" in errorData &&
       typeof errorData.code === "string" &&
@@ -319,24 +307,25 @@ export class ApiError extends Error {
   private static isValidationErrorResponse(
     errorData: Record<string, unknown>,
   ): errorData is Record<string, unknown> & ValidationErrorResponse {
-    return (
-      typeof errorData === "object" &&
-      errorData !== null &&
-      "detail" in errorData &&
-      Array.isArray(errorData.detail) &&
-      errorData.detail.length > 0 &&
-      errorData.detail.every(
-        (item) =>
-          typeof item === "object" &&
-          item !== null &&
-          "loc" in item &&
-          "msg" in item &&
-          "type" in item &&
-          Array.isArray(item.loc) &&
-          typeof item.msg === "string" &&
-          typeof item.type === "string",
-      )
-    );
+    if (
+      !("detail" in errorData) ||
+      !Array.isArray(errorData.detail) ||
+      errorData.detail.length === 0
+    ) {
+      return false;
+    }
+    return errorData.detail.every((item: unknown) => {
+      if (typeof item !== "object" || item === null) return false;
+      const err = item as Record<string, unknown>;
+      return (
+        "loc" in err &&
+        "msg" in err &&
+        "type" in err &&
+        Array.isArray(err.loc) &&
+        typeof err.msg === "string" &&
+        typeof err.type === "string"
+      );
+    });
   }
 
   /**
@@ -345,27 +334,28 @@ export class ApiError extends Error {
   private static isValidationErrorResponse422(
     errorData: Record<string, unknown>,
   ): errorData is Record<string, unknown> & ValidationErrorResponse422 {
-    return (
-      typeof errorData === "object" &&
-      errorData !== null &&
-      "detail" in errorData &&
-      "status" in errorData &&
-      "request_id" in errorData &&
-      "errors" in errorData &&
-      Array.isArray(errorData.errors) &&
-      errorData.errors.length > 0 &&
-      errorData.errors.every(
-        (item) =>
-          typeof item === "object" &&
-          item !== null &&
-          "loc" in item &&
-          "msg" in item &&
-          "type" in item &&
-          Array.isArray(item.loc) &&
-          typeof item.msg === "string" &&
-          typeof item.type === "string",
-      )
-    );
+    if (
+      !("detail" in errorData) ||
+      !("status" in errorData) ||
+      !("request_id" in errorData) ||
+      !("errors" in errorData) ||
+      !Array.isArray(errorData.errors) ||
+      errorData.errors.length === 0
+    ) {
+      return false;
+    }
+    return errorData.errors.every((item: unknown) => {
+      if (typeof item !== "object" || item === null) return false;
+      const err = item as Record<string, unknown>;
+      return (
+        "loc" in err &&
+        "msg" in err &&
+        "type" in err &&
+        Array.isArray(err.loc) &&
+        typeof err.msg === "string" &&
+        typeof err.type === "string"
+      );
+    });
   }
 
   /**
@@ -374,17 +364,14 @@ export class ApiError extends Error {
   private static isPayloadTooLargeErrorResponse(
     errorData: Record<string, unknown>,
   ): errorData is Record<string, unknown> & PayloadTooLargeErrorResponse {
-    return (
-      typeof errorData === "object" &&
-      errorData !== null &&
-      "summary" in errorData &&
-      "value" in errorData &&
-      typeof errorData.value === "object" &&
-      errorData.value !== null &&
-      "detail" in errorData.value &&
-      "status" in errorData.value &&
-      "request_id" in errorData.value
-    );
+    if (!("summary" in errorData) || !("value" in errorData)) {
+      return false;
+    }
+    if (typeof errorData.value !== "object" || errorData.value === null) {
+      return false;
+    }
+    const value = errorData.value as Record<string, unknown>;
+    return "detail" in value && "status" in value && "request_id" in value;
   }
 
   /**
@@ -459,30 +446,34 @@ export class ApiError extends Error {
     }
 
     // Handle new 422 format
-    if (this.rawErrorData.errors && Array.isArray(this.rawErrorData.errors)) {
+    if (Array.isArray(this.rawErrorData.errors)) {
       const errors: Record<string, string[]> = {};
 
       for (const error of this.rawErrorData.errors as ValidationErrorDetail[]) {
         const field = error.loc.join(".");
-        if (!errors[field]) {
-          errors[field] = [];
+        const existing = errors[field] as string[] | undefined;
+        if (existing) {
+          existing.push(error.msg);
+        } else {
+          errors[field] = [error.msg];
         }
-        errors[field].push(error.msg);
       }
 
       return errors;
     }
 
     // Handle legacy format
-    if (this.rawErrorData.detail && Array.isArray(this.rawErrorData.detail)) {
+    if (Array.isArray(this.rawErrorData.detail)) {
       const errors: Record<string, string[]> = {};
 
       for (const error of this.rawErrorData.detail as ValidationErrorDetail[]) {
         const field = error.loc.join(".");
-        if (!errors[field]) {
-          errors[field] = [];
+        const existing = errors[field] as string[] | undefined;
+        if (existing) {
+          existing.push(error.msg);
+        } else {
+          errors[field] = [error.msg];
         }
-        errors[field].push(error.msg);
       }
 
       return errors;
