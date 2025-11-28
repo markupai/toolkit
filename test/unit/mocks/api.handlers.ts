@@ -110,10 +110,10 @@ const styleHandlers = {
     createSuccess: http.post("*/v1/style-guides", async ({ request }) => {
       // Verify that the request contains FormData with file_upload and name
       const formData = await request.formData();
-      const file = formData.get("file_upload") as File;
-      const name = formData.get("name") as string;
+      const file = formData.get("file_upload");
+      const name = formData.get("name");
 
-      if (!file || !name) {
+      if (!(file instanceof File) || typeof name !== "string") {
         return HttpResponse.json(
           { message: "Missing required fields: file_upload and name" },
           { status: 400 },
@@ -135,7 +135,7 @@ const styleHandlers = {
       // Verify that the request contains JSON with name
       const body = (await request.json()) as { name?: string };
 
-      if (!body?.name) {
+      if (!body.name) {
         return HttpResponse.json({ message: "Missing required field: name" }, { status: 400 });
       }
 
@@ -181,7 +181,7 @@ const styleHandlers = {
                 "Retry-After": "0",
                 "X-RateLimit-Limit": "10",
                 "X-RateLimit-Remaining": "0",
-                "X-RateLimit-Reset": `${Math.floor(Date.now() / 1_000)}`,
+                "X-RateLimit-Reset": String(Math.floor(Date.now() / 1_000)),
               },
             },
           );
@@ -202,7 +202,7 @@ const styleHandlers = {
             "Retry-After": "0",
             "X-RateLimit-Limit": "10",
             "X-RateLimit-Remaining": "0",
-            "X-RateLimit-Reset": `${Math.floor(Date.now() / 1_000)}`,
+            "X-RateLimit-Reset": String(Math.floor(Date.now() / 1_000)),
           },
         },
       );

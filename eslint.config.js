@@ -9,13 +9,13 @@ export default [
   {
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        project: "./tsconfig.eslint.json",
         tsconfigRootDir: import.meta.dirname,
       },
     },
   },
   {
-    files: ["eslint.config.js", "test/**/*", "*.config.ts"],
+    files: ["eslint.config.js", "*.config.ts"],
     ...tseslint.configs.disableTypeChecked,
   },
   {

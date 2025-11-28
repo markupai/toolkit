@@ -13,9 +13,15 @@ import { server } from "../setup";
 import { apiHandlers } from "../mocks/api.handlers";
 import { http, HttpResponse } from "msw";
 
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+beforeAll(() => {
+  server.listen();
+});
+afterEach(() => {
+  server.resetHandlers();
+});
+afterAll(() => {
+  server.close();
+});
 
 describe("Style Guide Unit Tests", () => {
   const mockConfig: Config = {

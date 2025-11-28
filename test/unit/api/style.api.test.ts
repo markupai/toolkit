@@ -29,9 +29,15 @@ import { server } from "../setup";
 import { testTimeout } from "../testUtils";
 
 // Set up MSW server lifecycle hooks
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+beforeAll(() => {
+  server.listen();
+});
+afterEach(() => {
+  server.resetHandlers();
+});
+afterAll(() => {
+  server.close();
+});
 
 describe("Style API Unit Tests", () => {
   const mockConfig: Config = {
@@ -486,7 +492,7 @@ describe("Style API Unit Tests", () => {
       expect(typedResult.original.scores).toBeDefined();
       expect(typedResult.original.issues).toBeDefined();
       // Check for suggestion in issues
-      if (typedResult.original.issues && typedResult.original.issues.length > 0) {
+      if (typedResult.original.issues.length > 0) {
         const issue = typedResult.original.issues[0];
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe("string");
@@ -515,7 +521,7 @@ describe("Style API Unit Tests", () => {
       ).toBe(true);
       expect(typedResult.rewrite.scores.quality.terminology).toBeDefined();
       // Check for suggestion in issues
-      if (typedResult.original.issues && typedResult.original.issues.length > 0) {
+      if (typedResult.original.issues.length > 0) {
         const issue = typedResult.original.issues[0];
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe("string");

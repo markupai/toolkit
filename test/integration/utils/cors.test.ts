@@ -24,9 +24,9 @@ describe("CORS Integration Tests", () => {
   const testOrigins = ["https://uuid-2323423.ctfcloud.net", "https://app.contentful.com"];
 
   // Helper function to make OPTIONS request and check CORS headers
-  async function testCorsHeaders(endpoint: string, description: string) {
+  function testCorsHeaders(endpoint: string, description: string) {
     it(`should return proper CORS headers for ${description}`, async () => {
-      const url = `${platformUrl}${endpoint}`;
+      const url = `${String(platformUrl)}${endpoint}`;
 
       for (const origin of testOrigins) {
         const response = await fetch(url, {
@@ -188,10 +188,10 @@ describe("CORS Integration Tests", () => {
         expect(response.status).toBe(200);
 
         const allowOrigin = response.headers.get("access-control-allow-origin");
-        console.log(`Origin: ${origin}, Allow-Origin: ${allowOrigin}`);
+        console.log(`Origin: ${origin}, Allow-Origin: ${allowOrigin ?? ""}`);
 
         // Should either allow the specific origin or use wildcard
-        expect(["*", origin.toLowerCase()]).toContain(allowOrigin?.toLowerCase());
+        expect(["*", origin.toLowerCase()]).toContain((allowOrigin ?? "").toLowerCase());
       }
     });
   });
@@ -216,7 +216,7 @@ describe("CORS Integration Tests", () => {
 
           const allowMethods = response.headers.get("access-control-allow-methods");
           console.log(
-            `Origin: ${origin} Request Method: ${method}, Allow-Methods: ${allowMethods}`,
+            `Origin: ${origin} Request Method: ${method}, Allow-Methods: ${allowMethods ?? ""}`,
           );
 
           // The response should indicate which methods are allowed
@@ -257,7 +257,7 @@ describe("CORS Integration Tests", () => {
 
           const allowHeaders = response.headers.get("access-control-allow-headers");
           console.log(
-            `Origin: ${origin} Request Headers: ${headers}, Allow-Headers: ${allowHeaders}`,
+            `Origin: ${origin} Request Headers: ${headers}, Allow-Headers: ${allowHeaders ?? ""}`,
           );
 
           // The API returns only the headers that were requested

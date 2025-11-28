@@ -14,10 +14,14 @@ beforeAll(() => {
 });
 
 // Reset handlers after each test
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+});
 
 // Close server after all tests
-afterAll(() => server.close());
+afterAll(() => {
+  server.close();
+});
 
 // Export handlers from centralized location
 export { apiHandlers as handlers } from "./mocks/api.handlers";

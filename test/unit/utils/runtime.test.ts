@@ -140,10 +140,8 @@ describe("Runtime Utilities Unit Tests", () => {
       const testContent = "Hello, World!";
       const blob = new BlobCtor([testContent], { type: "text/plain" });
 
-      if (blob.text) {
-        const text = await blob.text();
-        expect(text).toBe(testContent);
-      }
+      const text = await blob.text();
+      expect(text).toBe(testContent);
     });
 
     it("should support arrayBuffer method on created Blob", async () => {
@@ -151,11 +149,9 @@ describe("Runtime Utilities Unit Tests", () => {
       const testContent = "Test";
       const blob = new BlobCtor([testContent], { type: "text/plain" });
 
-      if (blob.arrayBuffer) {
-        const arrayBuffer = await blob.arrayBuffer();
-        expect(arrayBuffer).toBeInstanceOf(ArrayBuffer);
-        expect(arrayBuffer.byteLength).toBeGreaterThan(0);
-      }
+      const arrayBuffer = await blob.arrayBuffer();
+      expect(arrayBuffer).toBeInstanceOf(ArrayBuffer);
+      expect(arrayBuffer.byteLength).toBeGreaterThan(0);
     });
 
     it("should support slice method on created Blob", async () => {
@@ -163,16 +159,12 @@ describe("Runtime Utilities Unit Tests", () => {
       const testContent = "Hello, World!";
       const blob = new BlobCtor([testContent], { type: "text/plain" });
 
-      if (blob.slice) {
-        const slicedBlob = blob.slice(0, 5);
-        expect(slicedBlob).toBeInstanceOf(BlobCtor);
-        expect(slicedBlob.size).toBe(5);
+      const slicedBlob = blob.slice(0, 5);
+      expect(slicedBlob).toBeInstanceOf(BlobCtor);
+      expect(slicedBlob.size).toBe(5);
 
-        if (slicedBlob.text) {
-          const text = await slicedBlob.text();
-          expect(text).toBe("Hello");
-        }
-      }
+      const text = await slicedBlob.text();
+      expect(text).toBe("Hello");
     });
 
     it("should cache the Blob constructor on subsequent calls", async () => {
@@ -232,10 +224,8 @@ describe("Runtime Utilities Unit Tests", () => {
         expect(blob.size).toBeGreaterThan(0);
         expect(blob.type).toBe("text/plain");
 
-        if (blob.text) {
-          const text = await blob.text();
-          expect(text).toContain("Integration test");
-        }
+        const text = await blob.text();
+        expect(text).toContain("Integration test");
       }
     });
   });

@@ -27,14 +27,14 @@ import { join } from "node:path";
 import { ApiError } from "../../../src/utils/errors";
 
 // Helper function to create a BufferDescriptor from the batteries.pdf
-async function createTestPdfBuffer(): Promise<BufferDescriptor> {
+function createTestPdfBuffer(): BufferDescriptor {
   const pdfPath = join(__dirname, "../test-data/batteries.pdf");
   const buffer = readFileSync(pdfPath);
   return { buffer, mimeType: "application/pdf", documentNameWithExtension: "batteries.pdf" };
 }
 
 // Helper function to create a File object from the batteries.pdf
-async function createTestFile(): Promise<File> {
+function createTestFile(): File {
   const pdfPath = join(__dirname, "../test-data/batteries.pdf");
   const pdfBuffer = readFileSync(pdfPath);
   return new File([pdfBuffer], "batteries.pdf", { type: "application/pdf" });
@@ -112,8 +112,8 @@ describe("Style API Integration Tests", () => {
     });
 
     it("should submit a style check with incorrect options", async () => {
-      expect(
-        async () =>
+      await expect(
+        (async () => {
           await submitStyleCheck(
             {
               content: "This is a test content for style operations.",
@@ -122,13 +122,14 @@ describe("Style API Integration Tests", () => {
               tone: "invalid-tone",
             },
             config,
-          ),
+          );
+        })(),
       ).rejects.toThrow(ApiError);
     });
 
     it("should submit a style check with invalid api key", async () => {
-      expect(
-        async () =>
+      await expect(
+        (async () => {
           await submitStyleCheck(
             {
               content: testContent,
@@ -140,7 +141,8 @@ describe("Style API Integration Tests", () => {
             {
               apiKey: "invalid-api-key",
             },
-          ),
+          );
+        })(),
       ).rejects.toThrow(ApiError);
     });
 
@@ -329,7 +331,7 @@ describe("Style API Integration Tests", () => {
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
 
-      if (response.original.issues && response.original.issues.length > 0) {
+      if (response.original.issues.length > 0) {
         const issue = response.original.issues[0];
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe("string");
@@ -364,7 +366,7 @@ describe("Style API Integration Tests", () => {
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
 
-      if (response.original.issues && response.original.issues.length > 0) {
+      if (response.original.issues.length > 0) {
         const issue = response.original.issues[0];
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe("string");
@@ -402,7 +404,7 @@ describe("Style API Integration Tests", () => {
       expect(response.rewrite).toBeDefined();
       expect(typeof response.rewrite.text).toBe("string");
 
-      if (response.original.issues && response.original.issues.length > 0) {
+      if (response.original.issues.length > 0) {
         const issue = response.original.issues[0];
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe("string");
@@ -446,7 +448,7 @@ describe("Style API Integration Tests", () => {
     const styleGuideId = STYLE_DEFAULTS.styleGuides.microsoft;
 
     it("should submit a style check with File content", async () => {
-      const testFile = await createTestFile();
+      const testFile = createTestFile();
       const fileDescriptor = { file: testFile, mimeType: "application/pdf" };
 
       const response = await submitStyleCheck(
@@ -464,7 +466,7 @@ describe("Style API Integration Tests", () => {
     });
 
     it("should submit a style suggestion with File content", async () => {
-      const testFile = await createTestFile();
+      const testFile = createTestFile();
       const fileDescriptor = { file: testFile, mimeType: "application/pdf" };
 
       const response = await submitStyleSuggestion(
@@ -482,7 +484,7 @@ describe("Style API Integration Tests", () => {
     });
 
     it("should submit a style check with File content and get result", async () => {
-      const testFile = await createTestFile();
+      const testFile = createTestFile();
       const fileDescriptor = { file: testFile, mimeType: "application/pdf" };
 
       const response = await styleCheck(
@@ -520,7 +522,7 @@ describe("Style API Integration Tests", () => {
     });
 
     it("should submit a style suggestion with File content and get result", async () => {
-      const testFile = await createTestFile();
+      const testFile = createTestFile();
       const fileDescriptor = { file: testFile, mimeType: "application/pdf" };
 
       const response = await styleSuggestions(
@@ -548,7 +550,7 @@ describe("Style API Integration Tests", () => {
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
 
-      if (response.original.issues && response.original.issues.length > 0) {
+      if (response.original.issues.length > 0) {
         const issue = response.original.issues[0];
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe("string");
@@ -556,7 +558,7 @@ describe("Style API Integration Tests", () => {
     });
 
     it("should handle File content without custom document name", async () => {
-      const testFile = await createTestFile();
+      const testFile = createTestFile();
       const fileDescriptor = { file: testFile, mimeType: "application/pdf" };
 
       const response = await styleCheck(
@@ -726,7 +728,7 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.analysis.tone).toBeDefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
 
-      if (response.original.issues && response.original.issues.length > 0) {
+      if (response.original.issues.length > 0) {
         const issue = response.original.issues[0];
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe("string");
@@ -781,7 +783,7 @@ describe("Style API Integration Tests", () => {
       ).toBe(true);
       expect(response.rewrite.scores.quality.terminology).toBeDefined();
 
-      if (response.original.issues && response.original.issues.length > 0) {
+      if (response.original.issues.length > 0) {
         const issue = response.original.issues[0];
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe("string");
@@ -826,7 +828,7 @@ describe("Style API Integration Tests", () => {
     });
 
     it("should handle PDF Buffer content", async () => {
-      const testPdfBuffer = await createTestPdfBuffer();
+      const testPdfBuffer = createTestPdfBuffer();
 
       const response = await submitStyleCheck(
         {
@@ -952,10 +954,10 @@ describe("Style API Integration Tests", () => {
       expect(styleCheckResponse.original.scores.quality.terminology).toBeDefined();
 
       // Log some information about the downloaded content for debugging
-      console.log(`Downloaded file size: ${arrayBuffer.byteLength} bytes`);
-      console.log(`Buffer size: ${fileBuffer.length} bytes`);
+      console.log(`Downloaded file size: ${String(arrayBuffer.byteLength)} bytes`);
+      console.log(`Buffer size: ${String(fileBuffer.length)} bytes`);
       console.log(`Style check workflow ID: ${styleCheckResponse.workflow.id}`);
-      console.log(`Quality score: ${styleCheckResponse.original.scores.quality.score}`);
+      console.log(`Quality score: ${String(styleCheckResponse.original.scores.quality.score)}`);
     });
   });
 
@@ -1250,11 +1252,11 @@ describe("Style API Integration Tests", () => {
       it("should handle larger batches efficiently", async () => {
         // Create a larger batch (but not too large for testing)
         const largeBatch = new Array(10).fill(null).map((_, index) => ({
-          content: `Test document ${index + 1} for large batch processing.`,
+          content: `Test document ${String(index + 1)} for large batch processing.`,
           style_guide: "ap",
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: `test-document-${index + 1}.txt`,
+          documentName: `test-document-${String(index + 1)}.txt`,
         }));
 
         const batchResponse = styleBatchCheckRequests(largeBatch, config, {
@@ -1273,11 +1275,11 @@ describe("Style API Integration Tests", () => {
       it("should provide real-time progress updates with 25 requests", async () => {
         // Create 25 test requests
         const largeBatch = new Array(25).fill(null).map((_, index) => ({
-          content: `Test document ${index + 1} for reactive progress testing. This document contains multiple sentences to ensure proper processing time. Document ${index + 1} has unique content for comprehensive testing.`,
+          content: `Test document ${String(index + 1)} for reactive progress testing. This document contains multiple sentences to ensure proper processing time. Document ${String(index + 1)} has unique content for comprehensive testing.`,
           style_guide: "ap",
           dialect: STYLE_DEFAULTS.dialects.americanEnglish,
           tone: STYLE_DEFAULTS.tones.technical,
-          documentName: `test-document-${index + 1}.txt`,
+          documentName: `test-document-${String(index + 1)}.txt`,
         }));
 
         const batchResponse = styleBatchCheckRequests(largeBatch, config, {
@@ -1366,7 +1368,7 @@ describe("Style API Integration Tests", () => {
         }
 
         console.log(
-          `Progress test completed: ${result.completed} successful, ${result.failed} failed, max completed during processing: ${maxCompleted}`,
+          `Progress test completed: ${String(result.completed)} successful, ${String(result.failed)} failed, max completed during processing: ${String(maxCompleted)}`,
         );
       }, 120_000); // 2 minutes timeout for 25 requests
     });
