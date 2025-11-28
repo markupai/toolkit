@@ -59,12 +59,12 @@ describe("API Utilities Integration Tests", () => {
       it("should handle platform URL with trailing slash", async () => {
         const configWithSlash: Config = {
           ...config,
-          platform: { type: PlatformType.Url, value: `${process.env.TEST_PLATFORM_URL}/` },
+          platform: { type: PlatformType.Url, value: `${String(process.env.TEST_PLATFORM_URL)}/` },
         };
         const result = await verifyPlatformUrl(configWithSlash);
         expect(result).toEqual({
           success: true,
-          url: `${process.env.TEST_PLATFORM_URL}/`,
+          url: `${String(process.env.TEST_PLATFORM_URL)}/`,
           error: undefined,
         });
       });
@@ -114,7 +114,9 @@ describe("API Utilities Integration Tests", () => {
 
         // Set a timeout for this test
         const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error("Test timeout")), 5_000);
+          setTimeout(() => {
+            reject(new Error("Test timeout"));
+          }, 5_000);
         });
 
         const verifyPromise = verifyPlatformUrl(timeoutConfig);

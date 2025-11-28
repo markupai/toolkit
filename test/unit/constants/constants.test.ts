@@ -3,8 +3,8 @@ import { getAdminConstants } from "../../../src/constants/internal/constants";
 
 describe("Constants Unit Tests", () => {
   describe("getAdminConstants", () => {
-    it("should return admin constants successfully", async () => {
-      const result = await getAdminConstants();
+    it("should return admin constants successfully", () => {
+      const result = getAdminConstants();
       expect(result).toEqual({
         dialects: ["american_english", "british_english", "canadian_english"],
         tones: [

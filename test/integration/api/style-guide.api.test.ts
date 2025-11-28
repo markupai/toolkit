@@ -46,7 +46,7 @@ describe("Style Guide Integration Tests", () => {
       const pdfBuffer = readFileSync(pdfPath);
       const pdfFile = new File([pdfBuffer], "sample-style-guide.pdf", { type: "application/pdf" });
       const randomNumber = randomInt(10_000);
-      const styleGuideName = `Integration Test Style Guide ${randomNumber}`;
+      const styleGuideName = `Integration Test Style Guide ${String(randomNumber)}`;
       const response = await createStyleGuide({ file: pdfFile, name: styleGuideName }, config);
       expect(response.id).toBeDefined();
       expect(response.name).toBe(styleGuideName);
@@ -68,8 +68,8 @@ describe("Style Guide Integration Tests", () => {
       const pdfFile = new File([pdfBuffer], "sample-style-guide.pdf", { type: "application/pdf" });
       const randomNumber1 = randomInt(10_000);
       const randomNumber2 = randomInt(10_000);
-      const styleGuideName1 = `Integration Test Style Guide A ${randomNumber1}`;
-      const styleGuideName2 = `Integration Test Style Guide B ${randomNumber2}`;
+      const styleGuideName1 = `Integration Test Style Guide A ${String(randomNumber1)}`;
+      const styleGuideName2 = `Integration Test Style Guide B ${String(randomNumber2)}`;
       const response1 = await createStyleGuide({ file: pdfFile, name: styleGuideName1 }, config);
       const response2 = await createStyleGuide({ file: pdfFile, name: styleGuideName2 }, config);
       expect(response1.name).toBe(styleGuideName1);
@@ -80,7 +80,7 @@ describe("Style Guide Integration Tests", () => {
     it("should create style guide using utility function from file path", async () => {
       const pdfPath = join(__dirname, "../test-data/batteries.pdf");
       const randomNumber = randomInt(10_000);
-      const styleGuideName = `Utility Test Style Guide ${randomNumber}`;
+      const styleGuideName = `Utility Test Style Guide ${String(randomNumber)}`;
       const request = await createStyleGuideReqFromPath(pdfPath, styleGuideName);
       expect(request.file).toBeInstanceOf(File);
       expect(request.file.name).toBe("batteries.pdf");

@@ -331,10 +331,8 @@ describe("Style API Utils", () => {
         "Custom Name",
       );
 
-      expect(result).toEqual({
-        file: expect.any(File),
-        name: "Custom Name",
-      });
+      expect(result.name).toBe("Custom Name");
+      expect(result.file).toBeInstanceOf(File);
 
       expect(result.file.name).toBe("test-style-guide.pdf");
       expect(result.file.type).toBe("application/pdf");
@@ -345,10 +343,8 @@ describe("Style API Utils", () => {
     it("should create request from file path string without custom name", async () => {
       const result = await createStyleGuideReqFromUrl("/path/to/test-style-guide.pdf");
 
-      expect(result).toEqual({
-        file: expect.any(File),
-        name: "test-style-guide", // filename without .pdf extension
-      });
+      expect(result.name).toBe("test-style-guide"); // filename without .pdf extension
+      expect(result.file).toBeInstanceOf(File);
 
       expect(result.file.name).toBe("test-style-guide.pdf");
       expect(result.file.type).toBe("application/pdf");
@@ -360,10 +356,8 @@ describe("Style API Utils", () => {
         "Custom Name",
       );
 
-      expect(result).toEqual({
-        file: expect.any(File),
-        name: "Custom Name",
-      });
+      expect(result.name).toBe("Custom Name");
+      expect(result.file).toBeInstanceOf(File);
 
       expect(mockFileURLToPath).toHaveBeenCalledWith("file:///path/to/test-style-guide.pdf");
       expect(mockReadFileSync).toHaveBeenCalledWith("/path/to/test-style-guide.pdf");
@@ -373,10 +367,8 @@ describe("Style API Utils", () => {
       const url = new URL("file:///path/to/test-style-guide.pdf");
       const result = await createStyleGuideReqFromUrl(url, "Custom Name");
 
-      expect(result).toEqual({
-        file: expect.any(File),
-        name: "Custom Name",
-      });
+      expect(result.name).toBe("Custom Name");
+      expect(result.file).toBeInstanceOf(File);
 
       expect(mockFileURLToPath).toHaveBeenCalledWith(url);
     });
@@ -424,10 +416,8 @@ describe("Style API Utils", () => {
         "Custom Name",
       );
 
-      expect(result).toEqual({
-        file: expect.any(File),
-        name: "Custom Name",
-      });
+      expect(result.name).toBe("Custom Name");
+      expect(result.file).toBeInstanceOf(File);
 
       expect(mockReadFileSync).toHaveBeenCalledWith("/path/to/test-style-guide.pdf");
     });
@@ -435,10 +425,8 @@ describe("Style API Utils", () => {
     it("should create request from file path without custom name", async () => {
       const result = await createStyleGuideReqFromPath("/path/to/test-style-guide.pdf");
 
-      expect(result).toEqual({
-        file: expect.any(File),
-        name: "test-style-guide",
-      });
+      expect(result.name).toBe("test-style-guide");
+      expect(result.file).toBeInstanceOf(File);
     });
   });
 
@@ -1179,7 +1167,9 @@ describe("styleBatchCheck", () => {
     );
 
     // Test too many requests
-    const tooManyRequests = new Array(1001).fill(mockRequests[0]);
+    const tooManyRequests: StyleAnalysisReq[] = new Array(1001)
+      .fill(null)
+      .map(() => mockRequests[0]);
     expect(() => styleBatchCheck(tooManyRequests, mockConfig, mockStyleFunction, {})).toThrow(
       "Maximum 1000 requests allowed per batch",
     );

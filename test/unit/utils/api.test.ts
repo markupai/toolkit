@@ -19,11 +19,15 @@ const mockBaseConfig: Config = {
   platform: { type: PlatformType.Environment, value: Environment.Dev },
 };
 
-beforeAll(() => server.listen());
+beforeAll(() => {
+  server.listen();
+});
 afterEach(() => {
   server.resetHandlers();
 });
-afterAll(() => server.close());
+afterAll(() => {
+  server.close();
+});
 
 describe("API Utilities Unit Tests", () => {
   describe("Platform URL Functions", () => {
