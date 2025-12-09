@@ -37,4 +37,5 @@ export interface Config {
     maxDelayMs?: number;
     jitter?: boolean;
   };
+  headers?: Record<string, string>;
 }

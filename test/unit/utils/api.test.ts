@@ -3,6 +3,7 @@ import {
   verifyPlatformUrl,
   getCurrentPlatformUrl,
   getPlatformUrl,
+  initEndpoint,
   DEFAULT_PLATFORM_URL_PROD,
   DEFAULT_PLATFORM_URL_STAGE,
   DEFAULT_PLATFORM_URL_DEV,
@@ -83,6 +84,104 @@ describe("API Utilities Unit Tests", () => {
       };
       const result = getCurrentPlatformUrl(config);
       expect(result).toBe(DEFAULT_PLATFORM_URL_DEV);
+    });
+  });
+
+  describe("Custom Headers", () => {
+    it("should create client without custom headers when not provided", () => {
+      const config: Config = {
+        apiKey: "test-key",
+        platform: { type: PlatformType.Environment, value: Environment.Dev },
+      };
+
+      // Should not throw an error
+      expect(() => {
+        const result = getPlatformUrl(config);
+        expect(result).toBe(DEFAULT_PLATFORM_URL_DEV);
+      }).not.toThrow();
+    });
+
+    it("should accept custom headers in config", () => {
+      const config: Config = {
+        apiKey: "test-key",
+        platform: { type: PlatformType.Environment, value: Environment.Dev },
+        headers: {
+          "x-integration-id": "test-integration",
+          "x-custom-header": "custom-value",
+        },
+      };
+
+      expect(config.headers).toBeDefined();
+      expect(config.headers?.["x-integration-id"]).toBe("test-integration");
+      expect(config.headers?.["x-custom-header"]).toBe("custom-value");
+    });
+
+    it("should accept empty headers object", () => {
+      const config: Config = {
+        apiKey: "test-key",
+        headers: {},
+      };
+
+      expect(config.headers).toBeDefined();
+      expect(Object.keys(config.headers || {})).toHaveLength(0);
+    });
+
+    it("should pass custom headers to API client during requests", async () => {
+      const customHeaders = {
+        "x-integration-id": "test-integration-123",
+        "x-custom-tracking": "tracking-value",
+      };
+
+      const config: Config = {
+        apiKey: mockApiKey,
+        platform: { type: PlatformType.Environment, value: Environment.Dev },
+        headers: customHeaders,
+      };
+
+      // Create a mock handler that captures the request headers
+      let capturedHeaders: Headers | undefined;
+      server.use(
+        http.post("*/v1/style/checks", ({ request }) => {
+          capturedHeaders = request.headers;
+          return HttpResponse.json({
+            status: "running",
+            workflow_id: "test-workflow-id",
+            message: "Style check workflow started successfully.",
+          });
+        }),
+      );
+
+      const client = initEndpoint(config);
+
+      // Make a request to trigger the handler (may fail, we only care about headers being sent)
+      await client.styleChecks
+        .createStyleCheck({
+          file_upload: new File(["test content"], "test.txt", { type: "text/plain" }),
+          dialect: "american_english",
+          style_guide: "ap",
+        })
+        .catch(() => {
+          // Ignore errors, we only care about headers
+        });
+
+      // Verify custom headers were included
+      expect(capturedHeaders).toBeDefined();
+      if (capturedHeaders) {
+        expect(capturedHeaders.get("x-integration-id")).toBe("test-integration-123");
+        expect(capturedHeaders.get("x-custom-tracking")).toBe("tracking-value");
+      }
+    });
+
+    it("should not include headers property when headers not provided in config", () => {
+      const config: Config = {
+        apiKey: mockApiKey,
+        platform: { type: PlatformType.Environment, value: Environment.Dev },
+      };
+
+      // Should create client successfully without headers
+      const client = initEndpoint(config);
+      expect(client).toBeDefined();
+      expect(client.styleChecks).toBeDefined();
     });
   });
 

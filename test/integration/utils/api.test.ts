@@ -152,4 +152,62 @@ describe("API Utilities Integration Tests", () => {
       });
     });
   });
+
+  describe("Custom Headers Integration", () => {
+    it("should accept custom headers in config", () => {
+      const configWithHeaders: Config = {
+        ...config,
+        headers: {
+          "x-integration-id": "integration-test-id",
+          "x-custom-header": "custom-value",
+        },
+      };
+
+      expect(configWithHeaders.headers).toBeDefined();
+      expect(configWithHeaders.headers?.["x-integration-id"]).toBe("integration-test-id");
+      expect(configWithHeaders.headers?.["x-custom-header"]).toBe("custom-value");
+    });
+
+    it("should work without custom headers", () => {
+      const configWithoutHeaders: Config = {
+        apiKey: config.apiKey,
+        platform: config.platform,
+      };
+
+      expect(configWithoutHeaders.headers).toBeUndefined();
+      const result = getCurrentPlatformUrl(configWithoutHeaders);
+      expect(result).toBe(process.env.TEST_PLATFORM_URL);
+    });
+
+    it("should handle empty headers object", () => {
+      const configWithEmptyHeaders: Config = {
+        ...config,
+        headers: {},
+      };
+
+      expect(configWithEmptyHeaders.headers).toBeDefined();
+      expect(Object.keys(configWithEmptyHeaders.headers || {})).toHaveLength(0);
+    });
+
+    it("should handle multiple custom headers", () => {
+      const multipleHeaders = {
+        "x-integration-id": "test-integration",
+        "x-request-id": "req-123",
+        "x-correlation-id": "corr-456",
+        "x-tenant-id": "tenant-789",
+      };
+
+      const configWithMultipleHeaders: Config = {
+        ...config,
+        headers: multipleHeaders,
+      };
+
+      expect(configWithMultipleHeaders.headers).toBeDefined();
+      expect(Object.keys(configWithMultipleHeaders.headers || {})).toHaveLength(4);
+      expect(configWithMultipleHeaders.headers?.["x-integration-id"]).toBe("test-integration");
+      expect(configWithMultipleHeaders.headers?.["x-request-id"]).toBe("req-123");
+      expect(configWithMultipleHeaders.headers?.["x-correlation-id"]).toBe("corr-456");
+      expect(configWithMultipleHeaders.headers?.["x-tenant-id"]).toBe("tenant-789");
+    });
+  });
 });

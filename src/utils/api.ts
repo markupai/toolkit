@@ -77,7 +77,11 @@ export async function verifyPlatformUrl(
 
 export function initEndpoint(config: Config): MarkupAIClient {
   const platformUrl = getPlatformUrl(config);
-  const rawClient = new MarkupAIClient({ token: config.apiKey, baseUrl: platformUrl });
+  const rawClient = new MarkupAIClient({
+    token: config.apiKey,
+    baseUrl: platformUrl,
+    ...(config.headers ? { headers: config.headers } : {}),
+  });
   return wrapClientWithRateLimit(rawClient, config);
 }
 
