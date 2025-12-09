@@ -28,6 +28,18 @@ export type PlatformConfig =
   | { type: PlatformType.Environment; value: Environment }
   | { type: PlatformType.Url; value: string };
 
+/**
+ * Recommended custom header names for SDK integrations.
+ * These are optional but provide a standard way to identify requests.
+ */
+export const CUSTOM_HEADERS = {
+  /**
+   * Header to identify the integration/application making the request.
+   * Recommended format: "your-app-name" or "your-company-app-name"
+   */
+  INTEGRATION_ID: "x-integration-id",
+} as const;
+
 export interface Config {
   platform?: PlatformConfig;
   apiKey: string;

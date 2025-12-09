@@ -4,7 +4,7 @@ import {
   getCurrentPlatformUrl,
   DEFAULT_PLATFORM_URL_PROD,
 } from "../../../src/utils/api";
-import { PlatformType } from "../../../src/utils/api.types";
+import { PlatformType, CUSTOM_HEADERS } from "../../../src/utils/api.types";
 import type { Config } from "../../../src/utils/api.types";
 
 describe("API Utilities Integration Tests", () => {
@@ -158,13 +158,15 @@ describe("API Utilities Integration Tests", () => {
       const configWithHeaders: Config = {
         ...config,
         headers: {
-          "x-integration-id": "integration-test-id",
+          [CUSTOM_HEADERS.INTEGRATION_ID]: "integration-test-id",
           "x-custom-header": "custom-value",
         },
       };
 
       expect(configWithHeaders.headers).toBeDefined();
-      expect(configWithHeaders.headers?.["x-integration-id"]).toBe("integration-test-id");
+      expect(configWithHeaders.headers?.[CUSTOM_HEADERS.INTEGRATION_ID]).toBe(
+        "integration-test-id",
+      );
       expect(configWithHeaders.headers?.["x-custom-header"]).toBe("custom-value");
     });
 
@@ -191,7 +193,7 @@ describe("API Utilities Integration Tests", () => {
 
     it("should handle multiple custom headers", () => {
       const multipleHeaders = {
-        "x-integration-id": "test-integration",
+        [CUSTOM_HEADERS.INTEGRATION_ID]: "test-integration",
         "x-request-id": "req-123",
         "x-correlation-id": "corr-456",
         "x-tenant-id": "tenant-789",
@@ -204,7 +206,9 @@ describe("API Utilities Integration Tests", () => {
 
       expect(configWithMultipleHeaders.headers).toBeDefined();
       expect(Object.keys(configWithMultipleHeaders.headers || {})).toHaveLength(4);
-      expect(configWithMultipleHeaders.headers?.["x-integration-id"]).toBe("test-integration");
+      expect(configWithMultipleHeaders.headers?.[CUSTOM_HEADERS.INTEGRATION_ID]).toBe(
+        "test-integration",
+      );
       expect(configWithMultipleHeaders.headers?.["x-request-id"]).toBe("req-123");
       expect(configWithMultipleHeaders.headers?.["x-correlation-id"]).toBe("corr-456");
       expect(configWithMultipleHeaders.headers?.["x-tenant-id"]).toBe("tenant-789");
