@@ -8,7 +8,7 @@ import {
   DEFAULT_PLATFORM_URL_STAGE,
   DEFAULT_PLATFORM_URL_DEV,
 } from "../../../src/utils/api";
-import { PlatformType, Environment } from "../../../src/utils/api.types";
+import { PlatformType, Environment, CUSTOM_HEADERS } from "../../../src/utils/api.types";
 import type { Config } from "../../../src/utils/api.types";
 import { server } from "../setup";
 import { http, HttpResponse } from "msw";
@@ -88,6 +88,11 @@ describe("API Utilities Unit Tests", () => {
   });
 
   describe("Custom Headers", () => {
+    it("should export CUSTOM_HEADERS constant with recommended header names", () => {
+      expect(CUSTOM_HEADERS).toBeDefined();
+      expect(CUSTOM_HEADERS.INTEGRATION_ID).toBe("x-integration-id");
+    });
+
     it("should create client without custom headers when not provided", () => {
       const config: Config = {
         apiKey: "test-key",
@@ -106,13 +111,13 @@ describe("API Utilities Unit Tests", () => {
         apiKey: "test-key",
         platform: { type: PlatformType.Environment, value: Environment.Dev },
         headers: {
-          "x-integration-id": "test-integration",
+          [CUSTOM_HEADERS.INTEGRATION_ID]: "test-integration",
           "x-custom-header": "custom-value",
         },
       };
 
       expect(config.headers).toBeDefined();
-      expect(config.headers?.["x-integration-id"]).toBe("test-integration");
+      expect(config.headers?.[CUSTOM_HEADERS.INTEGRATION_ID]).toBe("test-integration");
       expect(config.headers?.["x-custom-header"]).toBe("custom-value");
     });
 
@@ -128,7 +133,7 @@ describe("API Utilities Unit Tests", () => {
 
     it("should pass custom headers to API client during requests", async () => {
       const customHeaders = {
-        "x-integration-id": "test-integration-123",
+        [CUSTOM_HEADERS.INTEGRATION_ID]: "test-integration-123",
         "x-custom-tracking": "tracking-value",
       };
 
@@ -167,7 +172,7 @@ describe("API Utilities Unit Tests", () => {
       // Verify custom headers were included
       expect(capturedHeaders).toBeDefined();
       if (capturedHeaders) {
-        expect(capturedHeaders.get("x-integration-id")).toBe("test-integration-123");
+        expect(capturedHeaders.get(CUSTOM_HEADERS.INTEGRATION_ID)).toBe("test-integration-123");
         expect(capturedHeaders.get("x-custom-tracking")).toBe("tracking-value");
       }
     });
