@@ -1074,7 +1074,7 @@ describe("Style API Utils", () => {
       const originalProcess = globalThis.process;
       globalThis.process = {
         ...originalProcess,
-        versions: { node: "22.0.0" },
+        versions: { node: "24.0.0" },
       } as NodeJS.Process;
 
       const result = await createStyleGuideReqFromUrl("/path/to/test-style-guide.pdf");

@@ -20,7 +20,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Build And Test
         env:
@@ -29,6 +29,7 @@ jobs:
         run: |
           npm ci
           npm run format:check
+          npm run type-check
           npm run lint:check
           npm run test:unit
           npm run test:integration

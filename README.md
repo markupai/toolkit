@@ -213,7 +213,7 @@ const configWithUrl: Config = {
 
 ### Prerequisites
 
-- Node.js (Latest LTS version recommended)
+- Node.js >= 24
 - npm
 
 ### Setup

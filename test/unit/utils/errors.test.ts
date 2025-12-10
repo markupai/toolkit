@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
 import {
   ApiError,
-  ApiErrorResponse,
-  ValidationErrorResponse,
+  type ApiErrorResponse,
+  type ValidationErrorResponse,
   ErrorType,
-  ValidationErrorResponse422,
-  PayloadTooLargeErrorResponse,
+  type ValidationErrorResponse422,
+  type PayloadTooLargeErrorResponse,
 } from "../../../src/utils/errors";
 
 describe("ApiError", () => {

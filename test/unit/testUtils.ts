@@ -12,11 +12,11 @@ export const testTimeout = async (
     vi.advanceTimersByTime(timeoutMillis + 1);
     await promise;
     success = true;
-  } catch (error) {
-    expect(error).toBeDefined();
-    expect(error.type).toBe(ErrorType.TIMEOUT_ERROR);
-    expect(error.message).toContain("Workflow timed out");
-    expect(error.message).toContain("ms");
+  } catch (error: unknown) {
+    expect(error).toHaveProperty("type", ErrorType.TIMEOUT_ERROR);
+    expect(error).toHaveProperty("message");
+    expect((error as { message: string }).message).toContain("Workflow timed out");
+    expect((error as { message: string }).message).toContain("ms");
   }
   if (success) {
     fail("Expected timeout error");
