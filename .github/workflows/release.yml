@@ -27,7 +27,7 @@ jobs:
           API_KEY: ${{ secrets.MARKUP_AI_API_KEY_DEV }}
           TEST_PLATFORM_URL: ${{ secrets.TEST_PLATFORM_URL }}
         run: |
-          npm ci
+          npm ci --ignore-scripts
           npm run format:check
           npm run type-check
           npm run lint:check
