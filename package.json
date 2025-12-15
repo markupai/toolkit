@@ -41,7 +41,7 @@
     "@markupai/api": "^1.3.0"
   },
   "devDependencies": {
-    "@types/node": "25.0.1",
+    "@types/node": "25.0.2",
     "@vitest/coverage-v8": "4.0.15",
     "dotenv": "17.2.3",
     "eslint": "9.39.2",
