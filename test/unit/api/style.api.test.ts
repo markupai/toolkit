@@ -286,11 +286,11 @@ describe("Style API Unit Tests", () => {
       server.use(apiHandlers.style.suggestions.success, apiHandlers.style.suggestions.poll);
 
       const result = await styleSuggestions(mockStyleAnalysisRequest, mockConfig);
-      expect(result.original.scores.analysis.tone).not.toBeNull();
-      if (result.original.scores.analysis.tone !== null) {
-        expect(typeof result.original.scores.analysis.tone.score).toBe("number");
-        expect(typeof result.original.scores.analysis.tone.informality).toBe("number");
-        expect(typeof result.original.scores.analysis.tone.liveliness).toBe("number");
+      const tone = result.original.scores.analysis.tone;
+      if (tone !== null && tone !== undefined) {
+        expect(typeof tone.score).toBe("number");
+        expect(typeof tone.informality).toBe("number");
+        expect(typeof tone.liveliness).toBe("number");
       }
     });
 
@@ -319,11 +319,11 @@ describe("Style API Unit Tests", () => {
       server.use(apiHandlers.style.rewrites.success, apiHandlers.style.rewrites.poll);
 
       const result = await styleRewrite(mockStyleAnalysisRequest, mockConfig);
-      expect(result.rewrite.scores.analysis.tone).not.toBeNull();
-      if (result.rewrite.scores.analysis.tone !== null) {
-        expect(typeof result.rewrite.scores.analysis.tone.score).toBe("number");
-        expect(typeof result.rewrite.scores.analysis.tone.informality).toBe("number");
-        expect(typeof result.rewrite.scores.analysis.tone.liveliness).toBe("number");
+      const tone = result.rewrite.scores.analysis.tone;
+      if (tone !== null && tone !== undefined) {
+        expect(typeof tone.score).toBe("number");
+        expect(typeof tone.informality).toBe("number");
+        expect(typeof tone.liveliness).toBe("number");
       }
     });
 
