@@ -83,13 +83,13 @@ export interface StyleScores {
       vocabulary_complexity: number;
       sentence_complexity: number;
     };
-    tone: {
+    tone?: {
       score: number;
       informality: number;
       liveliness: number;
       informality_alignment: number;
       liveliness_alignment: number;
-    } | null;
+    };
   };
 }
 
