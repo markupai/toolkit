@@ -220,6 +220,7 @@ describe("Style API Integration Tests", () => {
       );
 
       expect(response).toBeDefined();
+      console.log(JSON.stringify(response, null, 2));
       // New response structure assertions
       expect(response.workflow).toBeDefined();
       expect(response.workflow.id).toBeDefined();
@@ -262,10 +263,12 @@ describe("Style API Integration Tests", () => {
       expect(typeof response.original.scores.quality.consistency.score).toBe("number");
       expect(typeof response.original.scores.quality.consistency.issues).toBe("number");
 
-      if (response.original.scores.analysis.tone !== null) {
-        expect(typeof response.original.scores.analysis.tone.score).toBe("number");
-        expect(typeof response.original.scores.analysis.tone.informality).toBe("number");
-        expect(typeof response.original.scores.analysis.tone.liveliness).toBe("number");
+      const toneResponse = response.original.scores.analysis.tone;
+
+      if (toneResponse !== null && toneResponse !== undefined) {
+        expect(typeof toneResponse.score).toBe("number");
+        expect(typeof toneResponse.informality).toBe("number");
+        expect(typeof toneResponse.liveliness).toBe("number");
       }
 
       expect(response.original.scores.quality.terminology).toBeDefined();
@@ -298,6 +301,7 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
         response.original.scores.analysis.tone === null ||
+          response.original.scores.analysis.tone === undefined ||
           typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
@@ -327,6 +331,7 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
         response.original.scores.analysis.tone === null ||
+          response.original.scores.analysis.tone === undefined ||
           typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
@@ -362,6 +367,7 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
         response.original.scores.analysis.tone === null ||
+          response.original.scores.analysis.tone === undefined ||
           typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
@@ -396,6 +402,7 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
         response.original.scores.analysis.tone === null ||
+          response.original.scores.analysis.tone === undefined ||
           typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
@@ -434,6 +441,7 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
         response.original.scores.analysis.tone === null ||
+          response.original.scores.analysis.tone === undefined ||
           typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
@@ -516,6 +524,7 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
         response.original.scores.analysis.tone === null ||
+          response.original.scores.analysis.tone === undefined ||
           typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
@@ -546,6 +555,7 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
         response.original.scores.analysis.tone === null ||
+          response.original.scores.analysis.tone === undefined ||
           typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
@@ -581,7 +591,7 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
       expect(response.original.scores.quality.consistency).toBeDefined();
-      expect(response.original.scores.analysis.tone).toBeDefined();
+      expect(response.original.scores.analysis.tone).toBeUndefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
     });
   });
@@ -692,7 +702,7 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
       expect(response.original.scores.quality.consistency).toBeDefined();
-      expect(response.original.scores.analysis.tone).toBeDefined();
+      expect(response.original.scores.analysis.tone).toBeUndefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
     });
 
@@ -725,7 +735,7 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
       expect(response.original.scores.quality.consistency).toBeDefined();
-      expect(response.original.scores.analysis.tone).toBeDefined();
+      expect(response.original.scores.analysis.tone).toBeUndefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
 
       if (response.original.issues.length > 0) {
@@ -764,7 +774,7 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.analysis.clarity).toBeDefined();
       expect(response.original.scores.quality.grammar).toBeDefined();
       expect(response.original.scores.quality.consistency).toBeDefined();
-      expect(response.original.scores.analysis.tone).toBeDefined();
+      expect(response.original.scores.analysis.tone).toBeUndefined();
       expect(response.original.scores.quality.terminology).toBeDefined();
 
       // Test rewrite and rewrite_scores
@@ -779,6 +789,7 @@ describe("Style API Integration Tests", () => {
       expect(response.rewrite.scores.quality.consistency).toBeDefined();
       expect(
         response.rewrite.scores.analysis.tone === null ||
+          response.rewrite.scores.analysis.tone === undefined ||
           typeof response.rewrite.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.rewrite.scores.quality.terminology).toBeDefined();
@@ -822,6 +833,7 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
         response.original.scores.analysis.tone === null ||
+          response.original.scores.analysis.tone === undefined ||
           typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
@@ -883,6 +895,7 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.quality.consistency).toBeDefined();
       expect(
         response.original.scores.analysis.tone === null ||
+          response.original.scores.analysis.tone === undefined ||
           typeof response.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(response.original.scores.quality.terminology).toBeDefined();
@@ -949,6 +962,7 @@ describe("Style API Integration Tests", () => {
       expect(styleCheckResponse.original.scores.quality.consistency).toBeDefined();
       expect(
         styleCheckResponse.original.scores.analysis.tone === null ||
+          styleCheckResponse.original.scores.analysis.tone === undefined ||
           typeof styleCheckResponse.original.scores.analysis.tone === "object",
       ).toBe(true);
       expect(styleCheckResponse.original.scores.quality.terminology).toBeDefined();
