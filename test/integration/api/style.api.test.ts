@@ -220,7 +220,6 @@ describe("Style API Integration Tests", () => {
       );
 
       expect(response).toBeDefined();
-      console.log(JSON.stringify(response, null, 2));
       // New response structure assertions
       expect(response.workflow).toBeDefined();
       expect(response.workflow.id).toBeDefined();
