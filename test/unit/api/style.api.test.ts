@@ -287,7 +287,7 @@ describe("Style API Unit Tests", () => {
 
       const result = await styleSuggestions(mockStyleAnalysisRequest, mockConfig);
       const tone = result.original.scores.analysis.tone;
-      if (tone !== null && tone !== undefined) {
+      if (tone) {
         expect(typeof tone.score).toBe("number");
         expect(typeof tone.informality).toBe("number");
         expect(typeof tone.liveliness).toBe("number");
@@ -320,7 +320,7 @@ describe("Style API Unit Tests", () => {
 
       const result = await styleRewrite(mockStyleAnalysisRequest, mockConfig);
       const tone = result.rewrite.scores.analysis.tone;
-      if (tone !== null && tone !== undefined) {
+      if (tone) {
         expect(typeof tone.score).toBe("number");
         expect(typeof tone.informality).toBe("number");
         expect(typeof tone.liveliness).toBe("number");
@@ -516,7 +516,7 @@ describe("Style API Unit Tests", () => {
       expect(typedResult.rewrite.scores.quality.grammar).toBeDefined();
       expect(typedResult.rewrite.scores.quality.consistency).toBeDefined();
       expect(
-        typedResult.rewrite.scores.analysis.tone === null ||
+        typedResult.rewrite.scores.analysis.tone === undefined ||
           typeof typedResult.rewrite.scores.analysis.tone === "object",
       ).toBe(true);
       expect(typedResult.rewrite.scores.quality.terminology).toBeDefined();
