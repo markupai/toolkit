@@ -4,7 +4,6 @@ export default defineConfig({
   test: {
     include: ["test/integration/**/*.test.ts"],
     environment: "node",
-    globals: true,
     setupFiles: ["test/integration/setup.ts"],
     testTimeout: 60_000, // 60 seconds timeout for all integration tests
   },
