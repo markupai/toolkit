@@ -46,7 +46,7 @@
     "dotenv": "17.2.3",
     "eslint": "9.39.2",
     "msw": "2.12.7",
-    "prettier": "3.7.4",
+    "prettier": "3.8.0",
     "prettier-plugin-packagejson": "2.5.21",
     "typescript": "5.9.3",
     "typescript-eslint": "8.53.0",
