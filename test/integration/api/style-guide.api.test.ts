@@ -37,6 +37,39 @@ describe("Style Guide Integration Tests", () => {
       expect(firstStyleGuide).toHaveProperty("created_by");
       expect(firstStyleGuide).toHaveProperty("status");
     });
+
+    it("should include new style guide fields when available", async () => {
+      const response = await listStyleGuides(config);
+      expect(response.length).toBeGreaterThan(0);
+      const firstStyleGuide = response[0];
+
+      // Check that response has required fields
+      expect(typeof firstStyleGuide.id).toBe("string");
+      expect(typeof firstStyleGuide.name).toBe("string");
+      expect(typeof firstStyleGuide.created_at).toBe("string");
+      expect(typeof firstStyleGuide.created_by).toBe("string");
+      expect(typeof firstStyleGuide.status).toBe("string");
+
+      // New optional fields - check types when present
+      if (firstStyleGuide.updated_at !== undefined) {
+        expect(typeof firstStyleGuide.updated_at).toBe("string");
+      }
+      if (firstStyleGuide.updated_by !== undefined) {
+        expect(typeof firstStyleGuide.updated_by).toBe("string");
+      }
+      if (firstStyleGuide.summary !== undefined) {
+        expect(typeof firstStyleGuide.summary).toBe("string");
+      }
+      if (firstStyleGuide.base_style_guide_type !== undefined) {
+        expect(["ap", "chicago", "microsoft"]).toContain(firstStyleGuide.base_style_guide_type);
+      }
+      if (firstStyleGuide.terminology_domain_ids !== undefined) {
+        expect(Array.isArray(firstStyleGuide.terminology_domain_ids)).toBe(true);
+      }
+      if (firstStyleGuide.has_tone_prompt !== undefined) {
+        expect(typeof firstStyleGuide.has_tone_prompt).toBe("boolean");
+      }
+    });
   });
 
   // Run this test manually to create a style guide, skipping in CI pipeline to avoid creating style guides in CI

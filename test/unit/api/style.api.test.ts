@@ -491,6 +491,30 @@ describe("Style API Unit Tests", () => {
       expect(typeof issue.severity).toBe("string");
       expect(["high", "medium", "low"]).toContain(issue.severity);
     });
+
+    it("should include filename field in workflow response", async () => {
+      server.use(apiHandlers.style.checks.poll);
+
+      const result = await getStyleCheck(mockWorkflowId, mockConfig);
+      const typedResult = result as StyleAnalysisSuccessResp;
+      expect(typedResult.workflow.filename).toBeDefined();
+      expect(typeof typedResult.workflow.filename).toBe("string");
+      expect(typedResult.workflow.filename).toBe("test-document.txt");
+    });
+
+    it("should include typed subcategory in style check issues", async () => {
+      server.use(apiHandlers.style.checks.poll);
+
+      const result = await getStyleCheck(mockWorkflowId, mockConfig);
+      const typedResult = result as StyleAnalysisSuccessResp;
+      expect(typedResult.original.issues).toBeDefined();
+      expect(typedResult.original.issues.length).toBeGreaterThan(0);
+      const issue = typedResult.original.issues[0];
+      expect(issue.subcategory).toBeDefined();
+      expect(typeof issue.subcategory).toBe("string");
+      // Subcategory should be one of the typed values or a string
+      expect(issue.subcategory).toBe("Passive Voice");
+    });
   });
 
   describe("Style Suggestion and Rewrite Results", () => {

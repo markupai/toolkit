@@ -88,7 +88,13 @@ const styleHandlers = {
           name: "Test Style Guide",
           created_at: "2025-06-20T11:46:30.537Z",
           created_by: "test-user",
-          status: "running",
+          status: "completed",
+          updated_at: "2025-06-21T15:30:00.000Z",
+          updated_by: "test-user-2",
+          summary: "A test style guide for unit testing purposes",
+          base_style_guide_type: "ap",
+          terminology_domain_ids: ["domain-1", "domain-2"],
+          has_tone_prompt: true,
         },
       ]);
     }),
@@ -101,7 +107,13 @@ const styleHandlers = {
         name: "Test Style Guide",
         created_at: "2025-06-20T11:46:30.537Z",
         created_by: "test-user",
-        status: "running",
+        status: "completed",
+        updated_at: "2025-06-21T15:30:00.000Z",
+        updated_by: "test-user-2",
+        summary: "A test style guide for unit testing purposes",
+        base_style_guide_type: "ap",
+        terminology_domain_ids: ["domain-1", "domain-2"],
+        has_tone_prompt: true,
       });
     }),
     getError: http.get("*/v1/style-guides/:styleGuideId", () => {
@@ -126,6 +138,8 @@ const styleHandlers = {
         created_at: "2025-06-20T11:46:30.537Z",
         created_by: "test-user",
         status: "running",
+        base_style_guide_type: "microsoft",
+        has_tone_prompt: false,
       });
     }),
     createError: http.post("*/v1/style-guides", () => {
@@ -144,7 +158,11 @@ const styleHandlers = {
         name: body.name,
         created_at: "2025-06-20T11:46:30.537Z",
         created_by: "test-user",
-        status: "running",
+        status: "completed",
+        updated_at: new Date().toISOString(),
+        updated_by: "test-user",
+        base_style_guide_type: "ap",
+        has_tone_prompt: true,
       });
     }),
     updateError: http.patch("*/v1/style-guides/:styleGuideId", () => {
@@ -215,6 +233,7 @@ const styleHandlers = {
           api_version: "1.0.0",
           generated_at: "2025-01-15T14:22:33Z",
           status: Status.Completed,
+          filename: "test-document.txt",
         },
         config: {
           dialect: "american_english",
@@ -229,7 +248,7 @@ const styleHandlers = {
             {
               original: "This is a test sentence.",
               position: { start_index: 0 },
-              subcategory: "passive_voice",
+              subcategory: "Passive Voice",
               category: "grammar",
               severity: "medium",
             },
@@ -277,6 +296,7 @@ const styleHandlers = {
           api_version: "1.0.0",
           generated_at: "2025-01-15T14:45:12Z",
           status: Status.Completed,
+          filename: "suggestions-document.txt",
         },
         config: {
           dialect: "american_english",
@@ -291,8 +311,8 @@ const styleHandlers = {
             {
               original: "This is a test sentence.",
               position: { start_index: 0 },
-              subcategory: "passive_voice",
-              category: "grammar",
+              subcategory: "Passive Voice",
+              category: "clarity",
               severity: "high",
               suggestion: "This sentence should be rewritten.",
               explanation:
@@ -348,6 +368,7 @@ const styleHandlers = {
           api_version: "1.0.0",
           generated_at: "2025-01-15T15:12:45Z",
           status: Status.Completed,
+          filename: "rewrites-document.txt",
         },
         config: {
           dialect: "american_english",
@@ -362,8 +383,8 @@ const styleHandlers = {
             {
               original: "This is a test sentence.",
               position: { start_index: 0 },
-              subcategory: "passive_voice",
-              category: "grammar",
+              subcategory: "Passive Voice",
+              category: "clarity",
               severity: "low",
               suggestion: "This sentence should be rewritten.",
               explanation: "Consider using active voice for better readability.",

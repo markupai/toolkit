@@ -30,6 +30,88 @@ export enum IssueSeverity {
 }
 
 /**
+ * Base style guide type that a custom style guide extends
+ */
+export enum BaseStyleGuideType {
+  AP = "ap",
+  Chicago = "chicago",
+  Microsoft = "microsoft",
+}
+
+/**
+ * Grammar subcategory types
+ */
+export enum GrammarSubcategory {
+  GrammarAgreement = "Grammar Agreement",
+  Punctuation = "Punctuation",
+  Capitalization = "Capitalization",
+  Spelling = "Spelling",
+  SentenceStructure = "Sentence Structure",
+  VerbForms = "Verb Forms",
+  ContextFit = "Context Fit",
+  Other = "other",
+}
+
+/**
+ * Clarity subcategory types
+ */
+export enum ClaritySubcategory {
+  SimplerWords = "Simpler Words",
+  ComplexVerbTenses = "Complex Verb Tenses",
+  HiddenVerbs = "Hidden Verbs",
+  DirectStatements = "Direct Statements",
+  PassiveVoice = "Passive Voice",
+  PhrasalVerbs = "Phrasal Verbs",
+  FormalGrammarForms = "Formal Grammar Forms",
+  UnnecessaryWords = "Unnecessary Words",
+  SentenceSplitting = "Sentence Splitting",
+  ConciseWording = "Concise Wording",
+}
+
+/**
+ * Tone subcategory types
+ */
+export enum ToneSubcategory {
+  ToneAlignedWording = "Tone-Aligned Wording",
+  ToneShapingStructure = "Tone-Shaping Structure",
+  ToneSignalPunctuation = "Tone-Signal Punctuation",
+  TransitionsAndFlow = "Transitions and Flow",
+  AdditionalToneChanges = "Additional Tone Changes",
+  Other = "other",
+}
+
+/**
+ * Consistency subcategory types
+ */
+export enum ConsistencySubcategory {
+  ConsistentPunctuation = "Consistent Punctuation",
+  ConsistentCapitalization = "Consistent Capitalization",
+  NumbersDatesAndTimes = "Numbers, Dates, and Times",
+  InclusiveLanguage = "Inclusive Language",
+  SpecialStyleGuideRequirements = "Special Style Guide Requirements",
+  Other = "other",
+}
+
+/**
+ * Terminology subcategory types
+ */
+export enum TerminologySubcategory {
+  Terminology = "Terminology",
+  Other = "other",
+}
+
+/**
+ * Union type for all subcategory types
+ */
+export type IssueSubcategory =
+  | GrammarSubcategory
+  | ClaritySubcategory
+  | ToneSubcategory
+  | ConsistencySubcategory
+  | TerminologySubcategory
+  | string; // Allow string for backwards compatibility
+
+/**
  * File descriptor interface for style analysis
  */
 export interface FileDescriptor {
@@ -54,7 +136,7 @@ export interface Issue {
   position: {
     start_index: number;
   };
-  subcategory: string;
+  subcategory: IssueSubcategory;
   category: IssueCategory;
   /**
    * Severity level of the issue
@@ -116,6 +198,10 @@ export interface StyleAnalysisResponseBase {
     type: string;
     api_version: string;
     status: Status;
+    /**
+     * The original name of the file passed into the workflow
+     */
+    filename?: string;
   };
 }
 
@@ -126,6 +212,10 @@ export interface StyleAnalysisSuccessResp extends StyleAnalysisResponseBase {
     api_version: string;
     generated_at: string;
     status: Status;
+    /**
+     * The original name of the file passed into the workflow
+     */
+    filename?: string;
     webhook_response?: {
       url: string;
       status_code: number;
@@ -194,6 +284,30 @@ export interface StyleGuide {
   created_at: string;
   created_by: string;
   status: string;
+  /**
+   * The UTC datetime that the style guide was last updated. If null, the style guide has never been updated.
+   */
+  updated_at?: string;
+  /**
+   * The ID of the user who last updated the style guide. If null, the style guide has never been updated.
+   */
+  updated_by?: string;
+  /**
+   * User-friendly summary of the style guide's contents and characteristics
+   */
+  summary?: string;
+  /**
+   * The base style guide type that this style guide extends (AP, Chicago, or Microsoft).
+   */
+  base_style_guide_type?: BaseStyleGuideType;
+  /**
+   * List of domain IDs to filter terminology searches by. NULL or empty list means no filtering.
+   */
+  terminology_domain_ids?: string[];
+  /**
+   * Whether this style guide has a tone prompt defined.
+   */
+  has_tone_prompt?: boolean;
 }
 
 export type StyleGuides = StyleGuide[];

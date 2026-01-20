@@ -10,6 +10,7 @@ export enum Status {
   Running = "running",
   Completed = "completed",
   Failed = "failed",
+  NotFound = "not_found",
 }
 
 export enum Environment {
