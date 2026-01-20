@@ -273,6 +273,14 @@ describe("Style API Integration Tests", () => {
       expect(response.original.scores.quality.terminology).toBeDefined();
       expect(typeof response.original.scores.quality.terminology.score).toBe("number");
       expect(typeof response.original.scores.quality.terminology.issues).toBe("number");
+
+      // Check severity field in style check issues
+      if (response.original.issues.length > 0) {
+        const issue = response.original.issues[0];
+        expect(issue.severity).toBeDefined();
+        expect(typeof issue.severity).toBe("string");
+        expect(["high", "medium", "low"]).toContain(issue.severity);
+      }
     });
 
     it("should submit a style check with custom document name and get result", async () => {
@@ -337,6 +345,14 @@ describe("Style API Integration Tests", () => {
         const issue = response.original.issues[0];
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe("string");
+        // Check severity field
+        expect(issue.severity).toBeDefined();
+        expect(typeof issue.severity).toBe("string");
+        expect(["high", "medium", "low"]).toContain(issue.severity);
+        // Check explanation field (optional)
+        if (issue.explanation) {
+          expect(typeof issue.explanation).toBe("string");
+        }
       }
     });
 
@@ -410,6 +426,14 @@ describe("Style API Integration Tests", () => {
         const issue = response.original.issues[0];
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe("string");
+        // Check severity field
+        expect(issue.severity).toBeDefined();
+        expect(typeof issue.severity).toBe("string");
+        expect(["high", "medium", "low"]).toContain(issue.severity);
+        // Check explanation field (optional)
+        if (issue.explanation) {
+          expect(typeof issue.explanation).toBe("string");
+        }
       }
     });
 
@@ -443,6 +467,70 @@ describe("Style API Integration Tests", () => {
       // Test rewrite
       expect(response.rewrite).toBeDefined();
       expect(typeof response.rewrite.text).toBe("string");
+    });
+
+    it("should include severity field in all style analysis issues", async () => {
+      // Use content that is likely to generate issues
+      const contentWithIssues =
+        "This sentence have a error. The data was recieved yesterday. Utilize the functionality to optimize the implementation.";
+
+      const response = await styleSuggestions(
+        {
+          content: contentWithIssues,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.technical,
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.original.issues).toBeDefined();
+      expect(Array.isArray(response.original.issues)).toBe(true);
+
+      // Verify all issues have severity field with valid values
+      for (const issue of response.original.issues) {
+        expect(issue.severity).toBeDefined();
+        expect(typeof issue.severity).toBe("string");
+        expect(["high", "medium", "low"]).toContain(issue.severity);
+        // Verify other required issue fields
+        expect(issue.original).toBeDefined();
+        expect(issue.position).toBeDefined();
+        expect(issue.position.start_index).toBeDefined();
+        expect(issue.category).toBeDefined();
+        expect(issue.subcategory).toBeDefined();
+        expect(issue.suggestion).toBeDefined();
+      }
+    });
+
+    it("should include explanation field in suggestion issues when available", async () => {
+      // Use content that is likely to generate issues with explanations
+      const contentWithIssues =
+        "The meeting was attended by the team. It was decided that the project will be completed.";
+
+      const response = await styleSuggestions(
+        {
+          content: contentWithIssues,
+          style_guide: styleGuideId,
+          dialect: STYLE_DEFAULTS.dialects.americanEnglish,
+          tone: STYLE_DEFAULTS.tones.technical,
+        },
+        config,
+      );
+
+      expect(response).toBeDefined();
+      expect(response.original.issues).toBeDefined();
+
+      // Check if any issues have explanations
+      const issuesWithExplanation = response.original.issues.filter(
+        (issue) => issue.explanation !== undefined,
+      );
+
+      // If explanations are present, verify their format
+      for (const issue of issuesWithExplanation) {
+        expect(typeof issue.explanation).toBe("string");
+        expect(issue.explanation.length).toBeGreaterThan(0);
+      }
     });
   });
 

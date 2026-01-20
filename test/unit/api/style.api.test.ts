@@ -478,6 +478,19 @@ describe("Style API Unit Tests", () => {
       expect(typedResult.original.scores.quality.terminology.score).toBe(85);
       expect(typedResult.original.scores.quality.terminology.issues).toBe(0);
     });
+
+    it("should include severity field in style check issues", async () => {
+      server.use(apiHandlers.style.checks.poll);
+
+      const result = await getStyleCheck(mockWorkflowId, mockConfig);
+      const typedResult = result as StyleAnalysisSuccessResp;
+      expect(typedResult.original.issues).toBeDefined();
+      expect(typedResult.original.issues.length).toBeGreaterThan(0);
+      const issue = typedResult.original.issues[0];
+      expect(issue.severity).toBeDefined();
+      expect(typeof issue.severity).toBe("string");
+      expect(["high", "medium", "low"]).toContain(issue.severity);
+    });
   });
 
   describe("Style Suggestion and Rewrite Results", () => {
@@ -497,6 +510,24 @@ describe("Style API Unit Tests", () => {
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe("string");
       }
+    });
+
+    it("should include severity and explanation in style suggestion issues", async () => {
+      server.use(apiHandlers.style.suggestions.poll);
+
+      const result = await getStyleSuggestion(mockWorkflowId, mockConfig);
+      const typedResult = result as StyleAnalysisSuggestionResp;
+      expect(typedResult.original.issues).toBeDefined();
+      expect(typedResult.original.issues.length).toBeGreaterThan(0);
+      const issue = typedResult.original.issues[0];
+      // Check severity
+      expect(issue.severity).toBeDefined();
+      expect(typeof issue.severity).toBe("string");
+      expect(["high", "medium", "low"]).toContain(issue.severity);
+      // Check explanation
+      expect(issue.explanation).toBeDefined();
+      expect(typeof issue.explanation).toBe("string");
+      expect(issue.explanation.length).toBeGreaterThan(0);
     });
 
     it("should get style rewrite results by workflow ID", async () => {
@@ -526,6 +557,24 @@ describe("Style API Unit Tests", () => {
         expect(issue.suggestion).toBeDefined();
         expect(typeof issue.suggestion).toBe("string");
       }
+    });
+
+    it("should include severity and explanation in style rewrite issues", async () => {
+      server.use(apiHandlers.style.rewrites.poll);
+
+      const result = await getStyleRewrite(mockWorkflowId, mockConfig);
+      const typedResult = result as StyleAnalysisRewriteResp;
+      expect(typedResult.original.issues).toBeDefined();
+      expect(typedResult.original.issues.length).toBeGreaterThan(0);
+      const issue = typedResult.original.issues[0];
+      // Check severity
+      expect(issue.severity).toBeDefined();
+      expect(typeof issue.severity).toBe("string");
+      expect(["high", "medium", "low"]).toContain(issue.severity);
+      // Check explanation
+      expect(issue.explanation).toBeDefined();
+      expect(typeof issue.explanation).toBe("string");
+      expect(issue.explanation.length).toBeGreaterThan(0);
     });
   });
 

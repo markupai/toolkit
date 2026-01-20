@@ -231,6 +231,7 @@ const styleHandlers = {
               position: { start_index: 0 },
               subcategory: "passive_voice",
               category: "grammar",
+              severity: "medium",
             },
           ],
           scores: {
@@ -292,7 +293,10 @@ const styleHandlers = {
               position: { start_index: 0 },
               subcategory: "passive_voice",
               category: "grammar",
+              severity: "high",
               suggestion: "This sentence should be rewritten.",
+              explanation:
+                "The passive voice makes the sentence less direct. Using active voice improves clarity and engagement.",
             },
           ],
           scores: {
@@ -360,7 +364,9 @@ const styleHandlers = {
               position: { start_index: 0 },
               subcategory: "passive_voice",
               category: "grammar",
+              severity: "low",
               suggestion: "This sentence should be rewritten.",
+              explanation: "Consider using active voice for better readability.",
             },
           ],
           scores: {
