@@ -527,7 +527,7 @@ describe("Style API Unit Tests", () => {
       // Check explanation
       expect(issue.explanation).toBeDefined();
       expect(typeof issue.explanation).toBe("string");
-      expect(issue.explanation.length).toBeGreaterThan(0);
+      expect(issue.explanation!.length).toBeGreaterThan(0);
     });
 
     it("should get style rewrite results by workflow ID", async () => {
@@ -574,7 +574,7 @@ describe("Style API Unit Tests", () => {
       // Check explanation
       expect(issue.explanation).toBeDefined();
       expect(typeof issue.explanation).toBe("string");
-      expect(issue.explanation.length).toBeGreaterThan(0);
+      expect(issue.explanation!.length).toBeGreaterThan(0);
     });
   });
 
