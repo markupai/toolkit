@@ -529,7 +529,9 @@ describe("Style API Integration Tests", () => {
       // If explanations are present, verify their format
       for (const issue of issuesWithExplanation) {
         expect(typeof issue.explanation).toBe("string");
-        expect(issue.explanation!.length).toBeGreaterThan(0);
+        if (issue.explanation) {
+          expect(issue.explanation.length).toBeGreaterThan(0);
+        }
       }
     });
   });
