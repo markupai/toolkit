@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   IssueCategory,
+  IssueSeverity,
   type BatchProgress,
   type StyleAnalysisReq,
   type StyleAnalysisSuccessResp,
@@ -152,6 +153,7 @@ const mockStyleCheckResponse: StyleAnalysisSuccessResp = {
         },
         subcategory: "spelling",
         category: IssueCategory.Grammar,
+        severity: IssueSeverity.High,
       },
       {
         original: "leverage",
@@ -160,6 +162,7 @@ const mockStyleCheckResponse: StyleAnalysisSuccessResp = {
         },
         subcategory: "vocabulary",
         category: IssueCategory.Clarity,
+        severity: IssueSeverity.Medium,
       },
       {
         original: "going forward",
@@ -168,6 +171,7 @@ const mockStyleCheckResponse: StyleAnalysisSuccessResp = {
         },
         subcategory: "word_choice",
         category: IssueCategory.Tone,
+        severity: IssueSeverity.Low,
       },
       {
         original: "email",
@@ -176,6 +180,7 @@ const mockStyleCheckResponse: StyleAnalysisSuccessResp = {
         },
         subcategory: "punctuation",
         category: IssueCategory.Consistency,
+        severity: IssueSeverity.Medium,
       },
       {
         original: "towards",
@@ -184,6 +189,7 @@ const mockStyleCheckResponse: StyleAnalysisSuccessResp = {
         },
         subcategory: "word_choice",
         category: IssueCategory.Terminology,
+        severity: IssueSeverity.Low,
       },
     ],
     scores: {

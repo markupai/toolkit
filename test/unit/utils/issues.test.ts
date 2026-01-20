@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { categorizeIssues, type CategorizedIssues } from "../../../src/utils/issues";
 import {
   IssueCategory,
+  IssueSeverity,
   type Issue,
   type IssueWithSuggestion,
 } from "../../../src/api/style/style.api.types";
@@ -15,6 +16,7 @@ describe("Issues Utils", () => {
       },
       subcategory: "spelling",
       category: IssueCategory.Grammar,
+      severity: IssueSeverity.High,
     },
     {
       original: "simple word",
@@ -23,6 +25,7 @@ describe("Issues Utils", () => {
       },
       subcategory: "basic",
       category: IssueCategory.Clarity,
+      severity: IssueSeverity.Medium,
     },
     {
       original: "complex sentence structure",
@@ -31,6 +34,7 @@ describe("Issues Utils", () => {
       },
       subcategory: "fragment",
       category: IssueCategory.Consistency,
+      severity: IssueSeverity.Low,
     },
     {
       original: "very long sentence",
@@ -39,6 +43,7 @@ describe("Issues Utils", () => {
       },
       subcategory: "length",
       category: IssueCategory.Terminology,
+      severity: IssueSeverity.Medium,
     },
     {
       original: "informal tone",
@@ -47,6 +52,7 @@ describe("Issues Utils", () => {
       },
       subcategory: "casual",
       category: IssueCategory.Tone,
+      severity: IssueSeverity.Low,
     },
     {
       original: "style guide violation",
@@ -55,6 +61,7 @@ describe("Issues Utils", () => {
       },
       subcategory: "formatting",
       category: IssueCategory.Consistency,
+      severity: IssueSeverity.High,
     },
     {
       original: "technical term",
@@ -63,6 +70,7 @@ describe("Issues Utils", () => {
       },
       subcategory: "jargon",
       category: IssueCategory.Terminology,
+      severity: IssueSeverity.Medium,
     },
     {
       original: "another grammar issue",
@@ -71,6 +79,7 @@ describe("Issues Utils", () => {
       },
       subcategory: "punctuation",
       category: IssueCategory.Grammar,
+      severity: IssueSeverity.High,
     },
   ];
 
@@ -112,6 +121,7 @@ describe("Issues Utils", () => {
           },
           subcategory: "spelling",
           category: IssueCategory.Grammar,
+          severity: IssueSeverity.High,
           suggestion: "grammar correction",
         },
       ];
