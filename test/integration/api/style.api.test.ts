@@ -280,6 +280,14 @@ describe("Style API Integration Tests", () => {
         expect(issue.severity).toBeDefined();
         expect(typeof issue.severity).toBe("string");
         expect(["high", "medium", "low"]).toContain(issue.severity);
+        // Check subcategory is a string (typed subcategory or legacy string)
+        expect(issue.subcategory).toBeDefined();
+        expect(typeof issue.subcategory).toBe("string");
+      }
+
+      // Check filename field in workflow response (optional)
+      if (response.workflow.filename !== undefined) {
+        expect(typeof response.workflow.filename).toBe("string");
       }
     });
 
