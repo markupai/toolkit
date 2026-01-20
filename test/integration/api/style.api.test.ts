@@ -472,7 +472,7 @@ describe("Style API Integration Tests", () => {
     it("should include severity field in all style analysis issues", async () => {
       // Use content that is likely to generate issues
       const contentWithIssues =
-        "This sentence have a error. The data was recieved yesterday. Utilize the functionality to optimize the implementation.";
+        "This sentence have a error. The data was received yesterday. Utilize the functionality to optimize the implementation.";
 
       const response = await styleSuggestions(
         {
