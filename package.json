@@ -46,7 +46,7 @@
     "@vitest/coverage-v8": "4.1.0",
     "dotenv": "17.3.1",
     "eslint": "10.0.3",
-    "msw": "2.12.10",
+    "msw": "2.12.11",
     "prettier": "3.8.1",
     "prettier-plugin-packagejson": "3.0.2",
     "typescript": "5.9.3",
